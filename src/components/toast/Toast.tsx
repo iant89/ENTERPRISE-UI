@@ -95,7 +95,6 @@ function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: s
   );
 }
 
-let counter = 0;
 
 /**
  * Hosts transient notifications, announced through the ThemeProvider live region. Toasts pause while hovered or focused;
@@ -104,11 +103,12 @@ let counter = 0;
 export function ToastProvider({ children, position = 'bottom-center', limit = 4 }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastRecord[]>([]);
   const announce = useAnnouncer();
+  const counter = useRef(0);
 
   const dismiss = useCallback((id: string) => setToasts((all) => all.filter((t) => t.id !== id)), []);
   const show = useCallback(
     (options: ToastOptions) => {
-      const id = options.id ?? `toast-${++counter}`;
+      const id = options.id ?? `toast-${++counter.current}`;
       setToasts((all) => [...all.filter((t) => t.id !== id), { ...options, id }].slice(-limit));
       // Announce through the persistent live region; inserted live regions are unreliable.
       const text = [options.title, options.description].filter((part) => typeof part === 'string').join('. ');

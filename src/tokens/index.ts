@@ -28,7 +28,8 @@ export const tokenGroups: TokenGroup[] = [
     tokens: [
       t('color-primary', 'Primary actions and selection'), t('color-primary-hover', 'Hover state of primary actions'),
       t('color-primary-active', 'Pressed state'), t('color-on-primary', 'Text on primary'),
-      t('color-primary-subtle', 'Selected / emphasized backgrounds'), t('color-link', 'Hyperlinks'), t('color-focus', 'Focus indicator'),
+      t('color-primary-subtle', 'Selected / emphasized backgrounds'), t('color-selected-text', 'Brand text on selected backgrounds'),
+      t('color-link', 'Hyperlinks'), t('color-focus', 'Focus indicator'),
     ],
   },
   {

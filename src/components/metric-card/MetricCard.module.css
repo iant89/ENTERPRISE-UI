@@ -69,6 +69,7 @@
 
 .valueRow {
   display: flex;
+  min-width: 0;
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--eui-space-3);
@@ -120,7 +121,10 @@
 }
 
 .sparkline {
-  flex-shrink: 0;
+  flex-shrink: 1;
+  min-width: 2.5rem;
+  max-width: 45%;
+  height: auto;
   color: var(--_value, var(--eui-color-primary));
   overflow: visible;
 }

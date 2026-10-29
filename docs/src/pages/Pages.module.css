@@ -85,6 +85,7 @@
 }
 
 .heroPreview {
+  min-width: 0;
   color: var(--eui-color-text);
   border-radius: var(--eui-radius-lg);
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
@@ -130,6 +131,8 @@
 }
 
 .swatch {
+  display: inline-block;
+  vertical-align: middle;
   width: 2.5rem;
   height: 2.5rem;
   border-radius: var(--eui-radius-sm);
@@ -137,12 +140,16 @@
 }
 
 .spaceBar {
+  display: inline-block;
+  vertical-align: middle;
   height: 0.75rem;
   border-radius: 2px;
   background: var(--eui-color-primary);
 }
 
 .radiusBox {
+  display: inline-block;
+  vertical-align: middle;
   width: 3rem;
   height: 3rem;
   border: 2px solid var(--eui-color-primary);
@@ -150,6 +157,8 @@
 }
 
 .shadowBox {
+  display: inline-block;
+  vertical-align: middle;
   width: 4rem;
   height: 3rem;
   border-radius: var(--eui-radius-md);
@@ -271,5 +280,11 @@
 @media (max-width: 599px) {
   .content {
     padding: var(--eui-space-6) var(--eui-space-4);
+  }
+}
+
+@media (max-width: 599px) {
+  .heroPreview {
+    display: none;
   }
 }

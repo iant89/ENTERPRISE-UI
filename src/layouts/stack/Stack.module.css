@@ -1,0 +1,27 @@
+.stack {
+  display: flex;
+  min-width: 0;
+}
+
+.vertical {
+  flex-direction: column;
+}
+
+.horizontal {
+  flex-direction: row;
+  align-items: center;
+}
+
+.wrap {
+  flex-wrap: wrap;
+}
+
+.dividers.vertical > * + * {
+  padding-top: var(--_gap);
+  border-top: var(--eui-border-width) solid var(--eui-color-border-subtle);
+}
+
+.dividers.horizontal > * + * {
+  padding-inline-start: var(--_gap);
+  border-inline-start: var(--eui-border-width) solid var(--eui-color-border-subtle);
+}

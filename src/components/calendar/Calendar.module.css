@@ -1,0 +1,94 @@
+.calendar {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-2);
+  color: var(--eui-color-text);
+  user-select: none;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--eui-space-2);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--eui-font-size-md);
+  font-weight: var(--eui-font-weight-bold);
+  text-align: center;
+  flex: 1;
+}
+
+.grid {
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.weekday {
+  width: 2.5rem;
+  height: 2rem;
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-xs);
+  font-weight: var(--eui-font-weight-regular);
+  text-align: center;
+}
+
+.cell {
+  padding: 1px;
+  text-align: center;
+}
+
+.day {
+  position: relative;
+  width: 2.375rem;
+  height: 2.375rem;
+  padding: 0;
+  border: var(--eui-border-width) solid transparent;
+  border-radius: var(--eui-radius-sm);
+  background: transparent;
+  color: var(--eui-color-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+[data-eui-density='compact'] .day {
+  width: 2rem;
+  height: 2rem;
+}
+
+.day:hover:not(:disabled) {
+  background: var(--eui-color-surface-hover);
+}
+
+.day:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: 0;
+}
+
+.outside {
+  color: var(--eui-color-text-secondary);
+}
+
+.today {
+  border-color: var(--eui-color-primary);
+  font-weight: var(--eui-font-weight-bold);
+}
+
+.selected,
+.selected:hover:not(:disabled) {
+  background: var(--eui-color-primary);
+  color: var(--eui-color-on-primary);
+}
+
+.weekend:not(.selected) {
+  background: var(--eui-color-surface-alt);
+}
+
+.day:disabled {
+  opacity: var(--eui-disabled-opacity);
+  cursor: var(--eui-disabled-cursor);
+  text-decoration: line-through;
+}

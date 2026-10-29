@@ -1,0 +1,117 @@
+.fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  display: flex;
+  gap: var(--eui-space-0-5);
+  padding: 0;
+  margin-bottom: var(--eui-space-1);
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.required {
+  color: var(--eui-color-error-text);
+  font-weight: var(--eui-font-weight-bold);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0 var(--eui-space-6);
+}
+
+.horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.option {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--eui-space-2);
+  min-height: var(--eui-touch-target-min);
+  padding-block: calc((var(--eui-control-height) - 18px) / 2 - 2px);
+  cursor: pointer;
+}
+
+.input {
+  appearance: none;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  border: var(--eui-border-width) solid var(--eui-color-border-strong);
+  border-radius: 50%;
+  background: var(--eui-color-surface);
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+}
+
+.input::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: scale(0);
+  background: var(--eui-color-primary);
+  transition: transform var(--eui-duration-fast) var(--eui-easing-standard);
+}
+
+.input:checked {
+  border-color: var(--eui-color-primary);
+}
+
+.input:checked::before {
+  transform: scale(1);
+}
+
+.input:hover:not(:disabled) {
+  border-color: var(--eui-color-border-hover);
+}
+
+.input:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+}
+
+.invalid .input {
+  border-color: var(--eui-color-error-border);
+  background: var(--eui-color-error-subtle);
+}
+
+.label {
+  line-height: 20px;
+}
+
+.description {
+  display: block;
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.disabled {
+  opacity: var(--eui-disabled-opacity);
+  cursor: var(--eui-disabled-cursor);
+}
+
+.disabled .input {
+  cursor: var(--eui-disabled-cursor);
+}
+
+.helper {
+  margin: var(--eui-space-1) 0 0;
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-xs);
+}
+
+.error {
+  margin: var(--eui-space-1) 0 0;
+  color: var(--eui-color-error-text);
+  font-size: var(--eui-font-size-sm);
+}

@@ -1,0 +1,70 @@
+.box {
+  flex-wrap: wrap;
+  align-items: center;
+  padding-block: 2px;
+  padding-inline-start: var(--eui-space-1);
+}
+
+.tokens {
+  display: contents;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.token {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--eui-space-1);
+  max-width: 12rem;
+  height: calc(var(--eui-control-height) - 12px);
+  min-height: 22px;
+  padding: 0 var(--eui-space-0-5) 0 var(--eui-space-2);
+  border: var(--eui-border-width) solid var(--eui-color-border-strong);
+  border-radius: var(--eui-radius-sm);
+  background: var(--eui-color-neutral-subtle);
+  color: var(--eui-color-text);
+  font-size: var(--eui-font-size-sm);
+}
+
+.tokenLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tokenRemove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--eui-radius-xs);
+  background: transparent;
+  color: var(--eui-color-icon);
+  cursor: pointer;
+}
+
+.tokenRemove:hover {
+  background: var(--eui-color-surface-active);
+  color: var(--eui-color-text);
+}
+
+.tokenRemove svg {
+  width: 12px;
+  height: 12px;
+}
+
+.more {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+  padding: 0 var(--eui-space-1);
+}
+
+.input {
+  flex: 1 1 4rem;
+  min-width: 4rem;
+  padding-inline-start: var(--eui-space-2);
+}

@@ -1,0 +1,118 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--eui-color-background);
+}
+
+.fullHeight {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.skipLink {
+  position: absolute;
+  top: var(--eui-space-2);
+  left: var(--eui-space-2);
+  z-index: var(--eui-z-tooltip);
+  padding: var(--eui-space-2) var(--eui-space-4);
+  border-radius: var(--eui-radius-sm);
+  background: var(--eui-color-primary);
+  color: var(--eui-color-on-primary);
+  font-weight: var(--eui-font-weight-semibold);
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skipLink:focus {
+  transform: none;
+}
+
+.header {
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: var(--eui-z-header);
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.nav {
+  flex-shrink: 0;
+  display: flex;
+  width: var(--eui-sidenav-width);
+  background: var(--eui-color-surface);
+  border-inline-end: var(--eui-border-width) solid var(--eui-color-border);
+  transition: width var(--eui-duration-normal) var(--eui-easing-standard);
+  overflow: hidden;
+}
+
+.fullHeight .nav {
+  overflow-y: auto;
+}
+
+.navCollapsed {
+  width: var(--eui-sidenav-width-collapsed);
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  outline: none;
+}
+
+.fullHeight .main {
+  overflow: auto;
+}
+
+.footer {
+  flex-shrink: 0;
+}
+
+/* Mobile drawer */
+.drawerOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--eui-z-drawer);
+  background: var(--eui-color-overlay);
+  animation: eui-fade-in var(--eui-duration-normal) var(--eui-easing-standard);
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--eui-z-drawer);
+  display: flex;
+  flex-direction: column;
+  width: min(20rem, 85vw);
+  background: var(--eui-color-surface);
+  box-shadow: var(--eui-shadow-xl);
+  overflow-y: auto;
+  outline: none;
+  animation: eui-drawer-in var(--eui-duration-normal) var(--eui-easing-emphasized);
+}
+
+@keyframes eui-drawer-in {
+  from { transform: translateX(-100%); }
+  to { transform: none; }
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--eui-header-height);
+  padding: 0 var(--eui-space-2) 0 var(--eui-space-4);
+  border-bottom: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  font-weight: var(--eui-font-weight-bold);
+}

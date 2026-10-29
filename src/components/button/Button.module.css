@@ -1,0 +1,174 @@
+.button {
+  --_bg: var(--eui-color-surface);
+  --_fg: var(--eui-color-primary);
+  --_border: var(--eui-color-primary);
+  --_bg-hover: var(--eui-color-primary-subtle);
+  --_fg-hover: var(--eui-color-primary-hover);
+  --_border-hover: var(--eui-color-primary-hover);
+  --_bg-active: var(--eui-color-primary-subtle-hover);
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--eui-space-2);
+  min-width: var(--eui-control-height);
+  height: var(--eui-control-height);
+  padding: 0 var(--eui-control-padding-x);
+  margin: 0;
+  border: var(--eui-border-width) solid var(--_border);
+  border-radius: var(--eui-radius-sm);
+  background: var(--_bg);
+  color: var(--_fg);
+  font: inherit;
+  font-size: var(--eui-font-size-md);
+  font-weight: var(--eui-font-weight-semibold);
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--eui-duration-fast) var(--eui-easing-standard),
+    border-color var(--eui-duration-fast) var(--eui-easing-standard),
+    color var(--eui-duration-fast) var(--eui-easing-standard);
+}
+
+.button:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--_bg-hover);
+  border-color: var(--_border-hover);
+  color: var(--_fg-hover);
+}
+
+.button:active:not(:disabled):not([aria-disabled='true']),
+.button[aria-pressed='true'],
+.button[aria-expanded='true'] {
+  background: var(--_bg-active);
+}
+
+.button:focus-visible {
+  outline: var(--eui-focus-width) var(--eui-focus-style) var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+}
+
+.button:disabled,
+.button[aria-disabled='true'] {
+  opacity: var(--eui-disabled-opacity);
+  cursor: var(--eui-disabled-cursor);
+}
+
+.primary {
+  --_bg: var(--eui-color-primary);
+  --_fg: var(--eui-color-on-primary);
+  --_border: var(--eui-color-primary);
+  --_bg-hover: var(--eui-color-primary-hover);
+  --_fg-hover: var(--eui-color-on-primary);
+  --_border-hover: var(--eui-color-primary-hover);
+  --_bg-active: var(--eui-color-primary-active);
+}
+
+.secondary {
+  /* defaults */
+}
+
+.tertiary {
+  --_bg: transparent;
+  --_border: transparent;
+  --_bg-hover: var(--eui-color-surface-hover);
+  --_border-hover: transparent;
+  --_bg-active: var(--eui-color-surface-active);
+}
+
+.destructive {
+  --_bg: var(--eui-color-error);
+  --_fg: var(--eui-color-on-error);
+  --_border: var(--eui-color-error);
+  --_bg-hover: var(--eui-color-error-hover);
+  --_fg-hover: var(--eui-color-on-error);
+  --_border-hover: var(--eui-color-error-hover);
+  --_bg-active: var(--eui-color-error-hover);
+}
+
+.neutral {
+  --_fg: var(--eui-color-text);
+  --_border: var(--eui-color-border-strong);
+  --_bg-hover: var(--eui-color-surface-hover);
+  --_fg-hover: var(--eui-color-text);
+  --_border-hover: var(--eui-color-border-strong);
+  --_bg-active: var(--eui-color-surface-active);
+}
+
+.tertiary.neutral {
+  --_border: transparent;
+  --_border-hover: transparent;
+  --_bg: transparent;
+}
+
+.pressed {
+  --_bg: var(--eui-color-primary-subtle);
+  --_border: var(--eui-color-primary);
+  --_fg: var(--eui-color-primary);
+}
+
+.sm {
+  height: var(--eui-control-height-sm);
+  min-width: var(--eui-control-height-sm);
+  padding: 0 var(--eui-space-2);
+  font-size: var(--eui-font-size-sm);
+}
+
+.lg {
+  height: var(--eui-control-height-lg);
+  min-width: var(--eui-control-height-lg);
+  padding: 0 var(--eui-space-4);
+}
+
+.fullWidth {
+  display: flex;
+  width: 100%;
+}
+
+.iconOnly {
+  padding: 0;
+  width: var(--eui-control-height);
+}
+
+.iconOnly.sm {
+  width: var(--eui-control-height-sm);
+}
+
+.iconOnly.lg {
+  width: var(--eui-control-height-lg);
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.icon svg {
+  width: var(--eui-icon-size);
+  height: var(--eui-icon-size);
+}
+
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.loading {
+  cursor: progress;
+}
+
+/* Touch devices: keep a 44px hit area even in compact layouts. */
+@media (pointer: coarse) {
+  .button::after {
+    content: '';
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+}

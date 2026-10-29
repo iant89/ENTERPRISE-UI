@@ -1,0 +1,90 @@
+/* Light theme — the default. */
+:root,
+[data-eui-theme='light'] {
+  color-scheme: light;
+
+  /* Brand */
+  --eui-color-primary: #0a6ed1;
+  --eui-color-primary-hover: #0854a0;
+  --eui-color-primary-active: #0a4d8c;
+  --eui-color-on-primary: #ffffff;
+  --eui-color-primary-subtle: #e5f0fa;
+  --eui-color-primary-subtle-hover: #d1e6f8;
+  --eui-color-link: #0a6ed1;
+  --eui-color-link-hover: #0854a0;
+
+  /* Surfaces */
+  --eui-color-background: #f5f6f7;
+  --eui-color-surface: #ffffff;
+  --eui-color-surface-alt: #fafafa;
+  --eui-color-surface-sunken: #eff1f2;
+  --eui-color-surface-hover: #f2f4f6;
+  --eui-color-surface-active: #e4e7ea;
+  --eui-color-surface-selected: #e5f0fa;
+  --eui-color-surface-selected-hover: #d8e9f8;
+  --eui-color-overlay: rgba(0, 0, 0, 0.4);
+  --eui-color-shell: #ffffff;
+  --eui-color-shell-border: #d9d9d9;
+  --eui-color-tooltip: #32363a;
+  --eui-color-on-tooltip: #ffffff;
+
+  /* Borders */
+  --eui-color-border: #d9d9d9;
+  --eui-color-border-subtle: #e5e5e5;
+  /* Interactive borders must reach 3:1 against the surface (WCAG 1.4.11). */
+  --eui-color-border-strong: #89919a;
+  --eui-color-border-hover: #0854a0;
+
+  /* Text */
+  --eui-color-text: #32363a;
+  --eui-color-text-secondary: #6a6d70;
+  --eui-color-text-placeholder: #6a6d70;
+  --eui-color-text-inverse: #ffffff;
+  --eui-color-icon: #556b82;
+
+  /* Semantic */
+  --eui-color-success: #107e3e;
+  --eui-color-success-text: #107e3e;
+  --eui-color-success-subtle: #f1fdf6;
+  --eui-color-success-border: #38a238;
+  --eui-color-on-success: #ffffff;
+  --eui-color-warning: #e9730c;
+  --eui-color-warning-text: #a14d00;
+  --eui-color-warning-subtle: #fef7f1;
+  --eui-color-warning-border: #e9730c;
+  --eui-color-on-warning: #000000;
+  --eui-color-error: #bb0000;
+  --eui-color-error-hover: #9a0000;
+  --eui-color-error-text: #bb0000;
+  --eui-color-error-subtle: #ffebeb;
+  --eui-color-error-border: #bb0000;
+  --eui-color-on-error: #ffffff;
+  --eui-color-info: #0a6ed1;
+  --eui-color-info-text: #0a6ed1;
+  --eui-color-info-subtle: #f5faff;
+  --eui-color-info-border: #0a6ed1;
+  --eui-color-neutral: #6a6d70;
+  --eui-color-neutral-text: #5b5e61;
+  --eui-color-neutral-subtle: #f2f2f2;
+  --eui-color-neutral-border: #89919a;
+
+  /* Focus */
+  --eui-color-focus: #0a6ed1;
+
+  /* Accent palette (avatars, charts, tags) */
+  --eui-color-accent-1: #0a6ed1;
+  --eui-color-accent-2: #107e3e;
+  --eui-color-accent-3: #c35500;
+  --eui-color-accent-4: #a93e7d;
+  --eui-color-accent-5: #6c32a9;
+  --eui-color-accent-6: #0f828f;
+  --eui-color-accent-7: #7b5f00;
+  --eui-color-accent-8: #5b738b;
+
+  /* Elevation */
+  --eui-shadow-sm: 0 0 2px rgba(34, 53, 72, 0.12), 0 1px 2px rgba(34, 53, 72, 0.1);
+  --eui-shadow-md: 0 0 2px rgba(34, 53, 72, 0.12), 0 2px 8px rgba(34, 53, 72, 0.12);
+  --eui-shadow-lg: 0 0 4px rgba(34, 53, 72, 0.12), 0 8px 24px rgba(34, 53, 72, 0.16);
+  --eui-shadow-xl: 0 0 4px rgba(34, 53, 72, 0.14), 0 16px 48px rgba(34, 53, 72, 0.24);
+  --eui-shadow-header: 0 1px 0 #d9d9d9, 0 2px 4px rgba(34, 53, 72, 0.06);
+}

@@ -1,0 +1,28 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  background: var(--eui-color-surface);
+}
+
+.paneBody {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.backBar {
+  display: flex;
+  align-items: center;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-2);
+  border-bottom: var(--eui-border-width) solid var(--eui-color-border-subtle);
+}

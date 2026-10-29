@@ -1,0 +1,61 @@
+/*
+ * Base styles, scoped to themed roots so the library never resets a host
+ * application's global styles.
+ */
+[data-eui-theme] {
+  font-family: var(--eui-font-family);
+  font-size: var(--eui-font-size-md);
+  line-height: var(--eui-line-height-normal);
+  color: var(--eui-color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+[data-eui-theme] *,
+[data-eui-theme] *::before,
+[data-eui-theme] *::after {
+  box-sizing: border-box;
+}
+
+[data-eui-theme] :focus-visible {
+  outline: var(--eui-focus-width) var(--eui-focus-style) var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+}
+
+/* Hide content visually while keeping it available to assistive technology. */
+.eui-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+@keyframes eui-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes eui-scale-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes eui-slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes eui-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes eui-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}

@@ -1,0 +1,65 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-1);
+  width: 100%;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--eui-space-2);
+  font-size: var(--eui-font-size-sm);
+}
+
+.label {
+  color: var(--eui-color-text);
+}
+
+.value {
+  color: var(--eui-color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.track {
+  position: relative;
+  height: 0.5rem;
+  border-radius: var(--eui-radius-full);
+  background: var(--eui-color-surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--eui-color-border-subtle);
+  overflow: hidden;
+}
+
+.sm .track {
+  height: 0.25rem;
+}
+
+.lg .track {
+  height: 0.875rem;
+}
+
+.fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--_fill, var(--eui-color-primary));
+  transition: width var(--eui-duration-slow) var(--eui-easing-standard);
+}
+
+.indeterminate .fill {
+  width: 40% !important;
+  animation: eui-progress-indeterminate 1.4s var(--eui-easing-emphasized) infinite;
+}
+
+@keyframes eui-progress-indeterminate {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indeterminate .fill { animation-duration: 4s; }
+}
+
+.success { --_fill: var(--eui-color-success); }
+.warning { --_fill: var(--eui-color-warning); }
+.error { --_fill: var(--eui-color-error); }
+.neutral { --_fill: var(--eui-color-neutral); }

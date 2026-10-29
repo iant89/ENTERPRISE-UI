@@ -1,0 +1,32 @@
+.grid {
+  display: grid;
+  gap: var(--_gap-base, var(--eui-space-4));
+  grid-template-columns: repeat(var(--_cols-base, 1), minmax(0, 1fr));
+}
+
+.auto {
+  grid-template-columns: repeat(auto-fill, minmax(min(var(--_min), 100%), 1fr));
+}
+
+@media (min-width: 600px) {
+  .grid:not(.auto) { grid-template-columns: repeat(var(--_cols-sm, var(--_cols-base, 1)), minmax(0, 1fr)); }
+  .grid { gap: var(--_gap-sm, var(--_gap-base, var(--eui-space-4))); }
+}
+
+@media (min-width: 1024px) {
+  .grid:not(.auto) { grid-template-columns: repeat(var(--_cols-md, var(--_cols-sm, var(--_cols-base, 1))), minmax(0, 1fr)); }
+  .grid { gap: var(--_gap-md, var(--_gap-sm, var(--_gap-base, var(--eui-space-4)))); }
+}
+
+@media (min-width: 1440px) {
+  .grid:not(.auto) { grid-template-columns: repeat(var(--_cols-lg, var(--_cols-md, var(--_cols-sm, var(--_cols-base, 1)))), minmax(0, 1fr)); }
+}
+
+.item {
+  min-width: 0;
+  grid-column: span var(--_span, 1);
+}
+
+.full {
+  grid-column: 1 / -1;
+}

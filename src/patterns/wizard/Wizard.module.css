@@ -1,0 +1,176 @@
+.wizard {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--eui-color-surface);
+  border: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  border-radius: var(--eui-radius-lg);
+  box-shadow: var(--eui-shadow-sm);
+}
+
+.steps {
+  display: flex;
+  margin: 0;
+  padding: var(--eui-space-4);
+  list-style: none;
+  overflow-x: auto;
+  border-bottom: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  counter-reset: step;
+}
+
+.step {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  min-width: 7rem;
+}
+
+.step + .step::before {
+  content: '';
+  position: absolute;
+  top: 1rem;
+  right: calc(50% + 1.25rem);
+  left: calc(-50% + 1.25rem);
+  height: 2px;
+  background: var(--eui-color-border);
+}
+
+.step.done + .step::before,
+.step.done + .step.done::before {
+  background: var(--eui-color-primary);
+}
+
+.stepButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--eui-space-1);
+  width: 100%;
+  padding: 0 var(--eui-space-1);
+  border: 0;
+  background: none;
+  color: var(--eui-color-text-secondary);
+  font: inherit;
+  font-size: var(--eui-font-size-sm);
+  text-align: center;
+  cursor: default;
+}
+
+.stepButton:not(:disabled) {
+  cursor: pointer;
+}
+
+.stepButton:focus-visible {
+  outline: none;
+}
+
+.stepButton:focus-visible .marker {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: 2px;
+}
+
+.marker {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--eui-color-border-strong);
+  border-radius: 50%;
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text-secondary);
+  font-weight: var(--eui-font-weight-bold);
+}
+
+.marker svg {
+  width: var(--eui-icon-size);
+  height: var(--eui-icon-size);
+}
+
+.current .marker {
+  border-color: var(--eui-color-primary);
+  background: var(--eui-color-primary);
+  color: var(--eui-color-on-primary);
+}
+
+.current .stepButton {
+  color: var(--eui-color-text);
+  font-weight: var(--eui-font-weight-semibold);
+}
+
+.done .marker {
+  border-color: var(--eui-color-primary);
+  color: var(--eui-color-primary);
+}
+
+.done .stepButton {
+  color: var(--eui-color-text);
+}
+
+.optional {
+  font-size: var(--eui-font-size-xs);
+  color: var(--eui-color-text-secondary);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-4);
+  padding: var(--eui-space-6);
+  min-height: 12rem;
+}
+
+.heading {
+  margin: 0;
+  font-size: var(--eui-font-size-xl);
+  font-weight: var(--eui-font-weight-bold);
+  outline: none;
+}
+
+.description {
+  margin: calc(-1 * var(--eui-space-2)) 0 0;
+  color: var(--eui-color-text-secondary);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-3) var(--eui-space-6);
+  border-top: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  background: var(--eui-color-surface-alt);
+  border-radius: 0 0 var(--eui-radius-lg) var(--eui-radius-lg);
+}
+
+.footerEnd {
+  display: flex;
+  gap: var(--eui-space-2);
+  margin-inline-start: auto;
+}
+
+.progressText {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+@media (max-width: 599px) {
+  .stepLabel {
+    display: none;
+  }
+
+  .current .stepLabel {
+    display: block;
+  }
+
+  .body {
+    padding: var(--eui-space-4);
+  }
+
+  .footer {
+    padding: var(--eui-space-3) var(--eui-space-4);
+  }
+}

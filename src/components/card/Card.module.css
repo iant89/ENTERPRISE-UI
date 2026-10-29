@@ -1,0 +1,120 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+  border: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  border-radius: var(--eui-radius-lg);
+  box-shadow: var(--eui-shadow-sm);
+  overflow: hidden;
+}
+
+.flat {
+  box-shadow: none;
+  border-color: var(--eui-color-border);
+}
+
+.interactive {
+  cursor: pointer;
+  transition: box-shadow var(--eui-duration-fast) var(--eui-easing-standard), border-color var(--eui-duration-fast);
+}
+
+.interactive:hover {
+  box-shadow: var(--eui-shadow-md);
+  border-color: var(--eui-color-border);
+}
+
+.interactive:focus-within:has(.cover:focus-visible) {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+}
+
+.selected {
+  border-color: var(--eui-color-primary);
+  box-shadow: 0 0 0 1px var(--eui-color-primary), var(--eui-shadow-sm);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--eui-space-3);
+  padding: var(--eui-space-4) var(--eui-space-4) var(--eui-space-2);
+}
+
+.headerDivider {
+  padding-bottom: var(--eui-space-3);
+  border-bottom: var(--eui-border-width) solid var(--eui-color-border-subtle);
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-0-5);
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  color: var(--eui-color-text);
+  font-size: var(--eui-font-size-lg);
+  font-weight: var(--eui-font-weight-bold);
+  line-height: var(--eui-line-height-tight);
+  overflow-wrap: anywhere;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--eui-space-1);
+  margin: calc(-1 * var(--eui-space-1)) calc(-1 * var(--eui-space-2)) 0 0;
+}
+
+.body {
+  flex: 1;
+  padding: var(--eui-space-2) var(--eui-space-4) var(--eui-space-4);
+  min-width: 0;
+}
+
+.noPadding {
+  padding: 0;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-2) var(--eui-space-4);
+  border-top: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  background: var(--eui-color-surface-alt);
+}
+
+/* Full-card click target that keeps inner buttons usable. */
+.cover {
+  all: unset;
+  cursor: pointer;
+}
+
+.cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.card:has(.cover) {
+  position: relative;
+}
+
+.card:has(.cover) .actions,
+.card:has(.cover) .footer {
+  position: relative;
+  z-index: 1;
+}

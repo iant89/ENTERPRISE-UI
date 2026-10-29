@@ -1,0 +1,83 @@
+.region {
+  position: fixed;
+  z-index: var(--eui-z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-2);
+  width: min(24rem, calc(100vw - 2 * var(--eui-space-4)));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+.bottom-center { bottom: var(--eui-space-6); left: 50%; transform: translateX(-50%); }
+.bottom-end { bottom: var(--eui-space-6); right: var(--eui-space-6); }
+.top-end { top: calc(var(--eui-header-height) + var(--eui-space-4)); right: var(--eui-space-6); flex-direction: column-reverse; }
+
+@media (max-width: 599px) {
+  .region {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--eui-space-3);
+  padding: var(--eui-space-3) var(--eui-space-2) var(--eui-space-3) var(--eui-space-4);
+  border: var(--eui-border-width) solid var(--eui-color-border);
+  border-inline-start: 4px solid var(--_tone, var(--eui-color-neutral));
+  border-radius: var(--eui-radius-md);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+  box-shadow: var(--eui-shadow-lg);
+  pointer-events: auto;
+  animation: eui-scale-in var(--eui-duration-normal) var(--eui-easing-emphasized);
+}
+
+.neutral { --_tone: var(--eui-color-neutral); }
+.information { --_tone: var(--eui-color-info); }
+.success { --_tone: var(--eui-color-success); }
+.warning { --_tone: var(--eui-color-warning); }
+.error { --_tone: var(--eui-color-error); }
+
+.icon {
+  display: inline-flex;
+  padding-top: 1px;
+  color: var(--_tone);
+}
+
+.icon svg {
+  width: var(--eui-icon-size-lg);
+  height: var(--eui-icon-size-lg);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-0-5);
+  flex: 1;
+  min-width: 0;
+  padding-top: 1px;
+}
+
+.title {
+  font-weight: var(--eui-font-weight-bold);
+}
+
+.description {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.action {
+  margin-top: var(--eui-space-1);
+  align-self: flex-start;
+}
+
+.close {
+  margin-top: -4px;
+}

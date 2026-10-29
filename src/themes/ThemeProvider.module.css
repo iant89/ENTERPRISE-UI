@@ -1,0 +1,13 @@
+.root {
+  background: var(--eui-color-background);
+  color: var(--eui-color-text);
+}
+
+.transparent {
+  background: transparent;
+}
+
+.layer {
+  position: relative;
+  z-index: var(--eui-z-overlay);
+}

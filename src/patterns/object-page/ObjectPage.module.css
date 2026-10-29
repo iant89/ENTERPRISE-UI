@@ -1,0 +1,120 @@
+.attributes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--eui-space-3) var(--eui-space-8);
+  margin: 0;
+}
+
+.attribute {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-0-5);
+  min-width: 8rem;
+}
+
+.attribute dt {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.attribute dd {
+  margin: 0;
+  color: var(--eui-color-text);
+  font-weight: var(--eui-font-weight-semibold);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--eui-space-4) var(--eui-space-8);
+  align-items: flex-start;
+}
+
+.kpis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--eui-space-4);
+}
+
+.anchorBar {
+  position: sticky;
+  top: 0;
+  z-index: var(--eui-z-sticky);
+  display: flex;
+  gap: var(--eui-space-1);
+  margin: calc(-1 * var(--eui-space-6)) calc(-1 * var(--eui-space-8)) 0;
+  padding: 0 var(--eui-space-8);
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: var(--eui-color-surface);
+  border-bottom: var(--eui-border-width) solid var(--eui-color-border);
+  box-shadow: var(--eui-shadow-sm);
+}
+
+@media (max-width: 599px) {
+  .anchorBar {
+    margin: calc(-1 * var(--eui-space-4)) calc(-1 * var(--eui-space-4)) 0;
+    padding: 0 var(--eui-space-4);
+  }
+}
+
+.anchorList {
+  display: flex;
+  gap: var(--eui-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.anchor {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--eui-control-height-lg);
+  padding: 0 var(--eui-space-3);
+  color: var(--eui-color-text-secondary);
+  font-weight: var(--eui-font-weight-semibold);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.anchor:hover {
+  color: var(--eui-color-text);
+}
+
+.anchor[aria-current='true'] {
+  color: var(--eui-color-primary);
+}
+
+.anchor[aria-current='true']::after {
+  content: '';
+  position: absolute;
+  left: var(--eui-space-2);
+  right: var(--eui-space-2);
+  bottom: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--eui-color-primary);
+}
+
+.anchor:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: -4px;
+}
+
+.section {
+  scroll-margin-top: calc(var(--eui-control-height-lg) + var(--eui-space-4));
+}
+
+.sectionTitle {
+  margin: 0 0 var(--eui-space-3);
+  font-size: var(--eui-font-size-xl);
+  font-weight: var(--eui-font-weight-bold);
+  outline: none;
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-8);
+}

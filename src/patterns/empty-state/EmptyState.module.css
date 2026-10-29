@@ -1,0 +1,67 @@
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--eui-space-3);
+  padding: var(--eui-space-12) var(--eui-space-6);
+  text-align: center;
+  color: var(--eui-color-text);
+}
+
+.sm {
+  padding: var(--eui-space-6) var(--eui-space-4);
+  gap: var(--eui-space-2);
+}
+
+.illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background: var(--eui-color-primary-subtle);
+  color: var(--eui-color-primary);
+}
+
+.illustration svg {
+  width: 2.25rem;
+  height: 2.25rem;
+  stroke-width: 1.5;
+}
+
+.sm .illustration {
+  width: 3rem;
+  height: 3rem;
+}
+
+.sm .illustration svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.title {
+  margin: var(--eui-space-2) 0 0;
+  font-size: var(--eui-font-size-xl);
+  font-weight: var(--eui-font-weight-bold);
+}
+
+.sm .title {
+  font-size: var(--eui-font-size-lg);
+  margin: 0;
+}
+
+.description {
+  max-width: 32rem;
+  margin: 0;
+  color: var(--eui-color-text-secondary);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--eui-space-2);
+  margin-top: var(--eui-space-2);
+}

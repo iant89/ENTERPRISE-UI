@@ -1,0 +1,111 @@
+.panel {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  min-width: 0;
+  min-height: 0;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+
+.handle {
+  position: absolute;
+  z-index: var(--eui-z-raised);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  touch-action: none;
+  outline: none;
+}
+
+.handle::before {
+  content: '';
+  position: absolute;
+  background: var(--eui-color-border);
+  transition: background-color var(--eui-duration-fast);
+}
+
+.handle:hover::before,
+.handle:focus-visible::before,
+.dragging::before {
+  background: var(--eui-color-primary);
+}
+
+.handle:focus-visible .grip {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+}
+
+.grip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--eui-border-width) solid var(--eui-color-border);
+  border-radius: var(--eui-radius-full);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-icon);
+  box-shadow: var(--eui-shadow-sm);
+}
+
+.grip svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Horizontal resizing (handle on the inline end / start edge). */
+.end,
+.start {
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  cursor: col-resize;
+}
+
+.end { right: -6px; }
+.start { left: -6px; }
+
+.end::before,
+.start::before {
+  top: 0;
+  bottom: 0;
+  left: 5px;
+  width: 2px;
+}
+
+.end .grip,
+.start .grip {
+  width: 16px;
+  height: 28px;
+}
+
+/* Vertical resizing. */
+.bottom,
+.top {
+  left: 0;
+  right: 0;
+  height: 12px;
+  cursor: row-resize;
+}
+
+.bottom { bottom: -6px; }
+.top { top: -6px; }
+
+.bottom::before,
+.top::before {
+  left: 0;
+  right: 0;
+  top: 5px;
+  height: 2px;
+}
+
+.bottom .grip,
+.top .grip {
+  width: 28px;
+  height: 16px;
+}

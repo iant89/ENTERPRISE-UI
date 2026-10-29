@@ -18,6 +18,9 @@ export interface AlertDialogProps {
   cancelLabel?: string;
   /** `error` styles the confirm button as destructive. @default 'warning' */
   tone?: 'information' | 'success' | 'warning' | 'error';
+  /** Direction and language for the portaled dialog. */
+  dir?: 'ltr' | 'rtl' | 'auto';
+  lang?: string;
 }
 
 const ICONS = { information: Info, success: CheckCircle2, warning: AlertTriangle, error: XCircle } as const;
@@ -26,7 +29,7 @@ const ICONS = { information: Info, success: CheckCircle2, warning: AlertTriangle
  * Interrupts the user to confirm an important or destructive action
  * (`role="alertdialog"`). Focus starts on the least destructive action.
  */
-export function AlertDialog({ open, onCancel, onConfirm, title, children, confirmLabel = 'Confirm', cancelLabel = 'Cancel', tone = 'warning' }: AlertDialogProps) {
+export function AlertDialog({ open, onCancel, onConfirm, title, children, confirmLabel = 'Confirm', cancelLabel = 'Cancel', tone = 'warning', dir, lang }: AlertDialogProps) {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const [busy, setBusy] = useState(false);
   const Icon = ICONS[tone];
@@ -43,6 +46,8 @@ export function AlertDialog({ open, onCancel, onConfirm, title, children, confir
   return (
     <Dialog
       open={open}
+      dir={dir}
+      lang={lang}
       onClose={() => !busy && onCancel()}
       title={title}
       role="alertdialog"

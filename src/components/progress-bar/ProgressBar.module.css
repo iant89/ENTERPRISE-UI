@@ -55,8 +55,10 @@
   100% { transform: translateX(250%); }
 }
 
+/* Keep a visible static indicator while avoiding continuous movement. */
+[data-eui-motion='reduced'] .indeterminate .fill { animation: none; }
 @media (prefers-reduced-motion: reduce) {
-  .indeterminate .fill { animation-duration: 4s; }
+  .indeterminate .fill { animation: none; }
 }
 
 .success { --_fill: var(--eui-color-success); }

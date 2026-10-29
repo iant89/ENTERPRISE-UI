@@ -12,12 +12,12 @@
 }
 
 [data-eui-motion='reduced'] .svg {
-  animation-duration: 2.4s;
+  animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .svg {
-    animation-duration: 2.4s;
+    animation: none;
   }
 }
 

@@ -291,7 +291,7 @@ Implementation is in place. Desktop and mobile Chromium checks pass; Firefox, We
 
 ## Phase 5: Documentation, Accessibility, and Release Quality
 
-In progress: the cookbook, representative browser and documentation checks, release guidance, and localization audit are available. Firefox, WebKit, screen-reader verification, complete documentation coverage and full translation/RTL support remain open; see `docs/release-quality.md` and `docs/localization-audit.md`.
+In progress: the cookbook, representative browser and documentation checks, release guidance, and localization audit are available. broader cross-browser coverage, screen-reader verification, complete documentation coverage and full translation/RTL support remain open; see `docs/release-quality.md` and `docs/localization-audit.md`.
 
 ### Objectives
 - Make the framework easy to adopt.

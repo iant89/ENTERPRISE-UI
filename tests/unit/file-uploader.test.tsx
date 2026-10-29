@@ -38,3 +38,42 @@ describe('FileUploader', () => {
     expect(entry).toHaveTextContent('cancelled');
   });
 });
+
+it('localizes validation, queue status, progress and retry while preserving file identity', async () => {
+  let context!: UploadContext;
+  const upload = vi.fn().mockImplementationOnce((_file: File, options: UploadContext) => { context = options; return Promise.reject(); }).mockResolvedValue(undefined);
+  const messages = {
+    instructions: 'اختر الملفات', uploadFailed: 'تعذر الرفع', typeNotAccepted: 'نوع غير مقبول', fileTooLarge: 'حجم كبير',
+    statuses: { queued: 'في الانتظار', uploading: 'جار الرفع', succeeded: 'تم', failed: 'فشل', cancelled: 'ملغى' },
+    summary: (done: number, failed: number, total: number) => `${done} تم، ${failed} فشل، ${total} إجمالي`,
+    progressAnnouncement: (name: string, percent: number) => `${name}: ${percent}%`,
+    progressLabel: (name: string) => `تقدم ${name}`, cancel: 'إلغاء', cancelLabel: (name: string) => `إلغاء ${name}`,
+    retry: 'إعادة', retryLabel: (name: string) => `إعادة ${name}`,
+  };
+  const { user, container } = renderWithTheme(<FileUploader label="رفع الملفات" dir="rtl" lang="ar" messages={messages} retrySafe upload={upload} accept={['.txt']} maxFileSize={2} />);
+  const input = screen.getByLabelText('رفع الملفات', { selector: 'input' });
+  fireEvent.change(input, { target: { files: [new File(['x'], 'PO-42.txt'), new File(['x'], 'bad.png'), new File(['abc'], 'big.txt')] } });
+  expect(screen.getByText('نوع غير مقبول')).toBeInTheDocument();
+  expect(screen.getByText('حجم كبير')).toBeInTheDocument();
+  expect(await screen.findByText('تعذر الرفع')).toBeInTheDocument();
+  expect(screen.getByRole('status')).toHaveTextContent('0 تم، 3 فشل، 3 إجمالي');
+  expect(screen.getByRole('region', { name: 'رفع الملفات' })).toHaveAttribute('dir', 'rtl');
+  expect(context.signal.aborted).toBe(false);
+  await user.click(screen.getByRole('button', { name: 'إعادة PO-42.txt' }));
+  await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('1 تم، 2 فشل، 3 إجمالي'));
+  expect(upload.mock.calls[1][0].name).toBe('PO-42.txt');
+  expect(await axeViolations(container)).toEqual([]);
+});
+
+it('uses translated progress and cancellation labels for an active upload', async () => {
+  let context!: UploadContext;
+  const upload = vi.fn((_file: File, options: UploadContext) => { context = options; return new Promise<void>(() => {}); });
+  const { user } = renderWithTheme(<FileUploader upload={upload} messages={{ progressLabel: (name) => `تقدم ${name}`, progressAnnouncement: (name, pct) => `${name} ${pct} بالمئة`, cancel: 'إلغاء', cancelLabel: (name) => `إلغاء ${name}` }} />);
+  fireEvent.change(screen.getByLabelText('Upload files', { selector: 'input' }), { target: { files: [new File(['x'], 'PO.txt')] } });
+  await waitFor(() => expect(upload).toHaveBeenCalledOnce());
+  act(() => context.onProgress(0.58));
+  expect(screen.getByRole('progressbar', { name: 'تقدم PO.txt' })).toHaveValue(0.58);
+  expect(screen.getByRole('status')).toHaveTextContent('PO.txt 50 بالمئة');
+  await user.click(screen.getByRole('button', { name: 'إلغاء PO.txt' }));
+  expect(context.signal.aborted).toBe(true);
+});

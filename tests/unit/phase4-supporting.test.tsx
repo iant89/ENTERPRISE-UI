@@ -39,3 +39,37 @@ describe('Phase 4 supporting components', () => {
     expect(screen.getByText('Not available')).toBeInTheDocument();
   });
 });
+
+describe('localized notifications', () => {
+  it('localizes visible and accessible text, dates and actions without changing identifiers', async () => {
+    const onRead = vi.fn(); const onDismiss = vi.fn();
+    const { user, container, rerender } = renderWithTheme(<NotificationCenter dir="rtl" lang="ar" notifications={[{ id: '42', title: 'طلب PO-42', timestamp: '2026-01-15T12:00:00Z', read: false }]} onMarkRead={onRead} onDismiss={onDismiss} formatTimestamp={() => '١٥ يناير'} messages={{ title: 'الإشعارات', unreadCount: (count) => `العدد ${count}`, unread: 'جديد', markRead: 'قراءة', dismiss: 'إزالة', markReadLabel: (title) => `قراءة ${title}`, dismissLabel: (title) => `إزالة ${title}`, empty: 'لا توجد إشعارات' }} />);
+    expect(screen.getByRole('region', { name: 'الإشعارات' })).toHaveAttribute('dir', 'rtl');
+    expect(screen.getByText('العدد 1')).toBeInTheDocument();
+    expect(screen.getByText('١٥ يناير')).toHaveAttribute('datetime', '2026-01-15T12:00:00Z');
+    await user.click(screen.getByRole('button', { name: 'قراءة طلب PO-42' }));
+    await user.click(screen.getByRole('button', { name: 'إزالة طلب PO-42' }));
+    expect(onRead).toHaveBeenCalledWith('42'); expect(onDismiss).toHaveBeenCalledWith('42');
+    expect(await axeViolations(container)).toEqual([]);
+    rerender(<NotificationCenter notifications={[]} messages={{ empty: 'لا توجد إشعارات' }} />);
+    expect(screen.getByText('لا توجد إشعارات')).toBeInTheDocument();
+  });
+});
+
+describe('localized inline editing', () => {
+  it('uses translated labels, validation and save errors and restores focus on cancel', async () => {
+    const messages = { edit: 'تعديل', editLabel: (label: string) => `تعديل ${label}`, save: 'حفظ', cancel: 'إلغاء', validationFailed: 'فشل التحقق', saveFailed: 'تعذر الحفظ', emptyValue: 'فارغ' };
+    const save = vi.fn().mockRejectedValue(undefined);
+    const validate = vi.fn().mockImplementationOnce(() => { throw new Error(); }).mockReturnValue(undefined);
+    const { user } = renderWithTheme(<InlineEdit label="الوصف" value="PO-42" onSave={save} validate={validate} messages={messages} />);
+    const edit = screen.getByRole('button', { name: 'تعديل الوصف' });
+    await user.click(edit);
+    expect(screen.getByLabelText('الوصف')).toHaveFocus();
+    await user.click(screen.getByRole('button', { name: 'حفظ' }));
+    expect(screen.getByRole('alert')).toHaveTextContent('فشل التحقق');
+    await user.click(screen.getByRole('button', { name: 'حفظ' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('تعذر الحفظ');
+    await user.click(screen.getByRole('button', { name: 'إلغاء' }));
+    await waitFor(() => expect(screen.getByRole('button', { name: 'تعديل الوصف' })).toHaveFocus());
+  });
+});

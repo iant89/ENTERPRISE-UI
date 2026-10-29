@@ -33,7 +33,7 @@ for (const theme of themes) {
   const css = readFileSync(new URL(`../src/themes/${theme}.css`, import.meta.url), 'utf8');
   const vars = Object.fromEntries([...css.matchAll(/--eui-color-([\w-]+):\s*(#[0-9a-f]{6})/gi)].map((m) => [m[1], m[2]]));
   for (const [fg, bg, min] of pairs) {
-    if (!vars[fg] || !vars[bg]) continue;
+    if (!vars[fg] || !vars[bg]) { failed++; console.log(`${theme}: missing or unsupported hex token for ${fg} on ${bg}`); continue; }
     const r = ratio(vars[fg], vars[bg]);
     if (r < min) { failed++; console.log(`${theme}: ${fg} on ${bg} = ${r.toFixed(2)} (< ${min})`); }
   }

@@ -1,0 +1,46 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--eui-space-2);
+  color: var(--eui-color-primary);
+  vertical-align: middle;
+}
+
+.svg {
+  animation: eui-spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+[data-eui-motion='reduced'] .svg {
+  animation-duration: 2.4s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svg {
+    animation-duration: 2.4s;
+  }
+}
+
+.track {
+  stroke: currentColor;
+  opacity: 0.2;
+}
+
+.arc {
+  stroke: currentColor;
+  stroke-linecap: round;
+}
+
+.label {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.inherit {
+  color: inherit;
+}
+
+/* Keyframes are local to this module (CSS Modules scopes animation names). */
+@keyframes eui-spin {
+  to { transform: rotate(360deg); }
+}

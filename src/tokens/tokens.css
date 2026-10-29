@@ -1,0 +1,135 @@
+/*
+ * Enterprise UI Kit — foundation tokens.
+ *
+ * Theme-independent tokens (spacing, typography, radii, sizing, layering,
+ * motion). Colour tokens live in ../themes/*.css so every theme can redefine
+ * them. All tokens are prefixed with --eui-.
+ */
+:root,
+[data-eui-theme] {
+  /* Spacing — 4px base scale */
+  --eui-space-0: 0;
+  --eui-space-0-5: 2px;
+  --eui-space-1: 4px;
+  --eui-space-2: 8px;
+  --eui-space-3: 12px;
+  --eui-space-4: 16px;
+  --eui-space-5: 20px;
+  --eui-space-6: 24px;
+  --eui-space-8: 32px;
+  --eui-space-10: 40px;
+  --eui-space-12: 48px;
+  --eui-space-16: 64px;
+
+  /* Typography */
+  --eui-font-family: '72', '72full', 'Segoe UI', Arial, Helvetica, sans-serif;
+  --eui-font-family-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  --eui-font-size-xs: 0.75rem; /* 12px */
+  --eui-font-size-sm: 0.8125rem; /* 13px */
+  --eui-font-size-md: 0.875rem; /* 14px — base */
+  --eui-font-size-lg: 1rem; /* 16px */
+  --eui-font-size-xl: 1.25rem; /* 20px */
+  --eui-font-size-2xl: 1.5rem; /* 24px */
+  --eui-font-size-3xl: 2rem; /* 32px */
+  --eui-font-weight-regular: 400;
+  --eui-font-weight-medium: 500;
+  --eui-font-weight-semibold: 600;
+  --eui-font-weight-bold: 700;
+  --eui-line-height-tight: 1.25;
+  --eui-line-height-normal: 1.4;
+  --eui-line-height-relaxed: 1.6;
+
+  /* Radii — small and restrained */
+  --eui-radius-none: 0;
+  --eui-radius-xs: 2px;
+  --eui-radius-sm: 4px;
+  --eui-radius-md: 6px;
+  --eui-radius-lg: 8px;
+  --eui-radius-full: 9999px;
+
+  /* Borders */
+  --eui-border-width: 1px;
+  --eui-border-width-thick: 2px;
+
+  /* Component sizing (cozy density — touch friendly) */
+  --eui-control-height-sm: 1.75rem; /* 28px */
+  --eui-control-height: 2.25rem; /* 36px */
+  --eui-control-height-lg: 2.75rem; /* 44px */
+  --eui-control-padding-x: var(--eui-space-3);
+  --eui-icon-size-sm: 14px;
+  --eui-icon-size: 16px;
+  --eui-icon-size-lg: 20px;
+  --eui-row-height: 2.75rem; /* 44px */
+  --eui-header-height: 3rem; /* 48px */
+  --eui-sidenav-width: 16rem;
+  --eui-sidenav-width-collapsed: 3.5rem;
+  --eui-touch-target-min: 24px;
+
+  /* Focus indicator */
+  --eui-focus-width: 2px;
+  --eui-focus-offset: 2px;
+  --eui-focus-style: solid;
+
+  /* Layering */
+  --eui-z-base: 0;
+  --eui-z-raised: 10;
+  --eui-z-sticky: 100;
+  --eui-z-header: 200;
+  --eui-z-drawer: 900;
+  --eui-z-dropdown: 1000;
+  --eui-z-overlay: 1200;
+  --eui-z-modal: 1300;
+  --eui-z-popover: 1400;
+  --eui-z-toast: 1500;
+  --eui-z-tooltip: 1600;
+
+  /* Motion */
+  --eui-duration-instant: 0ms;
+  --eui-duration-fast: 100ms;
+  --eui-duration-normal: 200ms;
+  --eui-duration-slow: 300ms;
+  --eui-easing-standard: cubic-bezier(0.2, 0, 0.38, 0.9);
+  --eui-easing-emphasized: cubic-bezier(0.4, 0.14, 0.3, 1);
+
+  /* Breakpoints (documentation only — custom properties cannot be used in
+   * media queries; see `breakpoints` in tokens/index.ts). */
+  --eui-breakpoint-sm: 600px;
+  --eui-breakpoint-md: 1024px;
+  --eui-breakpoint-lg: 1440px;
+
+  /* Disabled state */
+  --eui-disabled-opacity: 0.4;
+  --eui-disabled-cursor: not-allowed;
+
+  /* Layout */
+  --eui-container-sm: 640px;
+  --eui-container-md: 960px;
+  --eui-container-lg: 1280px;
+  --eui-container-xl: 1600px;
+}
+
+/* Compact density — for mouse-driven, data-heavy screens. */
+[data-eui-density='compact'] {
+  --eui-control-height-sm: 1.5rem; /* 24px */
+  --eui-control-height: 1.75rem; /* 28px */
+  --eui-control-height-lg: 2.25rem; /* 36px */
+  --eui-control-padding-x: var(--eui-space-2);
+  --eui-row-height: 2rem; /* 32px */
+  --eui-header-height: 2.75rem;
+}
+
+/* Honour the user's motion preference everywhere. */
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  [data-eui-theme] {
+    --eui-duration-fast: 0ms;
+    --eui-duration-normal: 0ms;
+    --eui-duration-slow: 0ms;
+  }
+}
+
+[data-eui-motion='reduced'] {
+  --eui-duration-fast: 0ms;
+  --eui-duration-normal: 0ms;
+  --eui-duration-slow: 0ms;
+}

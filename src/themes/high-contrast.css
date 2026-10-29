@@ -1,0 +1,83 @@
+/* High-contrast (black) theme — maximum legibility, solid outlines. */
+[data-eui-theme='high-contrast'] {
+  color-scheme: dark;
+
+  --eui-color-primary: #ffd400;
+  --eui-color-primary-hover: #ffe566;
+  --eui-color-primary-active: #fff0a3;
+  --eui-color-on-primary: #000000;
+  --eui-color-primary-subtle: #000000;
+  --eui-color-primary-subtle-hover: #262200;
+  --eui-color-selected-text: #ffd400;
+  --eui-color-link: #8fd6ff;
+  --eui-color-link-hover: #ffd400;
+
+  --eui-color-background: #000000;
+  --eui-color-surface: #000000;
+  --eui-color-surface-alt: #000000;
+  --eui-color-surface-sunken: #000000;
+  --eui-color-surface-hover: #262626;
+  --eui-color-surface-active: #3d3d3d;
+  --eui-color-surface-selected: #3a3000;
+  --eui-color-surface-selected-hover: #4d4000;
+  --eui-color-overlay: rgba(0, 0, 0, 0.8);
+  --eui-color-shell: #000000;
+  --eui-color-shell-border: #ffffff;
+  --eui-color-tooltip: #ffffff;
+  --eui-color-on-tooltip: #000000;
+
+  --eui-color-border: #ffffff;
+  --eui-color-border-subtle: #b3b3b3;
+  --eui-color-border-strong: #ffffff;
+  --eui-color-border-hover: #ffd400;
+
+  --eui-color-text: #ffffff;
+  --eui-color-text-secondary: #e6e6e6;
+  --eui-color-text-placeholder: #cccccc;
+  --eui-color-text-inverse: #000000;
+  --eui-color-icon: #ffffff;
+
+  --eui-color-success: #3ce07f;
+  --eui-color-success-text: #3ce07f;
+  --eui-color-success-subtle: #000000;
+  --eui-color-success-border: #3ce07f;
+  --eui-color-on-success: #000000;
+  --eui-color-warning: #ffab1d;
+  --eui-color-warning-text: #ffab1d;
+  --eui-color-warning-subtle: #000000;
+  --eui-color-warning-border: #ffab1d;
+  --eui-color-on-warning: #000000;
+  --eui-color-error: #ff6e6e;
+  --eui-color-error-hover: #ff9999;
+  --eui-color-error-text: #ff8080;
+  --eui-color-error-subtle: #000000;
+  --eui-color-error-border: #ff6e6e;
+  --eui-color-on-error: #000000;
+  --eui-color-info: #66d9ff;
+  --eui-color-info-text: #66d9ff;
+  --eui-color-info-subtle: #000000;
+  --eui-color-info-border: #66d9ff;
+  --eui-color-neutral: #ffffff;
+  --eui-color-neutral-text: #ffffff;
+  --eui-color-neutral-subtle: #000000;
+  --eui-color-neutral-border: #ffffff;
+
+  --eui-color-focus: #ffd400;
+
+  --eui-color-accent-1: #66d9ff;
+  --eui-color-accent-2: #3ce07f;
+  --eui-color-accent-3: #ffab1d;
+  --eui-color-accent-4: #ff8fd0;
+  --eui-color-accent-5: #c9a6ff;
+  --eui-color-accent-6: #4ff0ff;
+  --eui-color-accent-7: #ffe14d;
+  --eui-color-accent-8: #e6e6e6;
+
+  --eui-shadow-sm: 0 0 0 1px #ffffff;
+  --eui-shadow-md: 0 0 0 1px #ffffff;
+  --eui-shadow-lg: 0 0 0 2px #ffffff;
+  --eui-shadow-xl: 0 0 0 2px #ffffff;
+  --eui-shadow-header: 0 1px 0 #ffffff;
+
+  --eui-focus-width: 3px;
+}

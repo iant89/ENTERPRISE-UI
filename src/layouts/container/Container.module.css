@@ -1,0 +1,27 @@
+.container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--eui-space-4);
+}
+
+@media (min-width: 600px) {
+  .container {
+    padding-inline: var(--eui-space-8);
+  }
+}
+
+@media (min-width: 1440px) {
+  .container {
+    padding-inline: var(--eui-space-12);
+  }
+}
+
+.sm { max-width: var(--eui-container-sm); }
+.md { max-width: var(--eui-container-md); }
+.lg { max-width: var(--eui-container-lg); }
+.xl { max-width: var(--eui-container-xl); }
+.full { max-width: none; }
+
+.flush {
+  padding-inline: 0;
+}

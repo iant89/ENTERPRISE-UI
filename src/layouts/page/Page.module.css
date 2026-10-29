@@ -1,0 +1,120 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.header {
+  background: var(--eui-color-surface);
+  border-bottom: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  box-shadow: var(--eui-shadow-sm);
+}
+
+.headerInner,
+.content {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--eui-space-4);
+}
+
+@media (min-width: 600px) {
+  .headerInner,
+  .content {
+    padding-inline: var(--eui-space-8);
+  }
+}
+
+.contained .headerInner,
+.contained .content {
+  max-width: var(--eui-container-xl);
+}
+
+.headerInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-2);
+  padding-block: var(--eui-space-4) var(--eui-space-4);
+}
+
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--eui-space-3) var(--eui-space-4);
+}
+
+.titleBlock {
+  display: flex;
+  align-items: center;
+  gap: var(--eui-space-3);
+  min-width: 0;
+  flex: 1 1 20rem;
+}
+
+.titleText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-1);
+  min-width: 0;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--eui-space-3);
+  margin: 0;
+  color: var(--eui-color-text);
+  font-size: var(--eui-font-size-2xl);
+  font-weight: var(--eui-font-weight-bold);
+  line-height: var(--eui-line-height-tight);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 599px) {
+  .title {
+    font-size: var(--eui-font-size-xl);
+  }
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-md);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--eui-space-2);
+}
+
+.headerContent {
+  margin-top: var(--eui-space-2);
+}
+
+.toolbar {
+  margin-top: var(--eui-space-2);
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-4);
+  padding-block: var(--eui-space-4) var(--eui-space-8);
+}
+
+@media (min-width: 600px) {
+  .content {
+    padding-block: var(--eui-space-6) var(--eui-space-12);
+    gap: var(--eui-space-6);
+  }
+}
+
+.flush .content {
+  padding: 0;
+}

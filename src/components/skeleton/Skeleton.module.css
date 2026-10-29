@@ -1,0 +1,46 @@
+.skeleton {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    var(--eui-color-surface-sunken) 25%,
+    var(--eui-color-surface-hover) 37%,
+    var(--eui-color-surface-sunken) 63%
+  );
+  background-size: 400% 100%;
+  border-radius: var(--eui-radius-sm);
+  animation: eui-shimmer 1.4s ease infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+[data-eui-motion='reduced'] .skeleton {
+  animation: none;
+}
+
+[data-eui-theme='high-contrast'] .skeleton {
+  background: #3d3d3d;
+}
+
+.text {
+  height: 0.875em;
+  margin: 0.3em 0;
+}
+
+.circle {
+  border-radius: 50%;
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Keyframes are local to this module (CSS Modules scopes animation names). */
+@keyframes eui-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

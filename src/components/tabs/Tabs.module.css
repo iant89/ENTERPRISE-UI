@@ -1,0 +1,110 @@
+.tabs {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.list {
+  display: flex;
+  align-items: stretch;
+  gap: var(--eui-space-1);
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: var(--eui-border-width) solid var(--eui-color-border);
+}
+
+.list::-webkit-scrollbar {
+  display: none;
+}
+
+.contained {
+  padding: 0 var(--eui-space-4);
+  background: var(--eui-color-surface);
+  box-shadow: var(--eui-shadow-sm);
+  border-bottom: 0;
+}
+
+.tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--eui-space-2);
+  flex-shrink: 0;
+  min-height: var(--eui-control-height-lg);
+  padding: 0 var(--eui-space-3);
+  border: 0;
+  background: transparent;
+  color: var(--eui-color-text-secondary);
+  font: inherit;
+  font-weight: var(--eui-font-weight-semibold);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tab::after {
+  content: '';
+  position: absolute;
+  left: var(--eui-space-2);
+  right: var(--eui-space-2);
+  bottom: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: transparent;
+  transition: background-color var(--eui-duration-fast) var(--eui-easing-standard);
+}
+
+.tab:hover:not(:disabled) {
+  color: var(--eui-color-text);
+}
+
+.tab:hover:not(:disabled)::after {
+  background: var(--eui-color-border);
+}
+
+.tab[aria-selected='true'] {
+  color: var(--eui-color-primary);
+}
+
+.tab[aria-selected='true']::after {
+  background: var(--eui-color-primary);
+}
+
+.tab:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: -4px;
+  border-radius: var(--eui-radius-sm);
+}
+
+.tab:disabled {
+  opacity: var(--eui-disabled-opacity);
+  cursor: var(--eui-disabled-cursor);
+}
+
+.icon {
+  display: inline-flex;
+}
+
+.icon svg {
+  width: var(--eui-icon-size);
+  height: var(--eui-icon-size);
+}
+
+.count {
+  color: var(--eui-color-text-secondary);
+  font-weight: var(--eui-font-weight-regular);
+}
+
+.panel {
+  padding-top: var(--eui-space-4);
+  min-width: 0;
+}
+
+.panel:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: 2px;
+}
+
+.flush {
+  padding-top: 0;
+}

@@ -1,0 +1,275 @@
+/** Documentation metadata for every component page. Props tables come from docs/generated/api.json. */
+
+export type Category = 'Layout' | 'Navigation' | 'Buttons' | 'Forms' | 'Data display' | 'Feedback' | 'Patterns';
+
+export const categories: { id: Category; description: string }[] = [
+  { id: 'Layout', description: 'Application frame and layout primitives.' },
+  { id: 'Navigation', description: 'Move between pages, views and actions.' },
+  { id: 'Buttons', description: 'Trigger actions with the right emphasis.' },
+  { id: 'Forms', description: 'Labelled, validated data entry controls.' },
+  { id: 'Data display', description: 'Tables, lists, trees and business objects.' },
+  { id: 'Feedback', description: 'Dialogs, messages and progress.' },
+  { id: 'Patterns', description: 'Higher-level enterprise floorplans composed from components.' },
+];
+
+export interface KeyboardRow {
+  keys: string;
+  action: string;
+}
+
+export interface ComponentDoc {
+  slug: string;
+  name: string;
+  category: Category;
+  summary: string;
+  /** Components whose props are documented on this page. */
+  components: string[];
+  /** Examples folder (defaults to slug). */
+  examples?: string;
+  keyboard?: KeyboardRow[];
+  a11y: string[];
+  /** Related pages. */
+  related?: string[];
+}
+
+const k = (keys: string, action: string): KeyboardRow => ({ keys, action });
+
+export const docs: ComponentDoc[] = [
+  // Layout
+  {
+    slug: 'app-shell', name: 'AppShell', category: 'Layout', components: ['AppShell'],
+    summary: 'The responsive application frame: header, side navigation and main content. Collapses navigation to icons on tablets and to a drawer on phones.',
+    keyboard: [k('Tab (first)', 'Reveals the “Skip to main content” link'), k('Escape', 'Closes the mobile navigation drawer')],
+    a11y: ['Renders `banner`, `navigation` and `main` landmarks.', 'The skip link moves focus to `<main>` (WCAG 2.4.1).', 'The mobile drawer is a modal dialog: focus is trapped and restored, and the page behind does not scroll.'],
+    related: ['application-header', 'side-navigation', 'page'],
+  },
+  {
+    slug: 'page', name: 'Page', category: 'Layout', components: ['Page'],
+    summary: 'Page header with breadcrumbs, title, subtitle, actions, header content and a filter/toolbar area, followed by a responsive content region.',
+    a11y: ['The title renders as the page’s only `<h1>`.', 'Breadcrumbs render as a labelled `navigation` landmark.', 'Actions keep their DOM order on all screen sizes, matching the visual order.'],
+  },
+  { slug: 'container', name: 'Container', category: 'Layout', components: ['Container'], summary: 'Centres content with a maximum width and responsive side padding.', a11y: ['Purely presentational; use the `as` prop to render a landmark such as `section` when appropriate.'] },
+  { slug: 'grid', name: 'Grid', category: 'Layout', components: ['Grid', 'GridItem'], summary: 'Responsive CSS grid with per-breakpoint column counts or auto-fit columns.', a11y: ['Visual order follows DOM order; do not use spans to reorder meaningful content.'] },
+  { slug: 'flex', name: 'Flex', category: 'Layout', components: ['Flex'], summary: 'Flexbox layout primitive with token-based gaps.', a11y: ['Avoid `row-reverse`/`column-reverse` for content whose reading order matters (WCAG 1.3.2).'] },
+  { slug: 'stack', name: 'Stack', category: 'Layout', components: ['Stack'], summary: 'One-dimensional layout with consistent spacing and optional dividers.', a11y: ['Dividers are decorative borders and are not announced.'] },
+  {
+    slug: 'split-view', name: 'SplitView', category: 'Layout', components: ['SplitView'],
+    summary: 'Two panes side by side or stacked, optionally resizable.',
+    keyboard: [k('← / →', 'Resize the start pane (handle focused)'), k('Shift + arrows', 'Resize in larger steps'), k('Home / End', 'Minimum / maximum size')],
+    a11y: ['Panes can be labelled regions via `startLabel` / `endLabel`.', 'The resize handle is a focusable `separator` with `aria-valuenow`.'],
+  },
+  {
+    slug: 'resizable-panel', name: 'ResizablePanel', category: 'Layout', components: ['ResizablePanel'],
+    summary: 'A panel with a draggable, keyboard-operable edge.',
+    keyboard: [k('Arrow keys', 'Grow or shrink by `step` px'), k('Shift + arrows', 'Five times the step'), k('Home / End', 'Jump to min / max size')],
+    a11y: ['Handle uses `role="separator"` with `aria-valuenow/min/max` and an accessible label.', 'Dragging uses pointer events and works with touch.'],
+  },
+  // Navigation
+  {
+    slug: 'application-header', name: 'ApplicationHeader', category: 'Navigation', components: ['ApplicationHeader'],
+    summary: 'The top application bar: branding, global search, notifications, help, settings and the user menu.',
+    keyboard: [k('Tab', 'Moves through header actions'), k('Enter / Space / ↓', 'Opens the help or user menu'), k('Escape', 'Closes menus and popovers')],
+    a11y: ['Rendered as a `<header>` (banner landmark) with the search in a `search` landmark.', 'The notification button’s name includes the unread count.', 'The navigation toggle exposes `aria-expanded` and controls the side navigation.'],
+  },
+  {
+    slug: 'side-navigation', name: 'SideNavigation', category: 'Navigation', components: ['SideNavigation', 'NavigationItem', 'NavigationGroup'],
+    summary: 'Vertical navigation with icons, groups, expandable sections, active-route indicators and an icon-only collapsed mode.',
+    keyboard: [k('Tab', 'Moves between items'), k('Enter / Space', 'Follows a link or toggles a section'), k('↓ / Enter (collapsed)', 'Opens the flyout menu of a section')],
+    a11y: ['A labelled `navigation` landmark of nested lists.', 'The current page has `aria-current="page"`; sections expose `aria-expanded`.', 'In collapsed mode items keep their accessible names and show tooltips.'],
+  },
+  {
+    slug: 'navigation-item', name: 'NavigationItem', category: 'Navigation', components: ['NavigationItem', 'NavigationGroup'], examples: 'side-navigation',
+    summary: 'A link or expandable section inside SideNavigation. Nest NavigationItems to create sub-navigation.',
+    a11y: ['Renders a link when `href` is set, otherwise a button.', 'Badge counts are announced as “N new”.'],
+  },
+  {
+    slug: 'breadcrumbs', name: 'Breadcrumbs', category: 'Navigation', components: ['Breadcrumbs'],
+    summary: 'Shows the location in a hierarchy and links to parent pages.',
+    a11y: ['A `navigation` landmark labelled “Breadcrumb” containing an ordered list.', 'The current page has `aria-current="page"`.', 'Separators are hidden from assistive technology.'],
+  },
+  {
+    slug: 'tabs', name: 'Tabs', category: 'Navigation', components: ['Tabs', 'TabList', 'Tab', 'TabPanel'],
+    summary: 'Organises related content into panels, one visible at a time.',
+    keyboard: [k('← / →', 'Previous / next tab (skips disabled tabs)'), k('Home / End', 'First / last tab'), k('Enter / Space', 'Activates the focused tab (manual activation)'), k('Tab', 'Moves into the active panel')],
+    a11y: ['Implements the WAI-ARIA tabs pattern with roving tabindex.', 'Tabs and panels are linked via `aria-controls` / `aria-labelledby`.', 'Right-to-left layouts reverse arrow keys automatically.'],
+  },
+  {
+    slug: 'menu', name: 'Menu', category: 'Navigation', components: ['Menu'],
+    summary: 'A list of actions with icons, shortcuts, checkable items and groups.',
+    keyboard: [k('↑ / ↓', 'Previous / next item (wraps, skips disabled)'), k('Home / End', 'First / last item'), k('Enter / Space', 'Activates the item'), k('Letters', 'Type-ahead to an item'), k('Escape / Tab', 'Closes the menu')],
+    a11y: ['`role="menu"` with `menuitem` / `menuitemcheckbox` items and roving focus.', 'Group labels and separators are presentational.'],
+  },
+  {
+    slug: 'dropdown-menu', name: 'DropdownMenu', category: 'Navigation', components: ['DropdownMenu'],
+    summary: 'A trigger that opens a menu of actions.',
+    keyboard: [k('Enter / Space / ↓', 'Opens and focuses the first item'), k('↑', 'Opens and focuses the last item'), k('Escape', 'Closes and returns focus to the trigger')],
+    a11y: ['The trigger gets `aria-haspopup="menu"`, `aria-expanded` and `aria-controls`.', 'The menu is labelled by its trigger unless `aria-label` is given.'],
+  },
+  {
+    slug: 'pagination', name: 'Pagination', category: 'Navigation', components: ['Pagination'],
+    summary: 'Navigates between pages of a data set, with an optional page-size selector.',
+    a11y: ['A labelled `navigation` landmark; the current page has `aria-current="page"`.', 'Every page button has an explicit name (“Page 3”).', 'On phones a condensed “Page X of Y” label is shown.'],
+  },
+  // Buttons
+  {
+    slug: 'button', name: 'Button', category: 'Buttons', components: ['Button'],
+    summary: 'Triggers an action. Primary, secondary, tertiary and destructive variants communicate emphasis.',
+    keyboard: [k('Enter / Space', 'Activates the button')],
+    a11y: ['Native `<button>` with `type="button"` by default.', 'Loading buttons set `aria-busy` and ignore clicks while keeping focus.', 'Touch devices get a 44 × 44 px minimum hit area.'],
+  },
+  { slug: 'icon-button', name: 'IconButton', category: 'Buttons', components: ['IconButton'], summary: 'A square, icon-only button.', keyboard: [k('Enter / Space', 'Activates the button')], a11y: ['`label` is required and becomes the accessible name.', 'The icon is hidden from assistive technology.'] },
+  {
+    slug: 'split-button', name: 'SplitButton', category: 'Buttons', components: ['SplitButton'],
+    summary: 'A default action plus a menu of related alternatives.',
+    keyboard: [k('Tab', 'Moves between the action and the menu button'), k('↓ (menu button)', 'Opens the menu')],
+    a11y: ['Two separate buttons in a group; the menu button has its own label (“More options”).'],
+  },
+  { slug: 'toggle-button', name: 'ToggleButton', category: 'Buttons', components: ['ToggleButton'], summary: 'A two-state button.', keyboard: [k('Enter / Space', 'Toggles the pressed state')], a11y: ['Exposes `aria-pressed`. Keep the label constant so the state, not the name, changes.'] },
+  { slug: 'button-group', name: 'ButtonGroup', category: 'Buttons', components: ['ButtonGroup'], summary: 'Groups related buttons, optionally as a joined segmented control.', a11y: ['`role="group"`; provide `aria-label` when the purpose is not obvious.'] },
+  // Forms
+  {
+    slug: 'input', name: 'Input', category: 'Forms', components: ['Input'],
+    summary: 'Single-line text input with label, helper text, adornments and validation states.',
+    a11y: ['Label is a real `<label for>`; helper text and messages are linked with `aria-describedby`.', 'Errors set `aria-invalid`, are prefixed “Error:” for screen readers and announced via a polite live region.', 'Required fields show an asterisk and set `required`.'],
+  },
+  { slug: 'text-area', name: 'TextArea', category: 'Forms', components: ['TextArea'], summary: 'Multi-line text input with optional auto-resize and character counter.', a11y: ['The counter is linked via `aria-describedby`.', 'Shares labelling and validation behaviour with Input.'] },
+  {
+    slug: 'number-input', name: 'NumberInput', category: 'Forms', components: ['NumberInput'],
+    summary: 'Numeric entry with stepping, clamping, precision and units.',
+    keyboard: [k('↑ / ↓', 'Increase / decrease by step'), k('Page Up / Page Down', 'Change by ten steps'), k('Home / End', 'Minimum / maximum'), k('Enter', 'Commit typed value')],
+    a11y: ['`role="spinbutton"` with `aria-valuenow/min/max`.', 'Stepper buttons are mouse/touch helpers and are skipped in the Tab order.'],
+  },
+  {
+    slug: 'search-field', name: 'SearchField', category: 'Forms', components: ['SearchField'],
+    summary: 'Search input with icon, clear button and Enter-to-search.',
+    keyboard: [k('Enter', 'Runs `onSearch`'), k('Escape', 'Clears the field')],
+    a11y: ['`role="searchbox"` with a default “Search” label.', 'The clear button has an accessible name.'],
+  },
+  {
+    slug: 'select', name: 'Select', category: 'Forms', components: ['Select'],
+    summary: 'Choose one option from a list (select-only combobox).',
+    keyboard: [k('Enter / Space / ↓ / ↑', 'Opens the list'), k('↑ / ↓', 'Moves the active option'), k('Home / End / Page Up / Page Down', 'Jump in the list'), k('Enter / Space', 'Selects and closes'), k('Letters', 'Type-ahead (also while closed)'), k('Escape', 'Closes without selecting')],
+    a11y: ['WAI-ARIA select-only combobox: focus stays on the combobox and `aria-activedescendant` tracks the option.', 'Options expose `aria-selected`; grouped options use labelled `group`s.'],
+  },
+  {
+    slug: 'combo-box', name: 'ComboBox', category: 'Forms', components: ['ComboBox'],
+    summary: 'Editable combobox that filters options as you type.',
+    keyboard: [k('Typing', 'Filters and opens the list'), k('↓ / ↑', 'Opens / moves the active option'), k('Enter', 'Selects the active option'), k('Escape', 'Closes the list, then clears the value'), k('Alt + ↑', 'Closes the list')],
+    a11y: ['ARIA 1.2 combobox with `aria-autocomplete="list"`.', 'Matches are highlighted with `<mark>`; the empty message is part of the listbox.'],
+  },
+  {
+    slug: 'multi-select', name: 'MultiSelect', category: 'Forms', components: ['MultiSelect'],
+    summary: 'Select several options; values appear as removable tokens.',
+    keyboard: [k('↓ / ↑', 'Opens / moves the active option'), k('Enter', 'Toggles the active option'), k('Backspace', 'Removes the last token'), k('Escape', 'Closes the list')],
+    a11y: ['`aria-multiselectable` listbox; the current selection is summarised in the description.', 'Additions and removals are announced via the live region.'],
+  },
+  { slug: 'checkbox', name: 'Checkbox', category: 'Forms', components: ['Checkbox'], summary: 'A binary choice, with an indeterminate state for parent checkboxes.', keyboard: [k('Space', 'Toggles the checkbox')], a11y: ['Native checkbox input; the indeterminate state is reported as “mixed”.', 'Errors set `aria-invalid` and are linked with `aria-describedby`.'] },
+  {
+    slug: 'radio-group', name: 'RadioGroup', category: 'Forms', components: ['RadioGroup'],
+    summary: 'Choose exactly one of a few options.',
+    keyboard: [k('Tab', 'Moves into / out of the group'), k('Arrow keys', 'Select the previous / next option')],
+    a11y: ['A `fieldset` with `legend`, exposed as a labelled `radiogroup`.', 'Uses native radio inputs for full assistive-technology support.'],
+  },
+  { slug: 'switch', name: 'Switch', category: 'Forms', components: ['Switch'], summary: 'An on/off toggle that takes effect immediately.', keyboard: [k('Space', 'Toggles the switch')], a11y: ['Native checkbox with `role="switch"`.', 'The thumb position is reinforced by colour and optional On/Off text.'] },
+  {
+    slug: 'date-picker', name: 'DatePicker', category: 'Forms', components: ['DatePicker', 'Calendar'],
+    summary: 'Date entry by typing or choosing from a calendar popup.',
+    keyboard: [k('Alt + ↓', 'Opens the calendar'), k('Arrow keys', 'Previous / next day or week'), k('Home / End', 'Start / end of week'), k('Page Up / Page Down', 'Previous / next month'), k('Shift + Page Up / Down', 'Previous / next year'), k('Enter / Space', 'Selects the date'), k('Escape', 'Closes the calendar')],
+    a11y: ['The calendar is a `grid` labelled by the visible month; each day has a full date label.', 'Today is marked with `aria-current="date"`; disabled dates are not selectable.', 'Invalid typed input produces an inline error message.'],
+  },
+  {
+    slug: 'time-picker', name: 'TimePicker', category: 'Forms', components: ['TimePicker'],
+    summary: 'Type a time or pick from suggested times.',
+    keyboard: [k('Typing', 'Free-form entry, normalised on blur'), k('↓ / ↑', 'Moves through suggestions'), k('Enter', 'Selects')],
+    a11y: ['Built on ComboBox, so it shares its combobox semantics.'],
+  },
+  { slug: 'form-field', name: 'FormField', category: 'Forms', components: ['FormField'], summary: 'Label, description and validation layout that connects any nested control.', a11y: ['Provides ids through context so custom controls can set `aria-describedby` and `aria-invalid` correctly.'] },
+  { slug: 'form-group', name: 'FormGroup', category: 'Forms', components: ['FormGroup'], summary: 'Groups related fields under a heading in a responsive column layout.', a11y: ['A `fieldset` with `legend`, so the group name is announced with each field.'] },
+  // Data display
+  {
+    slug: 'table', name: 'Table', category: 'Data display', components: ['Table'],
+    summary: 'Semantic data table with sorting, selection, row highlights, loading/empty states, density and responsive modes.',
+    keyboard: [k('Tab', 'Moves through sort buttons, checkboxes and activatable rows'), k('Enter (row)', 'Activates the row (`onRowClick`)'), k('Space (row)', 'Toggles row selection')],
+    a11y: ['Native `<table>` semantics with a caption and optional row headers.', 'Sortable columns expose `aria-sort`; sort controls are real buttons.', 'Selection checkboxes are labelled per row; loading sets `aria-busy`.'],
+  },
+  {
+    slug: 'data-grid', name: 'DataGrid', category: 'Data display', components: ['DataGrid'],
+    summary: 'Feature-complete table: search, filters, sorting, selection with bulk actions, pagination, column visibility and density.',
+    a11y: ['A labelled region whose title includes the result count.', 'Result counts are announced after searching or filtering.', 'Composed of accessible primitives: SearchField, Select, Table, Pagination and DropdownMenu.'],
+  },
+  {
+    slug: 'list', name: 'List', category: 'Data display', components: ['List'],
+    summary: 'Vertical list of items: static, navigable or selectable.',
+    keyboard: [k('↑ / ↓ / Home / End', 'Moves between items (selectable lists)'), k('Space', 'Toggles selection'), k('Ctrl/⌘ + A', 'Selects all (multiple)'), k('Letters', 'Type-ahead')],
+    a11y: ['Selectable lists are `listbox`es with `aria-selected` options.', 'Navigable items are buttons or links with `aria-current` for the current item.'],
+  },
+  {
+    slug: 'tree', name: 'Tree', category: 'Data display', components: ['Tree'],
+    summary: 'Hierarchical list with expandable nodes.',
+    keyboard: [k('↑ / ↓', 'Previous / next visible node'), k('→', 'Expands, or moves to the first child'), k('←', 'Collapses, or moves to the parent'), k('Home / End', 'First / last node'), k('Enter / Space', 'Selects'), k('*', 'Expands all siblings'), k('Letters', 'Type-ahead')],
+    a11y: ['WAI-ARIA treeview with `aria-level`, `aria-setsize`, `aria-posinset` and `aria-expanded`.', 'Single tab stop with roving focus.'],
+  },
+  {
+    slug: 'tree-table', name: 'TreeTable', category: 'Data display', components: ['TreeTable'],
+    summary: 'A table whose rows form a hierarchy.',
+    keyboard: [k('↑ / ↓', 'Previous / next row'), k('→', 'Expands, or moves to the first child row'), k('←', 'Collapses, or moves to the parent row'), k('Home / End', 'First / last row'), k('Enter', 'Activates the row')],
+    a11y: ['`role="treegrid"` with `aria-level`, `aria-expanded`, `aria-posinset` and `aria-setsize` on rows.'],
+  },
+  { slug: 'card', name: 'Card', category: 'Data display', components: ['Card'], summary: 'Groups content and actions about one subject.', a11y: ['An `<article>` with a heading (configurable level).', 'Clickable cards use a single button in the title that covers the card, so inner actions remain usable.'] },
+  { slug: 'avatar', name: 'Avatar', category: 'Data display', components: ['Avatar'], summary: 'A person or object as image, initials or icon.', a11y: ['Exposed as an image named after the person (plus presence).', 'Use `decorative` when the name is already visible next to it.'] },
+  { slug: 'badge', name: 'Badge', category: 'Data display', components: ['Badge'], summary: 'Compact labels and counters.', a11y: ['Counters without visible context need an `aria-label` (e.g. “7 new”).', 'Colours are paired with text, never used alone.'] },
+  { slug: 'status-indicator', name: 'StatusIndicator', category: 'Data display', components: ['StatusIndicator'], summary: 'Object status shown with semantic colour, icon and text.', a11y: ['Status always includes text, so meaning does not rely on colour (WCAG 1.4.1).', 'Text colours meet 4.5:1 contrast in all themes.'] },
+  { slug: 'timeline', name: 'Timeline', category: 'Data display', components: ['Timeline'], summary: 'Chronological list of events.', a11y: ['An ordered list; Date timestamps render as `<time datetime>`.'] },
+  { slug: 'object-identifier', name: 'ObjectIdentifier', category: 'Data display', components: ['ObjectIdentifier'], summary: 'Names a business object with its ID.', a11y: ['When interactive, the title is a link or button with the object name as its accessible name.'] },
+  { slug: 'metric-card', name: 'MetricCard', category: 'Data display', components: ['MetricCard'], summary: 'KPI tile with value, unit, trend and sparkline.', a11y: ['Trend direction is announced as text (“Up +8.2%”), not just shown by an arrow.', 'The sparkline is decorative; put essential numbers in text.'] },
+  // Feedback
+  {
+    slug: 'dialog', name: 'Dialog', category: 'Feedback', components: ['Dialog'],
+    summary: 'Modal dialog for focused tasks.',
+    keyboard: [k('Tab / Shift + Tab', 'Cycles focus within the dialog'), k('Escape', 'Closes the dialog')],
+    a11y: ['`role="dialog"` with `aria-modal` and a title as its name.', 'Focus moves inside on open, is trapped, and is restored to the trigger on close.', 'Background scrolling is locked; full screen on phones.'],
+  },
+  {
+    slug: 'alert-dialog', name: 'AlertDialog', category: 'Feedback', components: ['AlertDialog'],
+    summary: 'Confirms important or destructive actions.',
+    keyboard: [k('Tab', 'Cycles between Confirm and Cancel'), k('Escape', 'Cancels')],
+    a11y: ['`role="alertdialog"`; the message is the accessible description.', 'Initial focus is on the least destructive action (Cancel).'],
+  },
+  {
+    slug: 'toast', name: 'Toast', category: 'Feedback', components: ['ToastProvider'],
+    summary: 'Brief, non-blocking notifications.',
+    a11y: ['Announced through the ThemeProvider live region (errors assertively).', 'Timers pause while hovered or focused (WCAG 2.2.1); errors persist until dismissed.', 'Do not put the only path to an action in a toast.'],
+  },
+  { slug: 'message-strip', name: 'MessageStrip', category: 'Feedback', components: ['MessageStrip'], summary: 'Inline message about the current page or section.', a11y: ['Tone is announced as a hidden prefix (“Warning:”).', 'Use `announce` for messages that appear dynamically.'] },
+  {
+    slug: 'tooltip', name: 'Tooltip', category: 'Feedback', components: ['Tooltip'],
+    summary: 'Short contextual help on hover and focus.',
+    keyboard: [k('Tab (focus trigger)', 'Shows the tooltip'), k('Escape', 'Hides the tooltip')],
+    a11y: ['Linked with `aria-describedby` (or `aria-labelledby` for icon-only triggers).', 'Dismissible and hoverable per WCAG 1.4.13; not shown for touch.'],
+  },
+  {
+    slug: 'popover', name: 'Popover', category: 'Feedback', components: ['Popover'],
+    summary: 'Non-modal dialog anchored to a trigger.',
+    keyboard: [k('Enter / Space', 'Opens (on the trigger)'), k('Escape', 'Closes and returns focus')],
+    a11y: ['`role="dialog"` named by its title; the trigger exposes `aria-expanded`.', 'Focus moves into the popover on open.'],
+  },
+  { slug: 'progress-bar', name: 'ProgressBar', category: 'Feedback', components: ['ProgressBar'], summary: 'Progress of a task or utilisation of a quantity.', a11y: ['`role="progressbar"` with `aria-valuenow` and a human-readable `aria-valuetext`.', 'Indeterminate bars omit the value.'] },
+  { slug: 'spinner', name: 'Spinner', category: 'Feedback', components: ['Spinner'], summary: 'Indeterminate busy indicator.', a11y: ['`role="status"` with a visually hidden label.', 'Animation slows down when reduced motion is requested.'] },
+  { slug: 'skeleton', name: 'Skeleton', category: 'Feedback', components: ['Skeleton'], summary: 'Placeholder that mirrors the layout of loading content.', a11y: ['Hidden from assistive technology; set `aria-busy` on the loading region.', 'Shimmer animation is disabled for reduced motion.'] },
+  // Patterns
+  { slug: 'filter-bar', name: 'FilterBar', category: 'Patterns', components: ['FilterBar'], summary: 'Search and filter area for list reports.', keyboard: [k('Enter', 'Applies filters (Go)')], a11y: ['A `search` landmark form; the toggle exposes `aria-expanded` and `aria-controls`.'] },
+  { slug: 'master-detail', name: 'MasterDetail', category: 'Patterns', components: ['MasterDetail'], summary: 'List and details side by side, or one at a time on small screens.', a11y: ['Panes are labelled regions; on phones a back button returns to the list.'] },
+  { slug: 'object-page', name: 'ObjectPage', category: 'Patterns', components: ['ObjectPage'], summary: 'Displays one business object with a rich header and sections.', a11y: ['Sections are labelled regions with `<h2>` headings.', 'The anchor bar marks the visible section with `aria-current` and moves focus to the section heading.', 'Smooth scrolling is disabled for reduced motion.'] },
+  { slug: 'detail-panel', name: 'DetailPanel', category: 'Patterns', components: ['DetailPanel'], summary: 'Side panel with details of a selected object.', keyboard: [k('Escape', 'Closes the panel')], a11y: ['Overlay mode is a modal dialog with focus trapping and restoration; inline mode is a labelled region.'] },
+  { slug: 'wizard', name: 'Wizard', category: 'Patterns', components: ['Wizard'], summary: 'Guides users through a multi-step task.', a11y: ['The step list marks the current step with `aria-current="step"` and completed steps in text.', 'Focus moves to the step heading on navigation; validation errors are announced.'] },
+  { slug: 'dashboard', name: 'Dashboard', category: 'Patterns', components: ['Dashboard', 'DashboardWidget'], summary: 'A responsive grid of KPI tiles and cards.', a11y: ['A labelled region; widgets keep DOM order on all breakpoints.'] },
+  {
+    slug: 'command-toolbar', name: 'CommandToolbar', category: 'Patterns', components: ['CommandToolbar'],
+    summary: 'Action toolbar that overflows into a “More” menu.',
+    keyboard: [k('← / →', 'Moves between toolbar buttons'), k('Enter / Space', 'Activates')],
+    a11y: ['`role="toolbar"` with a name; overflowed actions remain reachable in the menu.'],
+  },
+  { slug: 'empty-state', name: 'EmptyState', category: 'Patterns', components: ['EmptyState'], summary: 'Explains missing content and offers next steps.', a11y: ['The illustration is decorative; the title is a heading at a configurable level.'] },
+];
+
+export const docsBySlug = new Map(docs.map((d) => [d.slug, d]));

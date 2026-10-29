@@ -1,0 +1,59 @@
+.split {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  background: var(--eui-color-surface);
+}
+
+.vertical {
+  flex-direction: column;
+}
+
+.bordered {
+  border: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  border-radius: var(--eui-radius-lg);
+  overflow: hidden;
+}
+
+.start {
+  flex-shrink: 0;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  border-inline-end: var(--eui-border-width) solid var(--eui-color-border);
+}
+
+.vertical .start {
+  border-inline-end: 0;
+  border-bottom: var(--eui-border-width) solid var(--eui-color-border);
+}
+
+.end {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* Below the collapse breakpoint, panes stack. */
+.stacked {
+  flex-direction: column;
+}
+
+.stacked .start {
+  width: auto !important;
+  height: auto !important;
+  border-inline-end: 0;
+  border-bottom: var(--eui-border-width) solid var(--eui-color-border);
+}
+
+.stacked [role='separator'] {
+  display: none;
+}
+
+.start:focus-visible,
+.end:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: calc(-1 * var(--eui-focus-width));
+}

@@ -1,0 +1,20 @@
+.tooltip {
+  z-index: var(--eui-z-tooltip);
+  max-width: 18rem;
+  padding: var(--eui-space-1) var(--eui-space-2);
+  border-radius: var(--eui-radius-sm);
+  background: var(--eui-color-tooltip);
+  color: var(--eui-color-on-tooltip);
+  font-size: var(--eui-font-size-sm);
+  line-height: var(--eui-line-height-normal);
+  box-shadow: var(--eui-shadow-md);
+  pointer-events: auto;
+  animation: eui-fade-in var(--eui-duration-fast) var(--eui-easing-standard);
+  overflow-wrap: break-word;
+}
+
+/* Keyframes are local to this module (CSS Modules scopes animation names). */
+@keyframes eui-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

@@ -1,0 +1,103 @@
+.root {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--eui-space-1);
+}
+
+.row {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--eui-space-2);
+  cursor: pointer;
+  min-height: var(--eui-touch-target-min);
+  padding-block: calc((var(--eui-control-height) - 18px) / 2 - 2px);
+}
+
+.boxWrap {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+}
+
+.input {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  border: var(--eui-border-width) solid var(--eui-color-border-strong);
+  border-radius: var(--eui-radius-xs);
+  background: var(--eui-color-surface);
+  cursor: pointer;
+  transition: background-color var(--eui-duration-fast), border-color var(--eui-duration-fast);
+}
+
+.input:hover:not(:disabled) {
+  border-color: var(--eui-color-border-hover);
+}
+
+.input:checked,
+.input:indeterminate {
+  border-color: var(--eui-color-primary);
+  background: var(--eui-color-primary);
+}
+
+.input:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+}
+
+.input[aria-invalid='true'] {
+  border-color: var(--eui-color-error-border);
+  background: var(--eui-color-error-subtle);
+}
+
+.input[aria-invalid='true']:checked {
+  background: var(--eui-color-error);
+}
+
+.mark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--eui-color-on-primary);
+  pointer-events: none;
+}
+
+.mark svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 3;
+}
+
+.label {
+  color: var(--eui-color-text);
+  line-height: 20px;
+}
+
+.description {
+  display: block;
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.disabled {
+  cursor: var(--eui-disabled-cursor);
+  opacity: var(--eui-disabled-opacity);
+}
+
+.disabled .input {
+  cursor: var(--eui-disabled-cursor);
+}
+
+.message {
+  display: flex;
+  gap: var(--eui-space-1);
+  padding-inline-start: calc(18px + var(--eui-space-2));
+  color: var(--eui-color-error-text);
+  font-size: var(--eui-font-size-sm);
+}

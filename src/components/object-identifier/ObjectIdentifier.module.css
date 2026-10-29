@@ -1,0 +1,40 @@
+.root {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--eui-space-0-5);
+  min-width: 0;
+}
+
+.title {
+  color: var(--eui-color-text);
+  font-weight: var(--eui-font-weight-bold);
+  overflow-wrap: anywhere;
+}
+
+.link {
+  color: var(--eui-color-link);
+  text-decoration: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-weight: var(--eui-font-weight-bold);
+  text-align: start;
+  cursor: pointer;
+}
+
+.link:hover {
+  color: var(--eui-color-link-hover);
+  text-decoration: underline;
+}
+
+.link:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: 1px;
+  border-radius: var(--eui-radius-xs);
+}
+
+.text {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}

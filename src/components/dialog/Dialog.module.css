@@ -1,0 +1,121 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--eui-z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--eui-space-4);
+  background: var(--eui-color-overlay);
+  animation: eui-fade-in var(--eui-duration-normal) var(--eui-easing-standard);
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(100vh - 2 * var(--eui-space-4));
+  max-height: calc(100dvh - 2 * var(--eui-space-4));
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+  border: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  border-radius: var(--eui-radius-lg);
+  box-shadow: var(--eui-shadow-xl);
+  outline: none;
+  animation: eui-scale-in var(--eui-duration-normal) var(--eui-easing-emphasized);
+}
+
+.sm { max-width: 25rem; }
+.md { max-width: 37.5rem; }
+.lg { max-width: 56rem; }
+.xl { max-width: 75rem; }
+
+.full {
+  max-width: none;
+  height: 100%;
+}
+
+@media (max-width: 599px) {
+  .overlay {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .dialog {
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+  }
+
+  .alert {
+    align-self: center;
+    margin: var(--eui-space-4);
+    max-height: calc(100vh - 2 * var(--eui-space-4));
+    border-radius: var(--eui-radius-lg);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--eui-space-2);
+  min-height: 3rem;
+  padding: var(--eui-space-2) var(--eui-space-2) var(--eui-space-2) var(--eui-space-4);
+  border-bottom: var(--eui-border-width) solid var(--eui-color-border-subtle);
+}
+
+.headerIcon {
+  display: inline-flex;
+  color: var(--_tone, var(--eui-color-icon));
+}
+
+.headerIcon svg {
+  width: var(--eui-icon-size-lg);
+  height: var(--eui-icon-size-lg);
+}
+
+.title {
+  flex: 1;
+  margin: 0;
+  font-size: var(--eui-font-size-lg);
+  font-weight: var(--eui-font-weight-bold);
+  line-height: var(--eui-line-height-tight);
+}
+
+.body {
+  flex: 1;
+  padding: var(--eui-space-4);
+  overflow: auto;
+  line-height: var(--eui-line-height-normal);
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-2) var(--eui-space-4);
+  border-top: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  background: var(--eui-color-surface-alt);
+  border-radius: 0 0 var(--eui-radius-lg) var(--eui-radius-lg);
+}
+
+.information { --_tone: var(--eui-color-info-text); }
+.success { --_tone: var(--eui-color-success-text); }
+.warning { --_tone: var(--eui-color-warning-text); }
+.error { --_tone: var(--eui-color-error-text); }
+
+.toneBar {
+  border-top: 3px solid var(--_tone, transparent);
+}
+
+/* Keyframes are local to this module (CSS Modules scopes animation names). */
+@keyframes eui-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes eui-scale-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}

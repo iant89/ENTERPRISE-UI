@@ -1,0 +1,31 @@
+.popover {
+  min-width: 12rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-2) var(--eui-space-2) var(--eui-space-2) var(--eui-space-4);
+  border-bottom: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  min-height: var(--eui-control-height-lg);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--eui-font-size-md);
+  font-weight: var(--eui-font-weight-bold);
+}
+
+.body {
+  padding: var(--eui-space-4);
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-2) var(--eui-space-4);
+  border-top: var(--eui-border-width) solid var(--eui-color-border-subtle);
+}

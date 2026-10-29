@@ -1,0 +1,96 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--eui-z-drawer);
+  background: var(--eui-color-overlay);
+  animation: eui-fade-in var(--eui-duration-normal) var(--eui-easing-standard);
+}
+
+.panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--eui-z-drawer);
+  display: flex;
+  flex-direction: column;
+  width: min(var(--_width, 28rem), 100vw);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+  border-inline-start: var(--eui-border-width) solid var(--eui-color-border);
+  box-shadow: var(--eui-shadow-xl);
+  outline: none;
+  animation: eui-slide-in-right var(--eui-duration-normal) var(--eui-easing-emphasized);
+}
+
+.inline {
+  position: relative;
+  z-index: auto;
+  height: 100%;
+  width: var(--_width, 28rem);
+  max-width: 100%;
+  box-shadow: none;
+  animation: none;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-3) var(--eui-space-2) var(--eui-space-3) var(--eui-space-4);
+  border-bottom: var(--eui-border-width) solid var(--eui-color-border-subtle);
+}
+
+.titles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-0-5);
+  flex: 1;
+  min-width: 0;
+  padding-top: var(--eui-space-1);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--eui-font-size-lg);
+  font-weight: var(--eui-font-weight-bold);
+  line-height: var(--eui-line-height-tight);
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--eui-space-1);
+}
+
+.body {
+  flex: 1;
+  overflow: auto;
+  padding: var(--eui-space-4);
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-2) var(--eui-space-4);
+  border-top: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  background: var(--eui-color-surface-alt);
+}
+
+/* Keyframes are local to this module (CSS Modules scopes animation names). */
+@keyframes eui-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes eui-slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}

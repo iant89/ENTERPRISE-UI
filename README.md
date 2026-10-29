@@ -4,6 +4,8 @@ A React + TypeScript component library for building business applications that l
 
 `@enterprise-ui/react` is meant for dashboards, admin panels, ERP, inventory, fleet management and other data-heavy screens. It has its own implementation, design tokens and component APIs. It uses only one runtime dependency, `lucide-react`, for icons.
 
+![Inventory management app built with Enterprise UI Kit: application header, side navigation, filter bar and data grid](docs/screenshots/demo-app.png)
+
 > **Status: 0.1, pre-release.** The package is not on npm yet. See [Installation](#installation) for using it from this repository.
 
 ## Features
@@ -20,6 +22,27 @@ A React + TypeScript component library for building business applications that l
 - **Accessibility.** Targets WCAG 2.2 AA, with semantic HTML, WAI-ARIA keyboard patterns, focus trapping and restoration, live announcements and reduced motion.
 - **Responsive.** Works on desktop, tablet and phone. The navigation becomes a drawer on small screens, and tables can stack into cards.
 - **Typed and tree-shakeable.** Strict TypeScript APIs and one ES module per component. React is a peer dependency, and the stylesheet is imported separately.
+
+## Screenshots
+
+**Light, dark and high-contrast themes**
+
+![The same purchase-order form in the light, dark and high-contrast themes](docs/screenshots/themes.png)
+
+**Object page pattern**
+
+![Object page for a purchase order with status, key facts, a KPI tile and section tabs](docs/screenshots/object-page.png)
+
+**Dark theme and phone layout**
+
+<p>
+  <img src="docs/screenshots/demo-app-dark.png" alt="The inventory app in the dark theme" width="68%">
+  <img src="docs/screenshots/demo-app-mobile.png" alt="The inventory app on a phone, with the navigation collapsed into a menu button" width="28%">
+</p>
+
+**Documentation: interactive preview with generated code**
+
+![Button documentation page with preview controls and generated TSX](docs/screenshots/component-page.png)
 
 ## Requirements
 
@@ -279,6 +302,7 @@ scripts/        API extraction, contrast checker, build helpers
 | `npm run check` | Runs the type check, lint and unit tests |
 | `npm run build:lib` | Builds the library into `dist/`: ESM modules, `.d.ts` files, `styles.css` and `tokens.css` |
 | `npm run build:docs` | Builds the static documentation into `docs-dist/` |
+| `npm run docs:screenshots` | Regenerates the README screenshots (needs the docs preview running on port 4173) |
 
 The Playwright tests cover:
 

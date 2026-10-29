@@ -49,7 +49,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:update": "playwright test --update-snapshots",
-    "check": "npm run typecheck && npm run lint && npm run test"
+    "check": "npm run typecheck && npm run lint && npm run test",
+    "docs:screenshots": "node scripts/readme-screenshots.mjs"
   },
   "peerDependencies": {
     "react": ">=18.2.0",

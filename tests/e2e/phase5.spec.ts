@@ -135,7 +135,13 @@ test('button keyboard focus remains visible in forced colors', async ({ page }) 
   await expect(button).toBeFocused();
   const outline = await button.evaluate((element) => {
     const style = getComputedStyle(element);
-    return { style: style.outlineStyle, width: parseFloat(style.outlineWidth), color: style.outlineColor, background: style.backgroundColor };
+    let parent = element.parentElement;
+    let background = 'rgba(0, 0, 0, 0)';
+    while (parent && background === 'rgba(0, 0, 0, 0)') {
+      background = getComputedStyle(parent).backgroundColor;
+      parent = parent.parentElement;
+    }
+    return { style: style.outlineStyle, width: parseFloat(style.outlineWidth), color: style.outlineColor, background };
   });
   expect(outline.style).not.toBe('none');
   expect(outline.width).toBeGreaterThan(0);

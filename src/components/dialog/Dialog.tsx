@@ -36,6 +36,11 @@ export interface DialogProps {
   tone?: 'information' | 'success' | 'warning' | 'error';
   /** Id of an element describing the dialog. */
   'aria-describedby'?: string;
+  /** Accessible label for the close button. @default "Close dialog" */
+  closeLabel?: string;
+  /** Direction and language for dialog content, including its portal. */
+  dir?: 'ltr' | 'rtl' | 'auto';
+  lang?: string;
   className?: string;
 }
 
@@ -59,6 +64,9 @@ export function Dialog({
   tone,
   'aria-describedby': ariaDescribedBy,
   className,
+  closeLabel = 'Close dialog',
+  dir,
+  lang,
 }: DialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleId = useId(undefined, 'dialog-title');
@@ -73,6 +81,8 @@ export function Dialog({
     <Portal>
       <div
         className={styles.overlay}
+        dir={dir}
+        lang={lang}
         onPointerDown={(event) => {
           overlayPointerDown.current = event.target === event.currentTarget;
         }}
@@ -104,7 +114,7 @@ export function Dialog({
             <h2 id={titleId} className={styles.title}>
               {title}
             </h2>
-            {showClose && <IconButton icon={<X />} label="Close dialog" neutral onClick={onClose} />}
+            {showClose && <IconButton icon={<X />} label={closeLabel} neutral onClick={onClose} />}
           </div>
           <div id={bodyId} className={styles.body}>
             {children}

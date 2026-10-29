@@ -1,0 +1,4 @@
+.scroll { overflow-x: auto; }
+.root table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.root th, .root td { padding: .5rem; text-align: start; vertical-align: top; border-bottom: 1px solid var(--eui-color-border, #89919a); overflow-wrap: anywhere; white-space: pre-wrap; }
+.added, .removed, .modified { font-weight: 600; }

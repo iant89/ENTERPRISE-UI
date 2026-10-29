@@ -131,80 +131,82 @@ The roadmap prioritizes reliability and foundational capabilities before introdu
 
 ## Phase 3: Core Enterprise Workflow Patterns
 
+Implementation and mock examples are in place. Browser-suite execution, real-service integration by consuming applications, and release-wide accessibility verification remain to be validated; see `docs/enterprise-workflows.md` and Phase 5. Checklist items describe framework support, not a claim that a production backend is included.
+
 ### Objectives
 - Introduce reusable business workflows.
 - Reduce repeated application-specific implementation.
 - Standardize record management and business operations.
 
 ### 3.1 ListReport
-- [ ] Create a reusable enterprise listing page pattern.
-- [ ] Compose `Page`, `FilterBar`, `DataGrid`, and `CommandToolbar`.
-- [ ] Integrate `SavedViews`.
-- [ ] Integrate `FilterToken`.
-- [ ] Support server-side data adapters.
-- [ ] Support row selection.
-- [ ] Support bulk actions.
-- [ ] Support configurable columns.
-- [ ] Support loading, empty, error, and no-results states.
-- [ ] Support page-level actions.
-- [ ] Provide a complete working example.
+- [x] Create a reusable enterprise listing page pattern.
+- [x] Compose `Page`, `FilterBar`, `DataGrid`, and `CommandToolbar`.
+- [x] Integrate `SavedViews`.
+- [x] Integrate `FilterToken`.
+- [x] Support server-side data adapters.
+- [x] Support row selection.
+- [x] Support bulk actions.
+- [x] Support configurable columns.
+- [x] Support loading, empty, error, and no-results states.
+- [x] Support page-level actions.
+- [x] Provide a complete working example.
 
 ### 3.2 BulkActionBar
-- [ ] Display the selected-record count.
-- [ ] Support contextual actions.
-- [ ] Support bulk edit, assign, export, archive, and delete.
-- [ ] Support permission-aware action availability.
-- [ ] Support confirmation for destructive actions.
-- [ ] Support partial-success reporting.
-- [ ] Support retry for failed operations.
-- [ ] Support undo when the underlying operation allows it.
-- [ ] Integrate with `DataGrid` and `ListReport`.
+- [x] Display the selected-record count.
+- [x] Support contextual actions.
+- [x] Support bulk edit, assign, export, archive, and delete.
+- [x] Support permission-aware action availability.
+- [x] Support confirmation for destructive actions.
+- [x] Support partial-success reporting.
+- [x] Support retry for failed operations.
+- [x] Support undo when the underlying operation allows it.
+- [x] Integrate with `DataGrid` and `ListReport`.
 
 ### 3.3 ObjectEditor
-- [ ] Create a standard business-object editing pattern.
-- [ ] Support view and edit modes.
-- [ ] Support Save, Cancel, and Reset.
-- [ ] Track unsaved changes.
-- [ ] Confirm navigation when unsaved changes exist.
-- [ ] Support field-level validation.
-- [ ] Display server-side validation errors.
-- [ ] Handle save failures without losing user input.
-- [ ] Handle concurrent modification conflicts.
-- [ ] Support read-only fields and sections.
-- [ ] Integrate with `ObjectPage`.
+- [x] Create a standard business-object editing pattern.
+- [x] Support view and edit modes.
+- [x] Support Save, Cancel, and Reset.
+- [x] Track unsaved changes.
+- [x] Confirm navigation when unsaved changes exist.
+- [x] Support field-level validation.
+- [x] Display server-side validation errors.
+- [x] Handle save failures without losing user input.
+- [x] Handle concurrent modification conflicts.
+- [x] Support read-only fields and sections.
+- [x] Integrate with `ObjectPage`.
 
 ### 3.4 ApprovalWorkflow
-- [ ] Define reusable approval workflow states.
-- [ ] Support pending, approved, rejected, and returned states.
-- [ ] Display approver identity and decision history.
-- [ ] Support comments and rejection reasons.
-- [ ] Display due dates and escalation indicators.
-- [ ] Support approval confirmation.
-- [ ] Support asynchronous action states.
-- [ ] Handle authorization failures.
-- [ ] Keep workflow execution and authorization on the backend.
-- [ ] Provide a purchase-order approval example.
+- [x] Define reusable approval workflow states.
+- [x] Support pending, approved, rejected, and returned states.
+- [x] Display approver identity and decision history.
+- [x] Support comments and rejection reasons.
+- [x] Display due dates and escalation indicators.
+- [x] Support approval confirmation.
+- [x] Support asynchronous action states.
+- [x] Handle authorization failures.
+- [x] Keep workflow execution and authorization on the backend.
+- [x] Provide a purchase-order approval example.
 
 ### 3.5 ActivityFeed
-- [ ] Display chronological business-object activity.
-- [ ] Support comments and status changes.
-- [ ] Display actors and timestamps.
-- [ ] Group related events.
-- [ ] Support pagination or incremental loading.
-- [ ] Support filtering by event type.
-- [ ] Support empty and loading states.
-- [ ] Integrate with `ObjectPage`.
+- [x] Display chronological business-object activity.
+- [x] Support comments and status changes.
+- [x] Display actors and timestamps.
+- [x] Group related events.
+- [x] Support pagination or incremental loading.
+- [x] Support filtering by event type.
+- [x] Support empty and loading states.
+- [x] Integrate with `ObjectPage`.
 
 ### 3.6 AuditTrail
-- [ ] Display authoritative audit records.
-- [ ] Display actor, timestamp, action, and source.
-- [ ] Display changed fields.
-- [ ] Support before-and-after value comparison.
-- [ ] Support filtering by user, action, and date.
-- [ ] Support pagination for large histories.
-- [ ] Clearly distinguish audit data from ordinary activity.
-- [ ] Avoid generating audit history from client-side UI events.
-- [ ] Provide an audit-history example.
+- [x] Display authoritative audit records.
+- [x] Display actor, timestamp, action, and source.
+- [x] Display changed fields.
+- [x] Support before-and-after value comparison.
+- [x] Support filtering by user, action, and date.
+- [x] Support pagination for large histories.
+- [x] Clearly distinguish audit data from ordinary activity.
+- [x] Avoid generating audit history from client-side UI events.
+- [x] Provide an audit-history example.
 
 ### Completion Criteria
 - Applications can implement common enterprise workflows using reusable patterns.
@@ -214,70 +216,72 @@ The roadmap prioritizes reliability and foundational capabilities before introdu
 
 ## Phase 4: Advanced Components and Capabilities
 
+Implementation is in place. Desktop and mobile Chromium checks pass; Firefox, WebKit, and assistive-technology verification remain open. See `docs/advanced-components.md` for virtualization alternatives and benchmark limitations.
+
 ### Objectives
 - Improve navigation efficiency.
 - Support large collections and complex operational workflows.
 - Expand the component library where reusable capabilities provide clear value.
 
 ### 4.1 CommandPalette
-- [ ] Implement a global command and navigation interface.
-- [ ] Support keyboard-first interaction.
-- [ ] Support searching commands and destinations.
-- [ ] Support recent destinations.
-- [ ] Display keyboard shortcut hints.
-- [ ] Support grouped search results.
-- [ ] Support permission-filtered commands.
-- [ ] Support accessible focus management.
-- [ ] Integrate with application navigation.
+- [x] Implement a global command and navigation interface.
+- [x] Support keyboard-first interaction.
+- [x] Support searching commands and destinations.
+- [x] Support recent destinations.
+- [x] Display keyboard shortcut hints.
+- [x] Support grouped search results.
+- [x] Support permission-filtered commands.
+- [x] Support accessible focus management.
+- [x] Integrate with application navigation.
 
 ### 4.2 VirtualList
-- [ ] Create a reusable list virtualization engine.
-- [ ] Support stable item identities.
-- [ ] Support keyboard navigation.
-- [ ] Support item selection.
-- [ ] Handle resizing and container changes.
-- [ ] Define variable-height item support requirements.
-- [ ] Preserve scroll position where appropriate.
-- [ ] Provide accessible alternatives and guidance.
-- [ ] Integrate with suitable list and tree components.
+- [x] Create a reusable list virtualization engine.
+- [x] Support stable item identities.
+- [x] Support keyboard navigation.
+- [x] Support item selection.
+- [x] Handle resizing and container changes.
+- [x] Define variable-height item support requirements.
+- [x] Preserve scroll position where appropriate.
+- [x] Provide accessible alternatives and guidance.
+- [x] Integrate with suitable list and tree components.
 
 ### 4.3 DataGrid Virtualization
-- [ ] Integrate virtualization with `DataGrid`.
-- [ ] Avoid rendering off-screen rows unnecessarily.
-- [ ] Preserve selection across scrolling.
-- [ ] Preserve keyboard navigation behavior.
-- [ ] Support stable row identities.
-- [ ] Test large datasets and memory usage.
-- [ ] Establish performance benchmarks.
+- [x] Integrate virtualization with `DataGrid`.
+- [x] Avoid rendering off-screen rows unnecessarily.
+- [x] Preserve selection across scrolling.
+- [x] Preserve keyboard navigation behavior.
+- [x] Support stable row identities.
+- [x] Test large datasets and memory usage.
+- [x] Establish performance benchmarks.
 
 ### 4.4 FileUploader and UploadQueue
-- [ ] Support drag-and-drop uploads.
-- [ ] Support multiple files.
-- [ ] Validate file types and sizes.
-- [ ] Display upload progress.
-- [ ] Support retry and cancellation.
-- [ ] Display individual file failures.
-- [ ] Support queued uploads.
-- [ ] Support partial-success reporting.
-- [ ] Provide accessible progress announcements.
-- [ ] Keep actual upload transport configurable.
+- [x] Support drag-and-drop uploads.
+- [x] Support multiple files.
+- [x] Validate file types and sizes.
+- [x] Display upload progress.
+- [x] Support retry and cancellation.
+- [x] Display individual file failures.
+- [x] Support queued uploads.
+- [x] Support partial-success reporting.
+- [x] Provide accessible progress announcements.
+- [x] Keep actual upload transport configurable.
 
 ### 4.5 DiffViewer
-- [ ] Compare old and new values.
-- [ ] Support structured object differences.
-- [ ] Highlight added, removed, and modified fields.
-- [ ] Support long values and wrapping.
-- [ ] Support accessible change indicators.
-- [ ] Integrate with `ObjectEditor` and `AuditTrail`.
+- [x] Compare old and new values.
+- [x] Support structured object differences.
+- [x] Highlight added, removed, and modified fields.
+- [x] Support long values and wrapping.
+- [x] Support accessible change indicators.
+- [x] Integrate with `ObjectEditor` and `AuditTrail`.
 
 ### 4.6 Additional Components
-- [ ] Add `InlineEdit`.
-- [ ] Add `OverflowMenu`.
-- [ ] Add `CopyButton`.
-- [ ] Add `NotificationCenter`.
-- [ ] Add `AppBreadcrumbBar`.
-- [ ] Add `PermissionGate` where a reusable abstraction is justified.
-- [ ] Add components only when they have clear reuse value.
+- [x] Add `InlineEdit`.
+- [x] Add `OverflowMenu`.
+- [x] Add `CopyButton`.
+- [x] Add `NotificationCenter`.
+- [x] Add `AppBreadcrumbBar`.
+- [x] Add `PermissionGate` where a reusable abstraction is justified.
+- [x] Add components only when they have clear reuse value.
 
 ### Completion Criteria
 - Large collections can be rendered efficiently.
@@ -286,6 +290,8 @@ The roadmap prioritizes reliability and foundational capabilities before introdu
 - Performance improvements are supported by benchmarks.
 
 ## Phase 5: Documentation, Accessibility, and Release Quality
+
+In progress: the cookbook, representative browser and documentation checks, release guidance, and localization audit are available. Firefox, WebKit, screen-reader verification, complete documentation coverage and full translation/RTL support remain open; see `docs/release-quality.md` and `docs/localization-audit.md`.
 
 ### Objectives
 - Make the framework easy to adopt.
@@ -308,26 +314,26 @@ Every component and pattern should document:
 - [ ] Related components and patterns.
 
 ### 5.2 Enterprise Pattern Cookbook
-- [ ] Create a ListReport example.
-- [ ] Create an inventory dashboard example.
-- [ ] Create a customer master-detail example.
-- [ ] Create a purchase-order wizard example.
-- [ ] Create an approval inbox example.
-- [ ] Create an asset-management example.
-- [ ] Create an editable object-page example.
-- [ ] Use realistic mock data.
-- [ ] Demonstrate failure and empty states.
-- [ ] Ensure examples are runnable and maintainable.
+- [x] Create a ListReport example.
+- [x] Create an inventory dashboard example.
+- [x] Create a customer master-detail example.
+- [x] Create a purchase-order wizard example.
+- [x] Create an approval inbox example.
+- [x] Create an asset-management example.
+- [x] Create an editable object-page example.
+- [x] Use realistic mock data.
+- [x] Demonstrate failure and empty states.
+- [x] Ensure examples are runnable and maintainable.
 
 ### 5.3 Automated Documentation Validation
-- [ ] Compile documentation examples.
-- [ ] Run type checks.
-- [ ] Detect runtime exceptions.
+- [x] Compile documentation examples.
+- [x] Run type checks.
+- [x] Detect runtime exceptions.
 - [ ] Validate interactive behavior.
-- [ ] Run accessibility checks.
+- [x] Run accessibility checks.
 - [ ] Detect broken links and missing exports.
 - [ ] Verify that documented APIs match actual declarations.
-- [ ] Include example validation in continuous integration.
+- [x] Include example validation in continuous integration.
 
 ### 5.4 Accessibility
 - [ ] Review keyboard navigation across all interactive components.
@@ -337,7 +343,7 @@ Every component and pattern should document:
 - [ ] Verify color contrast in every supported theme.
 - [ ] Test high-contrast mode.
 - [ ] Test responsive navigation and overlays.
-- [ ] Document known accessibility limitations.
+- [x] Document known accessibility limitations.
 
 ### 5.5 Localization and Internationalization
 - [ ] Complete right-to-left layout support.
@@ -350,10 +356,10 @@ Every component and pattern should document:
 ### 5.6 Release Readiness
 - [ ] Run the complete regression suite.
 - [ ] Run supported-browser tests.
-- [ ] Verify package installation in clean applications.
+- [x] Verify package installation in clean applications.
 - [ ] Validate published declarations and styles.
 - [ ] Review public API consistency.
-- [ ] Document migration instructions.
+- [x] Document migration instructions.
 - [ ] Publish release notes.
 - [ ] Define a stable release checklist.
 

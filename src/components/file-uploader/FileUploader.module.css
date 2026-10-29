@@ -1,0 +1,5 @@
+.drop { border: 1px dashed var(--eui-color-border, #89919a); padding: 1rem; }
+.drop label { display: flex; flex-wrap: wrap; gap: .5rem; font-weight: 600; }
+.queue { padding-inline-start: 1.5rem; }
+.queue li { padding-block: .5rem; overflow-wrap: anywhere; }
+.queue progress { display: block; max-width: 100%; }

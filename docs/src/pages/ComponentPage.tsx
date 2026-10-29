@@ -46,7 +46,7 @@ export function ComponentPage({ slug }: { slug: string }) {
         <h2 id="examples">Examples</h2>
         {examples.length === 0 && <MessageStrip>No examples yet.</MessageStrip>}
         {examples.map((example) => (
-          <ExampleBlock key={example.id} example={example} />
+          <ExampleBlock key={example.id} example={example} headingLevel={slug === 'master-detail' && example.id.endsWith('02-customers') ? 2 : 3} />
         ))}
       </section>
 

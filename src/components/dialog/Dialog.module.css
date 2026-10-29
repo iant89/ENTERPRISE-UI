@@ -60,7 +60,8 @@
   align-items: center;
   gap: var(--eui-space-2);
   min-height: 3rem;
-  padding: var(--eui-space-2) var(--eui-space-2) var(--eui-space-2) var(--eui-space-4);
+  padding-block: var(--eui-space-2);
+  padding-inline: var(--eui-space-4) var(--eui-space-2);
   border-bottom: var(--eui-border-width) solid var(--eui-color-border-subtle);
 }
 
@@ -76,6 +77,8 @@
 
 .title {
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
   margin: 0;
   font-size: var(--eui-font-size-lg);
   font-weight: var(--eui-font-weight-bold);

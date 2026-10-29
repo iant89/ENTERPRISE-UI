@@ -10,11 +10,11 @@ A React + TypeScript component library for building business applications that l
 
 > **Status: 0.1, pre-release.** The package is not on npm yet. See [Installation](#installation) for using it from this repository.
 
-See the [development roadmap](https://github.com/iant89/ENTERPRISE-UI/blob/main/ROADMAP.md) and [data adapter guide](https://github.com/iant89/ENTERPRISE-UI/blob/main/docs/data-adapters.md).
+See the [development roadmap](https://github.com/iant89/ENTERPRISE-UI/blob/main/ROADMAP.md), [enterprise cookbook](https://github.com/iant89/ENTERPRISE-UI/blob/main/docs/enterprise-cookbook.md), [release-quality guide](https://github.com/iant89/ENTERPRISE-UI/blob/main/docs/release-quality.md), and [localization audit](https://github.com/iant89/ENTERPRISE-UI/blob/main/docs/localization-audit.md).
 
 ## Features
 
-- **64 documented components.** Layout, navigation, buttons, forms, data display and feedback, plus enterprise patterns:
+- **Documented components and patterns.** Layout, navigation, buttons, forms, data display and feedback, plus enterprise patterns:
   - FilterBar
   - ObjectPage
   - MasterDetail
@@ -51,7 +51,7 @@ See the [development roadmap](https://github.com/iant89/ENTERPRISE-UI/blob/main/
 ## Requirements
 
 - React and React DOM 18.2 or newer (React 19 supported)
-- Node.js 20 or newer to build or develop the library
+- Node.js 20.19+ (20.x) or 22.12+ to build or develop the library (as required by Vite 8)
 
 ## Installation
 

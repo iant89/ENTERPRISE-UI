@@ -260,3 +260,9 @@
     display: none;
   }
 }
+
+/* Fixed-height windowing: cells clip content instead of expanding the row. */
+.virtual .tbody .row .td { height: 0; padding-block: 0; border-bottom: 0; box-shadow: inset 0 -1px var(--eui-color-border-subtle); }
+.virtualContent { display: flex; align-items: center; overflow: hidden; white-space: nowrap; }
+.virtual .alignCenter .virtualContent { justify-content: center; }
+.virtual .alignEnd .virtualContent { justify-content: flex-end; }

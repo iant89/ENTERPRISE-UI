@@ -77,11 +77,11 @@ export function AccessibilityPage() {
     >
       <Grid columns={{ base: 1, md: 2, lg: 3 }} gap={4}>
         <Card title="Semantic HTML first" headingLevel={2}>Native buttons, inputs, tables, lists, fieldsets and landmarks. ARIA only where HTML has no equivalent (comboboxes, menus, trees, tabs).</Card>
-        <Card title="Keyboard support" headingLevel={2}>Every interaction works without a mouse, following WAI-ARIA Authoring Practices: roving focus, arrow keys, Home/End and type-ahead.</Card>
+        <Card title="Keyboard support" headingLevel={2}>Interactive components aim to follow WAI-ARIA keyboard patterns. Check each component’s documented shortcuts and test complete workflows with a keyboard.</Card>
         <Card title="Visible focus" headingLevel={2}>A 2px focus ring (3px in high contrast) using the <code>--eui-color-focus</code> token with ≥ 3:1 contrast, shown for keyboard users via <code>:focus-visible</code>.</Card>
-        <Card title="Focus management" headingLevel={2}>Dialogs, drawers and panels trap focus and restore it on close. Menus and popovers return focus to their trigger. Route changes focus the new page heading.</Card>
+        <Card title="Focus management" headingLevel={2}>Dialogs and drawers use focus trapping and restoration; menus and popovers manage focus. Applications must manage focus on their own route changes.</Card>
         <Card title="Announcements" headingLevel={2}>ThemeProvider hosts polite and assertive live regions. Toasts, multi-select changes and filtered result counts are announced.</Card>
-        <Card title="Motion & targets" headingLevel={2}>Durations collapse with <code>prefers-reduced-motion</code>. Touch devices get ≥ 44px hit areas; all targets meet the 24px minimum (WCAG 2.5.8).</Card>
+        <Card title="Motion & targets" headingLevel={2}>Durations collapse with <code>prefers-reduced-motion</code>. Check target sizes and spacing in your application, especially in compact density.</Card>
       </Grid>
 
       <section className="docs-section" aria-labelledby="contrast">
@@ -104,11 +104,15 @@ export function AccessibilityPage() {
         />
       </section>
 
+      <section className="docs-section" aria-labelledby="limitations">
+        <h2 id="limitations">Known limitations</h2>
+        <p>Automated checks do not establish WCAG conformance. Firefox, WebKit and screen-reader behavior need verification for the current changes. Virtualized lists and tables expose only mounted rows; use pagination or the non-virtualized alternative where this is unsuitable. Applications must test custom content, focus after routing, translated labels, contrast, and responsive layouts.</p>
+      </section>
       <section className="docs-section" aria-labelledby="testing">
         <h2 id="testing">How accessibility is tested</h2>
         <ul className={styles.checklist}>
           <li>Unit tests (Vitest + Testing Library) assert roles, names, states and keyboard behaviour, and run axe-core against every documentation example.</li>
-          <li>Browser tests (Playwright) run axe-core with colour-contrast checks on every documentation page in light, dark and high-contrast themes.</li>
+          <li>Browser tests run axe-core on documentation pages in light theme and a representative selection in dark and high-contrast themes; they do not cover every state or browser.</li>
           <li><code>scripts/contrast.mjs</code> verifies theme token pairs against WCAG thresholds.</li>
         </ul>
         <h2 id="checklist">Checklist for application teams</h2>

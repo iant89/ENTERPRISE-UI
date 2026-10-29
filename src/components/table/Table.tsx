@@ -1,4 +1,4 @@
-import { useMemo, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronRight } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import type { Tone } from '../../utilities/types';
@@ -87,6 +87,8 @@ export interface TableProps<T> {
   /** Keep the header visible while scrolling (set `maxHeight`). @default true */
   stickyHeader?: boolean;
   maxHeight?: CSSProperties['maxHeight'];
+  /** Opt in to fixed-height row windowing. Use stable getRowId and non-wrapping cells. */
+  virtualization?: { rowHeight: number; height: number; overscan?: number };
   /** `stack` turns rows into label/value cards on phones; `scroll` scrolls horizontally. @default 'scroll' */
   responsive?: 'scroll' | 'stack';
   /** Remove the outer border (when inside a Card). @default false */
@@ -134,14 +136,69 @@ export function Table<T>({
   sort, defaultSort = null, onSortChange, manualSorting = false,
   selectionMode = 'none', selectAllLabel = 'Select all rows', selectedIds, defaultSelectedIds = [], onSelectionChange,
   onRowClick, getRowLabel, getRowHighlight, loading = false, loadingRowCount = 5, emptyState,
-  density, striped = false, stickyHeader = true, maxHeight, responsive = 'scroll', borderless = false, className,
+  density, striped = false, stickyHeader = true, maxHeight, responsive = 'scroll', borderless = false, className, virtualization,
 }: TableProps<T>) {
   const [sortState, setSort] = useControllableState<SortState | null>(sort, defaultSort, onSortChange);
   const [selected, setSelected] = useControllableState<string[]>(selectedIds, defaultSelectedIds, onSelectionChange);
   const tableId = useId(undefined, 'table');
   const rows = useMemo(() => (manualSorting ? data : sortRows(data, columns, sortState)), [data, columns, sortState, manualSorting]);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [scrollTop, setScrollTop] = useState(0);
+  const [focusedRow, setFocusedRow] = useState<string | null>(null);
+  const pendingFocus = useRef<{ index: number; last: boolean } | null>(null);
+  const virtual = virtualization && responsive !== 'stack' && Number.isFinite(virtualization.height) && virtualization.height > 0 && Number.isFinite(virtualization.rowHeight) && virtualization.rowHeight >= 32 ? virtualization : undefined;
+  const virtualHeight = virtual?.height ?? 0;
+  const rowHeight = virtual?.rowHeight ?? 1;
+  const overscan = Number.isFinite(virtual?.overscan) ? Math.max(0, Math.floor(virtual?.overscan ?? 0)) : 3;
+  const position = virtual ? Math.min(scrollTop, Math.max(0, rows.length * rowHeight - virtualHeight)) : 0;
+  const start = virtual ? Math.max(0, Math.floor(position / rowHeight) - overscan - 1) : 0;
+  const end = virtual ? Math.min(rows.length, Math.ceil((position + virtualHeight) / rowHeight) + overscan) : rows.length;
   const selectedSet = useMemo(() => new Set(selected), [selected]);
   const rowIds = rows.map((row, i) => getRowId(row, i));
+  const focusedIndex = focusedRow === null ? -1 : rowIds.indexOf(focusedRow);
+  const displayedIndices = virtual ? Array.from(new Set([...Array.from({ length: Math.max(0, end - start) }, (_, index) => index + start), ...(focusedIndex >= 0 ? [focusedIndex] : [])])).sort((a, b) => a - b) : rows.map((_, index) => index);
+  useEffect(() => {
+    if (pendingFocus.current === null) return;
+    const pending = pendingFocus.current;
+    const row = wrapperRef.current?.querySelector<HTMLElement>(`[data-virtual-index="${pending.index}"]`);
+    if (row) {
+      pendingFocus.current = null;
+      const controls = Array.from(row.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])')).filter((element) => !element.hidden && !element.closest('[hidden], [inert]'));
+      (pending.last ? controls[controls.length - 1] ?? row : row).focus();
+    }
+  });
+  const moveVirtualRow = (event: KeyboardEvent<HTMLTableRowElement>, index: number) => {
+    if (!virtual || event.target !== event.currentTarget || (event.key !== 'ArrowDown' && event.key !== 'ArrowUp')) return;
+    const next = Math.max(0, Math.min(rows.length - 1, index + (event.key === 'ArrowDown' ? 1 : -1)));
+    event.preventDefault();
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+    pendingFocus.current = { index: next, last: false };
+    setFocusedRow(rowIds[next]);
+    const headerHeight = wrapper.querySelector('thead')?.getBoundingClientRect().height ?? 0;
+    const top = headerHeight + next * rowHeight;
+    if (top < wrapper.scrollTop + headerHeight) wrapper.scrollTop = Math.max(0, top - headerHeight);
+    else if (top + rowHeight > wrapper.scrollTop + virtual.height) wrapper.scrollTop = top + rowHeight - virtual.height;
+    setScrollTop(wrapper.scrollTop);
+  };
+  const handleVirtualTab = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!virtual || event.key !== 'Tab' || event.altKey || event.ctrlKey || event.metaKey) return;
+    const target = event.target as HTMLElement;
+    const row = target.closest<HTMLElement>('[data-virtual-index]');
+    if (!row || !event.currentTarget.contains(row)) return;
+    const index = Number(row.dataset.virtualIndex);
+    const controls = Array.from(row.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])')).filter((element) => !element.hidden && !element.closest('[hidden], [inert]'));
+    const atBoundary = event.shiftKey ? target === row : target === (controls[controls.length - 1] ?? row);
+    const next = index + (event.shiftKey ? -1 : 1);
+    if (!atBoundary || next < 0 || next >= rows.length || displayedIndices.includes(next)) return;
+    event.preventDefault();
+    pendingFocus.current = { index: next, last: event.shiftKey };
+    setFocusedRow(rowIds[next]);
+    const headerHeight = event.currentTarget.querySelector('thead')?.getBoundingClientRect().height ?? 0;
+    const top = headerHeight + next * rowHeight;
+    event.currentTarget.scrollTop = event.shiftKey ? Math.max(0, top - headerHeight) : Math.max(0, top + rowHeight - virtual.height);
+    setScrollTop(event.currentTarget.scrollTop);
+  };
   const allSelected = rowIds.length > 0 && rowIds.every((id) => selectedSet.has(id));
   const someSelected = !allSelected && rowIds.some((id) => selectedSet.has(id));
   const hasSelection = selectionMode !== 'none';
@@ -177,6 +234,11 @@ export function Table<T>({
 
   return (
     <div
+      ref={wrapperRef}
+      onScroll={(event) => { if (virtual) setScrollTop(event.currentTarget.scrollTop); }}
+      onKeyDownCapture={handleVirtualTab}
+      onFocusCapture={(event) => { if (virtual && !(event.target as HTMLElement).closest('[data-virtual-index]')) setFocusedRow(null); }}
+      onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocusedRow(null); }}
       className={cx(
         styles.wrapper,
         stickyHeader && styles.sticky,
@@ -185,21 +247,22 @@ export function Table<T>({
         striped && styles.striped,
         borderless && styles.borderless,
         className,
+        virtual && styles.virtual,
       )}
-      style={{ maxHeight }}
-      tabIndex={maxHeight ? 0 : undefined}
-      role={maxHeight ? 'region' : undefined}
-      aria-labelledby={maxHeight && caption ? `${tableId}-caption` : undefined}
-      aria-label={maxHeight && !caption ? ariaLabel : undefined}
+      style={{ maxHeight: virtual?.height ?? maxHeight, height: virtual?.height }}
+      tabIndex={0}
+      role={maxHeight || virtual ? 'region' : undefined}
+      aria-labelledby={(maxHeight || virtual) && caption ? `${tableId}-caption` : undefined}
+      aria-label={(maxHeight || virtual) && !caption ? ariaLabel : undefined}
     >
-      <table className={styles.table} aria-label={caption ? undefined : ariaLabel} aria-busy={loading || undefined} aria-rowcount={loading ? -1 : undefined}>
+      <table className={styles.table} aria-label={caption ? undefined : ariaLabel} aria-busy={loading || undefined} aria-rowcount={loading ? -1 : virtual ? rows.length + 1 + (hasFooter ? 1 : 0) : undefined}>
         {caption && (
           <caption id={`${tableId}-caption`} className={cx(styles.caption, hideCaption && 'eui-visually-hidden')}>
             {caption}
           </caption>
         )}
         <thead className={styles.thead}>
-          <tr>
+          <tr aria-rowindex={virtual ? 1 : undefined}>
             {hasSelection && (
               <th scope="col" className={cx(styles.th, styles.selectCell)}>
                 {selectionMode === 'multiple' ? (
@@ -259,26 +322,33 @@ export function Table<T>({
             </tr>
           )}
           {!loading &&
-            rows.map((row, rowIndex) => {
+            displayedIndices.map((rowIndex, position) => {
+              const row = rows[rowIndex];
+              const previous = position ? displayedIndices[position - 1] + 1 : 0;
+              const gap = rowIndex - previous;
               const id = rowIds[rowIndex];
               const isSelected = selectedSet.has(id);
               const highlight = getRowHighlight?.(row);
               const rowLabel = getRowLabel?.(row) ?? `row ${rowIndex + 1}`;
-              return (
+              return <Fragment key={id}>
+                {virtual && gap > 0 && <tr aria-hidden="true"><td colSpan={colCount} style={{ height: gap * rowHeight, padding: 0, border: 0 }} /></tr>}
                 <tr
-                  key={id}
+                  data-virtual-index={virtual ? rowIndex : undefined}
+                  aria-rowindex={virtual ? rowIndex + 2 : undefined}
+                  onFocus={() => { if (virtual) setFocusedRow(id); }}
+                  style={virtual ? { height: rowHeight } : undefined}
                   className={cx(styles.row, onRowClick && styles.clickable)}
                   aria-selected={hasSelection ? isSelected : undefined}
-                  tabIndex={onRowClick ? 0 : undefined}
+                  tabIndex={onRowClick || virtual ? 0 : undefined}
                   onClick={onRowClick ? (event) => {
                     if ((event.target as HTMLElement).closest('button, a, input, [role="checkbox"]')) return;
                     onRowClick(row);
                   } : undefined}
-                  onKeyDown={onRowClick || hasSelection ? (event) => onRowKeyDown(event, row) : undefined}
+                  onKeyDown={onRowClick || hasSelection || virtual ? (event) => { moveVirtualRow(event, rowIndex); if (!event.defaultPrevented) onRowKeyDown(event, row); } : undefined}
                 >
                   {hasSelection && (
                     <td className={cx(styles.td, styles.selectCell, highlight && styles.highlight, highlight && styles[`hl-${highlight}`])}>
-                      {selectionMode === 'multiple' ? (
+                      <div className={virtual ? styles.virtualContent : undefined} style={virtual ? { height: rowHeight } : undefined}>{selectionMode === 'multiple' ? (
                         <Checkbox aria-label={`Select ${rowLabel}`} checked={isSelected} onChange={() => toggleRow(id)} />
                       ) : (
                         <input
@@ -289,7 +359,7 @@ export function Table<T>({
                           onChange={() => toggleRow(id)}
                           style={{ accentColor: 'var(--eui-color-primary)', width: 16, height: 16 }}
                         />
-                      )}
+                      )}</div>
                     </td>
                   )}
                   {columns.map((column, c) => {
@@ -309,22 +379,23 @@ export function Table<T>({
                         )}
                         style={column.rowHeader ? { fontWeight: 'inherit', textAlign: column.align === 'end' ? 'end' : 'start' } : undefined}
                       >
-                        {content}
+                        {virtual ? <div className={styles.virtualContent} style={{ height: rowHeight }}>{content}</div> : content}
                       </Cell>
                     );
                   })}
                   {onRowClick && (
                     <td className={cx(styles.td, styles.navCell)} aria-hidden="true">
-                      <ChevronRight />
+                      {virtual ? <div className={styles.virtualContent} style={{ height: rowHeight }}><ChevronRight /></div> : <ChevronRight />}
                     </td>
                   )}
                 </tr>
-              );
+              </Fragment>;
             })}
+          {!loading && virtual && displayedIndices.length > 0 && displayedIndices[displayedIndices.length - 1] < rows.length - 1 && <tr aria-hidden="true"><td colSpan={colCount} style={{ height: (rows.length - 1 - displayedIndices[displayedIndices.length - 1]) * rowHeight, padding: 0, border: 0 }} /></tr>}
         </tbody>
         {hasFooter && !loading && rows.length > 0 && (
           <tfoot className={styles.tfoot}>
-            <tr>
+            <tr aria-rowindex={virtual ? rows.length + 2 : undefined}>
               {hasSelection && <td className={styles.td} />}
               {columns.map((column) => (
                 <td key={column.id} className={cx(styles.td, alignClass(column.align))} data-label={getColumnText(column)}>

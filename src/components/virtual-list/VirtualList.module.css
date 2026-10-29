@@ -1,0 +1,5 @@
+.viewport { overflow: auto; border: 1px solid var(--eui-color-border, #89919a); }
+.viewport:focus-visible { outline: 2px solid var(--eui-color-primary, #0064d9); outline-offset: 2px; }
+.item { box-sizing: border-box; overflow: hidden; padding: .5rem; }
+.item[data-active] { outline: 1px solid currentColor; outline-offset: -1px; }
+.item[aria-selected='true'] { background: var(--eui-color-primary-subtle, #e5efff); color: var(--eui-color-text, #1a2733); }

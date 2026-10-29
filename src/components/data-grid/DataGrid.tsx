@@ -221,7 +221,7 @@ export function DataGrid<T>({
         <div className={styles.selectionBar} role="status">
           <strong>{selected.length} selected</strong>
           {selectionActions?.(selected)}
-          <Button size="sm" variant="tertiary" onClick={() => setSelected([])}>
+          <Button size="sm" variant="tertiary" neutral onClick={() => setSelected([])}>
             Clear selection
           </Button>
         </div>

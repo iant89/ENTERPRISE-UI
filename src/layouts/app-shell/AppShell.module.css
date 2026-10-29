@@ -1,15 +1,16 @@
 .shell {
+  position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
   background: var(--eui-color-background);
 }
 
 .fullHeight {
   height: 100vh;
   height: 100dvh;
-  overflow: hidden;
 }
 
 .skipLink {
@@ -53,7 +54,7 @@
   overflow: hidden;
 }
 
-.fullHeight .nav {
+.nav {
   overflow-y: auto;
 }
 
@@ -69,7 +70,7 @@
   outline: none;
 }
 
-.fullHeight .main {
+.main {
   overflow: auto;
 }
 
@@ -115,4 +116,10 @@
   padding: 0 var(--eui-space-2) 0 var(--eui-space-4);
   border-bottom: var(--eui-border-width) solid var(--eui-color-border-subtle);
   font-weight: var(--eui-font-weight-bold);
+}
+
+/* Keyframes are local to this module (CSS Modules scopes animation names). */
+@keyframes eui-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

@@ -23,7 +23,11 @@ export interface AppShellProps extends HTMLAttributes<HTMLDivElement> {
   /** Defaults to collapsed on tablets and expanded on desktops. */
   defaultNavCollapsed?: boolean;
   onNavCollapsedChange?: (collapsed: boolean) => void;
-  /** Fill the viewport and scroll the main area (instead of the page). @default true */
+  /**
+   * `true` fills the viewport; `false` fills the parent element (for embedding).
+   * Either way the navigation and main area scroll independently.
+   * @default true
+   */
   fullHeight?: boolean;
   /** Label for the skip link. @default 'Skip to main content' */
   skipLinkLabel?: string;

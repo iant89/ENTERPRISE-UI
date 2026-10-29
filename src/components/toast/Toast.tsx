@@ -123,13 +123,17 @@ export function ToastProvider({ children, position = 'bottom-center', limit = 4 
   return (
     <ToastContext.Provider value={api}>
       {children}
-      <Portal>
-        <ol className={cx(styles.region, styles[position])} aria-label="Notifications">
-          {toasts.map((toast) => (
-            <ToastItem key={toast.id} toast={toast} onDismiss={dismiss} />
-          ))}
-        </ol>
-      </Portal>
+      {toasts.length > 0 && (
+        <Portal>
+          <section aria-label="Notifications">
+            <ol className={cx(styles.region, styles[position])}>
+              {toasts.map((toast) => (
+                <ToastItem key={toast.id} toast={toast} onDismiss={dismiss} />
+              ))}
+            </ol>
+          </section>
+        </Portal>
+      )}
     </ToastContext.Provider>
   );
 }

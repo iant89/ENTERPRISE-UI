@@ -22,7 +22,8 @@ export interface ComputePositionOptions {
  */
 export function computePosition(anchor: Rect, floating: { width: number; height: number }, options: ComputePositionOptions) {
   const { offset, viewport, padding = 8 } = options;
-  let [side, align = 'center'] = options.placement.split('-') as [string, string?];
+  const [initialSide, align = 'center'] = options.placement.split('-') as [string, string?];
+  let side = initialSide;
 
   const fits = (s: string) => {
     if (s === 'bottom') return anchor.top + anchor.height + offset + floating.height <= viewport.height - padding;
@@ -33,8 +34,8 @@ export function computePosition(anchor: Rect, floating: { width: number; height:
   const opposite: Record<string, string> = { top: 'bottom', bottom: 'top', left: 'right', right: 'left' };
   if (!fits(side) && fits(opposite[side])) side = opposite[side];
 
-  let top = 0;
-  let left = 0;
+  let top: number;
+  let left: number;
   if (side === 'top' || side === 'bottom') {
     top = side === 'bottom' ? anchor.top + anchor.height + offset : anchor.top - offset - floating.height;
     if (align === 'start') left = anchor.left;

@@ -39,3 +39,8 @@
 .inherit {
   color: inherit;
 }
+
+/* Keyframes are local to this module (CSS Modules scopes animation names). */
+@keyframes eui-spin {
+  to { transform: rotate(360deg); }
+}

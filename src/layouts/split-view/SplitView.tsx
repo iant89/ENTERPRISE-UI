@@ -41,7 +41,8 @@ export const SplitView = forwardRef<HTMLDivElement, SplitViewProps>(function Spl
   const stacked = useMediaQuery(`(max-width: ${Math.max(collapseBelow - 1, 0)}px)`) && collapseBelow > 0;
   const horizontal = orientation === 'horizontal';
   const sizeStyle: CSSProperties = horizontal ? { width: startSize } : { height: startSize };
-  const regionProps = (label?: string) => (label ? { role: 'region', 'aria-label': label } : {});
+  // Labelled panes are focusable regions so keyboard users can scroll them.
+  const regionProps = (label?: string) => (label ? { role: 'region', 'aria-label': label, tabIndex: 0 } : {});
 
   return (
     <div ref={ref} className={cx(styles.split, !horizontal && styles.vertical, stacked && styles.stacked, bordered && styles.bordered, className)} {...rest}>
@@ -54,7 +55,8 @@ export const SplitView = forwardRef<HTMLDivElement, SplitViewProps>(function Spl
           maxSize={maxStartSize}
           onResize={onStartSizeChange}
           handleLabel={`Resize ${startLabel ?? 'panes'}`}
-          {...regionProps(startLabel)}
+          focusableContent={!!startLabel}
+          {...(startLabel ? { role: 'region', 'aria-label': startLabel } : {})}
         >
           {start}
         </ResizablePanel>

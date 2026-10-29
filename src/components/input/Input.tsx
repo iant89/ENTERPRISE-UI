@@ -53,4 +53,3 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   );
 });
 
-export { styles as inputBoxStyles };

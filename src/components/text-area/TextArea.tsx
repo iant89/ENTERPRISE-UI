@@ -2,7 +2,7 @@ import { forwardRef, useLayoutEffect, useRef, useState, type TextareaHTMLAttribu
 import { cx } from '../../utilities/cx';
 import { useMergedRefs } from '../../utilities/refs';
 import { useFormControl, type FieldProps } from '../form-field';
-import { inputBoxStyles } from '../input';
+import inputBoxStyles from '../input/InputBox.module.css';
 import styles from './TextArea.module.css';
 
 export interface TextAreaProps extends FieldProps, TextareaHTMLAttributes<HTMLTextAreaElement> {

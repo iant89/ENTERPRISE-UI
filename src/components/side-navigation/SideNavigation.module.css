@@ -85,7 +85,7 @@
 
 .item[aria-current='page'] {
   background: var(--eui-color-surface-selected);
-  color: var(--eui-color-primary);
+  color: var(--eui-color-selected-text);
   font-weight: var(--eui-font-weight-semibold);
 }
 

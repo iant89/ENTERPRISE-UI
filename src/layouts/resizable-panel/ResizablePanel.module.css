@@ -109,3 +109,8 @@
   width: 28px;
   height: 16px;
 }
+
+.content:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: calc(-1 * var(--eui-focus-width));
+}

@@ -44,33 +44,46 @@ export const FilterBar = forwardRef<HTMLFormElement, FilterBarProps>(function Fi
     event.preventDefault();
     onGo?.();
   };
+  const actionButtons = (
+    <>
+      {actions}
+      {children && (
+        <Button variant="tertiary" icon={<Filter />} aria-expanded={isExpanded} aria-controls={filtersId} onClick={() => setExpanded(!isExpanded)}>
+          {isExpanded ? 'Hide filters' : 'Show filters'}
+          {activeCount > 0 && ` (${activeCount})`}
+        </Button>
+      )}
+      {onClear && (
+        <Button variant="tertiary" onClick={onClear} disabled={activeCount === 0}>
+          Clear
+        </Button>
+      )}
+      {!liveMode && (
+        <Button type="submit" variant="primary">
+          Go
+        </Button>
+      )}
+    </>
+  );
+  const hasTop = title != null || search != null;
   return (
     <form ref={ref} role="search" aria-label={ariaLabel ?? 'Filters'} className={cx(styles.bar, className)} onSubmit={submit} noValidate {...rest}>
-      <div className={styles.top}>
-        {title && <h2 className={styles.title}>{title}</h2>}
-        {search && <div className={styles.search}>{search}</div>}
-        <div className={styles.spacer} />
-        {actions}
-        {children && (
-          <Button variant="tertiary" icon={<Filter />} aria-expanded={isExpanded} aria-controls={filtersId} onClick={() => setExpanded(!isExpanded)}>
-            {isExpanded ? 'Hide filters' : 'Show filters'}
-            {activeCount > 0 && ` (${activeCount})`}
-          </Button>
-        )}
-        {onClear && (
-          <Button variant="tertiary" onClick={onClear} disabled={activeCount === 0}>
-            Clear
-          </Button>
-        )}
-        {!liveMode && (
-          <Button type="submit" variant="primary">
-            Go
-          </Button>
-        )}
-      </div>
-      {children && (
-        <div id={filtersId} className={styles.filters} hidden={!isExpanded}>
-          {children}
+      {hasTop && (
+        <div className={styles.top}>
+          {title && <h2 className={styles.title}>{title}</h2>}
+          {search && <div className={styles.search}>{search}</div>}
+          <div className={styles.spacer} />
+          {actionButtons}
+        </div>
+      )}
+      {(children || !hasTop) && (
+        <div className={styles.body}>
+          {children && (
+            <div id={filtersId} className={styles.filters} hidden={!isExpanded}>
+              {children}
+            </div>
+          )}
+          {!hasTop && <div className={styles.actions}>{actionButtons}</div>}
         </div>
       )}
     </form>

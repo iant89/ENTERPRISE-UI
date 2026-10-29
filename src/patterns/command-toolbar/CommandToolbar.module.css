@@ -43,11 +43,18 @@
 
 .measure {
   position: absolute;
-  visibility: hidden;
-  pointer-events: none;
-  display: flex;
-  gap: var(--eui-space-2);
   top: 0;
   left: 0;
+  display: flex;
+  gap: var(--eui-space-2);
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
   white-space: nowrap;
+}
+
+.measure > * {
+  flex-shrink: 0;
 }

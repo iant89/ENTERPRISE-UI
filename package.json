@@ -2,7 +2,6 @@
   "name": "@enterprise-ui/react",
   "version": "0.1.0",
   "description": "A Fiori-inspired enterprise React component library: design tokens, themes, components, layouts and enterprise patterns.",
-  "license": "MIT",
   "type": "module",
   "sideEffects": [
     "**/*.css"
@@ -15,8 +14,14 @@
       "types": "./dist/types/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./styles.css": "./dist/styles.css",
-    "./tokens.css": "./dist/tokens.css",
+    "./styles.css": {
+      "types": "./dist/styles.css.d.ts",
+      "default": "./dist/styles.css"
+    },
+    "./tokens.css": {
+      "types": "./dist/tokens.css.d.ts",
+      "default": "./dist/tokens.css"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -32,13 +37,13 @@
     "fiori"
   ],
   "scripts": {
-    "dev": "vite --config docs/vite.config.ts",
+    "dev": "npm run docs:api && vite --config docs/vite.config.ts",
     "build": "npm run build:lib && npm run build:docs",
-    "build:lib": "vite build && tsc -p tsconfig.build.json && node scripts/copy-tokens.mjs",
+    "build:lib": "vite build && tsc -p tsconfig.build.json && node scripts/postbuild.mjs",
     "build:docs": "npm run docs:api && vite build --config docs/vite.config.ts",
-    "preview": "vite preview --config docs/vite.config.ts",
+    "preview": "vite preview --config docs/vite.config.ts --strictPort",
     "docs:api": "node scripts/extract-api.mjs",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "npm run docs:api && tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -75,5 +80,8 @@
     "typescript-eslint": "^8.72.1",
     "vite": "^8.3.5",
     "vitest": "^5.0.5"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

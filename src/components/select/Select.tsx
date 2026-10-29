@@ -7,8 +7,9 @@ import { useControllableState } from '../../hooks/useControllableState';
 import { useClickOutside } from '../../hooks/useDismiss';
 import { usePosition } from '../../hooks/usePosition';
 import { useFormControl, type FieldProps } from '../form-field';
-import { inputBoxStyles } from '../input';
-import { ListboxPopup, listboxStyles as styles, optionId, type SelectOption } from '../listbox';
+import inputBoxStyles from '../input/InputBox.module.css';
+import { ListboxPopup, optionId, type SelectOption } from '../listbox';
+import styles from '../listbox/Listbox.module.css';
 
 export interface SelectProps<V extends string = string> extends FieldProps {
   options: SelectOption<V>[];

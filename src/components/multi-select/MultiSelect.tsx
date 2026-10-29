@@ -8,8 +8,9 @@ import { useClickOutside } from '../../hooks/useDismiss';
 import { usePosition } from '../../hooks/usePosition';
 import { useAnnouncer } from '../../themes/ThemeProvider';
 import { useFormControl, type FieldProps } from '../form-field';
-import { inputBoxStyles } from '../input';
-import { ListboxPopup, listboxStyles, optionId, type SelectOption } from '../listbox';
+import inputBoxStyles from '../input/InputBox.module.css';
+import { ListboxPopup, optionId, type SelectOption } from '../listbox';
+import listboxStyles from '../listbox/Listbox.module.css';
 import styles from './MultiSelect.module.css';
 
 export interface MultiSelectProps extends FieldProps {

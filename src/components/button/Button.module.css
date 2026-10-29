@@ -43,7 +43,7 @@
 
 .button:active:not(:disabled):not([aria-disabled='true']),
 .button[aria-pressed='true'],
-.button[aria-expanded='true'] {
+.button[aria-haspopup][aria-expanded='true'] {
   background: var(--_bg-active);
 }
 
@@ -108,7 +108,8 @@
 .pressed {
   --_bg: var(--eui-color-primary-subtle);
   --_border: var(--eui-color-primary);
-  --_fg: var(--eui-color-primary);
+  --_fg: var(--eui-color-selected-text);
+  --_fg-hover: var(--eui-color-selected-text);
 }
 
 .sm {

@@ -10,7 +10,7 @@ import { useClickOutside } from '../../hooks/useDismiss';
 import { usePosition } from '../../hooks/usePosition';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
 import { useFormControl, type FieldProps } from '../form-field';
-import { inputBoxStyles as styles } from '../input';
+import styles from '../input/InputBox.module.css';
 import { Calendar } from '../calendar';
 import floating from '../popover/Floating.module.css';
 

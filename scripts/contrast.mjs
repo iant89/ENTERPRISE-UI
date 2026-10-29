@@ -16,7 +16,7 @@ const pairs = [
   ['on-success', 'success', 4.5], ['on-warning', 'warning', 4.5], ['on-error', 'error', 4.5],
   ['border-strong', 'surface', 3], ['focus', 'surface', 3], ['focus', 'background', 3],
   ['on-tooltip', 'tooltip', 4.5], ['text', 'surface-selected', 4.5], ['text', 'surface-alt', 4.5],
-  ['primary', 'surface', 3], ['icon', 'surface', 3], ['text-placeholder', 'surface', 4.5],
+  ['primary', 'surface', 3], ['selected-text', 'surface-selected', 4.5], ['selected-text', 'primary-subtle', 4.5], ['selected-text', 'surface', 4.5], ['icon', 'surface', 3], ['text-placeholder', 'surface', 4.5],
   ...[1, 2, 3, 4, 5, 6, 7, 8].map((n) => [`accent-${n}`, 'surface', 3]),
 ];
 

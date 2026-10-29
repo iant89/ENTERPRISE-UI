@@ -38,6 +38,8 @@ export interface TableColumn<T> {
   rowHeader?: boolean;
   /** Footer content (e.g. totals). */
   footer?: ReactNode;
+  /** Allow cell text to wrap in `scroll` mode (cells stay on one line by default). @default false */
+  wrap?: boolean;
 }
 
 export type TableDensity = 'cozy' | 'compact' | 'condensed';
@@ -176,7 +178,7 @@ export function Table<T>({
       className={cx(
         styles.wrapper,
         stickyHeader && styles.sticky,
-        responsive === 'stack' && styles.stack,
+        responsive === 'stack' ? styles.stack : styles.scroll,
         density && styles[density],
         striped && styles.striped,
         borderless && styles.borderless,
@@ -298,6 +300,7 @@ export function Table<T>({
                         data-label={getColumnText(column)}
                         className={cx(
                           styles.td,
+                          column.wrap && styles.wrap,
                           alignClass(column.align),
                           !hasSelection && c === 0 && highlight && styles.highlight,
                           !hasSelection && c === 0 && highlight && styles[`hl-${highlight}`],

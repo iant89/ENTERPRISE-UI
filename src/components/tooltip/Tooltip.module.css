@@ -12,3 +12,9 @@
   animation: eui-fade-in var(--eui-duration-fast) var(--eui-easing-standard);
   overflow-wrap: break-word;
 }
+
+/* Keyframes are local to this module (CSS Modules scopes animation names). */
+@keyframes eui-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

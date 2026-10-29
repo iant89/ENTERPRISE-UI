@@ -1,7 +1,8 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cx } from '../../utilities/cx';
 import { Spinner } from '../spinner';
-import { buttonStyles as styles, type ButtonSize, type ButtonVariant } from '../button';
+import type { ButtonSize, ButtonVariant } from '../button';
+import styles from '../button/Button.module.css';
 
 export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   /** The icon to display. */

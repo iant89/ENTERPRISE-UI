@@ -87,6 +87,7 @@
 }
 
 .unit {
+  white-space: nowrap;
   color: var(--eui-color-text-secondary);
   font-size: var(--eui-font-size-md);
 }

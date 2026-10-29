@@ -62,3 +62,8 @@
   position: relative;
   display: inline-flex;
 }
+
+.initials::before {
+  content: attr(data-initials);
+  content: attr(data-initials) / '';
+}

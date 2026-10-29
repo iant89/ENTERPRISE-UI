@@ -21,6 +21,8 @@ export interface ResizablePanelProps extends Omit<HTMLAttributes<HTMLDivElement>
   step?: number;
   /** Accessible label for the separator. @default 'Resize panel' */
   handleLabel?: string;
+  /** Make the scrollable content area focusable so keyboard users can scroll it. @default false */
+  focusableContent?: boolean;
   children: ReactNode;
 }
 
@@ -29,7 +31,7 @@ export interface ResizablePanelProps extends Omit<HTMLAttributes<HTMLDivElement>
  * arrow keys resize, Home/End jump to the min/max size.
  */
 export const ResizablePanel = forwardRef<HTMLDivElement, ResizablePanelProps>(function ResizablePanel(
-  { size, defaultSize = 320, onResize, minSize = 160, maxSize = 800, handle = 'end', step = 16, handleLabel = 'Resize panel', className, style, children, ...rest },
+  { size, defaultSize = 320, onResize, minSize = 160, maxSize = 800, handle = 'end', step = 16, handleLabel = 'Resize panel', focusableContent = false, className, style, children, ...rest },
   ref,
 ) {
   const [current, setCurrent] = useControllableState(size, defaultSize, onResize);
@@ -68,7 +70,9 @@ export const ResizablePanel = forwardRef<HTMLDivElement, ResizablePanelProps>(fu
   const Grip = horizontal ? GripVertical : GripHorizontal;
   return (
     <div ref={ref} className={cx(styles.panel, className)} style={{ ...(horizontal ? { width: value } : { height: value }), ...style } as CSSProperties} {...rest}>
-      <div className={styles.content}>{children}</div>
+      <div className={styles.content} tabIndex={focusableContent ? 0 : undefined}>
+        {children}
+      </div>
       <div
         role="separator"
         tabIndex={0}

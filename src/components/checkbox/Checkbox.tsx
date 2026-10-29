@@ -83,4 +83,3 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
   );
 });
 
-export { styles as checkboxStyles };

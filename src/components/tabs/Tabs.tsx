@@ -1,4 +1,4 @@
-import { createContext, forwardRef, useContext, type ButtonHTMLAttributes, type HTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
+import { createContext, forwardRef, useCallback, useContext, useEffect, useMemo, useState, type ButtonHTMLAttributes, type HTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
 import { cx } from '../../utilities/cx';
 import { getNavigationIndex } from '../../utilities/keyboard';
 import { useControllableState } from '../../hooks/useControllableState';
@@ -11,6 +11,9 @@ interface TabsContextValue {
   baseId: string;
   activation: 'automatic' | 'manual';
   variant: 'line' | 'contained';
+  /** Values of mounted TabPanels, so tabs only reference panels that exist. */
+  panels: Set<string>;
+  registerPanel: (value: string) => () => void;
 }
 
 const TabsContext = createContext<TabsContextValue | null>(null);
@@ -45,8 +48,22 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
 ) {
   const [current, setCurrent] = useControllableState(value, defaultValue, onValueChange);
   const baseId = useId(undefined, 'tabs');
+  const [panels, setPanels] = useState<Set<string>>(() => new Set());
+  const registerPanel = useCallback((panel: string) => {
+    setPanels((prev) => new Set(prev).add(panel));
+    return () =>
+      setPanels((prev) => {
+        const next = new Set(prev);
+        next.delete(panel);
+        return next;
+      });
+  }, []);
+  const ctx = useMemo(
+    () => ({ value: current, setValue: setCurrent, baseId, activation, variant, panels, registerPanel }),
+    [current, setCurrent, baseId, activation, variant, panels, registerPanel],
+  );
   return (
-    <TabsContext.Provider value={{ value: current, setValue: setCurrent, baseId, activation, variant }}>
+    <TabsContext.Provider value={ctx}>
       <div ref={ref} className={cx(styles.tabs, className)} {...rest}>
         {children}
       </div>
@@ -101,7 +118,7 @@ export const Tab = forwardRef<HTMLButtonElement, TabProps>(function Tab({ value,
       role="tab"
       id={tabId(ctx.baseId, value)}
       aria-selected={selected}
-      aria-controls={panelId(ctx.baseId, value)}
+      aria-controls={ctx.panels.has(value) ? panelId(ctx.baseId, value) : undefined}
       tabIndex={selected ? 0 : -1}
       className={cx(styles.tab, className)}
       onClick={(event) => {
@@ -130,7 +147,10 @@ export interface TabPanelProps extends HTMLAttributes<HTMLDivElement> {
 export const TabPanel = forwardRef<HTMLDivElement, TabPanelProps>(function TabPanel({ value, keepMounted = false, flush = false, className, children, ...rest }, ref) {
   const ctx = useTabs();
   const selected = ctx.value === value;
-  if (!selected && !keepMounted) return null;
+  const mounted = selected || keepMounted;
+  const { registerPanel } = ctx;
+  useEffect(() => (mounted ? registerPanel(value) : undefined), [mounted, value, registerPanel]);
+  if (!mounted) return null;
   return (
     <div
       ref={ref}

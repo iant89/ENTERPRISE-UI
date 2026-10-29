@@ -1,7 +1,7 @@
 .box {
   flex-wrap: wrap;
   align-items: center;
-  padding-block: 2px;
+  row-gap: 2px;
   padding-inline-start: var(--eui-space-1);
 }
 

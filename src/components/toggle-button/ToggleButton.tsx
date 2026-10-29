@@ -1,7 +1,8 @@
 import { forwardRef } from 'react';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
-import { Button, buttonStyles, type ButtonProps } from '../button';
+import { Button, type ButtonProps } from '../button';
+import buttonStyles from '../button/Button.module.css';
 
 export interface ToggleButtonProps extends Omit<ButtonProps, 'onChange' | 'variant'> {
   /** Controlled pressed state. */

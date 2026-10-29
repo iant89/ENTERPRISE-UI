@@ -18,7 +18,7 @@ describe('Toast', () => {
       </ToastProvider>,
     );
     await user.click(screen.getByRole('button', { name: 'Save' }));
-    expect(screen.getByRole('list', { name: 'Notifications' })).toHaveTextContent('Order saved');
+    expect(screen.getByRole('region', { name: 'Notifications' })).toHaveTextContent('Order saved');
     await act(async () => {
       vi.advanceTimersByTime(50);
     });
@@ -38,7 +38,7 @@ describe('Toast', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Save' }));
     await user.click(screen.getByRole('button', { name: 'Dismiss notification' }));
-    expect(screen.getByRole('list', { name: 'Notifications' })).toBeEmptyDOMElement();
+    expect(screen.queryByRole('region', { name: 'Notifications' })).not.toBeInTheDocument();
   });
 
   it('throws outside a provider', () => {

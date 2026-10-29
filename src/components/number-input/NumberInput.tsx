@@ -4,7 +4,7 @@ import { cx } from '../../utilities/cx';
 import { clamp } from '../../utilities/format';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useFormControl, type FieldProps } from '../form-field';
-import { inputBoxStyles as styles } from '../input';
+import styles from '../input/InputBox.module.css';
 
 export interface NumberInputProps
   extends FieldProps,

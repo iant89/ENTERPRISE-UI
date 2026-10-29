@@ -51,3 +51,9 @@
 .stacked [role='separator'] {
   display: none;
 }
+
+.start:focus-visible,
+.end:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: calc(-1 * var(--eui-focus-width));
+}

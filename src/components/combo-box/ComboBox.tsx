@@ -7,9 +7,10 @@ import { useControllableState } from '../../hooks/useControllableState';
 import { useClickOutside } from '../../hooks/useDismiss';
 import { usePosition } from '../../hooks/usePosition';
 import { useFormControl, type FieldProps } from '../form-field';
-import { inputBoxStyles } from '../input';
+import inputBoxStyles from '../input/InputBox.module.css';
 import { Spinner } from '../spinner';
-import { ListboxPopup, listboxStyles, optionId, type SelectOption } from '../listbox';
+import { ListboxPopup, optionId, type SelectOption } from '../listbox';
+import listboxStyles from '../listbox/Listbox.module.css';
 
 export interface ComboBoxProps
   extends FieldProps,

@@ -83,3 +83,14 @@
   border-top: var(--eui-border-width) solid var(--eui-color-border-subtle);
   background: var(--eui-color-surface-alt);
 }
+
+/* Keyframes are local to this module (CSS Modules scopes animation names). */
+@keyframes eui-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes eui-slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}

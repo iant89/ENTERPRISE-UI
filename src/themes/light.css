@@ -10,6 +10,8 @@
   --eui-color-on-primary: #ffffff;
   --eui-color-primary-subtle: #e5f0fa;
   --eui-color-primary-subtle-hover: #d1e6f8;
+  /* Brand-coloured text on selected (subtle) backgrounds — 4.5:1 or better. */
+  --eui-color-selected-text: #0854a0;
   --eui-color-link: #0a6ed1;
   --eui-color-link-hover: #0854a0;
 

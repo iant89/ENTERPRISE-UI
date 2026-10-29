@@ -21,13 +21,15 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 
 /** Compact label or counter for status, categories and notification counts. */
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
-  { children, tone = 'neutral', solid = false, count, max = 99, dot = false, icon, className, ...rest },
+  { children, tone = 'neutral', solid = false, count, max = 99, dot = false, icon, className, 'aria-label': ariaLabel, ...rest },
   ref,
 ) {
   const isCount = count !== undefined;
   return (
     <span
       ref={ref}
+      role={ariaLabel ? 'img' : undefined}
+      aria-label={ariaLabel}
       className={cx(styles.badge, styles[tone], (solid || isCount || dot) && styles.solid, isCount && styles.count, dot && styles.dot, className)}
       {...rest}
     >

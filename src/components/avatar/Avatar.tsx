@@ -24,12 +24,13 @@ export interface AvatarProps extends HTMLAttributes<HTMLSpanElement> {
 
 /** Represents a person or object with an image, initials or icon. */
 export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
-  { name, src, icon, size = 'md', shape = 'circle', presence, accent, decorative = false, className, style, ...rest },
+  { name, src, icon, size = 'md', shape = 'circle', presence, accent, decorative = false, className, style, 'aria-label': ariaLabel, ...rest },
   ref,
 ) {
   const [failed, setFailed] = useState(false);
   const accentIndex = accent ?? (name ? (hashString(name) % 8) + 1 : 8);
-  const label = name ? (presence ? `${name} (${presence})` : name) : undefined;
+  const baseLabel = ariaLabel ?? name;
+  const label = baseLabel ? (presence ? `${baseLabel} (${presence})` : baseLabel) : undefined;
   const showImage = src && !failed;
   return (
     <span
@@ -44,7 +45,8 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
       {showImage ? (
         <img className={styles.image} src={src} alt="" onError={() => setFailed(true)} />
       ) : name ? (
-        <span aria-hidden="true">{getInitials(name)}</span>
+        // Initials are drawn with CSS generated content (alt text "") so they never compete with the accessible name.
+        <span className={styles.initials} data-initials={getInitials(name)} aria-hidden="true" />
       ) : (
         <span className={styles.icon} aria-hidden="true">
           {icon}

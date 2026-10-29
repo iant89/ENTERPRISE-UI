@@ -55,7 +55,7 @@ export * from './components/switch';
 export * from './components/calendar';
 export * from './components/date-picker';
 export * from './components/time-picker';
-export type { SelectOption } from './components/listbox';
+export type { SelectOption } from './components/listbox/types';
 
 // Data display
 export * from './components/table';

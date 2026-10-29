@@ -22,6 +22,7 @@ export interface WizardStep {
 }
 
 export interface WizardProps {
+  /** Non-empty steps with unique, non-empty IDs. */
   steps: WizardStep[];
   /** Controlled current step index. */
   step?: number;
@@ -41,18 +42,39 @@ export interface WizardProps {
 /**
  * Guides users through a multi-step task with a step indicator, per-step
  * validation and Back / Next / Finish actions. Focus moves to the step
- * heading on navigation; completed steps can be revisited.
+ * heading on navigation; completed steps can be revisited. Navigation is locked
+ * while validation or finishing is pending. Invalid step indexes are clamped to
+ * the available range; an empty step list or duplicate/empty IDs throws.
+ * Results from validation for a step that is no longer active are ignored.
  */
 export function Wizard({ steps, step, defaultStep = 0, onStepChange, onFinish, onCancel, finishLabel = 'Finish', 'aria-label': ariaLabel, className }: WizardProps) {
-  const [current, setCurrent] = useControllableState(step, defaultStep, onStepChange);
+  if (steps.length === 0) throw new Error('Wizard requires at least one step.');
+  const ids = new Set<string>();
+  for (const item of steps) {
+    if (!item.id || !item.id.trim() || ids.has(item.id)) {
+      throw new Error('Wizard step IDs must be non-empty and unique.');
+    }
+    ids.add(item.id);
+  }
+  const [requested, setCurrent] = useControllableState(step, defaultStep, onStepChange);
+  const current = Number.isFinite(requested) ? Math.max(0, Math.min(steps.length - 1, Math.trunc(requested))) : 0;
   const [furthest, setFurthest] = useState(current);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const pending = useRef(false);
+  const mounted = useRef(false);
+  const activeIdentity = useRef({ current, id: steps[current].id });
+  activeIdentity.current = { current, id: steps[current].id };
   const headingRef = useRef<HTMLHeadingElement>(null);
   const moved = useRef(false);
   const id = useId(undefined, 'wizard');
   const active = steps[current];
   const isLast = current === steps.length - 1;
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
 
   useEffect(() => {
     if (moved.current) headingRef.current?.focus();
@@ -67,20 +89,27 @@ export function Wizard({ steps, step, defaultStep = 0, onStepChange, onFinish, o
   };
 
   const next = async () => {
+    if (pending.current) return;
+    pending.current = true;
     setBusy(true);
+    setError(null);
+    const identity = { current, id: active.id };
+    const isCurrent = () => mounted.current && activeIdentity.current.current === identity.current && activeIdentity.current.id === identity.id;
     try {
       const result = active.validate ? await active.validate() : true;
+      if (!isCurrent()) return;
       if (result !== true) {
-        setError(result);
+        setError(result || 'Validation failed.');
         return;
       }
       if (isLast) await onFinish();
       else goTo(current + 1);
     } catch (err) {
       // A rejected validate() or onFinish() is shown on the step instead of becoming an unhandled rejection.
-      setError(err instanceof Error ? err.message : String(err));
+      if (isCurrent()) setError((err instanceof Error ? err.message : String(err ?? '')) || 'An unexpected error occurred.');
     } finally {
-      setBusy(false);
+      pending.current = false;
+      if (mounted.current) setBusy(false);
     }
   };
 
@@ -95,7 +124,7 @@ export function Wizard({ steps, step, defaultStep = 0, onStepChange, onFinish, o
                 type="button"
                 className={styles.stepButton}
                 aria-current={i === current ? 'step' : undefined}
-                disabled={i > furthest || i === current}
+                disabled={busy || i > Math.min(furthest, steps.length - 1) || i === current}
                 onClick={() => goTo(i)}
               >
                 <span className={styles.marker} aria-hidden="true">
@@ -130,11 +159,11 @@ export function Wizard({ steps, step, defaultStep = 0, onStepChange, onFinish, o
         </span>
         <div className={styles.footerEnd}>
           {onCancel && (
-            <Button variant="tertiary" onClick={onCancel}>
+            <Button variant="tertiary" disabled={busy} onClick={onCancel}>
               Cancel
             </Button>
           )}
-          {current > 0 && <Button onClick={() => goTo(current - 1)}>Back</Button>}
+          {current > 0 && <Button disabled={busy} onClick={() => goTo(current - 1)}>Back</Button>}
           <Button variant="primary" loading={busy} onClick={next}>
             {isLast ? finishLabel : active.optional ? 'Next (or skip)' : 'Next'}
           </Button>

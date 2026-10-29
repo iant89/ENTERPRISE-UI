@@ -1,25 +1,55 @@
 # Enterprise UI Kit
 
-`@enterprise-ui/react` is a React + TypeScript component library for dashboards, administration panels, ERP, inventory, fleet management and other data-heavy business applications. Its visual language and interaction patterns follow SAP Fiori, but it has its own implementation, design tokens and component APIs, and it does not depend on SAPUI5 or OpenUI5.
+A React + TypeScript component library for building business applications that look and behave like modern SAP Fiori software, without depending on SAPUI5.
 
-- **Design tokens.** Colour, spacing, typography, radii, shadows, sizes, focus, z-index, motion, breakpoints, disabled states and density are all CSS custom properties (`--eui-*`).
-- **Themes.** Light, dark and high contrast, switchable at runtime and scoped to any subtree. There are two densities: cozy and compact.
-- **Components.** 64 documented components: layout, navigation, buttons, forms, data display and feedback, plus enterprise patterns.
-- **Accessibility.** Targets WCAG 2.2 AA: semantic HTML, WAI-ARIA patterns, keyboard support, focus management, live announcements and reduced motion. Axe tests run on every component and every documentation page.
-- **Responsive.** Layouts work on desktop, tablet and phone, with touch-friendly targets and responsive tables.
-- **Package.** Typed, tree-shakeable ESM (one module per component). React is a peer dependency, and the stylesheet is imported separately.
+`@enterprise-ui/react` is meant for dashboards, admin panels, ERP, inventory, fleet management and other data-heavy screens. It has its own implementation, design tokens and component APIs. It uses only one runtime dependency, `lucide-react`, for icons.
 
-Runtime dependencies: `lucide-react` (icons) only.
+> **Status: 0.1, pre-release.** The package is not on npm yet. See [Installation](#installation) for using it from this repository.
+
+## Features
+
+- **64 documented components.** Layout, navigation, buttons, forms, data display and feedback, plus enterprise patterns:
+  - FilterBar
+  - ObjectPage
+  - MasterDetail
+  - Wizard
+  - Dashboard
+  - and more
+- **Design tokens.** Every colour, spacing, type, radius, shadow, size, z-index, motion and density value is a CSS custom property (`--eui-*`).
+- **Themes.** Light, dark and high contrast, plus cozy and compact density. Switch them at runtime, or scope one to any part of the page.
+- **Accessibility.** Targets WCAG 2.2 AA, with semantic HTML, WAI-ARIA keyboard patterns, focus trapping and restoration, live announcements and reduced motion.
+- **Responsive.** Works on desktop, tablet and phone. The navigation becomes a drawer on small screens, and tables can stack into cards.
+- **Typed and tree-shakeable.** Strict TypeScript APIs and one ES module per component. React is a peer dependency, and the stylesheet is imported separately.
+
+## Requirements
+
+- React and React DOM 18.2 or newer (React 19 supported)
+- Node.js 20 or newer to build or develop the library
 
 ## Installation
 
+Until the package is published, build a tarball from this repository and install it into your app:
+
 ```bash
-npm install @enterprise-ui/react lucide-react react react-dom
+git clone https://github.com/iant89/ENTERPRISE-UI.git
+cd ENTERPRISE-UI
+npm install
+npm run build:lib
+npm pack                      # creates enterprise-ui-react-0.1.0.tgz
+
+# in your application
+npm install /path/to/enterprise-ui-react-0.1.0.tgz lucide-react
 ```
 
-React 18.2 or newer is required. React 19 is supported.
+Once it is published, this becomes:
 
-## Usage
+```bash
+npm install @enterprise-ui/react lucide-react
+```
+
+## Quick start
+
+Import the stylesheet once and wrap your app in `ThemeProvider`:
 
 ```tsx
 // main.tsx
@@ -36,6 +66,8 @@ createRoot(document.getElementById('root')!).render(
   </ThemeProvider>,
 );
 ```
+
+Then use the components:
 
 ```tsx
 import { Button, Card } from '@enterprise-ui/react';
@@ -54,9 +86,43 @@ export function Dashboard() {
 
 `ThemeProvider` does three things:
 
-- applies the theme (`light`, `dark`, `high-contrast` or `system`) and the density;
-- hosts the overlay layer that menus, popovers and dialogs portal into, so they inherit the theme;
-- provides the screen-reader live region used by `useAnnouncer()` and toasts.
+- applies the theme and density;
+- hosts the layer that menus, popovers and dialogs render into, so they pick up the theme;
+- provides the screen-reader live region used by toasts and `useAnnouncer()`.
+
+`ToastProvider` is only needed if you use toasts.
+
+## Usage
+
+### Forms and validation
+
+Every form control takes `label`, `description`, `error` and `required`. The component connects the label, helper text and error message to the input for screen readers.
+
+```tsx
+import { useState } from 'react';
+import { DatePicker, Input, Select } from '@enterprise-ui/react';
+
+function SupplierForm() {
+  const [country, setCountry] = useState<string | null>(null);
+  return (
+    <>
+      <Input label="Supplier name" required error="Enter a supplier name." />
+      <Select
+        label="Country"
+        value={country}
+        onChange={setCountry}
+        options={[
+          { value: 'de', label: 'Germany' },
+          { value: 'fr', label: 'France' },
+        ]}
+      />
+      <DatePicker label="Contract start" description="Format: YYYY-MM-DD" />
+    </>
+  );
+}
+```
+
+Components are controlled when you pass `value`, `checked` or `open`. Without them, they manage their own state, starting from the `default*` prop.
 
 ### Application shell
 
@@ -67,7 +133,13 @@ import { AppShell, ApplicationHeader, Button, NavigationItem, Page, SideNavigati
 <AppShell
   header={<ApplicationHeader productName="Northwind" user={{ name: 'Ada Lovelace' }} notificationCount={3} />}
   navigation={
-    <SideNavigation activeId="products" onNavigate={(id, event) => { event.preventDefault(); router.push(id); }}>
+    <SideNavigation
+      activeId="products"
+      onNavigate={(id, event) => {
+        event.preventDefault(); // hand routing to your router
+        router.push(id);
+      }}
+    >
       <NavigationItem id="home" label="Home" icon={<Home />} href="/" />
       <NavigationItem id="catalog" label="Catalog" icon={<Package />}>
         <NavigationItem id="products" label="Products" href="/products" />
@@ -75,23 +147,46 @@ import { AppShell, ApplicationHeader, Button, NavigationItem, Page, SideNavigati
     </SideNavigation>
   }
 >
-  <Page title="Products" breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Products' }]} actions={<Button variant="primary">Create</Button>}>
+  <Page
+    title="Products"
+    breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Products' }]}
+    actions={<Button variant="primary">Create</Button>}
+  >
     …
   </Page>
 </AppShell>
 ```
 
-The navigation adapts to the screen size:
+The navigation adapts to the screen width:
 
 | Screen | Width | Navigation |
 | --- | --- | --- |
 | Phone | under 600px | Modal drawer |
 | Tablet | 600–1023px | Collapsed to icons |
-| Desktop | 1024px and up | Full; the user can collapse it |
+| Desktop | 1024px and up | Full width; the user can collapse it |
 
-### Tokens only
+The shell also renders a "Skip to main content" link.
 
-To use the tokens without the component styles:
+### Themes and density
+
+```tsx
+<ThemeProvider theme="system">…</ThemeProvider>   {/* follows the OS: light, dark or increased contrast */}
+<ThemeProvider theme="dark" density="compact">…</ThemeProvider>
+```
+
+Read the current theme and density with `useTheme()`. To apply your brand colours, override the tokens on a themed element:
+
+```css
+[data-eui-theme='light'].my-brand {
+  --eui-color-primary: #1b5e20;
+  --eui-color-primary-hover: #134a17;
+  --eui-color-focus: #1b5e20;
+}
+```
+
+When you override colours, keep text at 4.5:1 contrast or better, and borders and focus rings at 3:1. Run `node scripts/contrast.mjs` to check the built-in themes.
+
+### Tokens without components
 
 ```css
 @import '@enterprise-ui/react/tokens.css';
@@ -115,83 +210,105 @@ To use the tokens without the component styles:
 | Feedback | Dialog, AlertDialog, Toast (`ToastProvider` + `useToast`), MessageStrip, Tooltip, Popover, ProgressBar, Spinner, Skeleton |
 | Enterprise patterns | FilterBar, MasterDetail, ObjectPage, DetailPanel, Wizard, Dashboard, CommandToolbar, EmptyState |
 
-The library also exports these hooks: `useControllableState`, `useFocusTrap`, `usePosition`, `useMediaQuery`, `useBreakpoint`, `useTheme`, `useAnnouncer`, `useToast` and `useAppShell`. It also exports the token catalogue (`tokenGroups`, `getTokenValue`, `breakpoints`).
+The library also exports these hooks:
 
-The patterns are built from the existing components; they do not re-implement them. For example, `DataGrid` is made from `Table`, `SearchField`, `Select`, `Pagination` and `DropdownMenu`.
+- `useControllableState`
+- `useFocusTrap`
+- `usePosition`
+- `useMediaQuery`
+- `useBreakpoint`
+- `useTheme`
+- `useAnnouncer`
+- `useToast`
+- `useAppShell`
 
-## Documentation site
+It also exports the token catalogue: `tokenGroups`, `getTokenValue` and `breakpoints`.
+
+The patterns are built from the other components rather than re-implementing them. For example, `DataGrid` is `Table` + `SearchField` + `Select` + `Pagination` + `DropdownMenu`.
+
+## Documentation
 
 ```bash
 npm install
 npm run dev        # http://localhost:5173
 ```
 
-The site is built with the library itself and has these pages: Overview, Getting started, Design tokens, Themes, Components (64 pages), Component gallery, Layouts, Enterprise patterns, Accessibility and API reference. `#/demo` opens a full inventory application.
+The documentation site is built with the library itself. It covers:
 
-Each component page has:
+- Overview
+- Getting started
+- Design tokens (with live values)
+- Themes
+- Component gallery
+- Layouts
+- Enterprise patterns
+- Accessibility
+- API reference
 
-- a live interactive preview, with preview controls where useful;
-- runnable TypeScript examples, including variant, disabled and error states;
-- a props table with defaults;
-- keyboard interaction notes;
+Each of the 64 component pages has:
+
+- a live preview, with interactive controls where useful;
+- TypeScript examples, including disabled and error states;
+- a table of props and their defaults, generated from the source;
+- the keyboard model;
 - accessibility notes.
 
-The props tables are generated from the TypeScript source and JSDoc by `scripts/extract-api.mjs`.
+Open `#/demo` to see a complete inventory application built only from library components.
 
-## Project structure
+## Development
 
 ```
-├── src/
-│   ├── components/   # one folder per component: Component.tsx, *.module.css, *.test.tsx, index.ts
-│   ├── layouts/      # AppShell, Page, Container, Grid, Flex, Stack, SplitView, ResizablePanel
-│   ├── patterns/     # FilterBar, MasterDetail, ObjectPage, DetailPanel, Wizard, Dashboard, …
-│   ├── hooks/        # controllable state, focus trap, positioning, media queries, …
-│   ├── themes/       # light.css, dark.css, high-contrast.css, ThemeProvider
-│   ├── tokens/       # tokens.css and the token catalogue
-│   ├── utilities/    # cx, refs, keyboard helpers, Portal, VisuallyHidden, dates
-│   ├── styles/       # global entry (tokens + themes + scoped base styles)
-│   └── index.ts      # public API
-├── docs/             # documentation site (Vite app)
-├── examples/         # example components rendered and shown as code by the docs
-├── tests/            # shared test setup, example tests, Playwright suites
-├── scripts/          # API extraction, contrast checker, build helpers
-├── vite.config.ts    # library build + Vitest config
-└── playwright.config.ts
+src/
+  components/   one folder per component: Component.tsx, *.module.css, *.test.tsx, index.ts
+  layouts/      AppShell, Page, Grid, SplitView, …
+  patterns/     FilterBar, ObjectPage, Wizard, …
+  hooks/  themes/  tokens/  utilities/  styles/
+  index.ts      public API
+docs/           documentation site (Vite app)
+examples/       example components, rendered live and shown as code by the docs
+tests/          test setup, example tests, Playwright suites
+scripts/        API extraction, contrast checker, build helpers
 ```
 
-Styling uses CSS Modules with readable class names: `eui-<File>-<class>`, for example `eui-Button-primary`. Every value comes from tokens. Base styles apply only inside `[data-eui-theme]`, so the library never resets a host application's global styles.
-
-## Scripts
-
-| Script | Purpose |
+| Command | What it does |
 | --- | --- |
-| `npm run dev` | Documentation site with live examples |
-| `npm run build:lib` | Library build to `dist/`: ESM, `.d.ts`, `styles.css`, `tokens.css` |
-| `npm run build:docs` | Static documentation to `docs-dist/` |
-| `npm run build` | Both builds |
-| `npm test` | Unit, behaviour and accessibility tests (Vitest, Testing Library, axe-core) |
-| `npm run test:e2e` | Browser tests (Playwright): axe on every docs page in all themes, keyboard flows, responsive behaviour, visual regression |
-| `npm run test:e2e:update` | Refresh the visual-regression baselines |
-| `npm run typecheck`, `npm run lint` | TypeScript and ESLint |
-| `node scripts/contrast.mjs` | Checks the WCAG contrast of theme token pairs |
+| `npm run dev` | Starts the documentation site |
+| `npm test` | Runs unit, behaviour and accessibility tests (Vitest, Testing Library, axe-core) |
+| `npm run test:e2e` | Builds the docs and runs the Playwright tests (described below) |
+| `npm run test:e2e:update` | Refreshes the visual-regression baselines |
+| `npm run check` | Runs the type check, lint and unit tests |
+| `npm run build:lib` | Builds the library into `dist/`: ESM modules, `.d.ts` files, `styles.css` and `tokens.css` |
+| `npm run build:docs` | Builds the static documentation into `docs-dist/` |
 
-## Testing
+The Playwright tests cover:
 
-- **Unit (Vitest + Testing Library).** Covers roles, names, states, keyboard behaviour, focus management, controlled and uncontrolled state, and pure helpers (positioning, pagination, sorting, dates).
-- **Examples.** Every documentation example is rendered and checked with axe-core.
-- **Browser (Playwright).**
-  - Every docs page and component page is checked with axe, including colour contrast.
-  - Contrast is re-checked in the dark and high-contrast themes.
-  - The demo application is checked with all axe rules.
-  - Real-browser keyboard and responsive tests run on desktop and phone viewports.
-  - Visual regression baselines are stored in `tests/e2e/visual.spec.ts-snapshots`. They depend on the platform's font rendering, so CI skips them unless `VISUAL_BASELINES=1` is set and the baselines were generated in the CI image.
+- axe accessibility checks on every docs page, in all three themes;
+- keyboard flows;
+- desktop and phone layouts;
+- visual regression.
 
-## Accessibility
+Styling uses CSS Modules. Class names are stable and readable, in the form `eui-<File>-<class>` (for example, `eui-Button-primary`). Every value comes from a token. Base styles apply only inside `[data-eui-theme]`, so the library never resets your app's global CSS.
 
-- Each component's documentation page lists its keyboard model and its accessibility notes.
-- Interactive borders and focus indicators meet 3:1 contrast in every theme, and text meets 4.5:1.
-- Durations collapse to 0ms under `prefers-reduced-motion`, or when `reducedMotion` is passed to `ThemeProvider`.
+## Contributing
 
-## Browser support
+To add a component:
 
-The library targets evergreen browsers (Chrome, Edge, Firefox and Safari). It uses CSS custom properties, `:focus-visible`, `:has()` (for progressive enhancements only) and `ResizeObserver`. The automated browser suite runs in Chromium.
+1. Create `src/components/<name>/` with the component, a `.module.css` file that uses only `--eui-*` tokens, an `index.ts` and a test.
+2. Document every prop with JSDoc, including `@default` where there is one. The API reference is generated from these comments.
+3. Export the component from `src/index.ts`.
+4. Add a docs entry in `docs/src/registry.ts`, with a summary, keyboard model and accessibility notes.
+5. Add one or more examples in `examples/<slug>/`. The test suite renders each example and checks it with axe.
+6. Run `npm run check` and `npm run test:e2e` before opening a pull request.
+
+CI (`.github/workflows/ci.yml`) runs the type check, lint, contrast check, unit tests, library build and Playwright suite. Visual-regression baselines depend on the platform's fonts, so CI skips them unless `VISUAL_BASELINES=1` is set and the baselines were generated in the CI image.
+
+## Known limitations
+
+- `DataGrid` filters, sorts and paginates on the client only. It has no row virtualization and no server-side data hooks yet.
+- Right-to-left layout is only partly supported. Tabs reverse their arrow keys in RTL, but the layouts have not been audited for RTL.
+- The SAP "72" font is not bundled. Text falls back to Segoe UI, then Arial.
+- The automated browser tests run in Chromium only. The library targets current versions of Chrome, Edge, Firefox and Safari.
+
+## License
+
+No license has been chosen yet. Until one is added, all rights are reserved by the repository owner.

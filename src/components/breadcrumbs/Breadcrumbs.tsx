@@ -63,11 +63,7 @@ export const Breadcrumbs = forwardRef<HTMLElement, BreadcrumbsProps>(function Br
           <li className={styles.item}>
             <DropdownMenu
               aria-label="Hidden breadcrumbs"
-              items={hidden.map((item, i) => ({ id: String(i), label: item.label, href: item.href }))}
-              onAction={(id) => {
-                const item = hidden[Number(id)];
-                if (!item.href) item.onClick?.({} as MouseEvent);
-              }}
+              items={hidden.map((item, i) => ({ id: String(i), label: item.label, href: item.href, onSelect: item.onClick }))}
               trigger={<IconButton icon={<MoreHorizontal />} label={`Show ${hidden.length} more`} size="sm" />}
             />
             <span className={styles.separator} aria-hidden="true"><ChevronRight /></span>

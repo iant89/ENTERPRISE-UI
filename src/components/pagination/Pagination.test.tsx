@@ -40,3 +40,16 @@ describe('Breadcrumbs', () => {
     expect(screen.getByRole('button', { name: 'Show 2 more' })).toBeInTheDocument();
   });
 });
+
+describe('Breadcrumbs collapsed menu', () => {
+  it('passes a real event to onClick of hidden items', async () => {
+    const onClick = vi.fn((event: React.MouseEvent) => event.preventDefault());
+    const { user } = renderWithTheme(
+      <Breadcrumbs maxItems={3} items={[{ label: 'Home', href: '#' }, { label: 'Sales', onClick }, { label: 'Orders', href: '#o' }, { label: 'PO-1001' }]} />,
+    );
+    await user.click(screen.getByRole('button', { name: 'Show 2 more' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Sales' }));
+    expect(onClick).toHaveBeenCalledOnce();
+    expect(onClick.mock.calls[0][0].defaultPrevented).toBe(true);
+  });
+});

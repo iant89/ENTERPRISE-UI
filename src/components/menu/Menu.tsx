@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useMemo, useRef, useState, type HTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
+import { forwardRef, useEffect, useMemo, useRef, useState, type HTMLAttributes, type KeyboardEvent, type MouseEvent, type ReactNode } from 'react';
 import { Check } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { findTypeaheadIndex, getNavigationIndex } from '../../utilities/keyboard';
@@ -21,8 +21,12 @@ export interface MenuItemDef {
   checked?: boolean;
   /** Render as a link. */
   href?: string;
-  /** Called when the item is activated (in addition to `onAction`). */
-  onSelect?: () => void;
+  /**
+   * Called when the item is activated (in addition to `onAction`). Receives the
+   * click event — keyboard activation is delivered as a click — so link items
+   * can call `event.preventDefault()` to handle navigation themselves.
+   */
+  onSelect?: (event: MouseEvent<HTMLElement>) => void;
 }
 
 export interface MenuSeparator {
@@ -82,9 +86,9 @@ export const Menu = forwardRef<HTMLDivElement, MenuProps>(function Menu(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const activate = (item: MenuItemDef) => {
+  const activate = (item: MenuItemDef, event: MouseEvent<HTMLElement>) => {
     if (item.disabled) return;
-    item.onSelect?.();
+    item.onSelect?.(event);
     onAction?.(item.id);
     onClose?.('select');
   };
@@ -159,7 +163,7 @@ export const Menu = forwardRef<HTMLDivElement, MenuProps>(function Menu(
         );
         if (entry.href && !entry.disabled) {
           return (
-            <a key={entry.id} href={entry.href} {...common} onClick={() => activate(entry)}>
+            <a key={entry.id} href={entry.href} {...common} onClick={(event) => activate(entry, event)}>
               {inner}
             </a>
           );
@@ -168,11 +172,12 @@ export const Menu = forwardRef<HTMLDivElement, MenuProps>(function Menu(
           <div
             key={entry.id}
             {...common}
-            onClick={() => activate(entry)}
+            onClick={(event) => activate(entry, event)}
             onKeyDown={(event) => {
               if (event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();
-                activate(entry);
+                // Activate through a click so onSelect always receives a MouseEvent.
+                event.currentTarget.click();
               }
             }}
           >

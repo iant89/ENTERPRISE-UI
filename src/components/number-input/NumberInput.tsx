@@ -27,8 +27,6 @@ export interface NumberInputProps
   unit?: ReactNode;
   /** @default 'md' */
   size?: 'sm' | 'md' | 'lg';
-  /** Locale used for display formatting. Defaults to the browser locale. */
-  locale?: string;
 }
 
 const format = (value: number | null, precision: number | undefined) =>
@@ -43,7 +41,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
     label, description, error, status, statusMessage, hideLabel, labelPosition,
     value, defaultValue = null, onChange, min, max, step = 1, precision, showStepper = true, unit,
     size = 'md', id, required, disabled, readOnly, className, onBlur, onKeyDown, 'aria-describedby': ariaDescribedBy,
-    locale: _locale, ...rest
+    ...rest
   },
   ref,
 ) {

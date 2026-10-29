@@ -96,3 +96,26 @@ describe('ResizablePanel', () => {
     expect(handle).toHaveAttribute('aria-valuenow', '400');
   });
 });
+
+describe('SideNavigation collapsed flyout', () => {
+  it('lets onNavigate prevent link navigation', async () => {
+    const events: Array<{ id: string; prevented: boolean }> = [];
+    const { user } = renderWithTheme(
+      <SideNavigation
+        collapsed
+        onNavigate={(id, event) => {
+          event.preventDefault();
+          events.push({ id, prevented: event.defaultPrevented });
+        }}
+      >
+        <NavigationItem id="catalog" label="Catalog" icon={<Package />}>
+          <NavigationItem id="products" label="Products" href="#products" />
+        </NavigationItem>
+      </SideNavigation>,
+    );
+    await user.click(screen.getByRole('button', { name: 'Catalog' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Products' }));
+    expect(events).toEqual([{ id: 'products', prevented: true }]);
+    expect(window.location.hash).not.toBe('#products');
+  });
+});

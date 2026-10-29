@@ -13,6 +13,7 @@ import { Input } from '../components/input';
 import { Select } from '../components/select';
 import { Button } from '../components/button';
 import { MetricCard } from '../components/metric-card';
+import { ThemeProvider } from '../themes';
 
 describe('Wizard', () => {
   it('validates, moves focus to the step heading and finishes', async () => {
@@ -127,5 +128,61 @@ describe('EmptyState, MasterDetail and Dashboard', () => {
     expect(screen.getByRole('region', { name: 'Sales' })).toBeInTheDocument();
     expect(screen.getByText('Up')).toBeInTheDocument();
     expect(await axeViolations(container)).toEqual([]);
+  });
+});
+
+describe('Wizard errors', () => {
+  it('shows a rejected validation instead of leaving it unhandled', async () => {
+    const { user } = renderWithTheme(
+      <Wizard
+        onFinish={() => {}}
+        steps={[
+          { id: 'a', title: 'Basics', content: 'A', validate: () => Promise.reject(new Error('Server unavailable')) },
+          { id: 'b', title: 'Review', content: 'B' },
+        ]}
+      />,
+    );
+    await user.click(screen.getByRole('button', { name: 'Next' }));
+    expect(await screen.findByText('Server unavailable')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Basics' })).toBeInTheDocument();
+  });
+
+  it('shows a rejected onFinish', async () => {
+    const { user } = renderWithTheme(
+      <Wizard onFinish={() => Promise.reject(new Error('Could not save'))} steps={[{ id: 'a', title: 'Review', content: 'A' }]} />,
+    );
+    await user.click(screen.getByRole('button', { name: 'Finish' }));
+    expect(await screen.findByText('Could not save')).toBeInTheDocument();
+  });
+});
+
+describe('CommandToolbar priorities', () => {
+  it('re-measures when an action priority changes', async () => {
+    const actions = (priority: 'low' | 'always') => [
+      { id: 'a', label: 'Alpha' },
+      { id: 'b', label: 'Bravo', priority },
+    ];
+    // Simulate a container that only fits one action plus the overflow button.
+    const widths = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      return this.dataset.overflow !== undefined ? 30 : 60;
+    });
+    const client = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(120);
+    const visible = () =>
+      screen
+        .getAllByRole('button')
+        .filter((b) => !b.closest('[aria-hidden="true"]'))
+        .map((b) => b.textContent || b.getAttribute('aria-label'));
+    const { rerender } = renderWithTheme(<CommandToolbar title="Orders" actions={actions('low')} />);
+    expect(screen.getByRole('toolbar')).toBeInTheDocument();
+    expect(visible()).toEqual(['Alpha', 'More actions']);
+    // Re-render the same tree (keeping the ThemeProvider) so the toolbar updates rather than remounts.
+    rerender(
+      <ThemeProvider>
+        <CommandToolbar title="Orders" actions={actions('always')} />
+      </ThemeProvider>,
+    );
+    expect(visible()).toEqual(['Bravo', 'More actions']);
+    widths.mockRestore();
+    client.mockRestore();
   });
 });

@@ -8,7 +8,12 @@ These notes describe work in the current development branch, not a published or 
 - Added business workflow patterns for bulk operations, object editing, approvals, activity and authoritative audit display. Applications must provide backend authorization and persistence.
 - Added command search, fixed-height virtual lists, trees and grid rows, upload queue, structured diff viewer and supporting interface components.
 - Added a mock enterprise cookbook, documentation integrity checks, packed React consumer smoke tests and browser interaction checks.
+- Stop spinner and indeterminate progress animation when reduced motion is requested, and fail contrast checks on missing theme tokens.
 - Improved responsive wizard step names, keyboard access to scroll regions and narrow master–detail focus behavior.
+- Added bulk action message overrides and portaled confirmation direction and language.
+- Added localized file upload queue messages and accessible progress labels.
+- Added localized inline-edit and clipboard action and status messages.
+- Added localized notification messages, plural-aware counts, accessible action names, and timestamp display formatting.
 - Added localized command palette messages, locale-aware case matching and explicit dialog portal direction and language.
 
 ### Adoption notes and limitations

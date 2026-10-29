@@ -18,6 +18,7 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: node scripts/contrast.mjs
+      - run: npm run test:inventory
       - run: npm test
       - run: npm run docs:check
 

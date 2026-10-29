@@ -2,3 +2,5 @@
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--eui-space-2); }
 .report { display: flex; flex-wrap: wrap; align-items: center; gap: var(--eui-space-2); }
 .report ul { flex-basis: 100%; margin: 0; padding-inline-start: var(--eui-space-5); }
+
+.report li { overflow-wrap: anywhere; }

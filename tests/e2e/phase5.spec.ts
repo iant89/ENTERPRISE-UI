@@ -86,3 +86,111 @@ test('localized command palette supports compact RTL, long labels and mixed-dire
   await dialog.getByRole('button', { name: 'إغلاق القائمة' }).click();
   await expect(trigger).toBeFocused();
 });
+
+test('localized notifications support mixed-direction labels and actions in compact RTL', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('eui-docs-density', 'compact'));
+  await page.goto('/#/components/notification-center');
+  const example = page.locator('[data-example="notification-center/02-localized"]');
+  const region = example.getByRole('region', { name: 'الإشعارات' });
+  await expect(region).toHaveAttribute('dir', 'rtl');
+  await expect(region.getByText('الموافقة على الطلب PO-1042')).toBeVisible();
+  expect(await region.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+  const results = await new AxeBuilder({ page: page as never }).include('[data-example="notification-center/02-localized"]').disableRules(['region', 'heading-order']).analyze();
+  expect(results.violations).toEqual([]);
+  await region.getByRole('button', { name: 'وضع علامة مقروء: الموافقة على الطلب PO-1042' }).click();
+  const zero = await page.evaluate(() => new Intl.NumberFormat('ar').format(0));
+  await expect(region.getByText(`غير مقروء: ${zero}`)).toBeVisible();
+  await region.getByRole('button', { name: 'إزالة: الموافقة على الطلب PO-1042' }).click();
+  await expect(region.getByText('لا توجد إشعارات.')).toBeVisible();
+});
+
+test('loading indicators stop motion for system and explicit reduced-motion preferences', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/#/components/spinner');
+  const indicator = page.locator('[data-example="spinner/01-basic"] svg').first();
+  await expect(indicator).toBeVisible();
+  await expect(indicator).not.toHaveCSS('animation-name', 'none');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(indicator).toHaveCSS('animation-name', 'none');
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await indicator.evaluate((el) => el.parentElement?.setAttribute('data-eui-motion', 'reduced'));
+  await expect(indicator).toHaveCSS('animation-name', 'none');
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/#/components/progress-bar');
+  const fill = page.locator('[data-example="progress-bar/01-basic"]').getByRole('progressbar', { name: 'Synchronising' }).locator(':scope > div');
+  await expect(fill).not.toHaveCSS('animation-name', 'none');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(fill).toHaveCSS('animation-name', 'none');
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await fill.evaluate((el) => el.parentElement?.parentElement?.parentElement?.setAttribute('data-eui-motion', 'reduced'));
+  await expect(fill).toHaveCSS('animation-name', 'none');
+  await expect(fill).toBeVisible();
+});
+
+test('button keyboard focus remains visible in forced colors', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active' });
+  await page.goto('/#/components/button');
+  const button = page.locator('[data-example="button/01-variants"]').getByRole('button', { name: 'Save', exact: true });
+  await button.focus();
+  await expect(button).toBeFocused();
+  const outline = await button.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { style: style.outlineStyle, width: parseFloat(style.outlineWidth), color: style.outlineColor, background: style.backgroundColor };
+  });
+  expect(outline.style).not.toBe('none');
+  expect(outline.width).toBeGreaterThan(0);
+  expect(outline.color).not.toBe(outline.background);
+});
+
+test('localized inline editor supports RTL keyboard editing and validation', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('eui-docs-density', 'compact'));
+  await page.goto('/#/components/inline-edit');
+  const example = page.locator('[data-example="inline-edit/02-localized"]');
+  const trigger = example.getByRole('button', { name: 'تعديل وصف الطلب' });
+  await trigger.focus();
+  await page.keyboard.press('Enter');
+  const input = example.getByLabel('وصف الطلب');
+  await expect(input).toBeFocused();
+  await input.fill('');
+  await example.getByRole('button', { name: 'حفظ' }).click();
+  await expect(example.getByRole('alert')).toHaveText('أدخل الوصف.');
+  await input.fill('شركة جديدة PO-123');
+  await example.getByRole('button', { name: 'حفظ' }).click();
+  await expect(trigger).toBeFocused();
+  await expect(example.getByText('شركة جديدة PO-123')).toBeVisible();
+  const violations = await new AxeBuilder({ page: page as never }).include('[data-example="inline-edit/02-localized"]').disableRules(['region', 'heading-order']).analyze();
+  expect(violations.violations).toEqual([]);
+});
+
+test('localized file uploader validates and uploads mixed-direction filenames', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('eui-docs-density', 'compact'));
+  await page.goto('/#/components/file-uploader');
+  const root = page.locator('[data-example="file-uploader/02-localized"]');
+  const region = root.getByRole('region', { name: 'رفع الملفات' });
+  await expect(region).toHaveAttribute('dir', 'rtl');
+  await region.getByLabel('رفع الملفات').setInputFiles([
+    { name: 'طلب-PO-42.txt', mimeType: 'text/plain', buffer: Buffer.from('ok') },
+    { name: 'bad.png', mimeType: 'image/png', buffer: Buffer.from('x') },
+  ]);
+  await expect(region.getByText('نوع الملف غير مقبول.')).toBeVisible();
+  await expect(region.getByText('طلب-PO-42.txt')).toBeVisible();
+  await expect(region.getByText('تم الرفع', { exact: false })).toBeVisible();
+  const result = await new AxeBuilder({ page: page as never }).include('[data-example="file-uploader/02-localized"]').disableRules(['region', 'heading-order']).analyze();
+  expect(result.violations).toEqual([]);
+});
+
+test('localized bulk action confirms and warns about unknown outcomes', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('eui-docs-density', 'compact'));
+  await page.goto('/#/components/bulk-action-bar');
+  const root = page.locator('[data-example="bulk-action-bar/02-localized"]');
+  await root.getByRole('button', { name: 'الأرشفة' }).click();
+  const dialog = page.getByRole('alertdialog', { name: 'تأكيد الأرشفة' });
+  await expect(dialog.locator('xpath=..')).toHaveAttribute('dir', 'rtl');
+  await expect(dialog.getByRole('button', { name: 'إلغاء' })).toBeFocused();
+  await dialog.getByRole('button', { name: 'تأكيد' }).click();
+  await expect(root.getByText('تحقق من النتائج غير المؤكدة قبل إعادة المحاولة.')).toBeVisible();
+  await expect(root.getByText('لم ترد نتيجة لهذا السجل.')).toBeVisible();
+  await expect(root.getByRole('button', { name: 'إعادة محاولة الفاشل' })).toHaveCount(0);
+  const result = await new AxeBuilder({ page: page as never }).include('[data-example="bulk-action-bar/02-localized"]').disableRules(['region', 'heading-order']).analyze();
+  expect(result.violations).toEqual([]);
+});

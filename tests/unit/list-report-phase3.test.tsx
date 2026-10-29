@@ -108,10 +108,10 @@ describe('ListReport view and selection', () => {
     await user.click(screen.getByRole('checkbox', { name: 'Select all rows on this page' }));
     await user.click(screen.getByRole('button', { name: 'Archive' }));
     await user.click(screen.getByRole('button', { name: 'Confirm' }));
-    expect(await screen.findByText('PO-1002: Order is locked')).toBeInTheDocument();
+    expect(await screen.findByText((_, element) => element?.tagName === 'LI' && element.textContent === 'PO-1002: Order is locked')).toBeInTheDocument();
     expect(screen.getByText('2 succeeded; 1 failed.')).toBeInTheDocument();
     await waitFor(() => expect(screen.queryByText('PO-1001')).not.toBeInTheDocument());
-    expect(screen.getByText('PO-1002')).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: 'PO-1002' })).toBeInTheDocument();
   });
 
 });

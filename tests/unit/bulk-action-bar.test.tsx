@@ -1,8 +1,10 @@
-import { act, render, screen, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { BulkActionBar, type BulkAction, type BulkActionResult } from '../../src/patterns/bulk-action-bar';
 import { renderWithTheme } from '../utils';
 import { ThemeProvider } from '../../src/themes';
+
+const rowText = (text: string) => (_: string, element: Element | null) => element?.tagName === 'LI' && element.textContent === text;
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
@@ -20,7 +22,7 @@ describe('BulkActionBar', () => {
     expect(execute).not.toHaveBeenCalled();
     expect(await screen.findByRole('alertdialog')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Confirm' }));
-    expect(await screen.findByText('b: Conflict')).toBeInTheDocument();
+    expect(await screen.findByText(rowText('b: Conflict'))).toBeInTheDocument();
     expect(onResult).toHaveBeenCalledWith('delete', { succeeded: ['a'], failed: [{ id: 'b', message: 'Conflict' }] });
     await user.click(screen.getByRole('button', { name: 'Retry failed' }));
     await user.click(screen.getByRole('button', { name: 'Confirm' }));
@@ -35,7 +37,7 @@ describe('BulkActionBar', () => {
     const execute = vi.fn().mockResolvedValueOnce({ succeeded: ['a', 'not-selected'], failed: [] }).mockRejectedValueOnce(new Error('offline'));
     const { user } = renderWithTheme(<BulkActionBar selectedIds={['a', 'b']} actions={[{ id: 'update', label: 'Update', execute }]} />);
     await user.click(screen.getByRole('button', { name: 'Update' }));
-    expect(await screen.findByText('b: No result was returned for this record.')).toBeInTheDocument();
+    expect(await screen.findByText(rowText('b: No result was returned for this record.'))).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Retry failed' })).not.toBeInTheDocument();
     expect(screen.getByText('Verify unknown operation outcomes before retrying.')).toBeInTheDocument();
   });
@@ -63,11 +65,11 @@ describe('BulkActionBar', () => {
     const execute = vi.fn().mockResolvedValueOnce({ succeeded: [], failed: [{ id: 'a', message: 'locked' }] }).mockResolvedValueOnce({ succeeded: ['a'], failed: [] });
     const { user } = renderWithTheme(<BulkActionBar selectedIds={['a', 'b']} actions={[{ id: 'update', label: 'Update', execute }]} />);
     await user.click(screen.getByRole('button', { name: 'Update' }));
-    expect(await screen.findByText('b: No result was returned for this record.')).toBeInTheDocument();
+    expect(await screen.findByText(rowText('b: No result was returned for this record.'))).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Retry failed' }));
     expect(execute.mock.calls[1][0]).toEqual(['a']);
     expect(await screen.findByText('1 succeeded; 1 not confirmed.')).toBeInTheDocument();
-    expect(screen.getByText('b: No result was returned for this record.')).toBeInTheDocument();
+    expect(screen.getByText(rowText('b: No result was returned for this record.'))).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Retry failed' })).not.toBeInTheDocument();
   });
 
@@ -75,7 +77,7 @@ describe('BulkActionBar', () => {
     const execute = vi.fn().mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce({ succeeded: ['a'], failed: [] });
     const { user } = renderWithTheme(<BulkActionBar selectedIds={['a']} actions={[{ id: 'update', label: 'Update', execute, retryOnError: true }]} />);
     await user.click(screen.getByRole('button', { name: 'Update' }));
-    expect(await screen.findByText('a: Outcome unknown: offline')).toBeInTheDocument();
+    expect(await screen.findByText(rowText('a: Outcome unknown: offline'))).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Retry failed' }));
     expect(await screen.findByText('1 succeeded; 0 failed.')).toBeInTheDocument();
   });
@@ -93,7 +95,7 @@ describe('BulkActionBar', () => {
     const execute = vi.fn().mockResolvedValue({ succeeded: ['a'], failed: [{ id: 'a', message: 'failed' }] });
     const { user } = renderWithTheme(<BulkActionBar selectedIds={['a']} actions={[{ id: 'update', label: 'Update', execute }]} />);
     await user.click(screen.getByRole('button', { name: 'Update' }));
-    expect(await screen.findByText('a: The backend returned conflicting results.')).toBeInTheDocument();
+    expect(await screen.findByText(rowText('a: The backend returned conflicting results.'))).toBeInTheDocument();
     expect(screen.getByText('0 succeeded; 1 not confirmed.')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Retry failed' })).not.toBeInTheDocument();
   });
@@ -124,4 +126,23 @@ describe('BulkActionBar', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('action or selection changed');
   });
 
+});
+
+it('localizes confirmation and unknown outcomes without enabling unsafe retries', async () => {
+  const execute = vi.fn().mockResolvedValue({ succeeded: ['PO-1'], failed: [] });
+  const onResult = vi.fn();
+  const { user } = renderWithTheme(<BulkActionBar selectedIds={['PO-1', 'PO-2']} dir="rtl" lang="ar" aria-label="إجراءات مجمعة" onResult={onResult}
+    messages={{ selected: (count) => `${count} محدد`, confirmTitle: (action) => `تأكيد ${action}`, confirmBody: (action, count) => `${action}: ${count} سجلات؟`, confirm: 'تأكيد', cancel: 'إلغاء', summary: (success, failed, unknown) => `${success} نجح، ${failed} ${unknown ? 'غير مؤكد' : 'فشل'}`, missingResult: 'لم ترد نتيجة', verifyUnknown: 'تحقق قبل إعادة المحاولة', retryFailed: 'إعادة المحاولة' }}
+    actions={[{ id: 'archive', label: 'أرشفة', destructive: true, execute }]} />);
+  await user.click(screen.getByRole('button', { name: 'أرشفة' }));
+  const dialog = screen.getByRole('alertdialog', { name: 'تأكيد أرشفة' });
+  expect(dialog.closest('[dir="rtl"]')).toHaveAttribute('lang', 'ar');
+  await waitFor(() => expect(within(dialog).getByRole('button', { name: 'إلغاء' })).toHaveFocus());
+  expect(dialog).toHaveTextContent('أرشفة: 2 سجلات؟');
+  await user.click(within(dialog).getByRole('button', { name: 'تأكيد' }));
+  expect(await screen.findByText('1 نجح، 1 غير مؤكد')).toBeInTheDocument();
+  expect(screen.getByText(rowText('PO-2: لم ترد نتيجة'))).toBeInTheDocument();
+  expect(screen.getByText('تحقق قبل إعادة المحاولة')).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'إعادة المحاولة' })).not.toBeInTheDocument();
+  expect(onResult).toHaveBeenCalledWith('archive', { succeeded: ['PO-1'], failed: [{ id: 'PO-2', message: 'لم ترد نتيجة', outcomeUnknown: true }] });
 });

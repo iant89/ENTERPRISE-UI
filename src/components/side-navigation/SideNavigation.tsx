@@ -130,14 +130,20 @@ export function NavigationItem({ id, label, icon, href, badge, children, default
 
   if (hasChildren) {
     if (collapsed) {
-      const items = childItems(children).map((c) => ({ id: c.id, label: c.label, href: c.href, icon: c.icon }));
+      // Pass the real click event so `onNavigate` can preventDefault() link navigation.
+      const items = childItems(children).map((c) => ({
+        id: c.id,
+        label: c.label,
+        href: c.href,
+        icon: c.icon,
+        onSelect: (event: MouseEvent) => onNavigate?.(c.id, event),
+      }));
       return (
         <li className={cx(containsActive && styles.containsActive)}>
           <DropdownMenu
             placement="right-start"
             aria-label={label}
             items={items}
-            onAction={(childId) => onNavigate?.(childId, { preventDefault() {} } as MouseEvent)}
             trigger={
               <button type="button" className={styles.item} aria-label={label} title={label}>
                 {inner}

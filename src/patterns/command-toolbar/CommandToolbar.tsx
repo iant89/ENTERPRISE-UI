@@ -47,7 +47,8 @@ export function CommandToolbar({ title, start, actions, 'aria-label': ariaLabel,
   const actionsRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const [visibleIds, setVisibleIds] = useState<Set<string>>(() => new Set(actions.map((a) => a.id)));
-  const key = actions.map((a) => `${a.id}:${a.label}:${a.iconOnly}`).join('|');
+  // Re-measure whenever anything that affects width or overflow order changes.
+  const key = actions.map((a) => `${a.id}:${a.label}:${!!a.icon}:${!!a.iconOnly}:${a.priority ?? 'high'}`).join('|');
 
   useLayoutEffect(() => {
     const container = actionsRef.current;

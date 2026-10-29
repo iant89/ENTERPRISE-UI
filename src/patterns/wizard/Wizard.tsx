@@ -76,6 +76,9 @@ export function Wizard({ steps, step, defaultStep = 0, onStepChange, onFinish, o
       }
       if (isLast) await onFinish();
       else goTo(current + 1);
+    } catch (err) {
+      // A rejected validate() or onFinish() is shown on the step instead of becoming an unhandled rejection.
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setBusy(false);
     }

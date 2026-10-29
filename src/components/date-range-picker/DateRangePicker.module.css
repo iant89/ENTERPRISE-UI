@@ -1,0 +1,17 @@
+.root { border: 0; padding: 0; margin: 0; min-width: 0; }
+.root legend { font-weight: var(--eui-font-weight-semibold, 600); margin-bottom: var(--eui-space-2, 0.5rem); }
+.dates, .presets { display: flex; flex-wrap: wrap; gap: var(--eui-space-2, 0.5rem); }
+.dates label { display: flex; flex-direction: column; gap: var(--eui-space-1, 0.25rem); }
+.dates input { font: inherit; color: inherit; padding: var(--eui-space-2, 0.5rem); }
+.presets { margin-top: var(--eui-space-2, 0.5rem); }
+.dates input {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  min-height: var(--eui-control-height);
+  border: var(--eui-border-width) solid var(--eui-color-border-strong);
+  border-radius: var(--eui-radius-sm);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+}
+.dates input:focus-visible { outline: var(--eui-focus-width) var(--eui-focus-style) var(--eui-color-focus); outline-offset: 1px; }

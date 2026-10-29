@@ -80,3 +80,12 @@
     width: 100%;
   }
 }
+
+.widthControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--eui-space-3);
+  padding: var(--eui-space-3) var(--eui-space-4);
+}
+.widthControls label { display: flex; flex-direction: column; min-width: 0; }
+.selectionBar { flex-wrap: wrap; }

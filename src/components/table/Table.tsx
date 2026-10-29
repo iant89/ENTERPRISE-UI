@@ -63,6 +63,8 @@ export interface TableProps<T> {
   manualSorting?: boolean;
   /** @default 'none' */
   selectionMode?: SelectionMode;
+  /** Accessible label for the select-all checkbox. @default 'Select all rows' */
+  selectAllLabel?: string;
   selectedIds?: string[];
   defaultSelectedIds?: string[];
   onSelectionChange?: (ids: string[]) => void;
@@ -130,7 +132,7 @@ const defaultRowId = (row: unknown, index: number) => {
 export function Table<T>({
   columns, data, getRowId = defaultRowId, caption, hideCaption = true, 'aria-label': ariaLabel,
   sort, defaultSort = null, onSortChange, manualSorting = false,
-  selectionMode = 'none', selectedIds, defaultSelectedIds = [], onSelectionChange,
+  selectionMode = 'none', selectAllLabel = 'Select all rows', selectedIds, defaultSelectedIds = [], onSelectionChange,
   onRowClick, getRowLabel, getRowHighlight, loading = false, loadingRowCount = 5, emptyState,
   density, striped = false, stickyHeader = true, maxHeight, responsive = 'scroll', borderless = false, className,
 }: TableProps<T>) {
@@ -201,7 +203,7 @@ export function Table<T>({
             {hasSelection && (
               <th scope="col" className={cx(styles.th, styles.selectCell)}>
                 {selectionMode === 'multiple' ? (
-                  <Checkbox aria-label="Select all rows" checked={allSelected} indeterminate={someSelected} onChange={toggleAll} disabled={loading || rows.length === 0} />
+                  <Checkbox aria-label={selectAllLabel} checked={allSelected} indeterminate={someSelected} onChange={toggleAll} disabled={loading || rows.length === 0} />
                 ) : (
                   <span className="eui-visually-hidden">Selection</span>
                 )}

@@ -91,3 +91,10 @@ export * from './patterns/wizard';
 export * from './patterns/dashboard';
 export * from './patterns/command-toolbar';
 export * from './patterns/empty-state';
+
+// Transport-independent data loading
+export * from './data';
+export * from './components/date-range-picker';
+export * from './components/filter-token';
+export * from './components/saved-views';
+export * from './patterns/list-report';

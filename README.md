@@ -10,6 +10,8 @@ A React + TypeScript component library for building business applications that l
 
 > **Status: 0.1, pre-release.** The package is not on npm yet. See [Installation](#installation) for using it from this repository.
 
+See the [development roadmap](https://github.com/iant89/ENTERPRISE-UI/blob/main/ROADMAP.md) and [data adapter guide](https://github.com/iant89/ENTERPRISE-UI/blob/main/docs/data-adapters.md).
+
 ## Features
 
 - **64 documented components.** Layout, navigation, buttons, forms, data display and feedback, plus enterprise patterns:

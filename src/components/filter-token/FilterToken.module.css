@@ -1,0 +1,4 @@
+.token { display: inline-flex; max-width: 100%; align-items: center; gap: var(--eui-space-1, 0.25rem); padding: var(--eui-space-1, 0.25rem) var(--eui-space-2, 0.5rem); border: 1px solid currentColor; border-radius: var(--eui-radius-sm, 0.25rem); }
+.text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.token button { flex: none; font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+.group { display: flex; flex-wrap: wrap; align-items: center; gap: var(--eui-space-2); min-width: 0; }

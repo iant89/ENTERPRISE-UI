@@ -6,6 +6,7 @@ export default defineConfig({
   testMatch: /phase[345]\.spec\.ts/,
   timeout: 60_000,
   retries: process.env.CI ? 1 : 0,
+  reporter: process.env.CI ? [['list'], ['github']] : 'list',
   use: { baseURL: 'http://localhost:4174', trace: 'retain-on-failure', reducedMotion: 'reduce' },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'], launchOptions: process.env.PHASE3_CHROMIUM_PATH ? { executablePath: process.env.PHASE3_CHROMIUM_PATH, args: ['--no-sandbox'] } : {} } },

@@ -4,10 +4,10 @@ import type { DataAdapter, DataLoadState, DataRequest } from './types';
 /**
  * Loads a page and discards results from superseded requests, even if the
  * adapter ignores AbortSignal. Memoize adapter and request to avoid refetching
- * on unrelated renders. Refresh retains the last successful page; on error it
+ * on unrelated renders. Changing refreshKey triggers a refresh. Refresh retains the last successful page; on error it
  * remains available as stale data. Call retry to issue the same request again.
  */
-export function useDataAdapter<T>(adapter: DataAdapter<T>, request: DataRequest) {
+export function useDataAdapter<T>(adapter: DataAdapter<T>, request: DataRequest, refreshKey?: unknown) {
   const [state, setState] = useState<DataLoadState<T>>({ status: 'loading', data: null, error: null });
   const [revision, setRevision] = useState(0);
   const generation = useRef(0);
@@ -36,7 +36,7 @@ export function useDataAdapter<T>(adapter: DataAdapter<T>, request: DataRequest)
       },
     );
     return () => controller.abort();
-  }, [adapter, request, revision]);
+  }, [adapter, request, revision, refreshKey]);
 
   return { ...state, retry };
 }

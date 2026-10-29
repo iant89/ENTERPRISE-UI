@@ -50,7 +50,11 @@
     "test:e2e": "playwright test",
     "test:e2e:update": "playwright test --update-snapshots",
     "check": "npm run typecheck && npm run lint && npm run test",
-    "docs:screenshots": "node scripts/readme-screenshots.mjs"
+    "docs:screenshots": "node scripts/readme-screenshots.mjs",
+    "test:e2e:phase3": "playwright test --config playwright.phase3.config.ts",
+    "test:consumer": "npm run build:lib && node scripts/check-consumer.mjs",
+    "test:e2e:docs": "playwright test --config playwright.docs-audit.config.ts",
+    "docs:check": "npm run docs:api && node scripts/check-doc-links.mjs && npm run build:lib && node scripts/check-api-declarations.mjs"
   },
   "peerDependencies": {
     "react": ">=18.2.0",

@@ -1,0 +1,35 @@
+# Enterprise workflow foundations
+
+These patterns provide presentation and orchestration, not backend authorization, auditing, persistence, transactionality or business rules. Applications must validate inputs and permissions on the server and supply authoritative data. All callbacks may fail; implement idempotency and concurrency control in the underlying service as appropriate.
+
+## ListReport
+
+See the [data adapter guide](data-adapters.md#listreport-foundation), the [saved views example](../examples/list-report/02-saved-views.tsx), the [bulk selection example](../examples/bulk-action-bar/01-list-report.tsx), and the [purchase-order report](../examples/list-report/03-purchase-orders.tsx). `pageLayout` optionally wraps the report in `Page`; `pageActions` renders a `CommandToolbar`. `toolbarActions` adds grid-level actions. Filters are applied, controlled `DataFilter[]`; search, single sort, page size and column visibility can be controlled together with `view` and `onViewChange`. Selection is separate (`selectedIds`, `onSelectionChange`, `selectionMode`); page selection does not mean all server records. Changing `refreshKey` reloads data after a mutation. Results may be stale during refresh or after failure; the host must check current records and permissions before actions.
+
+## BulkActionBar
+
+Provide selected stable IDs and `BulkAction[]` for operations such as edit, assign, export, archive or delete. `execute(ids, signal)` must return per-ID successes and failures. Unrequested results are ignored; missing or contradictory results and rejected requests have unknown outcomes. Retry sends only confirmed failures by default; unknown outcomes are retried only when the host sets `retryOnError` for an idempotent operation. After an uncertain undo, Undo remains disabled unless `undoRetrySafe` is set. Verify the backend state before retrying non-idempotent work. Destructive actions and actions with confirmation text require confirmation; selection and UI permission are rechecked at confirmation. Execution is locked while pending and cancellation is signaled on unmount, but the backend may already have committed work. `onResult` runs for every execution, including retries. An optional `undo` operates on successful IDs and should only be supplied when the backend actually supports it. Do not assume an abort or a UI disabled state undoes or authorizes an operation. Use `onResult` and `onUndo` to reconcile selection and refresh data. Keep the bar mounted outside the grid selection slot if partial-result messages should remain visible after selection is cleared.
+
+## ObjectEditor
+
+`initialValue` and `initialVersion` are snapshots; use immutable values and provide a meaningful `isEqual`. Remount with a new key to edit another object. The render function receives `mode`, `value`, `onChange`, field `errors`, `dirty`, `busy`, `conflict`, `version`, `resolveConflict`, `requestNavigation`, and `requestNavigationTo`. The host renders fields and read-only sections, attaches error messages to fields, and implements synchronous validation. `onSave` receives the current version and an `AbortSignal` and returns the authoritative saved snapshot and version. Throw `ObjectSaveError` with field errors and/or `conflict: true` to preserve the draft and display the problem. To resolve a conflict, the application fetches the latest record and obtains a user-approved merged draft, then calls `resolveConflict(latestValue, latestVersion, mergedValue)` before retrying. Save is disabled while a conflict is unresolved. This component does not merge or overwrite server data itself.
+
+The editor installs a browser `beforeunload` guard for dirty drafts. SPA routers and in-app links are not automatically intercepted: route navigation must call `requestNavigation` and supply `onNavigate`, or use `requestNavigationTo` with a router continuation. A router blocker is still required for transitions initiated outside those callbacks. Cancel confirms when dirty; Reset restores the saved snapshot. Do not mutate a passed snapshot. [ObjectPage example](../examples/object-editor/01-object-page.tsx).
+
+## ApprovalWorkflow
+
+Pass authoritative status, approver, history, due date and escalation state. Allowed decisions only control the UI; the backend enforces authorization and state transitions. Reject requires a comment, and all decisions require confirmation. `onDecision` receives an abort signal; rejected promises are shown while retaining the comment. The parent must update status and history after successful persistence; the component does not create authoritative history or assume success changed status. Date display uses `Intl.DateTimeFormat`; specify a locale and time zone if defaults are inappropriate. [Purchase-order example](../examples/approval-workflow/01-purchase-order.tsx) uses local mock data only.
+
+## ActivityFeed and AuditTrail
+
+`ActivityFeed` displays host-supplied events newest first, grouping adjacent related events while preserving chronology. `typeFilter`, load-more actions and `loading`/`error` are controlled by the host; it does not fetch data. [Activity example](../examples/activity-feed/01-basic.tsx).
+
+`AuditTrail` displays **authoritative audit records supplied by the backend**, separately from ordinary activity. It shows actor, time, action, source and before/after strings. Filter controls and incremental loading are controlled by the host, which must validate dates and apply server-side queries. The component never generates audit entries from UI events. [Audit example](../examples/audit-trail/01-basic.tsx) uses a fixture. Both patterns can be placed in ObjectPage sections; feed and audit error nodes can contain host-provided retry actions.
+
+## Known limitations
+
+The interactive examples use in-memory mock data, not production services. The [HTTP contract example](../examples/workflow-api/purchase-orders.ts) shows same-origin, versioned saves, validation/conflict mapping, bulk responses and authorization errors; it requires a corresponding application backend. Labels are currently English except for date formatting. The ListReport view supports one sort rule and no grouping; it does not automatically map arbitrary saved configurations. Bulk action confirmation is generic and does not implement application-specific forms or background jobs. Activity groups are contiguous chronological runs rather than collapsible threads. Audit values are already formatted strings; redaction, structured diffs, server-side pagination and timezone interpretation belong to the host. Mobile layouts and keyboard behavior use existing components and native controls but have not been verified across the full supported-browser matrix.
+
+## Browser validation
+
+Run `npx playwright install --with-deps chromium firefox webkit` followed by `npm run test:e2e:phase3` in an environment with browser dependencies. The suite covers desktop Chromium, Firefox and WebKit, plus mobile Chromium, using the runnable documentation examples. These tests supplement rather than replace real assistive-technology testing.

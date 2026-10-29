@@ -1,0 +1,12 @@
+.search { width: 100%; box-sizing: border-box; padding: var(--eui-space-3, .75rem); border: 1px solid var(--eui-color-border, #89919a); border-radius: var(--eui-radius-sm, .25rem); font: inherit; color: inherit; background: transparent; }
+.search:focus-visible { outline: 2px solid var(--eui-color-primary, #0064d9); outline-offset: 2px; }
+.results { max-height: 20rem; overflow: auto; margin-top: var(--eui-space-2, .5rem); }
+.heading { padding: .5rem .75rem; font-size: .875rem; font-weight: 600; }
+.option { display: flex; justify-content: space-between; gap: 1rem; align-items: center; padding: .6rem .75rem; cursor: pointer; border-radius: var(--eui-radius-sm, .25rem); }
+.option[aria-selected='true'] { background: var(--eui-color-primary-subtle, #e5efff); color: var(--eui-color-text, #1a2733); }
+.option > span { min-width: 0; }
+.label, .description { display: block; overflow-wrap: anywhere; }
+.heading, .empty { overflow-wrap: anywhere; }
+.description { font-size: .875rem; }
+.shortcut { white-space: nowrap; font-size: .8rem; }
+.empty { padding: .5rem .75rem; }

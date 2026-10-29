@@ -1,0 +1,2 @@
+.bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--eui-space-2, .5rem); }
+.actions { display: flex; flex-wrap: wrap; gap: var(--eui-space-2, .5rem); }

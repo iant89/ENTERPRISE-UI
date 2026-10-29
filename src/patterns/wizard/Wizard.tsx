@@ -115,7 +115,7 @@ export function Wizard({ steps, step, defaultStep = 0, onStepChange, onFinish, o
 
   return (
     <section className={cx(styles.wizard, className)} aria-label={ariaLabel ?? 'Wizard'}>
-      <ol className={styles.steps}>
+      <ol className={styles.steps} tabIndex={0} aria-label="Wizard steps">
         {steps.map((s, i) => {
           const done = i < furthest && i !== current;
           return (

@@ -1,0 +1,17 @@
+# Release quality: checks and current scope
+
+Phase 5 is in progress. Passing these checks is not a declaration that the package is release-ready.
+
+## Documentation validation
+
+`npm run typecheck` generates the API data and type-checks the library, documentation, and examples. `npm test` renders each registered example and runs automated axe checks in jsdom. `tests/unit/documentation-audit.test.ts` checks unique registry slugs, related-page references, the presence of examples and generated API entries, and runtime exports for documented components. `npm run docs:check` also checks inline local Markdown links and Markdown heading fragments in the top-level documentation, then compares documented component prop names and optionality with generated public declarations. CI runs this command after generating API data and building the library. These checks do not cover external links, dynamic routes, all Markdown syntax, complete API types or defaults, or the actual published package; they do not exercise every interaction or replace manual accessibility testing. Browser-based workflow, virtualized interaction and targeted cookbook tests use `npm run test:e2e:phase3`; the suite includes Chromium, Firefox, WebKit and mobile Chromium projects. `npm run test:e2e:docs` runs the documentation axe audit on desktop browser projects. The latest local desktop Chromium documentation audit passed 102 checks, and desktop/mobile Chromium interaction checks passed 25 (one mobile-only check skipped on desktop). Firefox, WebKit and real screen readers were not run locally.
+
+## Packed consumer smoke test
+
+Run `npm run test:consumer` after installing dependencies. It builds and packs the actual npm tarball, creates temporary clean consumers, installs React 18.2 and React 19.2 separately, verifies selected runtime and CSS/package exports, type-checks representative TSX imports including stylesheet declarations without a generic CSS ambient declaration, and creates a production Vite bundle. A simple bundle assertion checks that the unused AuditTrail example text is absent. Temporary projects and tarballs are deleted afterwards. The check requires npm registry access and is run in CI.
+
+This is not an exhaustive compatibility matrix: it checks two React versions, one TypeScript/Vite configuration, representative types and exports, and one tree-shaking case. It does not run the consumer bundle in a browser, validate server-rendered React Server Components, test other bundlers, or prove the actual published artifact is identical. The Vite consumer build currently warns that lucide-react's `use client` directives may not be preserved; React Server Components integration is not validated. Review npm package contents and test supported environments before a release.
+
+## Outstanding work
+
+Firefox and WebKit execution, screen-reader verification, complete accessibility and localization reviews, full documentation coverage, and the release and support policies remain to be completed. The [localization audit](localization-audit.md) records initial findings; the [release checklist](release-checklist.md) is a draft pending maintainer decisions. The [cookbook](enterprise-cookbook.md) includes runnable mock examples. Virtualization and backend integration limitations are described in [advanced-components.md](advanced-components.md) and [enterprise-workflows.md](enterprise-workflows.md).

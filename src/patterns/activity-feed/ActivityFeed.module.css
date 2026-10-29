@@ -1,0 +1,4 @@
+.root { min-width: 0; }
+.events { display: flex; flex-direction: column; gap: var(--eui-space-3); padding-inline-start: var(--eui-space-4); }
+.events li { overflow-wrap: anywhere; }
+.group { display: inline-block; font-size: var(--eui-font-size-sm); color: var(--eui-color-text-secondary); }

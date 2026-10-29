@@ -13,8 +13,13 @@ const floorplans = [
 ];
 
 export function Patterns() {
-  const listReport = examplesFor('filter-bar')[0];
+  const listReport = examplesFor('list-report').find((example) => example.id.endsWith('03-purchase-orders'));
   const objectPage = examplesFor('object-page')[0];
+  const cookbookIds = ['dashboard/02-inventory', 'master-detail/02-customers', 'wizard/02-purchase-order', 'approval-workflow/02-inbox', 'data-grid/03-assets', 'object-editor/01-object-page'];
+  const cookbook = cookbookIds.flatMap((id) => {
+    const example = examplesFor(id.split('/')[0]).find((item) => item.id === id);
+    return example ? [example] : [];
+  });
   return (
     <Page
       title="Enterprise patterns"
@@ -33,6 +38,9 @@ export function Patterns() {
       </Grid>
       {listReport && <ExampleBlock example={listReport} headingLevel={2} />}
       {objectPage && <ExampleBlock example={objectPage} headingLevel={2} />}
+      <h2>Enterprise cookbook</h2>
+      <p>Runnable mock examples. Applications must supply persistence, authorization and real service integrations.</p>
+      {cookbook.map((example) => <ExampleBlock key={example.id} example={example} headingLevel={3} />)}
     </Page>
   );
 }

@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { breakpoints } from '../../tokens';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
@@ -41,15 +41,30 @@ export function MasterDetail({
   backLabel = 'Back to list', collapseBelow = breakpoints.md, bordered = true, className,
 }: MasterDetailProps) {
   const narrow = useMediaQuery(`(max-width: ${collapseBelow - 1}px)`);
+  const pane = useRef<HTMLElement>(null);
+  const back = useRef<HTMLButtonElement>(null);
+  const previous = useRef({ narrow, showDetail });
+  useEffect(() => {
+    const before = previous.current;
+    previous.current = { narrow, showDetail };
+    if (!narrow || !before.narrow || before.showDetail === showDetail) return;
+    if (showDetail) (back.current ?? pane.current)?.focus();
+    else {
+      const selected = pane.current?.querySelector<HTMLElement>('[role="option"][aria-selected="true"], [aria-current="page"]');
+      const fallback = pane.current?.querySelector<HTMLElement>('button:not([disabled]), a[href], [tabindex="0"]');
+      const selectedCanFocus = selected && (selected.hasAttribute('tabindex') || selected.matches('a[href], button, input, select, textarea'));
+      (selectedCanFocus ? selected : fallback ?? pane.current)?.focus();
+    }
+  }, [narrow, showDetail]);
 
   if (narrow) {
     return (
       <div className={`${styles.root} ${className ?? ''}`}>
         {showDetail ? (
-          <section className={styles.pane} aria-label={detailLabel}>
+          <section ref={pane} tabIndex={-1} className={styles.pane} aria-label={detailLabel}>
             {onBack && (
               <div className={styles.backBar}>
-                <Button variant="tertiary" icon={<ArrowLeft />} onClick={onBack}>
+                <Button ref={back} variant="tertiary" icon={<ArrowLeft />} onClick={onBack}>
                   {backLabel}
                 </Button>
               </div>
@@ -57,7 +72,7 @@ export function MasterDetail({
             <div className={styles.paneBody}>{detail}</div>
           </section>
         ) : (
-          <section className={styles.pane} aria-label={masterLabel}>
+          <section ref={pane} tabIndex={-1} className={styles.pane} aria-label={masterLabel}>
             <div className={styles.paneBody}>{master}</div>
           </section>
         )}

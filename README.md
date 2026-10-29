@@ -6,6 +6,8 @@ A React + TypeScript component library for building business applications that l
 
 ![Inventory management app built with Enterprise UI Kit: application header, side navigation, filter bar and data grid](docs/screenshots/demo-app.png)
 
+**[Documentation and live demo →](https://iant89.github.io/ENTERPRISE-UI/)**
+
 > **Status: 0.1, pre-release.** The package is not on npm yet. See [Installation](#installation) for using it from this repository.
 
 ## Features
@@ -250,6 +252,10 @@ It also exports the token catalogue: `tokenGroups`, `getTokenValue` and `breakpo
 The patterns are built from the other components rather than re-implementing them. For example, `DataGrid` is `Table` + `SearchField` + `Select` + `Pagination` + `DropdownMenu`.
 
 ## Documentation
+
+The documentation is published at **https://iant89.github.io/ENTERPRISE-UI/**, and the demo app is at [`#/demo`](https://iant89.github.io/ENTERPRISE-UI/#/demo). The `Deploy documentation to GitHub Pages` workflow (`.github/workflows/pages.yml`) rebuilds and deploys the site on every push to `main`; you can also run it manually from the Actions tab.
+
+To run it locally:
 
 ```bash
 npm install

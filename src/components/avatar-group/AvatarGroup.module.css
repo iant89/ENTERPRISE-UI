@@ -1,0 +1,11 @@
+.root, .measure { width: 100%; min-width: 0; }
+.group, .individual { display: inline-flex; align-items: center; max-width: 100%; }
+.group > * + * { margin-inline-start: calc(var(--group-size, 2.5rem) * -.25); }
+.individual { gap: 4px; }
+.interactive { display: inline-flex; border: 0; background: transparent; padding: 0; color: inherit; cursor: pointer; border-radius: 999px; }
+.more { display: inline-flex; justify-content: center; align-items: center; flex: none; border-radius: 50%; border: 2px solid var(--eui-color-surface); background: var(--eui-color-surface-sunken); color: var(--eui-color-text); font-size: var(--eui-font-size-sm); font-weight: var(--eui-font-weight-semibold); }
+.xs { width: 1.5rem; height: 1.5rem; }
+.sm { width: 2rem; height: 2rem; }
+.md { width: 2.5rem; height: 2.5rem; }
+.lg { width: 3.5rem; height: 3.5rem; }
+.xl { width: 5rem; height: 5rem; }

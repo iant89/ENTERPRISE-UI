@@ -1,0 +1,1 @@
+.link { color: var(--eui-color-link); text-decoration: none; }.link:hover { color: var(--eui-color-link-hover); text-decoration: underline; }.link:focus-visible { outline: var(--eui-focus-width) solid var(--eui-color-focus); outline-offset: var(--eui-focus-offset); }

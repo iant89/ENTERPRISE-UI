@@ -1,0 +1,26 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: max(1rem, calc(var(--_size, 2.5rem) * .38));
+  height: max(1rem, calc(var(--_size, 2.5rem) * .38));
+  border: 2px solid var(--eui-color-surface);
+  border-radius: 50%;
+  color: white;
+}
+.badge svg { width: 70%; height: 70%; }
+.accent1 { background: var(--eui-color-accent-1); }
+.accent2 { background: var(--eui-color-accent-2); }
+.accent3 { background: var(--eui-color-accent-3); }
+.accent4 { background: var(--eui-color-accent-4); }
+.accent5 { background: var(--eui-color-accent-5); }
+.accent6 { background: var(--eui-color-accent-6); }
+.accent7 { background: var(--eui-color-accent-7); }
+.accent8 { background: var(--eui-color-accent-8); }
+.success { background: var(--eui-color-success-subtle); color: var(--eui-color-success-text); }
+.warning { background: var(--eui-color-warning-subtle); color: var(--eui-color-warning-text); }
+.error { background: var(--eui-color-error-subtle); color: var(--eui-color-error-text); }
+.information { background: var(--eui-color-info-subtle); color: var(--eui-color-info-text); }
+[data-eui-theme='dark'] .neutral, [data-eui-theme='high-contrast'] .neutral { color: #000; }
+@media (forced-colors: active) { .badge { border-color: CanvasText; color: CanvasText; } }

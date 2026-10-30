@@ -9,6 +9,7 @@ import { Playground } from '../components/Playground';
 import { PropsTable, componentApi } from '../components/PropsTable';
 import { NotFound } from './NotFound';
 import { href } from '../router';
+import styles from './ComponentPage.module.css';
 
 export function ComponentPage({ slug }: { slug: string }) {
   const doc = docsBySlug.get(slug);
@@ -38,7 +39,8 @@ export function ComponentPage({ slug }: { slug: string }) {
       {playground && (
         <section className="docs-section" aria-labelledby="playground">
           <h2 id="playground">Interactive preview</h2>
-          <p className="docs-muted">Experiment with props below, or <a href={href(`/playground/${slug}`)}>open the full playground</a> to edit JSX and see a live preview.</p>
+          <p className="docs-muted">Experiment with props below, or edit JSX in the full playground.</p>
+          <a className={styles.playgroundButton} href={href(`/playground/${slug}`)}>Open component playground <span aria-hidden="true">↗</span></a>
           <Playground def={playground} name={doc.name} />
         </section>
       )}

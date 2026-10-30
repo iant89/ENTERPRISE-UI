@@ -18,7 +18,7 @@ test('playground edits, reports errors, resets and switches examples', async ({ 
 
 test('component documentation links to the playground', async ({ page }) => {
   await page.goto('/#/components/button');
-  await page.getByRole('link', { name: 'open the full playground' }).click();
+  await page.getByRole('link', { name: 'Open component playground' }).click();
   await expect(page).toHaveURL(/#\/playground\/button$/);
 });
 

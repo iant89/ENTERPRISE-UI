@@ -1,0 +1,1 @@
+.picker { width: 3rem; height: var(--eui-control-height); padding: 3px; border: 1px solid var(--eui-color-border-strong); border-radius: var(--eui-radius-sm); background: var(--eui-color-surface); cursor: pointer; }.picker:disabled { opacity: var(--eui-disabled-opacity); cursor: var(--eui-disabled-cursor); }

@@ -1,0 +1,3 @@
+.header { display: flex; align-items: center; gap: var(--eui-space-3); padding: var(--eui-space-4); min-width: 0; }
+.text { flex: 1; min-width: 0; }.title { margin: 0; font-size: var(--eui-font-size-md); }.subtitle, .additional { color: var(--eui-color-text-secondary); font-size: var(--eui-font-size-sm); }.additional, .actions { flex: none; }
+.button { border: 0; padding: 0; color: var(--eui-color-link); background: transparent; font: inherit; text-align: start; cursor: pointer; }.button:hover { text-decoration: underline; }

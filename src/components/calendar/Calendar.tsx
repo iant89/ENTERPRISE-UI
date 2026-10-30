@@ -1,10 +1,11 @@
-import { forwardRef, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { forwardRef, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { addDays, addMonths, isOutOfRange, isSameDay, isSameMonth, startOfDay, startOfMonth, startOfWeek } from '../../utilities/date';
 import { useId } from '../../hooks/useId';
 import { useControllableState } from '../../hooks/useControllableState';
 import { IconButton } from '../icon-button';
+import { readCalendarMarkers } from './dates';
 import styles from './Calendar.module.css';
 
 export interface CalendarProps {
@@ -25,6 +26,8 @@ export interface CalendarProps {
   autoFocus?: boolean;
   /** Highlight weekends. @default true */
   highlightWeekends?: boolean;
+  /** CalendarDate, CalendarDateRange and SpecialCalendarDate markers. */
+  children?: ReactNode;
   className?: string;
 }
 
@@ -33,9 +36,10 @@ export interface CalendarProps {
  * month (with Shift: by year), Home/End to the start/end of the week.
  */
 export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calendar(
-  { value, defaultValue = null, onChange, min, max, isDateDisabled, locale, weekStartsOn = 1, autoFocus = false, highlightWeekends = true, className },
+  { value, defaultValue = null, onChange, min, max, isDateDisabled, locale, weekStartsOn = 1, autoFocus = false, highlightWeekends = true, children, className },
   ref,
 ) {
+  const markers = readCalendarMarkers(children);
   const [selected, setSelected] = useControllableState<Date | null>(value, defaultValue);
   const [focused, setFocused] = useState<Date>(() => startOfDay(selected ?? new Date()));
   const gridRef = useRef<HTMLTableElement>(null);
@@ -115,15 +119,19 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calen
           {weeks.map((week, w) => (
             <tr key={w}>
               {week.map((d) => {
-                const isSelected = isSameDay(d, selected);
+                const marked = markers.selected.some((date) => isSameDay(date, d));
+                const isSelected = isSameDay(d, selected) || marked;
+                const inRange = markers.ranges.some((range) => startOfDay(d).getTime() >= startOfDay(range.start).getTime() && startOfDay(d).getTime() <= startOfDay(range.end).getTime());
+                const special = markers.special.find((date) => isSameDay(date.date, d));
                 const isToday = isSameDay(d, today);
                 const weekend = d.getDay() === 0 || d.getDay() === 6;
+                const name = [dayLabelFormatter.format(d), inRange ? 'in selected range' : null, special?.label].filter(Boolean).join(', ');
                 return (
                   <td key={d.toISOString()} role="gridcell" aria-selected={isSelected || undefined} className={styles.cell}>
                     <button
                       type="button"
                       tabIndex={isSameDay(d, focused) ? 0 : -1}
-                      aria-label={dayLabelFormatter.format(d)}
+                      aria-label={name}
                       aria-current={isToday ? 'date' : undefined}
                       aria-pressed={isSelected}
                       disabled={disabled(d)}
@@ -132,6 +140,9 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calen
                         !isSameMonth(d, focused) && styles.outside,
                         isToday && styles.today,
                         isSelected && styles.selected,
+                        inRange && styles.range,
+                        special && special.type !== 'none' && styles.special,
+                        special && styles[special.type],
                         highlightWeekends && weekend && styles.weekend,
                       )}
                       onClick={() => select(d)}

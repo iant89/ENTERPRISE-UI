@@ -40,6 +40,7 @@ export * from './components/icon-button';
 export * from './components/split-button';
 export * from './components/toggle-button';
 export * from './components/button-group';
+export * from './components/segmented-button';
 
 // Forms
 export * from './components/form-field';
@@ -62,6 +63,9 @@ export * from './components/multi-select';
 export * from './components/checkbox';
 export * from './components/radio-group';
 export * from './components/switch';
+export * from './components/slider';
+export * from './components/range-slider';
+export * from './components/step-input';
 export * from './components/calendar';
 export * from './components/calendar-legend';
 export * from './components/color-palette';

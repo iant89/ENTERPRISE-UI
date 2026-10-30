@@ -1,9 +1,10 @@
-import { forwardRef, useEffect, useMemo, useRef, useState, type HTMLAttributes, type KeyboardEvent, type MouseEvent, type ReactNode } from 'react';
+import { Children, Fragment, forwardRef, isValidElement, useEffect, useMemo, useRef, useState, type HTMLAttributes, type KeyboardEvent, type MouseEvent, type ReactNode } from 'react';
 import { Check } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { findTypeaheadIndex, getNavigationIndex } from '../../utilities/keyboard';
 import { focusElement } from '../../utilities/focus';
 import { useMergedRefs } from '../../utilities/refs';
+import { MenuItem, MenuItemGroup, type MenuItemGroupProps, type MenuItemProps } from './MenuParts';
 import styles from './Menu.module.css';
 
 export interface MenuItemDef {
@@ -33,9 +34,14 @@ export interface MenuItemDef {
   onSelect?: (event: MouseEvent<HTMLElement>) => void;
 }
 
-export interface MenuSeparator {
+export interface MenuSeparatorEntry {
   type: 'separator';
   id?: string;
+}
+
+/** A non-focusable divider between menu actions. */
+export function MenuSeparator(): null {
+  return null;
 }
 
 export interface MenuGroupLabel {
@@ -44,12 +50,56 @@ export interface MenuGroupLabel {
   label: string;
 }
 
-export type MenuEntry = MenuItemDef | MenuSeparator | MenuGroupLabel;
+export type MenuEntry = MenuItemDef | MenuSeparatorEntry | MenuGroupLabel;
 
 const isItem = (entry: MenuEntry): entry is MenuItemDef => !('type' in entry);
 
-export interface MenuProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onSelect' | 'autoFocus'> {
-  items: MenuEntry[];
+function entriesFromChildren(children: ReactNode): MenuEntry[] {
+  const entries: MenuEntry[] = [];
+  const visit = (nodes: ReactNode) => {
+    Children.forEach(nodes, (node) => {
+      if (!isValidElement(node)) return;
+      if (node.type === Fragment) {
+        visit((node.props as { children?: ReactNode }).children);
+        return;
+      }
+      if (node.type === MenuItemGroup) {
+        const props = node.props as MenuItemGroupProps;
+        if (props.headerText) entries.push({ type: 'label', label: props.headerText });
+        visit(props.children);
+        return;
+      }
+      if (node.type === MenuSeparator) {
+        entries.push({ type: 'separator' });
+        return;
+      }
+      if (node.type !== MenuItem) return;
+      const props = node.props as MenuItemProps;
+      entries.push({
+        id: props.id,
+        label: props.label,
+        icon: props.icon,
+        description: props.description,
+        shortcut: props.shortcut ?? props.additionalText,
+        disabled: props.disabled,
+        destructive: props.destructive,
+        checked: props.checked,
+        href: props.href,
+        target: props.target,
+        ariaLabel: props.accessibleName,
+        onSelect: props.onSelect,
+      });
+    });
+  };
+  visit(children);
+  return entries;
+}
+
+export interface MenuProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onSelect' | 'autoFocus' | 'children'> {
+  /** Action model. Used instead of `children` when provided. */
+  items?: MenuEntry[];
+  /** MenuItem, MenuItemGroup and MenuSeparator elements. */
+  children?: ReactNode;
   /** Called with the id of the activated item. */
   onAction?: (id: string) => void;
   /** Called when the menu requests to close (after activation, Escape or Tab). */
@@ -63,12 +113,13 @@ export interface MenuProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onSelec
  * type-ahead navigation. Usually rendered by DropdownMenu or SplitButton.
  */
 export const Menu = forwardRef<HTMLDivElement, MenuProps>(function Menu(
-  { items, onAction, onClose, autoFocus = false, className, ...rest },
+  { items, children, onAction, onClose, autoFocus = false, className, ...rest },
   ref,
 ) {
+  const entries = items ?? entriesFromChildren(children);
   const listRef = useRef<HTMLDivElement>(null);
   const merged = useMergedRefs(ref, listRef);
-  const actionable = useMemo(() => items.filter(isItem), [items]);
+  const actionable = useMemo(() => entries.filter(isItem), [entries]);
   const [active, setActive] = useState(() => {
     const first = actionable.findIndex((i) => !i.disabled);
     if (autoFocus === 'last') {
@@ -127,7 +178,7 @@ export const Menu = forwardRef<HTMLDivElement, MenuProps>(function Menu(
   let index = -1;
   return (
     <div ref={merged} role="menu" aria-orientation="vertical" className={cx(styles.menu, className)} onKeyDown={onKeyDown} {...rest}>
-      {items.map((entry, i) => {
+      {entries.map((entry, i) => {
         if (!isItem(entry)) {
           if (entry.type === 'separator') return <div key={entry.id ?? `sep-${i}`} role="separator" className={styles.separator} />;
           return (

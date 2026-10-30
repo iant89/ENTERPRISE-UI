@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added React adaptations for calendar markers, list and menu composition, select and combo-box items, slider, range slider, step input, segmented button and responsive popover. Upstream UI5 behavior is not yet verified.
 - Added DataGrid message overrides, locale-sensitive local search, and explicit direction and language for grid popups.
 - Added localized pagination messages and number formatting with RTL chevrons; DataGrid can pass pagination translations.
 

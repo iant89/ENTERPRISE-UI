@@ -1,0 +1,43 @@
+.field {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 12rem;
+}
+
+.field:disabled {
+  opacity: var(--eui-disabled-opacity);
+}
+
+.readout {
+  color: var(--eui-color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.tracks {
+  position: relative;
+  height: 2rem;
+}
+
+.slider {
+  position: absolute;
+  inset-inline: 0;
+  width: 100%;
+  margin: 0;
+  pointer-events: none;
+  accent-color: var(--eui-color-primary);
+  background: transparent;
+}
+
+.slider::-webkit-slider-thumb {
+  pointer-events: auto;
+}
+
+.slider::-moz-range-thumb {
+  pointer-events: auto;
+}
+
+.slider:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-space-1);
+}

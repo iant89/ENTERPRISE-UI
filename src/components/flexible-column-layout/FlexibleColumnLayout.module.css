@@ -1,0 +1,3 @@
+.root { display: flex; block-size: 100%; min-block-size: 0; }
+.column { flex-grow: 0; flex-shrink: 1; min-inline-size: 0; overflow: auto; background: var(--eui-color-surface); }
+.column + .column { border-inline-start: var(--eui-border-width) solid var(--eui-color-border); }

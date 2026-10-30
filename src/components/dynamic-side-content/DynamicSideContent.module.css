@@ -1,0 +1,6 @@
+.root { display: flex; gap: var(--eui-space-4); align-items: flex-start; }
+.main { flex: 1 1 auto; min-inline-size: 0; }
+.side { flex: 0 0 min(20rem, 33%); min-inline-size: 0; }
+.start { flex-direction: row-reverse; }
+.stacked { flex-direction: column; }
+.stacked .side { flex-basis: auto; inline-size: 100%; }

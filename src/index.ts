@@ -86,6 +86,9 @@ export * from './components/tree-table';
 export * from './components/card';
 export * from './components/card-header';
 export * from './components/expandable-text';
+export * from './components/dynamic-page';
+export * from './components/dynamic-side-content';
+export * from './components/flexible-column-layout';
 export * from './components/carousel';
 export * from './components/avatar';
 export * from './components/avatar-badge';
@@ -95,6 +98,8 @@ export * from './components/status-indicator';
 export * from './components/timeline';
 export * from './components/object-identifier';
 export * from './components/metric-card';
+export * from './components/hero-banner';
+export * from './components/media-gallery';
 export * from './components/title';
 export * from './components/text';
 

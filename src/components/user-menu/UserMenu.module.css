@@ -1,0 +1,11 @@
+.root { display: flex; flex-direction: column; gap: var(--eui-space-3); }
+.account { display: flex; flex-direction: column; align-items: center; gap: var(--eui-space-2); text-align: center; }
+.identity { display: flex; flex-direction: column; gap: var(--eui-space-0-5); }
+.secondary { color: var(--eui-color-text-secondary); font-size: var(--eui-font-size-sm); }
+.section { border-block-start: var(--eui-border-width) solid var(--eui-color-border-subtle); padding-block-start: var(--eui-space-2); }
+.heading { margin: 0 0 var(--eui-space-1); font-size: var(--eui-font-size-xs); font-weight: var(--eui-font-weight-semibold); color: var(--eui-color-text-secondary); text-transform: uppercase; }
+.accounts { margin: 0; padding: 0; list-style: none; }
+.accountButton { display: flex; align-items: center; gap: var(--eui-space-2); inline-size: 100%; min-block-size: var(--eui-touch-target-min); padding: var(--eui-space-1); border: 0; border-radius: var(--eui-radius-sm); background: transparent; color: var(--eui-color-text); font: inherit; text-align: start; cursor: pointer; }
+.accountButton:hover { background: var(--eui-color-surface-hover); }
+.accountButton:focus-visible { outline: var(--eui-focus-width) solid var(--eui-color-focus); }
+.footer { border-block-start: var(--eui-border-width) solid var(--eui-color-border-subtle); padding-block-start: var(--eui-space-2); }

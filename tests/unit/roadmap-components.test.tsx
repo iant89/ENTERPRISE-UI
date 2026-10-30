@@ -21,6 +21,10 @@ describe('BusyIndicator', () => {
   });
 });
 describe('ButtonBadge', () => {
+  it('announces its label after the visible button text', () => {
+    renderWithTheme(<Button badge={<ButtonBadge design="overlay" text="3" label="3 new" />}>Notifications</Button>);
+    expect(screen.getByRole('button', { name: 'Notifications, 3 new' })).not.toHaveAttribute('aria-label');
+  });
   it('is decorative inside a named button in dot and text modes', () => {
     const { rerender } = renderWithTheme(<Button aria-label="Inbox, 3 new" badge={<ButtonBadge design="overlay" text="3" />}>Inbox</Button>);
     expect(screen.getByRole('button', { name: 'Inbox, 3 new' })).toContainElement(screen.getByText('3'));

@@ -1,0 +1,2 @@
+.root { display: flex; flex-direction: column; gap: var(--eui-space-1); }
+.tokens { order: 1; }

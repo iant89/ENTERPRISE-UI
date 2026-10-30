@@ -865,7 +865,7 @@ Or, you can use the global configuration and set the `calendarType` key:
 
 - Tag: `ui5-date`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/CalendarDate.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Calendar` value / `DatePicker` (dates are props, not child elements) (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -899,7 +899,7 @@ The `ui5-date` component defines a calendar date to be used inside `ui5-calendar
 
 - Tag: `ui5-date-range`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/CalendarDateRange.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `DateRangePicker` value (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -1738,7 +1738,7 @@ The `ui5-combobox` provides advanced keyboard handling.
 
 - Tag: `ui5-cb-item`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ComboBoxItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `ComboBox` `options` (`SelectOption`) (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -1778,7 +1778,7 @@ The `ui5-cb-item` represents the item for a `ui5-combobox`.
 
 - Tag: `ui5-cb-item-custom`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ComboBoxItemCustom.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `SelectOption` `description`/`icon` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -1825,7 +1825,7 @@ For highlighting functionality, see `@ui5/webcomponents-base/dist/util/generateH
 
 - Tag: `ui5-cb-item-group`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ComboBoxItemGroup.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `SelectOption.group` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -2450,7 +2450,7 @@ with the following keyboard shortcut:
 
 - Tag: `ui5-dynamic-date-range`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/DynamicDateRange.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/dynamic-date-range` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -3583,7 +3583,7 @@ In order to use this functionality, you need to import the following module:
 
 - Tag: `ui5-li-custom`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ListItemCustom.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `List` items (`leading`/`trailing`/`meta`) (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -3668,7 +3668,7 @@ See the `ui5-list` "Keyboard Handling" section for the full behavior.
 
 - Tag: `ui5-li-group`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ListItemGroup.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `List` `header` / multiple lists (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -3725,7 +3725,7 @@ This is the item to use inside a `ui5-list`.
 
 - Tag: `ui5-li`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ListItemStandard.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `List` `items` (`ListItemData`) (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -3899,7 +3899,7 @@ The menu does not manage these aspects when the menu item state changes.
 
 - Tag: `ui5-menu-item`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/MenuItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Menu` `items` (`MenuItemDef`) (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -3977,7 +3977,7 @@ and each `ui5-menu-item` is represented by a list item in that list. Therefore, 
 
 - Tag: `ui5-menu-item-group`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/MenuItemGroup.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Menu` `{ type: 'label' }` entries (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -4034,7 +4034,7 @@ The items are addeed to the group's `items` slot.
 
 - Tag: `ui5-menu-separator`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/MenuSeparator.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Menu` `{ type: 'separator' }` entries (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -4137,7 +4137,7 @@ In order to use this functionality, you need to import the following module:
 
 - Tag: `ui5-multi-combobox`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/MultiComboBox.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `src/components/multi-select` (filterable multi-selection) (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -4250,7 +4250,7 @@ to navigate through the available options and select one by pressing the `Space`
 
 - Tag: `ui5-mcb-item`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/MultiComboBoxItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `MultiSelect` `options` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -4291,7 +4291,7 @@ The `ui5-mcb-item` represents the item for a `ui5-multi-combobox`.
 
 - Tag: `ui5-mcb-item-custom`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/MultiComboBoxItemCustom.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `SelectOption` `description`/`icon` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -4338,7 +4338,7 @@ For highlighting functionality, see `@ui5/webcomponents-base/dist/util/generateH
 
 - Tag: `ui5-mcb-item-group`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/MultiComboBoxItemGroup.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `SelectOption.group` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -4390,7 +4390,7 @@ that can be used to split the `ui5-multi-combobox` suggestions into groups.
 
 - Tag: `ui5-multi-input`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/MultiInput.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/multi-input` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -4571,7 +4571,7 @@ use the regular `ui5-input` instead.
 
 - Tag: `ui5-option`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/Option.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Select` `options` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -4624,7 +4624,7 @@ The `ui5-option` component defines the content of an option in the `ui5-select`.
 
 - Tag: `ui5-option-custom`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/OptionCustom.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `SelectOption` `description`/`icon` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -4678,7 +4678,7 @@ The component accepts arbitrary HTML content to allow full customization.
 
 - Tag: `ui5-option-group`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/OptionGroup.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `SelectOption.group` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -5066,7 +5066,7 @@ while TAB and SHIFT + TAB can be used to enter or leave the radio button group.
 
 - Tag: `ui5-range-slider`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/RangeSlider.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/range-slider` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -5249,7 +5249,7 @@ with the following keyboard shortcuts:
 
 - Tag: `ui5-responsive-popover`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ResponsivePopover.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/responsive-popover` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -5337,7 +5337,7 @@ Use it when you want to make sure that all the content is visible on any device.
 
 - Tag: `ui5-segmented-button`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/SegmentedButton.d.ts).
-- Local implementation: `src/components/button-group` (candidate only; parity unverified)
+- Local implementation: `src/components/segmented-button` (React adaptation; UI5 parity unverified). `src/components/button-group` remains the non-selecting grouping primitive.
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -5401,7 +5401,7 @@ to fit proportionally within the component. When no width is set, the component 
 
 - Tag: `ui5-segmented-button-item`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/SegmentedButtonItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/segmented-button` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -5581,7 +5581,7 @@ The `ui5-select` provides advanced keyboard handling.
 
 - Tag: `ui5-slider`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/Slider.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/slider` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -5684,7 +5684,7 @@ resizing the width of the control. You can move the slider handle in several dif
 
 - Tag: `ui5-special-date`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/SpecialCalendarDate.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Calendar` `isDateDisabled` + `CalendarLegend` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -5815,7 +5815,7 @@ There are separate events that are fired on activating of `ui5-split-button` par
 
 - Tag: `ui5-step-input`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/StepInput.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `src/components/number-input` (stepper buttons, keyboard stepping) (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -5910,7 +5910,7 @@ In this case, use the regular `ui5-input` instead.
 
 - Tag: `ui5-suggestion-item`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/SuggestionItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `ComboBox` / `MultiInput` `suggestions` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -5949,7 +5949,7 @@ The `ui5-suggestion-item` represents the suggestion item of the `ui5-input`.
 
 - Tag: `ui5-suggestion-item-custom`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/SuggestionItemCustom.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `SelectOption` `description`/`icon` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -5995,7 +5995,7 @@ In case the user needs highlighting functionality, check "@ui5/webcomponents-bas
 
 - Tag: `ui5-suggestion-item-group`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/SuggestionItemGroup.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `SelectOption.group` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -6422,7 +6422,7 @@ If you include custom web components inside table cells that are not part of the
 
 - Tag: `ui5-table-cell`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/TableCell.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Table` `columns` render functions (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -6467,7 +6467,7 @@ It is tightly coupled to the `ui5-table` and thus should only be used in the tab
 
 - Tag: `ui5-table-group-row`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/TableGroupRow.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `DataGrid` grouping (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -6543,7 +6543,7 @@ The following features of `ui5-table-row` are currently not supported by `ui5-ta
 
 - Tag: `ui5-table-growing`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/TableGrowing.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Table`/`DataGrid` pagination and `VirtualList` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -6610,7 +6610,7 @@ the component will render a growing button instead to ensure growing capabilitie
 
 - Tag: `ui5-table-header-cell`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/TableHeaderCell.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Table` `columns` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -6663,7 +6663,7 @@ to ensure correct layout and design.
 
 - Tag: `ui5-table-header-cell-action-ai`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/TableHeaderCellActionAI.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: not implemented — AI header action is application-specific; compose an `AIButton` in a `Table` column header.
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -6701,7 +6701,7 @@ The `ui5-table-header-cell-action-ai` component defines a dedicated AI action fo
 
 - Tag: `ui5-table-header-row`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/TableHeaderRow.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Table` `columns` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -6747,7 +6747,7 @@ The header row is placed in the `headerRow` slot of the table.
 
 - Tag: `ui5-table-row`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/TableRow.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Table` `rows` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -6795,7 +6795,7 @@ The `ui5-table-row` component represents a row in the `ui5-table`.
 
 - Tag: `ui5-table-row-action`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/TableRowAction.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Table` row actions column (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -6841,7 +6841,7 @@ The `ui5-table-row-action` component defines an action for table rows.
 
 - Tag: `ui5-table-row-action-navigation`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/TableRowActionNavigation.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Table` row click / link column (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -6886,7 +6886,7 @@ The `ui5-table-row-action-navigation` component defines a navigation action for 
 
 - Tag: `ui5-table-selection`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/TableSelection.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Table` selection props (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -6950,7 +6950,7 @@ The component is not intended to be used as a standalone component.
 
 - Tag: `ui5-table-selection-multi`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/TableSelectionMulti.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Table` multi selection (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -7017,7 +7017,7 @@ This component is not intended for standalone use.
 
 - Tag: `ui5-table-selection-single`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/TableSelectionSingle.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Table` single selection (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -7081,7 +7081,7 @@ This component is not intended for standalone use.
 
 - Tag: `ui5-table-virtualizer`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/TableVirtualizer.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `DataGrid` virtualization (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -7136,7 +7136,7 @@ This allows large numbers of rows to exist, but maintain high performance by onl
 
 - Tag: `ui5-tab-separator`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/TabSeparator.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `TabList` composition (separators rendered by the app) (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -7167,7 +7167,7 @@ The `ui5-tab-separator` represents a vertical line to separate tabs inside a `ui
 
 - Tag: `ui5-tag`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/Tag.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `src/components/badge` and `src/components/status-indicator` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -7242,7 +7242,7 @@ It can contain icon and text information, and its design can be chosen from spec
 
 - Tag: `ui5-text`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/Text.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/text` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -7519,7 +7519,7 @@ When opened:
 
 - Tag: `ui5-title`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/Title.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/title` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -7725,7 +7725,7 @@ By applying additional custom CSS-styling classes, apps can give a different sty
 
 - Tag: `ui5-token`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/Token.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/token` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -7773,7 +7773,7 @@ Tokens are small items of information (similar to tags) that mainly serve to vis
 
 - Tag: `ui5-tokenizer`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/Tokenizer.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/token` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -7931,7 +7931,7 @@ The `ui5-toolbar` provides advanced keyboard handling.
 
 - Tag: `ui5-toolbar-button`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ToolbarButton.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `CommandToolbar` `actions` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -7992,7 +7992,7 @@ used in the `ui5-toolbar`.
 
 - Tag: `ui5-toolbar-item`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ToolbarItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `CommandToolbar` `start` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -8048,7 +8048,7 @@ component-specific functionality and should be preferred when available.
 
 - Tag: `ui5-toolbar-select`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ToolbarSelect.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `CommandToolbar` `start` with `Select` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -8112,7 +8112,7 @@ The items inside the `ui5-toolbar-select` define the available options by using 
 
 - Tag: `ui5-toolbar-select-option`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ToolbarSelectOption.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Select` `options` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -8152,7 +8152,7 @@ The `ui5-toolbar-select-option` component defines the content of an option in th
 
 - Tag: `ui5-toolbar-separator`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ToolbarSeparator.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `CommandToolbar` action grouping (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -8191,7 +8191,7 @@ It takes no space in calculating toolbar items width.
 
 - Tag: `ui5-toolbar-spacer`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ToolbarSpacer.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `CommandToolbar` layout (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -8334,7 +8334,7 @@ when the `selectionMode` property is in use:
 
 - Tag: `ui5-tree-item`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/TreeItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Tree` `nodes` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -8412,7 +8412,7 @@ You can represent an arbitrary tree structure by recursively nesting tree items.
 
 - Tag: `ui5-tree-item-custom`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/TreeItemCustom.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Tree` node `label` as ReactNode (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -8493,7 +8493,7 @@ You can use this item to put any custom content inside the tree item.
 
 - Tag: `ui5-barcode-scanner-dialog`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/BarcodeScannerDialog.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/barcode-scanner-dialog` (React adaptation: getUserMedia rear camera, vendored, lazily loaded `@zxing/library` decoder by default with opt-in native BarcodeDetector, manual entry; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -8552,7 +8552,7 @@ For a list of supported barcode formats, see the [zxing-js/library](https://gith
 
 - Tag: `ui5-dynamic-page`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/DynamicPage.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/dynamic-page` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -8659,7 +8659,7 @@ In order to use this functionality, you need to import the following module:
 
 - Tag: `ui5-dynamic-page-header`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/DynamicPageHeader.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/dynamic-page` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -8718,7 +8718,7 @@ The `DynamicPageHeader` provides an accessible label for the header region.
 
 - Tag: `ui5-dynamic-page-title`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/DynamicPageTitle.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/dynamic-page` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -8780,7 +8780,7 @@ content that is displayed.
 
 - Tag: `ui5-dynamic-side-content`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/DynamicSideContent.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/dynamic-side-content` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -8902,7 +8902,7 @@ viewed by triggering it.
 
 - Tag: `ui5-filter-item`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/FilterItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/view-settings-dialog` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -8951,7 +8951,7 @@ The `ui5-filter-item` is used within the `ui5-view-settings-dialog` to provide f
 
 - Tag: `ui5-filter-item-option`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/FilterItemOption.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/view-settings-dialog` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -8996,7 +8996,7 @@ of `ui5-view-settings-dialog`. Each option represents a specific value that can 
 
 - Tag: `ui5-flexible-column-layout`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/FlexibleColumnLayout.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/flexible-column-layout` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -9094,7 +9094,7 @@ In order to use this functionality, you need to import the following module:
 
 - Tag: `ui5-group-item`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/GroupItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/view-settings-dialog` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -9139,7 +9139,7 @@ Each group item represents a column or field by which data can be grouped.
 
 - Tag: `ui5-hero-banner`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/HeroBanner.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/hero-banner` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -9231,7 +9231,7 @@ The hero banner adapts to different screen sizes:
 
 - Tag: `ui5-illustrated-message`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/IllustratedMessage.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `src/patterns/empty-state` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -9315,7 +9315,7 @@ a `ui5-dialog` or a `ui5-page`
 
 - Tag: `ui5-media-gallery`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/MediaGallery.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/media-gallery` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -9400,7 +9400,7 @@ shortcuts allow the user to navigate through the thumbnail items:
 
 - Tag: `ui5-media-gallery-item`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/MediaGalleryItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/media-gallery` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -9454,7 +9454,7 @@ shortcuts in order to perform a navigation:
 
 - Tag: `ui5-navigation-layout`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/NavigationLayout.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `src/layouts/app-shell` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -9593,7 +9593,7 @@ In order to use this functionality, you need to import the following module:
 
 - Tag: `ui5-li-notification-group`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/NotificationListGroupItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `NotificationCenter` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -9668,7 +9668,7 @@ This component provides fast navigation when the header is focused using the fol
 
 - Tag: `ui5-li-notification`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/NotificationListItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `NotificationCenter` `notifications` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -9828,7 +9828,7 @@ that there is enough space for the `ui5-page` to be rendered.
 
 - Tag: `ui5-product-switch`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/ProductSwitch.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/product-switch` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -9881,7 +9881,7 @@ shortcuts in order to perform a navigation:
 
 - Tag: `ui5-product-switch-item`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/ProductSwitchItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/product-switch` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -10029,7 +10029,7 @@ The `ui5-search` consists of several elements parts:
 
 - Tag: `ui5-search-item`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/SearchItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `SearchField` / `CommandPalette` results (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -10085,7 +10085,7 @@ A `ui5-search-item` is a list item, used for displaying search suggestions
 
 - Tag: `ui5-search-item-group`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/SearchItemGroup.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `CommandPalette` groups (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -10137,7 +10137,7 @@ that can be used to split the `ui5-search-item` suggestions into groups.
 
 - Tag: `ui5-search-item-show-more`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/SearchItemShowMore.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `CommandPalette` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -10182,7 +10182,7 @@ A `ui5-search-item-show-more` is a special type of ui5-li that acts as a button 
 
 - Tag: `ui5-search-message-area`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/SearchMessageArea.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `SearchField` status text (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 Module import: `import "@ui5/webcomponents-fiori/dist/SearchMessageArea.js";`
@@ -10214,7 +10214,7 @@ Module import: `import "@ui5/webcomponents-fiori/dist/SearchMessageArea.js";`
 
 - Tag: `ui5-search-scope`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/SearchScope.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `SearchField` + `Select` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -10361,7 +10361,7 @@ In order to use this functionality, you need to import the following module:
 
 - Tag: `ui5-shellbar-branding`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/ShellBarBranding.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `ApplicationHeader` `logo`/`productName` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -10410,7 +10410,7 @@ and the `logo` slot of `ui5-shellbar`.
 
 - Tag: `ui5-shellbar-item`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/ShellBarItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `ApplicationHeader` actions (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -10454,7 +10454,7 @@ The `ui5-shellbar-item` represents a custom item for `ui5-shellbar`.
 
 - Tag: `ui5-shellbar-search`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/ShellBarSearch.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `ApplicationHeader` `search` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -10519,7 +10519,7 @@ Search field for the ShellBar component.
 
 - Tag: `ui5-shellbar-spacer`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/ShellBarSpacer.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `ApplicationHeader` layout (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -10650,7 +10650,7 @@ In order to use this functionality, you need to import the following module:
 
 - Tag: `ui5-side-navigation-group`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/SideNavigationGroup.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `NavigationGroup` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -10698,7 +10698,7 @@ The `ui5-side-navigation-group` can only be used inside a `ui5-side-navigation`.
 
 - Tag: `ui5-side-navigation-item`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/SideNavigationItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `NavigationItem` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -10760,7 +10760,7 @@ The `ui5-side-navigation-item` is used within `ui5-side-navigation` or `ui5-side
 
 - Tag: `ui5-side-navigation-search-field`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/SideNavigationSearchField.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `SearchField` in `SideNavigation` children (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -10811,7 +10811,7 @@ used to filter the items of a `ui5-side-navigation`.
 
 - Tag: `ui5-side-navigation-sub-item`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/SideNavigationSubItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by nested `NavigationItem` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -10870,7 +10870,7 @@ The `ui5-side-navigation-sub-item` is intended to be used inside a `ui5-side-nav
 
 - Tag: `ui5-sort-item`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/SortItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/view-settings-dialog` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11000,7 +11000,7 @@ a constrained height in this mode so it owns its scrollbar.
 
 - Tag: `ui5-timeline-group-item`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/TimelineGroupItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Timeline` items (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11049,7 +11049,7 @@ It is intented to represent a group of `<ui5-timeline-item>`s.
 
 - Tag: `ui5-timeline-item`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/TimelineItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Timeline` items (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11100,7 +11100,7 @@ An entry posted on the timeline.
 
 - Tag: `ui5-upload-collection`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/UploadCollection.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/upload-collection` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11163,7 +11163,7 @@ It also allows you to show already uploaded files.
 
 - Tag: `ui5-upload-collection-item`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/UploadCollectionItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/upload-collection` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11233,7 +11233,7 @@ A component to be used within the `ui5-upload-collection`.
 
 - Tag: `ui5-user-menu`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/UserMenu.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/user-menu` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11304,7 +11304,7 @@ and allows the user to easily see information and settings for the current user 
 
 - Tag: `ui5-user-menu-account`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/UserMenuAccount.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/user-menu` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11349,7 +11349,7 @@ The `ui5-user-menu-account` represents an account in the `ui5-user-menu`.
 
 - Tag: `ui5-user-menu-item`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/UserMenuItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/user-menu` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11428,7 +11428,7 @@ and each `ui5-menu-item` is represented by a menu item in that menu. Therefore, 
 
 - Tag: `ui5-user-menu-item-group`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/UserMenuItemGroup.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/user-menu` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11485,7 +11485,7 @@ The items are addeed to the group's `items` slot.
 
 - Tag: `ui5-user-settings-account-view`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/UserSettingsAccountView.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `UserSettingsDialog` view `content` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11536,7 +11536,7 @@ The `ui5-user-settings-account-view` represents a view displayed in the `ui5-use
 
 - Tag: `ui5-user-settings-appearance-view`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/UserSettingsAppearanceView.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `UserSettingsDialog` view `content` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11587,7 +11587,7 @@ The `ui5-user-settings-appearance-view` represents a view displayed in the `ui5-
 
 - Tag: `ui5-user-settings-appearance-view-group`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/UserSettingsAppearanceViewGroup.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `UserSettingsDialog` view `content` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11645,7 +11645,7 @@ This is the item to use inside a `ui5-user-settings-appearance-view`.
 
 - Tag: `ui5-user-settings-appearance-view-item`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/UserSettingsAppearanceViewItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `UserSettingsDialog` view `content` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11718,7 +11718,7 @@ It displays a theme with an avatar icon, text label, and can be selected.
 
 - Tag: `ui5-user-settings-dialog`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/UserSettingsDialog.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/user-settings-dialog` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11780,7 +11780,7 @@ It allows the user to easily view information and settings for an account.
 
 - Tag: `ui5-user-settings-item`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/UserSettingsItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/user-settings-dialog` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11842,7 +11842,7 @@ or use the <code>UserSettingsItem</code> in read-only mode by setting the <code>
 
 - Tag: `ui5-user-settings-notifications-view`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/UserSettingsNotificationsView.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `UserSettingsDialog` view `content` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11911,7 +11911,7 @@ Additional content (e.g. an information message strip) can be placed via the
 
 - Tag: `ui5-user-settings-notifications-view-group`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/UserSettingsNotificationsViewGroup.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `UserSettingsDialog` view `content` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -11969,7 +11969,7 @@ section title with a separator line below, per the notifications design spec.
 
 - Tag: `ui5-user-settings-notifications-view-item`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/UserSettingsNotificationsViewItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `UserSettingsDialog` view `content` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -12053,7 +12053,7 @@ and no `switch-change` event is fired.
 
 - Tag: `ui5-user-settings-view`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/UserSettingsView.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/user-settings-dialog` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -12094,7 +12094,7 @@ The `ui5-user-settings-view` represents a view displayed in the `ui5-user-settin
 
 - Tag: `ui5-view-settings-dialog`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/ViewSettingsDialog.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/view-settings-dialog` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -12179,7 +12179,7 @@ The `ui5-view-settings-dialog` is usually displayed at the center of the screen.
 
 - Tag: `ui5-view-settings-dialog-custom-tab`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/ViewSettingsDialogCustomTab.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/view-settings-dialog` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -12352,7 +12352,7 @@ Tapping on them will show a popover to select the step to navigate to. On mobile
 
 - Tag: `ui5-wizard-step`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/WizardStep.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Wizard` steps (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -12532,7 +12532,7 @@ Furthermore, you can interact with `ui5-table` via the following keys.
 
 - Tag: `ui5-table-cell`
 - Package: `@ui5/webcomponents-compat@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-compat@2.28.1/dist/TableCell.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Table` `columns` render functions (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -12568,7 +12568,7 @@ The `ui5-table-cell` component defines the structure of the data in a single `ui
 
 - Tag: `ui5-table-column`
 - Package: `@ui5/webcomponents-compat@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-compat@2.28.1/dist/TableColumn.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Table` `columns` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -12614,7 +12614,7 @@ when rendering the `ui5-table` component.
 
 - Tag: `ui5-table-group-row`
 - Package: `@ui5/webcomponents-compat@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-compat@2.28.1/dist/TableGroupRow.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `DataGrid` grouping (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -12650,7 +12650,7 @@ The `ui5-table-group-row` component represents a group row in the `ui5-table`.
 
 - Tag: `ui5-table-row`
 - Package: `@ui5/webcomponents-compat@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-compat@2.28.1/dist/TableRow.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: covered by `Table` `rows` (React data-driven adaptation; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -12771,7 +12771,7 @@ To display additional actions, you can attach a menu to the arrow button.
 
 - Tag: `ui5-ai-button-state`
 - Package: `@ui5/webcomponents-ai@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-ai@2.28.1/dist/ButtonState.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/ai-button` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction
@@ -12924,7 +12924,7 @@ The component automatically determines which elements to render based on its int
 
 - Tag: `ui5-ai-prompt-input`
 - Package: `@ui5/webcomponents-ai@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-ai@2.28.1/dist/PromptInput.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
+- Local implementation: `src/components/prompt-input` (React adaptation added in the roadmap-components batch; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction

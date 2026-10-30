@@ -1,0 +1,8 @@
+.title { margin: 0; color: var(--eui-color-text); font-family: var(--eui-font-family); font-weight: var(--eui-font-weight-semibold); line-height: var(--eui-line-height-tight); }
+.size-xs { font-size: var(--eui-font-size-sm); }
+.size-sm { font-size: var(--eui-font-size-md); }
+.size-md { font-size: var(--eui-font-size-lg); }
+.size-lg { font-size: var(--eui-font-size-xl); }
+.size-xl { font-size: var(--eui-font-size-2xl); }
+.size-2xl { font-size: var(--eui-font-size-3xl); }
+.truncate { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }

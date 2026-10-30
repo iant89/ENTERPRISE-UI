@@ -1,0 +1,7 @@
+.root { border: 0; margin: 0; padding: 0; min-inline-size: 10rem; display: grid; grid-template-columns: 1fr auto; gap: var(--eui-space-1); }
+.legend { float: inline-start; font-size: var(--eui-font-size-sm); color: var(--eui-color-text-secondary); padding: 0; }
+.value { justify-self: end; font-size: var(--eui-font-size-sm); font-variant-numeric: tabular-nums; }
+.track { grid-column: 1 / -1; display: grid; gap: var(--eui-space-1); }
+.input { inline-size: 100%; margin: 0; accent-color: var(--eui-color-primary); min-block-size: var(--eui-touch-target-min); }
+.input:focus-visible { outline: var(--eui-focus-width) solid var(--eui-color-focus); outline-offset: var(--eui-focus-offset); }
+.root:disabled { opacity: var(--eui-disabled-opacity); }

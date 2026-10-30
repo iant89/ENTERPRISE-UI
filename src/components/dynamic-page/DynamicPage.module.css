@@ -11,5 +11,5 @@
 .headerContent { padding-block: var(--eui-space-3) var(--eui-space-1); }
 .headerControls { display: flex; justify-content: center; gap: var(--eui-space-1); }
 .content { flex: 1; padding: var(--eui-space-4) var(--eui-space-6); }
-.footer { position: sticky; inset-block-end: 0; z-index: var(--eui-z-sticky); display: flex; justify-content: flex-end; gap: var(--eui-space-2); padding: var(--eui-space-2) var(--eui-space-6); background: var(--eui-color-surface); border-block-start: var(--eui-border-width) solid var(--eui-color-border); box-shadow: var(--eui-shadow-md); }
+.footer { position: sticky; inset-block-end: 0; z-index: var(--eui-z-sticky); display: flex; justify-content: flex-end; gap: var(--eui-space-2); padding: var(--eui-space-2) var(--eui-space-6); background: var(--eui-color-surface); border-block-start: var(--eui-border-width) solid var(--eui-color-border); box-shadow: var(--eui-shadow-level-1); }
 @media (max-width: 599.98px) { .titleArea, .content, .footer { padding-inline: var(--eui-space-4); } }

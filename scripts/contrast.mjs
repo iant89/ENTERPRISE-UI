@@ -1,7 +1,7 @@
 // Quick WCAG contrast checker for theme token pairs: node scripts/contrast.mjs
 import { readFileSync } from 'node:fs';
 
-const themes = ['light', 'dark', 'high-contrast'];
+const themes = ['light', 'dark', 'high-contrast', 'sap-horizon', 'sap-horizon-dark', 'sap-fiori-3', 'sap-fiori-3-dark'];
 const pairs = [
   ['text', 'background', 4.5], ['text', 'surface', 4.5],
   ['text-secondary', 'surface', 4.5], ['text-secondary', 'background', 4.5],
@@ -16,7 +16,7 @@ const pairs = [
   ['on-success', 'success', 4.5], ['on-warning', 'warning', 4.5], ['on-error', 'error', 4.5],
   ['border-strong', 'surface', 3], ['focus', 'surface', 3], ['focus', 'background', 3],
   ['on-tooltip', 'tooltip', 4.5], ['text', 'surface-selected', 4.5], ['text', 'surface-alt', 4.5],
-  ['primary', 'surface', 3], ['selected-text', 'surface-selected', 4.5], ['selected-text', 'primary-subtle', 4.5], ['selected-text', 'surface', 4.5], ['icon', 'surface', 3], ['text-placeholder', 'surface', 4.5],
+  ['primary', 'surface', 4.5], ['selected-text', 'surface-selected', 4.5], ['selected-text', 'primary-subtle', 4.5], ['selected-text', 'surface', 4.5], ['icon', 'surface', 3], ['text-placeholder', 'surface', 4.5],
   ...[1, 2, 3, 4, 5, 6, 7, 8].map((n) => [`accent-${n}`, 'surface', 3]),
 ];
 

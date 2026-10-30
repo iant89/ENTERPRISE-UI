@@ -5,7 +5,7 @@
   background: var(--eui-color-surface);
   border: var(--eui-border-width) solid var(--eui-color-border-subtle);
   border-radius: var(--eui-radius-lg);
-  box-shadow: var(--eui-shadow-sm);
+  box-shadow: var(--eui-shadow-level-0);
 }
 
 .toolbar {

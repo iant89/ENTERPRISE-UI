@@ -33,7 +33,7 @@
   border-radius: var(--eui-radius-md);
   background: var(--eui-color-surface);
   color: var(--eui-color-text);
-  box-shadow: var(--eui-shadow-lg);
+  box-shadow: var(--eui-shadow-level-2);
   pointer-events: auto;
   animation: eui-scale-in var(--eui-duration-normal) var(--eui-easing-emphasized);
 }

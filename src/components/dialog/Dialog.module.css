@@ -20,7 +20,7 @@
   color: var(--eui-color-text);
   border: var(--eui-border-width) solid var(--eui-color-border-subtle);
   border-radius: var(--eui-radius-lg);
-  box-shadow: var(--eui-shadow-xl);
+  box-shadow: var(--eui-shadow-level-3);
   outline: none;
   animation: eui-scale-in var(--eui-duration-normal) var(--eui-easing-emphasized);
 }

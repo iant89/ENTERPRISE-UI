@@ -96,25 +96,25 @@
 .error {
   --_border: var(--eui-color-error-border);
   --_bg: var(--eui-color-error-subtle);
-  box-shadow: inset 0 -1px 0 var(--eui-color-error-border);
+  box-shadow: inset 0 -1px 0 var(--eui-color-error-border), var(--eui-shadow-negative);
 }
 
 .warning {
   --_border: var(--eui-color-warning-border);
   --_bg: var(--eui-color-warning-subtle);
-  box-shadow: inset 0 -1px 0 var(--eui-color-warning-border);
+  box-shadow: inset 0 -1px 0 var(--eui-color-warning-border), var(--eui-shadow-critical);
 }
 
 .success {
   --_border: var(--eui-color-success-border);
   --_bg: var(--eui-color-success-subtle);
-  box-shadow: inset 0 -1px 0 var(--eui-color-success-border);
+  box-shadow: inset 0 -1px 0 var(--eui-color-success-border), var(--eui-shadow-positive);
 }
 
 .information {
   --_border: var(--eui-color-info-border);
   --_bg: var(--eui-color-info-subtle);
-  box-shadow: inset 0 -1px 0 var(--eui-color-info-border);
+  box-shadow: inset 0 -1px 0 var(--eui-color-info-border), var(--eui-shadow-informative);
 }
 
 .error:hover:not(.disabled),

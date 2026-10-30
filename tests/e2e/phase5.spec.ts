@@ -32,7 +32,7 @@ test('keyboard dialog focus trap and restoration with reduced motion', async ({ 
   await page.keyboard.press('Escape'); await expect(trigger).toBeFocused();
 });
 
-for (const theme of ['light', 'dark', 'high-contrast']) {
+for (const theme of ['light', 'dark', 'high-contrast', 'sap-horizon', 'sap-horizon-dark', 'sap-fiori-3', 'sap-fiori-3-dark']) {
   test(`cookbook examples have no axe violations in ${theme}`, async ({ page }) => {
     await page.addInitScript((name) => localStorage.setItem('eui-docs-theme', name), theme);
     await page.goto('/#/patterns');

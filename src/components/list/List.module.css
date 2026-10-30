@@ -59,7 +59,7 @@ li:last-child > .item,
 .item[aria-current='true'],
 .item[aria-current='page'] {
   background: var(--eui-color-surface-selected);
-  box-shadow: inset 3px 0 0 var(--eui-color-primary);
+  box-shadow: inset 3px 0 0 var(--eui-color-primary), var(--eui-shadow-selected);
 }
 
 .item[aria-disabled='true'] {

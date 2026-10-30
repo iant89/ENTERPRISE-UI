@@ -111,6 +111,7 @@ export * from './components/text';
 export * from './components/dialog';
 export * from './components/alert-dialog';
 export * from './components/user-settings-dialog';
+export * from './components/barcode-scanner-dialog';
 export * from './components/view-settings-dialog';
 export * from './components/toast';
 export * from './components/message-strip';

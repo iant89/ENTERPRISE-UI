@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added BarcodeScannerDialog: camera scanning via the native BarcodeDetector with a lazily loaded `@zxing/library` (Apache-2.0) fallback, clear permission/camera/HTTPS error states and manual entry.
 - Added roadmap components: Slider, RangeSlider, SegmentedButton, Title, Text, Token, Tokenizer, MultiInput, ResponsivePopover, DynamicDateRange, DynamicPage, DynamicSideContent, FlexibleColumnLayout, HeroBanner, MediaGallery, ProductSwitch, UserMenu, UserSettingsDialog, ViewSettingsDialog, UploadCollection, AIButton and PromptInput.
 - Carousel, RatingIndicator, CopyButton, AppBreadcrumbBar and DiffViewer now forward refs and accept `className` and native attributes; added documentation pages for Calendar, DateRangePicker, FilterToken and SavedViews.
 - Added DataGrid message overrides, locale-sensitive local search, and explicit direction and language for grid popups.

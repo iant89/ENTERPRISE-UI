@@ -8493,7 +8493,7 @@ You can use this item to put any custom content inside the tree item.
 
 - Tag: `ui5-barcode-scanner-dialog`
 - Package: `@ui5/webcomponents-fiori@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents-fiori@2.28.1/dist/BarcodeScannerDialog.d.ts).
-- Local implementation: not implemented — needs camera access plus a barcode decoding library; transport/decoder must be app-owned — not implemented.
+- Local implementation: `src/components/barcode-scanner-dialog` (React adaptation: getUserMedia rear camera, native BarcodeDetector with lazily loaded `@zxing/library` fallback, manual entry; UI5 parity unverified).
 - Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
 
 #### Description and keyboard interaction

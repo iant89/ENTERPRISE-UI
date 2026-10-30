@@ -1,0 +1,13 @@
+.root { display: flex; flex-direction: column; gap: var(--eui-space-2); }
+.start { flex-direction: row-reverse; }
+.display { flex: 1; display: flex; align-items: center; justify-content: center; min-block-size: 12rem; background: var(--eui-color-surface-sunken); border-radius: var(--eui-radius-md); overflow: hidden; }
+.displayButton { padding: 0; border: 0; background: transparent; cursor: zoom-in; }
+.displayButton:focus-visible { outline: var(--eui-focus-width) solid var(--eui-color-focus); }
+.image { display: block; max-inline-size: 100%; max-block-size: 24rem; object-fit: contain; }
+.thumbs { display: flex; gap: var(--eui-space-1); margin: 0; padding: 0; list-style: none; overflow-x: auto; }
+.start .thumbs { flex-direction: column; overflow-x: visible; overflow-y: auto; }
+.thumb { display: block; inline-size: 4rem; block-size: 4rem; padding: 2px; border: var(--eui-border-width-thick) solid transparent; border-radius: var(--eui-radius-sm); background: var(--eui-color-surface); cursor: pointer; }
+.thumb img { inline-size: 100%; block-size: 100%; object-fit: cover; }
+.thumb:focus-visible { outline: var(--eui-focus-width) solid var(--eui-color-focus); outline-offset: 1px; }
+.selected { border-color: var(--eui-color-primary); }
+.thumb:disabled { opacity: var(--eui-disabled-opacity); cursor: var(--eui-disabled-cursor); }

@@ -15,6 +15,8 @@ function sandboxBundle(): Plugin {
       const result = await build({
         configFile: false,
         root: import.meta.dirname,
+        // Library mode leaves `process.env.NODE_ENV` in place for consumers; this IIFE runs directly in the browser.
+        define: { 'process.env.NODE_ENV': JSON.stringify('production') },
         plugins: [react()],
         resolve: { alias: { '@enterprise-ui/react': resolve(root, 'src/index.ts') } },
         css: { modules: { generateScopedName: cssModuleClassName } },

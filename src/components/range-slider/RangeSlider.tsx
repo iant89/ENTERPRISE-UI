@@ -1,102 +1,49 @@
-import { useRef, type KeyboardEvent } from 'react';
+import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
+import { cx } from '../../utilities/cx';
+import { useId } from '../../hooks/useId';
 import { useControllableState } from '../../hooks/useControllableState';
-import { sliderBounds, snapToStep } from '../slider';
 import styles from './RangeSlider.module.css';
 
-export interface RangeSliderProps {
-  /** Names the range. */
-  label: string;
-  value?: readonly [number, number];
+export type RangeValue = [start: number, end: number];
+
+export interface RangeSliderProps extends Omit<HTMLAttributes<HTMLFieldSetElement>, 'onChange' | 'defaultValue'> {
+  /** Group label. */
+  label: ReactNode;
+  value?: RangeValue;
   /** @default [min, max] */
-  defaultValue?: readonly [number, number];
-  onChange?: (value: [number, number]) => void;
+  defaultValue?: RangeValue;
+  onChange?: (value: RangeValue) => void;
   /** @default 0 */
   min?: number;
   /** @default 100 */
   max?: number;
   /** @default 1 */
   step?: number;
-  /** @default false */
   disabled?: boolean;
-  /** Accessible name of the start handle. @default 'Range start' */
-  startLabel?: string;
-  /** Accessible name of the end handle. @default 'Range end' */
-  endLabel?: string;
+  /** Show the selected range as text. @default true */
+  showValue?: boolean;
   formatValue?: (value: number) => string;
+  /** Localized thumb names. */
+  labels?: { start: string; end: string };
 }
 
-/** Two-handle range. Each handle stops at the other handle. */
-export function RangeSlider({
-  label, value, defaultValue, onChange, min: minProp, max: maxProp, step: stepProp, disabled = false,
-  startLabel = 'Range start', endLabel = 'Range end', formatValue,
-}: RangeSliderProps) {
-  const { min, max, step } = sliderBounds(minProp, maxProp, stepProp);
-  const [current, setCurrent] = useControllableState<[number, number]>(
-    value ? [value[0], value[1]] : undefined,
-    defaultValue ? [defaultValue[0], defaultValue[1]] : [min, max],
-    onChange,
-  );
-  const start = snapToStep(Math.min(current[0], current[1]), min, max, step);
-  const end = snapToStep(Math.max(current[0], current[1]), min, max, step);
-  const startOnFocus = useRef(start);
-  const endOnFocus = useRef(end);
-  const display = (n: number) => formatValue?.(n) ?? String(n);
-  const setStart = (next: number) => setCurrent([snapToStep(Math.min(next, end), min, end, step), end]);
-  const setEnd = (next: number) => setCurrent([start, snapToStep(Math.max(next, start), start, max, step)]);
-  const onKeyDown = (which: 'start' | 'end') => (event: KeyboardEvent<HTMLInputElement>) => {
-    const selected = which === 'start' ? start : end;
-    const commit = which === 'start' ? setStart : setEnd;
-    const rtl = event.currentTarget.closest('[dir="rtl"]') != null;
-    const large = Math.max(step, (max - min) / 10);
-    const key = event.key;
-    let delta: number | null = null;
-    if (key === 'Home') delta = (which === 'start' ? min : start) - selected;
-    else if (key === 'End') delta = (which === 'start' ? end : max) - selected;
-    else if (key === 'PageUp') delta = large;
-    else if (key === 'PageDown') delta = -large;
-    else if (key === 'ArrowUp' || key === '+' || (key === 'ArrowRight' && !rtl) || (key === 'ArrowLeft' && rtl)) delta = event.ctrlKey || event.metaKey ? large : step;
-    else if (key === 'ArrowDown' || key === '-' || (key === 'ArrowLeft' && !rtl) || (key === 'ArrowRight' && rtl)) delta = event.ctrlKey || event.metaKey ? -large : -step;
-    else if (key === 'Escape') {
-      event.preventDefault();
-      commit(which === 'start' ? startOnFocus.current : endOnFocus.current);
-      return;
-    }
-    if (delta == null || disabled) return;
-    event.preventDefault();
-    commit(selected + delta);
-  };
+/** Selects a start and end value with two native range inputs that cannot cross. */
+export const RangeSlider = forwardRef<HTMLFieldSetElement, RangeSliderProps>(function RangeSlider(
+  { label, value, defaultValue, onChange, min = 0, max = 100, step = 1, disabled = false, showValue = true, formatValue = String, labels = { start: 'Minimum', end: 'Maximum' }, className, id: providedId, ...rest },
+  ref,
+) {
+  const id = useId(providedId, 'range');
+  const [[start, end], setRange] = useControllableState<RangeValue>(value, defaultValue ?? [min, max], onChange);
   return (
-    <fieldset className={styles.field} disabled={disabled}>
-      <legend>{label}</legend>
-      <div className={styles.readout} aria-hidden="true">{display(start)} – {display(end)}</div>
-      <div className={styles.tracks}>
-        <input
-          className={styles.slider}
-          type="range"
-          min={min}
-          max={end}
-          step={step}
-          value={start}
-          aria-label={startLabel}
-          aria-valuetext={formatValue ? display(start) : undefined}
-          onFocus={() => { startOnFocus.current = start; }}
-          onChange={(event) => setStart(Number(event.target.value))}
-          onKeyDown={onKeyDown('start')}
-        />
-        <input
-          className={styles.slider}
-          type="range"
-          min={start}
-          max={max}
-          step={step}
-          value={end}
-          aria-label={endLabel}
-          aria-valuetext={formatValue ? display(end) : undefined}
-          onFocus={() => { endOnFocus.current = end; }}
-          onChange={(event) => setEnd(Number(event.target.value))}
-          onKeyDown={onKeyDown('end')}
-        />
+    <fieldset ref={ref} id={id} className={cx(styles.root, className)} disabled={disabled} {...rest}>
+      <legend className={styles.legend}>{label}</legend>
+      {showValue && <output className={styles.value} aria-live="polite">{formatValue(start)} – {formatValue(end)}</output>}
+      <div className={styles.track}>
+        <input type="range" className={styles.input} aria-label={labels.start} aria-valuetext={formatValue(start)} min={min} max={max} step={step} value={start}
+          onChange={(e) => setRange([Math.min(Number(e.target.value), end), end])} />
+        <input type="range" className={styles.input} aria-label={labels.end} aria-valuetext={formatValue(end)} min={min} max={max} step={step} value={end}
+          onChange={(e) => setRange([start, Math.max(Number(e.target.value), start)])} />
       </div>
     </fieldset>
   );
-}
+});

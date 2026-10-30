@@ -1,1 +1,1 @@
-export { Slider, sliderBounds, snapToStep, type SliderProps } from './Slider';
+export { Slider, type SliderProps } from './Slider';

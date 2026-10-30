@@ -2,7 +2,10 @@
 
 ## Unreleased
 
-- Added React adaptations for calendar markers, list and menu composition, select and combo-box items, slider, range slider, step input, segmented button and responsive popover. Upstream UI5 behavior is not yet verified.
+- Added BarcodeScannerDialog: camera scanning with a vendored, lazily loaded `@zxing/library` 0.23.0 (Apache-2.0) decoder by default and an opt-in native BarcodeDetector (`decoder`), clear permission/camera/HTTPS error states and manual entry.
+- Added roadmap components: Slider, RangeSlider, SegmentedButton, Title, Text, Token, Tokenizer, MultiInput, ResponsivePopover, DynamicDateRange, DynamicPage, DynamicSideContent, FlexibleColumnLayout, HeroBanner, MediaGallery, ProductSwitch, UserMenu, UserSettingsDialog, ViewSettingsDialog, UploadCollection, AIButton and PromptInput.
+- Carousel, RatingIndicator, CopyButton, AppBreadcrumbBar and DiffViewer now forward refs and accept `className` and native attributes; added documentation pages for Calendar, DateRangePicker, FilterToken and SavedViews.
+- Added composition APIs: CalendarDate, CalendarDateRange and SpecialCalendarDate markers; ListItemStandard, ListItemCustom and ListItemGroup; MenuItem, MenuItemGroup and MenuSeparator; Option, OptionGroup, OptionCustom and ComboBoxItem children for Select and ComboBox; and StepInput. Upstream UI5 behavior is not yet verified.
 - Added DataGrid message overrides, locale-sensitive local search, and explicit direction and language for grid popups.
 - Added localized pagination messages and number formatting with RTL chevrons; DataGrid can pass pagination translations.
 

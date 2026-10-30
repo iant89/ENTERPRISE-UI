@@ -1,0 +1,6 @@
+.wrap { display: inline-flex; }
+.button { position: relative; }
+.busy :global(svg) { animation: eui-ai-pulse 1.2s var(--eui-easing-standard) infinite; }
+@keyframes eui-ai-pulse { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .busy :global(svg) { animation: none; } }
+.live { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

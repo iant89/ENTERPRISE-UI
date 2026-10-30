@@ -1,11 +1,14 @@
-import { SegmentedButton, SegmentedButtonItem } from '@enterprise-ui/react';
-export const title = 'Single selection';
-export default function Example() {
+import { SegmentedButton } from '@enterprise-ui/react';
+
+export const title = 'Segmented button';
+export const description = 'Switch between closely related views or options.';
+
+export default function SegmentedButtonBasic() {
   return (
-    <SegmentedButton accessibleName="Period" defaultValue="month">
-      <SegmentedButtonItem id="day">Day</SegmentedButtonItem>
-      <SegmentedButtonItem id="month">Month</SegmentedButtonItem>
-      <SegmentedButtonItem id="year">Year</SegmentedButtonItem>
-    </SegmentedButton>
+    <SegmentedButton
+      aria-label="Period"
+      defaultValue={['week']}
+      items={[{ value: 'day', label: 'Day' }, { value: 'week', label: 'Week' }, { value: 'month', label: 'Month' }]}
+    />
   );
 }

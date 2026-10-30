@@ -1,10 +1,15 @@
-import { Button, ResponsivePopover } from '@enterprise-ui/react';
-export const title = 'Popover or dialog';
-export const description = 'Narrow viewports present the same content in a modal dialog.';
-export default function Example() {
+import { Button, ResponsivePopover, Switch, Stack } from '@enterprise-ui/react';
+
+export const title = 'Responsive popover';
+export const description = 'A popover on desktop and tablet, a full-screen dialog on phones.';
+
+export default function ResponsivePopoverBasic() {
   return (
-    <ResponsivePopover trigger={<Button>Order details</Button>} title="Order">
-      <p>Purchase order 4500001234.</p>
+    <ResponsivePopover title="Display settings" trigger={<Button>Display settings</Button>}>
+      <Stack gap={1}>
+        <Switch label="Compact rows" />
+        <Switch label="Show totals" defaultChecked />
+      </Stack>
     </ResponsivePopover>
   );
 }

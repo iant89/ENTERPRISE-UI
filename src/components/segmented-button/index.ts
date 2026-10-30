@@ -1,1 +1,1 @@
-export { SegmentedButton, SegmentedButtonItem, type SegmentedButtonProps, type SegmentedButtonItemProps } from './SegmentedButton';
+export { SegmentedButton, type SegmentedButtonProps, type SegmentedButtonItem } from './SegmentedButton';

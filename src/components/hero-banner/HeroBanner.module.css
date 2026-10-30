@@ -1,0 +1,9 @@
+.banner { display: flex; align-items: center; justify-content: space-between; gap: var(--eui-space-6); padding: var(--eui-space-8) var(--eui-space-6); border-radius: var(--eui-radius-lg); background-size: cover; background-position: center; }
+.brand { background-color: var(--eui-color-primary-subtle); color: var(--eui-color-text); }
+.neutral { background-color: var(--eui-color-surface-alt); color: var(--eui-color-text); }
+.text { display: flex; flex-direction: column; gap: var(--eui-space-2); max-inline-size: 40rem; }
+.title { margin: 0; font-size: var(--eui-font-size-3xl); font-weight: var(--eui-font-weight-bold); line-height: var(--eui-line-height-tight); }
+.subtitle { margin: 0; font-size: var(--eui-font-size-lg); color: var(--eui-color-text-secondary); }
+.actions { display: flex; flex-wrap: wrap; gap: var(--eui-space-2); margin-block-start: var(--eui-space-2); }
+.media { flex-shrink: 0; }
+@media (max-width: 599.98px) { .banner { flex-direction: column; align-items: flex-start; padding: var(--eui-space-6) var(--eui-space-4); } .media { display: none; } }

@@ -8,6 +8,7 @@ export interface ContainerProps extends HTMLAttributes<HTMLElement> {
   /** Remove the responsive horizontal padding. @default false */
   flush?: boolean;
   /** @default 'div' */
+  /** HTML element rendered as the root. */
   as?: ElementType;
 }
 

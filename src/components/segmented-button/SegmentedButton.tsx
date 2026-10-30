@@ -13,17 +13,22 @@ export interface SegmentedButtonItem {
 }
 
 export interface SegmentedButtonProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
+  /** Items shown in the segmented button. */
   items: SegmentedButtonItem[];
   /** Selected values. Single mode keeps at most one. */
   value?: string[];
   /** @default [] */
+  /** IDs of the items selected initially when the selection is uncontrolled. */
   defaultValue?: string[];
+  /** Called with the IDs of the selected items when the selection changes. */
   onChange?: (value: string[]) => void;
   /** @default 'single' */
+  /** Whether one item or several items can be selected. */
   selectionMode?: 'single' | 'multiple';
   /** Accessible group name. */
   'aria-label': string;
   /** @default 'md' */
+  /** Size of the segmented button. */
   size?: 'sm' | 'md';
 }
 

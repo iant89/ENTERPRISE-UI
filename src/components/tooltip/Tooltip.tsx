@@ -13,10 +13,12 @@ export interface TooltipProps {
   /** A single focusable element (e.g. an IconButton). */
   children: ReactElement;
   /** @default 'top' */
+  /** Preferred position relative to the trigger. It flips automatically when there is not enough space. */
   placement?: Placement;
   /** Delay before showing on hover, in ms. @default 400 */
   delay?: number;
   /** @default false */
+  /** Prevents the tooltip from showing, and closes it if it is open. */
   disabled?: boolean;
   /**
    * How the tooltip relates to the trigger: `description` adds

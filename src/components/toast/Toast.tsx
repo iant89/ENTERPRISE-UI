@@ -35,8 +35,10 @@ export interface ToastApi {
 const ToastContext = createContext<ToastApi | null>(null);
 
 export interface ToastProviderProps {
+  /** Content rendered inside the toast provider. */
   children: ReactNode;
   /** @default 'bottom-center' */
+  /** Screen position of the toast stack. */
   position?: 'bottom-center' | 'bottom-end' | 'top-end';
   /** Maximum visible toasts. @default 4 */
   limit?: number;

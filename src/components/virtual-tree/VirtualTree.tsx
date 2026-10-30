@@ -9,7 +9,9 @@ import styles from './VirtualTree.module.css';
 export interface VirtualTreeProps extends Omit<TreeProps, 'className'> {
   /** Fixed row height, in CSS pixels. Variable-height nodes are unsupported. */
   itemHeight: number;
+  /** Height of the scrolling viewport, in pixels. */
   height?: number;
+  /** Number of extra rows rendered above and below the viewport for smoother scrolling. */
   overscan?: number;
   /** Turn off windowing as an accessibility alternative. @default true */
   virtualized?: boolean;

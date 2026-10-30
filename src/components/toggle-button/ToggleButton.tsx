@@ -12,6 +12,7 @@ export interface ToggleButtonProps extends Omit<ButtonProps, 'onChange' | 'varia
   /** Called with the new pressed state. */
   onPressedChange?: (pressed: boolean) => void;
   /** @default 'secondary' */
+  /** Visual emphasis. */
   variant?: 'secondary' | 'tertiary';
 }
 

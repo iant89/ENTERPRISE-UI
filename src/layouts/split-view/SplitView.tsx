@@ -11,22 +11,28 @@ export interface SplitViewProps extends HTMLAttributes<HTMLDivElement> {
   /** Second pane (right / bottom). */
   end: ReactNode;
   /** @default 'horizontal' */
+  /** Layout direction. */
   orientation?: 'horizontal' | 'vertical';
   /** Size of the start pane in px (or any CSS length when not resizable). @default 320 */
   startSize?: number | string;
   /** Let the user resize the start pane. @default false */
   resizable?: boolean;
   /** @default 200 */
+  /** Smallest size of the start pane, in pixels. */
   minStartSize?: number;
   /** @default 640 */
+  /** Largest size of the start pane, in pixels. */
   maxStartSize?: number;
+  /** Called with the new start size when it changes. */
   onStartSizeChange?: (size: number) => void;
   /** Stack panes vertically below this width (px); `0` never stacks. @default 600 */
   collapseBelow?: number;
   /** @default false */
+  /** Draws a border around the component. */
   bordered?: boolean;
   /** Accessible labels for the panes (rendered as regions). */
   startLabel?: string;
+  /** Accessible name of the end pane. */
   endLabel?: string;
 }
 

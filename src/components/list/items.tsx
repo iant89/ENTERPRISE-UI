@@ -15,12 +15,14 @@ export interface ListItemStandardProps {
   id?: string;
   /** Primary text. Also used for type-ahead. */
   text: string;
+  /** Secondary text shown below the main text. */
   description?: ReactNode;
   /** Trailing text, such as a status or amount. */
   additionalText?: ReactNode;
   /** Leading visual. Decorative icons should be hidden from assistive technology. */
   icon?: ReactNode;
   /** @default false */
+  /** Disables the item. It cannot be selected or activated. */
   disabled?: boolean;
   /** Renders the row as a link when the list is not selectable. */
   href?: string;
@@ -38,6 +40,7 @@ export interface ListItemCustomProps {
   /** Accessible name and type-ahead text. */
   text: string;
   /** @default false */
+  /** Disables the item. It cannot be selected or activated. */
   disabled?: boolean;
   /** Renders the row as a link when the list is not selectable. */
   href?: string;
@@ -54,6 +57,7 @@ export interface ListItemGroupProps {
   headerText: string;
   /** Accessible name when it should differ from the visible heading. */
   headerAccessibleName?: string;
+  /** Content rendered inside the list item group. */
   children?: ReactNode;
 }
 /** Groups list rows under a heading. The heading is not itself a row. */

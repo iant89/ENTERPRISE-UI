@@ -19,11 +19,15 @@ const defaultMessages: InlineEditMessages = {
 };
 
 export interface InlineEditProps {
+  /** Visible label of the inline edit. Also used as its accessible name. */
   label: string;
+  /** Saved value shown in read mode. */
   value: string;
   /** Save the draft. The application owns the value and persists it. */
   onSave: (value: string, signal: AbortSignal) => Promise<void> | void;
+  /** Validates the draft. Return an error message to block saving, or `undefined` if the draft is valid. */
   validate?: (value: string) => string | undefined;
+  /** Disables editing. The value is still shown. */
   disabled?: boolean;
   /** Overrides built-in text and the accessible edit-button name. */
   messages?: Partial<InlineEditMessages>;

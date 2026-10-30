@@ -35,14 +35,19 @@ export interface FileUploaderProps {
   upload: (file: File, context: UploadContext) => Promise<void>;
   /** MIME types, MIME wildcards, or extensions (e.g. .pdf). Empty means all types. */
   accept?: string[];
+  /** Largest accepted file size, in bytes. Larger files are rejected with an error. */
   maxFileSize?: number;
+  /** Allows selecting more than one file. */
   multiple?: boolean;
   /** Enable retry only when the transport uses idempotency or confirms the server outcome. @default false */
   retrySafe?: boolean;
+  /** Visible label of the drop zone. It is also its accessible name. */
   label?: string;
   /** Overrides visible text and announcements. Supply all statuses when overriding them. */
   messages?: Partial<FileUploaderMessages>;
+  /** Text direction. `auto` follows the document. */
   dir?: 'ltr' | 'rtl' | 'auto';
+  /** BCP 47 language tag for the text, so screen readers pronounce it correctly. */
   lang?: string;
   /** Notifications are observational; consumers must not treat them as server-side audit records. */
   onItemsChange?: (items: readonly UploadItem[]) => void;

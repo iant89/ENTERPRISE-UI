@@ -4,10 +4,13 @@ import styles from './VirtualList.module.css';
 import { getVirtualWindow } from './virtualWindow';
 
 export interface VirtualListProps<T> {
+  /** Items to display. Only the visible rows are rendered. */
   items: readonly T[];
   /** Stable unique identity. Do not use array indexes when the collection can change. */
   getItemId: (item: T) => string;
+  /** Renders the content of one item. */
   renderItem: (item: T) => ReactNode;
+  /** Accessible name, used when there is no visible label. */
   'aria-label': string;
   /** Fixed row height in CSS pixels. Variable heights are not supported. */
   itemHeight: number;
@@ -17,6 +20,7 @@ export interface VirtualListProps<T> {
   overscan?: number;
   /** Controlled selection; omitted means no selection. */
   selectedIds?: readonly string[];
+  /** Called with the new selection when the user changes it. */
   onSelectionChange?: (ids: string[]) => void;
   /** Render every item as an accessible alternative. @default true */
   virtualized?: boolean;

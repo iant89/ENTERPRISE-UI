@@ -25,17 +25,23 @@ export interface SavedViewPersistence {
   delete(id: string, signal: AbortSignal): Promise<void>;
 }
 export interface SavedViewsProps {
+  /** Saved views the user can choose from. */
   views: SavedView[];
+  /** ID of the active view, or `null` when no view is active. */
   selectedId: string | null;
+  /** Called with the ID of the view the user selects. */
   onSelect: (id: string) => void;
   /** Receives the entered name and scope; the application captures current configuration. */
   onSave: (name: string, scope: 'personal' | 'shared') => void | Promise<void>;
+  /** Called with the view ID and the new name when the user renames a view. Return a promise to show a busy state. */
   onRename: (id: string, name: string) => void | Promise<void>;
+  /** Called with the view ID when the user deletes a view. Return a promise to show a busy state. */
   onDelete: (id: string) => void | Promise<void>;
   /** Optional action for persisting a default in the selected view scope. */
   onSetDefault?: (id: string) => void | Promise<void>;
   /** UI permissions only. The backend must enforce authorization. */
   canSaveShared?: boolean;
+  /** Returns whether the user may rename or delete a view. By default, every view except the standard view can be modified. */
   canModify?: (view: SavedView) => boolean;
 }
 

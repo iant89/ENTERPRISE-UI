@@ -20,27 +20,38 @@ export interface SelectProps<V extends string = string> extends FieldProps {
   /** Controlled selected value. `null` for no selection. */
   value?: V | null;
   /** @default null */
+  /** The initial value when the component is uncontrolled. */
   defaultValue?: V | null;
+  /** Called with the new value when the user changes it. */
   onChange?: (value: V | null) => void;
   /** @default 'Select' */
+  /** Hint text shown while the field is empty. Do not use it in place of a label. */
   placeholder?: string;
   /** @default 'md' */
+  /** Size of the select. */
   size?: 'sm' | 'md' | 'lg';
+  /** ID for the root element. One is generated when it is omitted. */
   id?: string;
   /** Form field name; renders a hidden input with the value. */
   name?: string;
   /** @default false */
+  /** Marks the field as required and shows a required indicator. */
   required?: boolean;
   /** @default false */
+  /** Disables the select. A disabled control cannot be focused or changed. */
   disabled?: boolean;
   /** @default false */
+  /** Shows the value without allowing changes. It can still be focused and copied. */
   readOnly?: boolean;
   /** Accessible name when there is no visible label. */
   'aria-label'?: string;
+  /** ID of an element that describes this one. */
   'aria-describedby'?: string;
+  /** Additional CSS class names for the root element. */
   className?: string;
   /** Direction and language for the control and portaled listbox. */
   dir?: 'ltr' | 'rtl' | 'auto';
+  /** BCP 47 language tag for the text, so screen readers pronounce it correctly. */
   lang?: string;
   /** Custom rendering of the selected value. */
   renderValue?: (option: SelectOption<V>) => ReactNode;

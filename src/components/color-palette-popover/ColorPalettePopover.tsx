@@ -10,11 +10,17 @@ export interface ColorPalettePopoverProps {
   colors: ColorOption[];
   /** Accessible name for both the popover and palette. */
   'aria-label': string;
+  /** The current value. Providing it makes the component controlled; update it from the change callback. */
   value?: string | null;
+  /** The initial value when the component is uncontrolled. */
   defaultValue?: string | null;
+  /** Called with the color the user selects. */
   onChange?: (color: string) => void;
+  /** Whether it is open. Providing it makes the open state controlled. */
   open?: boolean;
+  /** Whether it is open initially when the open state is uncontrolled. */
   defaultOpen?: boolean;
+  /** Called with the new open state when the user opens or closes it. */
   onOpenChange?: (open: boolean) => void;
 }
 /** A color palette in an accessible non-modal popover. */

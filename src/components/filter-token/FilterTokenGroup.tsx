@@ -4,10 +4,15 @@ import styles from './FilterToken.module.css';
 
 export interface FilterTokenItem { id: string; name: string; value: string }
 export interface FilterTokenGroupProps {
+  /** Active filters. */
   tokens: FilterTokenItem[];
+  /** Called with the ID of the filter the user removes. */
   onRemove: (id: string) => void;
+  /** Called when the user clears all filters. */
   onClear: () => void;
+  /** Accessible name of the group. */
   label?: string;
+  /** Text of the clear-all button. */
   clearLabel?: string;
 }
 

@@ -10,8 +10,10 @@ import { Spinner } from '../spinner';
 export interface SearchFieldProps
   extends FieldProps,
     Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'defaultValue' | 'onChange' | 'size' | 'type'> {
+  /** The current value. Providing it makes the component controlled; update it from the change callback. */
   value?: string;
   /** @default '' */
+  /** The initial value when the component is uncontrolled. */
   defaultValue?: string;
   /** Called on every keystroke. */
   onChange?: (value: string) => void;
@@ -26,6 +28,7 @@ export interface SearchFieldProps
   /** Accessible label for the busy indicator. @default 'Searching' */
   loadingLabel?: string;
   /** @default 'md' */
+  /** Size of the search field. */
   size?: 'sm' | 'md' | 'lg';
   /** Accessible label when no visible `label` is given. @default 'Search' */
   'aria-label'?: string;

@@ -12,16 +12,25 @@ export interface ActivityEvent {
   group?: string;
 }
 export interface ActivityFeedProps {
+  /** Events to display, newest first. */
   events: ActivityEvent[];
+  /** Shows a busy state while events load. */
   loading?: boolean;
   /** Application-provided error and optional retry action. */
   error?: ReactNode;
+  /** Whether more events can be loaded. Shows the load-more button. */
   hasMore?: boolean;
+  /** Called when the user asks for more events. */
   onLoadMore?: () => void;
+  /** Event types offered in the type filter. */
   types?: { value: string; label: string }[];
+  /** Selected event type. Providing it makes the filter controlled. */
   typeFilter?: string;
+  /** Called with the event type the user selects. */
   onTypeFilterChange?: (value: string) => void;
+  /** BCP 47 locale used to format numbers, dates and times. Defaults to the browser locale. */
   locale?: string;
+  /** IANA time zone used to display and interpret times, for example `Europe/Berlin`. */
   timeZone?: string;
 }
 

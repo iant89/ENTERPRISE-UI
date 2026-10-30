@@ -14,26 +14,39 @@ import listboxStyles from '../listbox/Listbox.module.css';
 import styles from './MultiSelect.module.css';
 
 export interface MultiSelectProps extends FieldProps {
+  /** Choices offered to the user. */
   options: SelectOption[];
   /** Controlled selected values. */
   value?: string[];
   /** @default [] */
+  /** The initial value when the component is uncontrolled. */
   defaultValue?: string[];
+  /** Called with the new value when the user changes it. */
   onChange?: (value: string[]) => void;
+  /** Hint text shown while the field is empty. Do not use it in place of a label. */
   placeholder?: string;
   /** Maximum tokens shown before collapsing into “+N more”. @default 3 */
   maxVisibleTokens?: number;
   /** @default 'md' */
+  /** Size of the multi select. */
   size?: 'sm' | 'md' | 'lg';
+  /** ID for the root element. One is generated when it is omitted. */
   id?: string;
+  /** Name used when the value is submitted with a form. */
   name?: string;
   /** @default false */
+  /** Marks the field as required and shows a required indicator. */
   required?: boolean;
   /** @default false */
+  /** Disables the multi select. A disabled control cannot be focused or changed. */
   disabled?: boolean;
+  /** Accessible name, used when there is no visible label. */
   'aria-label'?: string;
+  /** ID of an element that describes this one. */
   'aria-describedby'?: string;
+  /** Text shown when there is nothing to display. */
   emptyText?: ReactNode;
+  /** Additional CSS class names for the root element. */
   className?: string;
 }
 

@@ -3,7 +3,9 @@ import { cx } from '../../utilities/cx';
 import styles from './HeroBanner.module.css';
 
 export interface HeroBannerProps extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
+  /** Main heading of the banner. */
   title: ReactNode;
+  /** Secondary text shown below the title. */
   subtitle?: ReactNode;
   /** Actions, typically one primary button. */
   actions?: ReactNode;
@@ -14,6 +16,7 @@ export interface HeroBannerProps extends Omit<HTMLAttributes<HTMLElement>, 'titl
   /** Heading level for the title. @default 2 */
   headingLevel?: 1 | 2 | 3;
   /** @default 'brand' */
+  /** Background style: brand color or neutral. */
   tone?: 'brand' | 'neutral';
 }
 

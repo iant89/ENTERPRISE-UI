@@ -7,20 +7,29 @@ import tableStyles from '../table/Table.module.css';
 import styles from './TreeTable.module.css';
 
 export interface TreeTableProps<T> {
+  /** Column definitions. */
   columns: TableColumn<T>[];
   /** Top-level rows. */
   data: T[];
+  /** Returns a stable, unique ID for a row. */
   getRowId: (row: T) => string;
   /** Returns child rows. @default row.children */
   getChildren?: (row: T) => T[] | undefined;
+  /** Accessible name, used when there is no visible label. */
   'aria-label': string;
+  /** IDs of the expanded rows. Providing it makes the expanded state controlled. */
   expandedIds?: string[];
+  /** IDs of the rows expanded initially when the expanded state is uncontrolled. */
   defaultExpandedIds?: string[];
+  /** Called with the IDs of the expanded rows when the user expands or collapses a row. */
   onExpandedChange?: (ids: string[]) => void;
   /** Called when a row is activated with Enter or a click. */
   onRowClick?: (row: T) => void;
+  /** Row density. */
   density?: TableDensity;
+  /** Maximum height before the content scrolls. */
   maxHeight?: CSSProperties['maxHeight'];
+  /** Additional CSS class names for the root element. */
   className?: string;
 }
 

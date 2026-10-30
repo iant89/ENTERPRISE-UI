@@ -9,6 +9,7 @@ export interface TextAreaProps extends FieldProps, TextareaHTMLAttributes<HTMLTe
   /** Grow with the content up to `maxRows`. @default false */
   autoResize?: boolean;
   /** @default 10 */
+  /** Maximum number of rows the text area grows to before it scrolls. */
   maxRows?: number;
   /** Show a character counter (uses `maxLength` when set). @default false */
   showCount?: boolean;

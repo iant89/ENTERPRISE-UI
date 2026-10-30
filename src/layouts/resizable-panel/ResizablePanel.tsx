@@ -9,11 +9,15 @@ export interface ResizablePanelProps extends Omit<HTMLAttributes<HTMLDivElement>
   /** Controlled size in px (width for start/end handles, height for top/bottom). */
   size?: number;
   /** @default 320 */
+  /** Initial size of the panel, in pixels. */
   defaultSize?: number;
+  /** Called with the new size, in pixels, when the user resizes the panel. */
   onResize?: (size: number) => void;
   /** @default 160 */
+  /** Smallest size of the panel, in pixels. */
   minSize?: number;
   /** @default 800 */
+  /** Largest size of the panel, in pixels. */
   maxSize?: number;
   /** Edge that carries the drag handle. @default 'end' */
   handle?: 'start' | 'end' | 'top' | 'bottom';
@@ -23,6 +27,7 @@ export interface ResizablePanelProps extends Omit<HTMLAttributes<HTMLDivElement>
   handleLabel?: string;
   /** Make the scrollable content area focusable so keyboard users can scroll it. @default false */
   focusableContent?: boolean;
+  /** Content rendered inside the resizable panel. */
   children: ReactNode;
 }
 

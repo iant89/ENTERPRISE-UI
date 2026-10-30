@@ -14,12 +14,19 @@ export interface ApprovalHistoryEntry {
   comment?: string;
 }
 export interface ApprovalWorkflowProps {
+  /** Current approval status. */
   status: ApprovalStatus;
+  /** Name of the person who has to approve. */
   approver: string;
+  /** Past approval steps, oldest first. */
   history: ApprovalHistoryEntry[];
+  /** Due date, as an ISO date (`YYYY-MM-DD`). */
   dueDate?: string;
+  /** Marks the request as escalated. */
   escalated?: boolean;
+  /** BCP 47 locale used to format numbers, dates and times. Defaults to the browser locale. */
   locale?: string;
+  /** IANA time zone used to display and interpret times, for example `Europe/Berlin`. */
   timeZone?: string;
   /** UI hints only; the backend must enforce authorization. */
   allowedDecisions?: ApprovalDecision[];

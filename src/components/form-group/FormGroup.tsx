@@ -5,9 +5,11 @@ import styles from './FormGroup.module.css';
 export interface FormGroupProps extends Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, 'title'> {
   /** Group heading, rendered as the fieldset legend. */
   title?: ReactNode;
+  /** Secondary text shown below the main text. */
   description?: ReactNode;
   /** Number of field columns on wide screens (collapses responsively). @default 1 */
   columns?: 1 | 2 | 3 | 4;
+  /** Content rendered inside the form group. */
   children: ReactNode;
 }
 

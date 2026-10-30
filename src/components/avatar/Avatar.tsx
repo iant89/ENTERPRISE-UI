@@ -11,6 +11,7 @@ export interface AvatarProps extends HTMLAttributes<HTMLSpanElement> {
   /** Icon shown when there is no image or name. */
   icon?: ReactNode;
   /** @default 'md' */
+  /** Size of the avatar. */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   /** `square` suits objects (products, companies). @default 'circle' */
   shape?: 'circle' | 'square';

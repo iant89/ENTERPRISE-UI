@@ -7,14 +7,18 @@ import { TextArea, type TextAreaProps } from '../text-area';
 import styles from './PromptInput.module.css';
 
 export interface PromptInputProps extends Omit<TextAreaProps, 'value' | 'defaultValue' | 'onChange' | 'onSubmit'> {
+  /** The current value. Providing it makes the component controlled; update it from the change callback. */
   value?: string;
   /** @default '' */
+  /** The initial value when the component is uncontrolled. */
   defaultValue?: string;
+  /** Called with the new value when the user changes it. */
   onChange?: (value: string) => void;
   /** Called with the trimmed prompt on Enter (without Shift) or the send button. */
   onSubmit?: (prompt: string) => void;
   /** Show a Stop button instead of Send while a response is generating. @default false */
   generating?: boolean;
+  /** Called when the user stops a running request. The stop button is shown while `loading` is true. */
   onStop?: () => void;
   /** Suggested prompts shown as quick picks. */
   suggestions?: string[];
@@ -22,6 +26,7 @@ export interface PromptInputProps extends Omit<TextAreaProps, 'value' | 'default
   clearOnSubmit?: boolean;
   /** Content above the input, e.g. an AI disclaimer. */
   footnote?: ReactNode;
+  /** Override strings for localization. */
   labels?: { send: string; stop: string; suggestions: string };
 }
 

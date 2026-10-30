@@ -9,6 +9,7 @@ export interface ProgressBarProps extends HTMLAttributes<HTMLDivElement> {
   /** Current value. Omit for an indeterminate bar. */
   value?: number;
   /** @default 100 */
+  /** Value that represents completion. */
   max?: number;
   /** Visible label (also the accessible name). */
   label?: ReactNode;
@@ -17,8 +18,10 @@ export interface ProgressBarProps extends HTMLAttributes<HTMLDivElement> {
   /** Formats the value text. @default percentage */
   formatValue?: (value: number, max: number) => string;
   /** @default 'information' */
+  /** Semantic color of the bar. Pair it with a text label, so meaning is not conveyed by color alone. */
   tone?: Tone;
   /** @default 'md' */
+  /** Size of the progress bar. */
   size?: 'sm' | 'md' | 'lg';
 }
 

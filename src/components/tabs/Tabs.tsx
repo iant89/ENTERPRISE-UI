@@ -28,7 +28,9 @@ const panelId = (base: string, value: string) => `${base}-panel-${value}`;
 export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
   /** Controlled selected tab value. */
   value?: string;
+  /** Value of the tab selected initially when the selection is uncontrolled. */
   defaultValue?: string;
+  /** Called with the value of the tab the user selects. */
   onValueChange?: (value: string) => void;
   /**
    * `automatic` selects a tab as it receives focus; `manual` requires
@@ -38,6 +40,7 @@ export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChang
   activation?: 'automatic' | 'manual';
   /** `contained` places tabs on a surface bar (object pages). @default 'line' */
   variant?: 'line' | 'contained';
+  /** Content rendered inside the tabs. */
   children: ReactNode;
 }
 
@@ -74,6 +77,7 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
 export interface TabListProps extends HTMLAttributes<HTMLDivElement> {
   /** Accessible name for the tab list. */
   'aria-label'?: string;
+  /** Content rendered inside the tab list. */
   children: ReactNode;
 }
 
@@ -100,10 +104,13 @@ export const TabList = forwardRef<HTMLDivElement, TabListProps>(function TabList
 });
 
 export interface TabProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'value'> {
+  /** Unique value that identifies the tab and links it to its panel. */
   value: string;
+  /** Icon shown before the text. */
   icon?: ReactNode;
   /** Item count shown after the label, e.g. `(12)`. */
   count?: number;
+  /** Content rendered inside the tab. */
   children: ReactNode;
 }
 
@@ -135,11 +142,13 @@ export const Tab = forwardRef<HTMLButtonElement, TabProps>(function Tab({ value,
 });
 
 export interface TabPanelProps extends HTMLAttributes<HTMLDivElement> {
+  /** Value of the tab this panel belongs to. */
   value: string;
   /** Keep the panel mounted when hidden (preserves state). @default false */
   keepMounted?: boolean;
   /** Remove the top padding. @default false */
   flush?: boolean;
+  /** Content rendered inside the tab panel. */
   children: ReactNode;
 }
 

@@ -26,11 +26,14 @@ export interface PopoverProps {
   /** Footer content, typically actions. */
   footer?: ReactNode;
   /** @default 'bottom-start' */
+  /** Preferred position relative to the trigger. It flips automatically when there is not enough space. */
   placement?: Placement;
   /** Controlled open state. */
   open?: boolean;
   /** @default false */
+  /** Whether it is open initially when the open state is uncontrolled. */
   defaultOpen?: boolean;
+  /** Called with the new open state when the user opens or closes it. */
   onOpenChange?: (open: boolean) => void;
   /** Show a close button in the header. @default true when `title` is set */
   showClose?: boolean;
@@ -38,6 +41,7 @@ export interface PopoverProps {
   width?: CSSProperties['width'];
   /** Pad the content area. @default true */
   padded?: boolean;
+  /** Additional CSS class names for the popover surface. */
   className?: string;
 }
 

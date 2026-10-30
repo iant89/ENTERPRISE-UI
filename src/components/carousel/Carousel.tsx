@@ -13,6 +13,7 @@ export interface CarouselProps extends Omit<HTMLAttributes<HTMLElement>, 'aria-l
   page?: number;
   /** Uncontrolled starting page. @default 0 */
   defaultPage?: number;
+  /** Called with the zero-based index of the page the user moves to. */
   onPageChange?: (page: number) => void;
   /** Localized navigation and page text. */
   labels?: { previous: string; next: string; page: (page: number, total: number) => string };

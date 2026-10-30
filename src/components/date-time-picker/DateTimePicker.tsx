@@ -4,6 +4,7 @@ import { Input, type InputProps } from '../input';
 export interface DateTimePickerProps extends Omit<InputProps, 'type' | 'onChange' | 'value' | 'defaultValue'> {
   /** Local date and time, e.g. `2026-10-30T09:30`; no timezone is implied. */
   value?: string;
+  /** The initial value when the component is uncontrolled. */
   defaultValue?: string;
   /** Called with the browser's local date-time value or an empty string. */
   onChange?: (value: string, event: ChangeEvent<HTMLInputElement>) => void;

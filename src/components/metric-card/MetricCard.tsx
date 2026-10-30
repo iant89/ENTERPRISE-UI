@@ -16,24 +16,31 @@ export interface MetricTrend {
 }
 
 export interface MetricCardProps extends Omit<HTMLAttributes<HTMLElement>, 'title' | 'onClick'> {
+  /** Title of the metric. */
   title: ReactNode;
+  /** Secondary text shown below the title. */
   subtitle?: ReactNode;
   /** The headline figure, already formatted. */
   value: ReactNode;
   /** Unit or scale, e.g. `EUR`, `K`, `%`. */
   unit?: ReactNode;
+  /** Trend of the value, shown as an arrow with an accessible description. */
   trend?: MetricTrend;
   /** Color the value by status (Fiori semantic KPI coloring). */
   tone?: Exclude<Tone, 'neutral'>;
+  /** Icon shown next to the title. */
   icon?: ReactNode;
   /** Data points for a small trend line. */
   sparkline?: number[];
+  /** Content shown in the footer. */
   footer?: ReactNode;
   /** @default false */
+  /** Shows a skeleton in place of the value while data loads. */
   loading?: boolean;
   /** Make the whole card a single click target (e.g. drill-down). */
   onClick?: () => void;
   /** @default 3 */
+  /** Heading level used for the title, so the document outline stays correct. */
   headingLevel?: 2 | 3 | 4;
 }
 

@@ -9,19 +9,27 @@ export type RangeValue = [start: number, end: number];
 export interface RangeSliderProps extends Omit<HTMLAttributes<HTMLFieldSetElement>, 'onChange' | 'defaultValue'> {
   /** Group label. */
   label: ReactNode;
+  /** The current value. Providing it makes the component controlled; update it from the change callback. */
   value?: RangeValue;
   /** @default [min, max] */
+  /** The initial value when the component is uncontrolled. */
   defaultValue?: RangeValue;
+  /** Called with the new `[start, end]` range as the user moves a handle. */
   onChange?: (value: RangeValue) => void;
   /** @default 0 */
+  /** Smallest allowed value. */
   min?: number;
   /** @default 100 */
+  /** Largest allowed value. */
   max?: number;
   /** @default 1 */
+  /** Amount the value changes by per step. */
   step?: number;
+  /** Disables the range slider. A disabled control cannot be focused or changed. */
   disabled?: boolean;
   /** Show the selected range as text. @default true */
   showValue?: boolean;
+  /** Formats a value for the visible labels and `aria-valuetext`. */
   formatValue?: (value: number) => string;
   /** Localized thumb names. */
   labels?: { start: string; end: string };

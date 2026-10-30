@@ -7,6 +7,7 @@ export interface CalendarLegendItemProps extends Omit<HTMLAttributes<HTMLLIEleme
   /** Text describing the calendar date type. */
   text: string;
   /** @default 'neutral' */
+  /** Color of the legend marker. It matches the calendar day markers. */
   tone?: CalendarLegendTone;
 }
 /** A labelled visual key for dates; color is never the only label. */

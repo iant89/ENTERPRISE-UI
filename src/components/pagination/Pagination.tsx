@@ -29,13 +29,16 @@ export interface PaginationProps extends Omit<HTMLAttributes<HTMLElement>, 'onCh
   messages?: Partial<PaginationMessages>;
   /** Current page, 1-based. */
   page: number;
+  /** Called with the new zero-based page index. */
   onPageChange: (page: number) => void;
   /** Total number of items (used with `pageSize`). */
   totalItems: number;
   /** @default 10 */
+  /** Number of items per page. */
   pageSize?: number;
   /** Offer a page-size selector with these options. */
   pageSizeOptions?: number[];
+  /** Called with the new page size when the user chooses one. */
   onPageSizeChange?: (pageSize: number) => void;
   /** Pages shown on each side of the current page. @default 1 */
   siblingCount?: number;

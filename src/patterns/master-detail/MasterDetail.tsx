@@ -16,19 +16,24 @@ export interface MasterDetailProps {
   /** Called by the phone back button to return to the master list. */
   onBack?: () => void;
   /** @default 360 */
+  /** Width of the master pane, in pixels. */
   masterWidth?: number;
   /** Allow resizing the master pane. @default true */
   resizable?: boolean;
   /** @default 'List' */
+  /** Accessible name of the master pane. */
   masterLabel?: string;
   /** @default 'Details' */
+  /** Accessible name of the detail pane. */
   detailLabel?: string;
   /** Label for the back button on phones. @default 'Back to list' */
   backLabel?: string;
   /** Pane-switching breakpoint (px). @default 1024 */
   collapseBelow?: number;
   /** @default true */
+  /** Draws a border around the component. */
   bordered?: boolean;
+  /** Additional CSS class names for the root element. */
   className?: string;
 }
 

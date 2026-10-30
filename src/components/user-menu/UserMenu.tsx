@@ -20,9 +20,11 @@ export interface UserMenuProps {
   account: UserMenuAccount;
   /** Other accounts the user can switch to. */
   otherAccounts?: UserMenuAccount[];
+  /** Called with the ID of the account the user switches to. */
   onAccountSwitch?: (id: string) => void;
   /** Menu entries (settings, help…). */
   items?: MenuEntry[];
+  /** Called with the ID of the action the user chose. */
   onAction?: (id: string) => void;
   /** Show and handle "Manage account". */
   onManageAccount?: () => void;
@@ -30,8 +32,11 @@ export interface UserMenuProps {
   onSignOut?: () => void;
   /** Extra content under the account header. */
   children?: ReactNode;
+  /** Whether it is open. Providing it makes the open state controlled. */
   open?: boolean;
+  /** Whether it is open initially when the open state is uncontrolled. */
   defaultOpen?: boolean;
+  /** Called with the new open state when the user opens or closes it. */
   onOpenChange?: (open: boolean) => void;
   /** Localized text. */
   labels?: { menu: string; manageAccount: string; signOut: string; otherAccounts: string; switchTo: (name: string) => string };

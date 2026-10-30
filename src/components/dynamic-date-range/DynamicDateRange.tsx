@@ -15,10 +15,14 @@ export interface DynamicDateRangeValue {
 }
 
 export interface DynamicDateRangeProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
+  /** Visible label of the dynamic date range. Also used as its accessible name. */
   label: string;
+  /** The current value. Providing it makes the component controlled; update it from the change callback. */
   value?: DynamicDateRangeValue | null;
   /** @default null */
+  /** The initial value when the component is uncontrolled. */
   defaultValue?: DynamicDateRangeValue | null;
+  /** Called with the new value, or `null` when it is cleared. */
   onChange?: (value: DynamicDateRangeValue | null) => void;
   /** Offered options, in order. @default all options */
   options?: DynamicDateRangeOption[];
@@ -28,6 +32,7 @@ export interface DynamicDateRangeProps extends Omit<HTMLAttributes<HTMLDivElemen
   weekStartsOn?: number;
   /** Supplies the current local date; useful for deterministic tests. */
   today?: () => Date;
+  /** Disables the dynamic date range. A disabled control cannot be focused or changed. */
   disabled?: boolean;
 }
 

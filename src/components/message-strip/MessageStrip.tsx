@@ -7,12 +7,15 @@ import styles from './MessageStrip.module.css';
 
 export interface MessageStripProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   /** @default 'information' */
+  /** Semantic tone that sets the color and icon. */
   tone?: Tone;
   /** Bold lead-in text. */
   title?: ReactNode;
+  /** Content rendered inside the message strip. */
   children?: ReactNode;
   /** Show a close button. @default false */
   dismissible?: boolean;
+  /** Called when the user dismisses the message. A close button is shown only when this is set. */
   onDismiss?: () => void;
   /** Action elements (e.g. a tertiary Button or link). */
   actions?: ReactNode;

@@ -17,16 +17,23 @@ import floating from '../popover/Floating.module.css';
 export interface DatePickerProps
   extends FieldProps,
     Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'defaultValue' | 'onChange' | 'size' | 'min' | 'max' | 'type'> {
+  /** The current value. Providing it makes the component controlled; update it from the change callback. */
   value?: Date | null;
   /** @default null */
+  /** The initial value when the component is uncontrolled. */
   defaultValue?: Date | null;
   /** Called with the committed date, or `null` when cleared. */
   onChange?: (date: Date | null) => void;
+  /** Earliest selectable date. */
   min?: Date | null;
+  /** Latest selectable date. */
   max?: Date | null;
+  /** Returns `true` for dates that cannot be selected. */
   isDateDisabled?: (date: Date) => boolean;
   /** @default 1 */
+  /** First day of the week (0 is Sunday and 1 is Monday). Defaults to the locale. */
   weekStartsOn?: number;
+  /** BCP 47 locale used to format numbers, dates and times. Defaults to the browser locale. */
   locale?: string;
   /** Formats a date for display. @default ISO `YYYY-MM-DD` */
   formatDate?: (date: Date) => string;
@@ -35,6 +42,7 @@ export interface DatePickerProps
   /** Message shown for unparsable input. @default 'Enter a valid date' */
   invalidMessage?: string;
   /** @default 'md' */
+  /** Size of the date picker. */
   size?: 'sm' | 'md' | 'lg';
 }
 

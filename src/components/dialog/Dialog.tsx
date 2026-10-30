@@ -15,10 +15,12 @@ export interface DialogProps {
   onClose: () => void;
   /** Dialog heading — also its accessible name. */
   title: ReactNode;
+  /** Content rendered inside the dialog. */
   children?: ReactNode;
   /** Footer actions. Put the primary action last. */
   footer?: ReactNode;
   /** @default 'md' */
+  /** Size of the dialog. */
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
   /** Element to focus when opening. Defaults to the first focusable element. */
   initialFocusRef?: RefObject<HTMLElement | null>;
@@ -31,8 +33,10 @@ export interface DialogProps {
   /** Icon shown before the title. */
   icon?: ReactNode;
   /** @internal ARIA role. */
+  /** ARIA role. Use `alertdialog` for urgent messages that require a response. */
   role?: 'dialog' | 'alertdialog';
   /** @internal tone for alert dialogs */
+  /** Semantic tone that adds a matching icon and header accent. The title should still convey the meaning. */
   tone?: 'information' | 'success' | 'warning' | 'error';
   /** Id of an element describing the dialog. */
   'aria-describedby'?: string;
@@ -40,7 +44,9 @@ export interface DialogProps {
   closeLabel?: string;
   /** Direction and language for dialog content, including its portal. */
   dir?: 'ltr' | 'rtl' | 'auto';
+  /** BCP 47 language tag for the text, so screen readers pronounce it correctly. */
   lang?: string;
+  /** Additional CSS class names for the root element. */
   className?: string;
 }
 

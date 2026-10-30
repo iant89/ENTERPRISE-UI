@@ -43,10 +43,13 @@ const defaultLabels: BarcodeScannerDialogLabels = {
 };
 
 export interface BarcodeScannerDialogProps {
+  /** Whether the dialog is open. The camera starts when it opens and stops when it closes. */
   open: boolean;
+  /** Called when the user closes the dialog without scanning. */
   onClose: () => void;
   /** Called once per scan with the decoded text and format (`'manual'` for typed entry). Scanning stops; close the dialog from here. */
   onScanSuccess: (text: string, format: BarcodeFormat | 'manual') => void;
+  /** Called when the camera cannot be started or scanning fails. The error describes the cause. */
   onScanError?: (error: BarcodeScanError) => void;
   /** Formats to recognize. @default all supported formats */
   formats?: BarcodeFormat[];
@@ -63,6 +66,7 @@ export interface BarcodeScannerDialogProps {
   createDecoder?: (formats: BarcodeFormat[]) => Promise<BarcodeDecoder>;
   /** Localized text. */
   labels?: Partial<Omit<BarcodeScannerDialogLabels, 'errors'>> & { errors?: Partial<BarcodeScannerDialogLabels['errors']> };
+  /** Additional CSS class names for the root element. */
   className?: string;
 }
 

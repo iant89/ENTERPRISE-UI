@@ -22,6 +22,7 @@ export interface AppShellProps extends HTMLAttributes<HTMLDivElement> {
   navCollapsed?: boolean;
   /** Defaults to collapsed on tablets and expanded on desktops. */
   defaultNavCollapsed?: boolean;
+  /** Called with `true` when the user collapses the navigation and `false` when they expand it. */
   onNavCollapsedChange?: (collapsed: boolean) => void;
   /**
    * `true` fills the viewport; `false` fills the parent element (for embedding).
@@ -35,6 +36,7 @@ export interface AppShellProps extends HTMLAttributes<HTMLDivElement> {
   drawerTitle?: string;
   /** Id for the `<main>` element. @default 'main-content' */
   mainId?: string;
+  /** Content rendered inside the app shell. */
   children: ReactNode;
 }
 

@@ -11,10 +11,12 @@ export interface AvatarGroupItem extends Pick<AvatarProps, 'name' | 'src' | 'ico
 }
 
 export interface AvatarGroupProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
+  /** Items shown in the avatar group. */
   items: AvatarGroupItem[];
   /** Overlapping group or individually navigable avatars. @default 'group' */
   mode?: 'group' | 'individual';
   /** @default 'md' */
+  /** Size of each avatar. */
   size?: AvatarProps['size'];
   /** Accessible name for the group. */
   'aria-label': string;

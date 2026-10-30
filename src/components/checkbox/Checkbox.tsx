@@ -11,8 +11,10 @@ export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement
   label?: ReactNode;
   /** Secondary text under the label. */
   description?: ReactNode;
+  /** Whether the checkbox is checked. Providing it makes it controlled. */
   checked?: boolean;
   /** @default false */
+  /** Whether the checkbox is checked initially when it is uncontrolled. */
   defaultChecked?: boolean;
   /** Called with the new checked state. */
   onChange?: (checked: boolean, event: React.ChangeEvent<HTMLInputElement>) => void;

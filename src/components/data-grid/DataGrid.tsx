@@ -86,6 +86,7 @@ const defaultMessages: DataGridMessages = {
 };
 
 export interface DataGridProps<T> extends Omit<TableProps<T>, 'columns' | 'manualSorting' | 'borderless' | 'caption' | 'density'> {
+  /** Column definitions. */
   columns: DataGridColumn<T>[];
   /** Opt into externally managed pagination and filtering. Supply controlled search and sort callbacks as well.
    * Provide a stable getRowId whenever rows can change or selection spans pages. */
@@ -96,18 +97,22 @@ export interface DataGridProps<T> extends Omit<TableProps<T>, 'columns' | 'manua
   locale?: string;
   /** Direction and language, including floating menus and listboxes. */
   dir?: 'ltr' | 'rtl' | 'auto';
+  /** BCP 47 language tag for the text, so screen readers pronounce it correctly. */
   lang?: string;
   /** Toolbar title; also the table's accessible name. */
   title: string;
   /** Show the quick search field. @default true */
   searchable?: boolean;
+  /** Placeholder text of the search field. */
   searchPlaceholder?: string;
   /** Controlled search text. */
   search?: string;
+  /** Called with the search text as the user types. */
   onSearchChange?: (text: string) => void;
   /** Rows per page; `0` disables pagination. @default 10 */
   pageSize?: number;
   /** @default [10, 25, 50] */
+  /** Page sizes the user can choose from. */
   pageSizeOptions?: number[];
   /** Translates pagination labels and formats page numbers. */
   paginationMessages?: Partial<PaginationMessages>;
@@ -118,9 +123,11 @@ export interface DataGridProps<T> extends Omit<TableProps<T>, 'columns' | 'manua
   /** Actions shown while rows are selected. Receives the selected ids. */
   selectionActions?: (ids: string[]) => ReactNode;
   /** @default 'compact' */
+  /** Row density applied initially. The user can change it from the toolbar. */
   defaultDensity?: TableDensity;
   /** Controlled visible column IDs, useful when applying a saved view. Always-visible columns remain visible. */
   visibleColumnIds?: string[];
+  /** Called with the IDs of the visible columns when the user shows or hides columns. */
   onVisibleColumnIdsChange?: (ids: string[]) => void;
   /** Offer keyboard-operable column width controls in the toolbar. @default false */
   resizableColumns?: boolean;

@@ -32,6 +32,8 @@ export * from './components/tabs';
 export * from './components/menu';
 export * from './components/dropdown-menu';
 export * from './components/pagination';
+export * from './components/product-switch';
+export * from './components/user-menu';
 
 // Buttons
 export * from './components/button';
@@ -106,6 +108,8 @@ export * from './components/text';
 // Feedback
 export * from './components/dialog';
 export * from './components/alert-dialog';
+export * from './components/user-settings-dialog';
+export * from './components/view-settings-dialog';
 export * from './components/toast';
 export * from './components/message-strip';
 export * from './components/tooltip';
@@ -143,6 +147,7 @@ export * from './patterns/command-palette';
 export * from './components/virtual-list';
 export * from './components/diff-viewer';
 export * from './components/file-uploader';
+export * from './components/upload-collection';
 export * from './components/copy-button';
 export * from './components/inline-edit';
 export * from './components/overflow-menu';

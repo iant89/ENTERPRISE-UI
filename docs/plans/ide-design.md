@@ -1,6 +1,16 @@
 # Enterprise UI Studio: design plan
 
-Status: draft for the captain's review (Phase 1, nothing is implemented yet). Branch: `ide-plan`, based on `api-docs`.
+Status: **approved** by the captain on 2026-10-30. Implementation of M0–M2 (the MVP) is on the `studio` branch.
+
+## 0. Decisions
+
+| # | Question | Decision |
+|---|---|---|
+| 1 | Name and URL | `/studio`, named **Enterprise UI Studio** |
+| 2 | Code editor | **Monaco** (lazy-loaded, behind an `EditorAdapter`) |
+| 3 | Hosting | **Static page inside the docs only** (`docs-dist/studio/`); no npm package or desktop app |
+| 4 | MVP scope | **Single pages first**; routing and data come later |
+| 5 | License | **MIT** for the Studio and for exported projects, scoped to `studio/LICENSE` and the export template. The library's `package.json` license field is left unchanged |
 
 ## 1. Goal
 
@@ -207,10 +217,6 @@ The MVP is M0–M2, about 4–5 weeks.
 - **Scope creep:** routing, data binding, backend and state management are explicitly out of scope until after M5 (see Q4).
 - **Maintenance:** the palette and inspector depend on api.json, so the JSDoc quality enforced by `check-api-descriptions` becomes a product dependency.
 
-## 10. Open questions for the captain
+## 10. Open questions
 
-1. **Name and URL:** `/studio` ("Enterprise UI Studio"), or `/ide`?
-2. **Editor:** OK with Monaco (best TS completion, bigger bundle), or do you prefer CodeMirror 6 (lighter, better on mobile)?
-3. **Hosting:** static only on GitHub Pages under the docs (`/studio/`), or should it also be published as an npm package or desktop app?
-4. **App scope for the MVP:** single-page UI composition only, or are multi-page routing and data (mock REST through `examples/data-adapter`) required early?
-5. **Project license:** `package.json` has no `license` field. Which license should the Studio and exported projects carry?
+All five questions were answered on 2026-10-30; see section 0.

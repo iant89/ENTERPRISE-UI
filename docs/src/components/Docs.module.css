@@ -84,7 +84,9 @@
 
 .exampleActions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
+  gap: var(--eui-space-2);
   padding: var(--eui-space-1) var(--eui-space-2);
 }
 

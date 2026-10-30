@@ -1,8 +1,10 @@
+import { forwardRef, type HTMLAttributes } from 'react';
+import { cx } from '../../utilities/cx';
 import styles from './DiffViewer.module.css';
 
 export type DiffValue = null | boolean | number | string | DiffValue[] | { [key: string]: DiffValue };
 export interface DiffEntry { path: string; kind: 'added' | 'removed' | 'modified'; before?: DiffValue; after?: DiffValue }
-export interface DiffViewerProps {
+export interface DiffViewerProps extends Omit<HTMLAttributes<HTMLElement>, 'title' | 'children'> {
   /** Changes supplied by a trusted source or produced with compareDiffValues. */
   changes: readonly DiffEntry[];
   title?: string;
@@ -36,12 +38,12 @@ function equal(a: DiffValue, b: DiffValue): boolean {
 }
 const format = (value: DiffValue | undefined) => value === undefined ? 'Not present' : typeof value === 'string' ? value : JSON.stringify(value);
 /** Accessible structured comparison; indicators do not rely on color alone. */
-export function DiffViewer({ changes, title = 'Changes' }: DiffViewerProps) {
-  return <section aria-label={title} className={styles.root}>
+export const DiffViewer = forwardRef<HTMLElement, DiffViewerProps>(function DiffViewer({ changes, title = 'Changes', className, ...rest }, ref) {
+  return <section {...rest} ref={ref} aria-label={title} className={cx(styles.root, className)}>
     <h3>{title}</h3>
     {changes.length === 0 ? <p>No changes.</p> : <div className={styles.scroll}><table>
       <thead><tr><th scope="col">Field</th><th scope="col">Change</th><th scope="col">Before</th><th scope="col">After</th></tr></thead>
       <tbody>{changes.map((change, index) => <tr key={`${change.path}-${index}`}><th scope="row">{change.path}</th><td className={styles[change.kind]}>{change.kind === 'added' ? 'Added' : change.kind === 'removed' ? 'Removed' : 'Modified'}</td><td>{format(change.before)}</td><td>{format(change.after)}</td></tr>)}</tbody>
     </table></div>}
   </section>;
-}
+});

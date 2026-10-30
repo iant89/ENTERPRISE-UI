@@ -35,6 +35,10 @@ export interface ComponentDoc {
 const k = (keys: string, action: string): KeyboardRow => ({ keys, action });
 
 export const docs: ComponentDoc[] = [
+  { slug: 'calendar', name: 'Calendar', category: 'Forms', components: ['Calendar'], summary: 'A standalone month grid for selecting one date.', keyboard: [k('Arrow keys', 'Previous / next day or week'), k('Page Up / Page Down', 'Previous / next month'), k('Enter / Space', 'Selects the date')], a11y: ['A `grid` labelled by the visible month; each day has a full date label.', 'Today is marked with `aria-current="date"`.'], related: ['date-picker', 'calendar-legend'] },
+  { slug: 'date-range-picker', name: 'DateRangePicker', category: 'Forms', components: ['DateRangePicker'], summary: 'Start and end date inputs with quick presets.', a11y: ['Native date inputs are grouped and labelled.', 'Localize the preset labels.'], related: ['date-picker'] },
+  { slug: 'filter-token', name: 'FilterToken', category: 'Forms', components: ['FilterToken', 'FilterTokenGroup'], summary: 'Removable applied-filter tokens.', a11y: ['Each remove button names the filter it removes.', 'The group is a labelled region.'], related: ['filter-bar'] },
+  { slug: 'saved-views', name: 'SavedViews', category: 'Data display', components: ['SavedViews'], summary: 'Select and manage application-persisted views.', a11y: ['Uses native controls; persistence errors are announced.', 'Permissions are UI hints only; enforce authorization on the backend.'], related: ['list-report'] },
   // Layout
   { slug: 'date-time-picker', name: 'DateTimePicker', category: 'Forms', components: ['DateTimePicker'], summary: 'Native local date and time input.', a11y: ['Provide a visible label; the browser supplies the date and time picker.', 'Values are local date-time strings without timezone information.'], related: ['date-picker'] },
   { slug: 'expandable-text', name: 'ExpandableText', category: 'Data display', components: ['ExpandableText'], summary: 'A text excerpt with an in-place disclosure.', a11y: ['Uses a native disclosure button with expanded state.', 'Localize the control labels and do not hide critical information.'] },

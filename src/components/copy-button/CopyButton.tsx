@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
 import { Button, type ButtonProps } from '../button';
 
 export interface CopyButtonMessages {
@@ -19,7 +19,7 @@ export interface CopyButtonProps extends Omit<ButtonProps, 'onClick' | 'children
   onError?: (error: unknown) => void;
 }
 /** Copies text with a visible and politely announced success or failure. */
-export function CopyButton({ value, copy, label = 'Copy', messages, onCopied, onError, ...props }: CopyButtonProps) {
+export const CopyButton = forwardRef<HTMLButtonElement, CopyButtonProps>(function CopyButton({ value, copy, label = 'Copy', messages, onCopied, onError, ...props }, ref) {
   const [status, setStatus] = useState('');
   const text = { ...defaultMessages, ...messages };
   const lock = useRef(false);
@@ -37,5 +37,5 @@ export function CopyButton({ value, copy, label = 'Copy', messages, onCopied, on
     finally { lock.current = false; }
     onCopied?.();
   };
-  return <span><Button {...props} onClick={() => void run()}>{label}</Button><span role="status"> {status}</span></span>;
-}
+  return <span><Button {...props} ref={ref} onClick={() => void run()}>{label}</Button><span role="status"> {status}</span></span>;
+});

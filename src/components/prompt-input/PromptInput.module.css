@@ -1,0 +1,9 @@
+.root { display: flex; flex-direction: column; gap: var(--eui-space-2); }
+.suggestions { display: flex; flex-wrap: wrap; gap: var(--eui-space-1); margin: 0; padding: 0; list-style: none; }
+.chip { min-block-size: var(--eui-control-height-sm); padding: 0 var(--eui-space-3); border: var(--eui-border-width) solid var(--eui-color-border); border-radius: var(--eui-radius-full); background: var(--eui-color-surface); color: var(--eui-color-text); font: inherit; font-size: var(--eui-font-size-sm); cursor: pointer; }
+.chip:hover:not(:disabled) { background: var(--eui-color-surface-hover); }
+.chip:focus-visible { outline: var(--eui-focus-width) solid var(--eui-color-focus); outline-offset: var(--eui-focus-offset); }
+.field { display: flex; align-items: flex-end; gap: var(--eui-space-2); }
+.field > :first-child { flex: 1; min-inline-size: 0; }
+.action { padding-block-end: 2px; }
+.footnote { margin: 0; font-size: var(--eui-font-size-xs); color: var(--eui-color-text-secondary); }

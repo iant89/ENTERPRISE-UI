@@ -41,6 +41,7 @@ export * from './components/button-badge';
 export * from './components/icon-button';
 export * from './components/split-button';
 export * from './components/toggle-button';
+export * from './components/ai-button';
 export * from './components/button-group';
 export * from './components/segmented-button';
 
@@ -61,6 +62,7 @@ export * from './components/number-input';
 export * from './components/search-field';
 export * from './components/select';
 export * from './components/combo-box';
+export * from './components/prompt-input';
 export * from './components/multi-select';
 export * from './components/multi-input';
 export * from './components/token';

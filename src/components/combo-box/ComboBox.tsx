@@ -10,12 +10,16 @@ import { useFormControl, type FieldProps } from '../form-field';
 import inputBoxStyles from '../input/InputBox.module.css';
 import { Spinner } from '../spinner';
 import { ListboxPopup, optionId, type SelectOption } from '../listbox';
+import { collectOptionElements, ComboBoxItem, ComboBoxItemCustom, ComboBoxItemGroup } from '../listbox/optionElements';
 import listboxStyles from '../listbox/Listbox.module.css';
 
 export interface ComboBoxProps
   extends FieldProps,
     Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'defaultValue' | 'onChange' | 'size'> {
-  options: SelectOption[];
+  /** Choices. Item elements are used when this is omitted. */
+  options?: SelectOption[];
+  /** ComboBoxItem, ComboBoxItemCustom and ComboBoxItemGroup elements. */
+  children?: ReactNode;
   /** Controlled selected value. */
   value?: string | null;
   /** @default null */
@@ -54,12 +58,13 @@ const defaultFilter = (option: SelectOption, text: string) => option.label.toLoc
 export const ComboBox = forwardRef<HTMLInputElement, ComboBoxProps>(function ComboBox(
   {
     label, description, error, status, statusMessage, hideLabel, labelPosition,
-    options, value, defaultValue = null, onChange, onInputChange, allowCustomValue = false, parseCustomValue,
+    options: optionsProp, children, value, defaultValue = null, onChange, onInputChange, allowCustomValue = false, parseCustomValue,
     filter = defaultFilter, loading = false, emptyText, size = 'md', clearable = true, formatValue,
     id, required, disabled, readOnly, placeholder, className, 'aria-label': ariaLabel, 'aria-describedby': ariaDescribedBy, ...rest
   },
   ref,
 ) {
+  const options = optionsProp ?? collectOptionElements(children, { item: ComboBoxItem, custom: ComboBoxItemCustom, group: ComboBoxItemGroup } as Parameters<typeof collectOptionElements>[1]);
   const control = useFormControl({ label, description, error, status, statusMessage, hideLabel, labelPosition, id, required, disabled, 'aria-describedby': ariaDescribedBy });
   const [selected, setSelected] = useControllableState<string | null>(value, defaultValue, onChange);
   const labelFor = (v: string | null) => (v == null ? '' : formatValue?.(v) ?? options.find((o) => o.value === v)?.label ?? v);

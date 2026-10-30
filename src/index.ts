@@ -71,6 +71,7 @@ export * from './components/radio-group';
 export * from './components/switch';
 export * from './components/slider';
 export * from './components/range-slider';
+export * from './components/step-input';
 export * from './components/calendar';
 export * from './components/calendar-legend';
 export * from './components/color-palette';

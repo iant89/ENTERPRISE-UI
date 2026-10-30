@@ -9,10 +9,14 @@ import { usePosition } from '../../hooks/usePosition';
 import { useFormControl, type FieldProps } from '../form-field';
 import inputBoxStyles from '../input/InputBox.module.css';
 import { ListboxPopup, optionId, type SelectOption } from '../listbox';
+import { collectOptionElements, Option, OptionCustom, OptionGroup } from '../listbox/optionElements';
 import styles from '../listbox/Listbox.module.css';
 
 export interface SelectProps<V extends string = string> extends FieldProps {
-  options: SelectOption<V>[];
+  /** Choices. Option elements are used when this is omitted. */
+  options?: SelectOption<V>[];
+  /** Option, OptionCustom and OptionGroup elements. */
+  children?: ReactNode;
   /** Controlled selected value. `null` for no selection. */
   value?: V | null;
   /** @default null */
@@ -49,11 +53,12 @@ export interface SelectProps<V extends string = string> extends FieldProps {
 function SelectInner<V extends string = string>(
   {
     label, description, error, status, statusMessage, hideLabel, labelPosition,
-    options, value, defaultValue = null, onChange, placeholder = 'Select', size = 'md',
+    options: optionsProp, children, value, defaultValue = null, onChange, placeholder = 'Select', size = 'md',
     id, name, required, disabled, readOnly, 'aria-label': ariaLabel, 'aria-describedby': ariaDescribedBy, className, renderValue, dir, lang,
   }: SelectProps<V>,
   ref: React.ForwardedRef<HTMLDivElement>,
 ) {
+  const options = optionsProp ?? (collectOptionElements(children, { item: Option, custom: OptionCustom, group: OptionGroup } as Parameters<typeof collectOptionElements>[1]) as SelectOption<V>[]);
   const control = useFormControl({ label, description, error, status, statusMessage, hideLabel, labelPosition, id, required, disabled, 'aria-describedby': ariaDescribedBy });
   const [selected, setSelected] = useControllableState<V | null>(value, defaultValue, onChange);
   const [open, setOpen] = useState(false);

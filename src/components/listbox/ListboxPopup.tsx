@@ -14,6 +14,8 @@ export interface ListboxPopupProps {
   isSelected: (option: SelectOption) => boolean;
   onSelect: (option: SelectOption, index: number) => void;
   onActiveChange: (index: number) => void;
+  dir?: 'ltr' | 'rtl' | 'auto';
+  lang?: string;
   multiple?: boolean;
   labelledBy?: string;
   'aria-label'?: string;
@@ -40,7 +42,7 @@ function highlightLabel(label: string, query?: string): ReactNode {
 
 /** Internal: the floating `role="listbox"` used by select-like controls. Focus stays on the combobox. */
 export const ListboxPopup = forwardRef<HTMLUListElement, ListboxPopupProps>(function ListboxPopup(
-  { id, options, activeIndex, isSelected, onSelect, onActiveChange, multiple, labelledBy, 'aria-label': ariaLabel, style, emptyText = 'No matches', highlight },
+  { id, options, activeIndex, isSelected, onSelect, onActiveChange, multiple, dir, lang, labelledBy, 'aria-label': ariaLabel, style, emptyText = 'No matches', highlight },
   ref,
 ) {
   const listRef = useRef<HTMLUListElement>(null);
@@ -98,6 +100,8 @@ export const ListboxPopup = forwardRef<HTMLUListElement, ListboxPopupProps>(func
         ref={merged}
         id={id}
         role="listbox"
+        dir={dir}
+        lang={lang}
         aria-labelledby={labelledBy}
         aria-label={ariaLabel}
         aria-multiselectable={multiple || undefined}

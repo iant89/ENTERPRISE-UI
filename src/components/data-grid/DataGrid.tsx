@@ -8,7 +8,7 @@ import { Button } from '../button';
 import { DropdownMenu } from '../dropdown-menu';
 import { IconButton } from '../icon-button';
 import type { MenuEntry } from '../menu';
-import { Pagination } from '../pagination';
+import { Pagination, type PaginationMessages } from '../pagination';
 import { SearchField } from '../search-field';
 import { Select } from '../select';
 import type { SelectOption } from '../listbox';
@@ -44,11 +44,59 @@ export interface DataGridServerState {
   error?: ReactNode;
 }
 
+/** Localizable grid text; callbacks let hosts apply locale-specific plural and number formatting. */
+export interface DataGridMessages {
+  searchPlaceholder: string;
+  searchLabel: (title: string) => string;
+  clearSearch: string;
+  filterLabel: (column: string) => string;
+  filterValue: (column: string, value: string) => string;
+  all: string;
+  clearFilters: string;
+  columns: string;
+  rowDensity: string;
+  cozy: string;
+  compact: string;
+  condensed: string;
+  viewSettings: string;
+  columnWidths: string;
+  columnWidth: (column: string, pixels: number) => string;
+  selected: (count: number) => string;
+  clearSelection: string;
+  stale: string;
+  selectAllPage: string;
+  selectAll: string;
+  selectionHeader: string;
+  selectRow: (label: string) => string;
+  unavailable: string;
+  noResults: string;
+  noData: string;
+  results: (count: number) => string;
+}
+const defaultMessages: DataGridMessages = {
+  searchPlaceholder: 'Search', searchLabel: (title) => `Search ${title}`, clearSearch: 'Clear search',
+  filterLabel: (column) => `Filter by ${column}`, filterValue: (column, value) => `${column}: ${value}`,
+  all: 'All', clearFilters: 'Clear filters', columns: 'Columns', rowDensity: 'Row density',
+  cozy: 'Cozy', compact: 'Compact', condensed: 'Condensed', viewSettings: 'View settings', columnWidths: 'Column widths',
+  columnWidth: (column, pixels) => `${column} width: ${pixels}px`, selected: (count) => `${count} selected`,
+  clearSelection: 'Clear selection', stale: 'Showing previous results; they may be out of date.',
+  selectAllPage: 'Select all rows on this page', selectAll: 'Select all rows', selectionHeader: 'Selection',
+  selectRow: (label) => `Select ${label}`, unavailable: 'Data is unavailable.', noResults: 'No results match your search or filters.',
+  noData: 'No data', results: (count) => `${count} results`,
+};
+
 export interface DataGridProps<T> extends Omit<TableProps<T>, 'columns' | 'manualSorting' | 'borderless' | 'caption' | 'density'> {
   columns: DataGridColumn<T>[];
   /** Opt into externally managed pagination and filtering. Supply controlled search and sort callbacks as well.
    * Provide a stable getRowId whenever rows can change or selection spans pages. */
   server?: DataGridServerState;
+  /** Localized grid messages. Host-supplied columns and errors must also be translated. */
+  messages?: Partial<DataGridMessages>;
+  /** Valid BCP 47 locale for local search case conversion. */
+  locale?: string;
+  /** Direction and language, including floating menus and listboxes. */
+  dir?: 'ltr' | 'rtl' | 'auto';
+  lang?: string;
   /** Toolbar title; also the table's accessible name. */
   title: string;
   /** Show the quick search field. @default true */
@@ -61,6 +109,10 @@ export interface DataGridProps<T> extends Omit<TableProps<T>, 'columns' | 'manua
   pageSize?: number;
   /** @default [10, 25, 50] */
   pageSizeOptions?: number[];
+  /** Translates pagination labels and formats page numbers. */
+  paginationMessages?: Partial<PaginationMessages>;
+  /** Accessible name for pagination. Defaults to the grid title followed by “pagination”. */
+  paginationLabel?: string;
   /** Extra toolbar actions (e.g. Create, Export). */
   toolbarActions?: ReactNode;
   /** Actions shown while rows are selected. Receives the selected ids. */
@@ -74,7 +126,7 @@ export interface DataGridProps<T> extends Omit<TableProps<T>, 'columns' | 'manua
   resizableColumns?: boolean;
 }
 
-const matches = (value: unknown, text: string) => value != null && String(value).toLocaleLowerCase().includes(text);
+const matches = (value: unknown, text: string, locale?: string) => value != null && String(value).toLocaleLowerCase(locale).includes(text);
 
 /**
  * Feature-complete data table: quick search, column filters, sorting,
@@ -82,11 +134,12 @@ const matches = (value: unknown, text: string) => value != null && String(value)
  * Built from Table, SearchField, Select, Pagination and DropdownMenu.
  */
 export function DataGrid<T>({
-  columns, data, title, searchable = true, searchPlaceholder = 'Search', search, onSearchChange,
-  pageSize: initialPageSize = 10, pageSizeOptions = [10, 25, 50], toolbarActions, selectionActions,
+  columns, data, title, searchable = true, searchPlaceholder, search, onSearchChange, messages, locale, dir, lang,
+  pageSize: initialPageSize = 10, pageSizeOptions = [10, 25, 50], paginationMessages, paginationLabel, toolbarActions, selectionActions,
   defaultDensity = 'compact', visibleColumnIds, onVisibleColumnIdsChange, resizableColumns = false, sort, defaultSort = null, onSortChange, selectedIds, defaultSelectedIds = [], onSelectionChange,
   getRowId, className, emptyState, loading, server, ...tableProps
 }: DataGridProps<T>) {
+  const text = { ...defaultMessages, ...messages };
   const titleId = useId(undefined, 'grid-title');
   const announce = useAnnouncer();
   const [query, setQuery] = useControllableState(search, '', onSearchChange);
@@ -112,7 +165,7 @@ export function DataGrid<T>({
 
   const filtered = useMemo(() => {
     if (server) return data;
-    const text = query.trim().toLocaleLowerCase();
+    const text = query.trim().toLocaleLowerCase(locale);
     return data.filter((row) => {
       for (const [columnId, value] of Object.entries(filters)) {
         if (value == null) continue;
@@ -120,10 +173,10 @@ export function DataGrid<T>({
         if (column && String(getValue(row, column)) !== value) return false;
       }
       if (!text) return true;
-      return columns.some((c) => c.accessor && c.searchable !== false && matches(getValue(row, c), text));
+      return columns.some((c) => c.accessor && c.searchable !== false && matches(getValue(row, c), text, locale));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, columns, filters, query, !!server]);
+  }, [data, columns, filters, query, locale, !!server]);
 
   const sorted = useMemo(() => server ? filtered : sortRows(filtered, columns, sortState), [filtered, columns, sortState, server]);
   const totalItems = server ? server.totalItems : sorted.length;
@@ -135,7 +188,7 @@ export function DataGrid<T>({
   // Reset to the first page whenever the result set changes shape.
   useEffect(() => setPage(1), [query, filters, pageSize]);
   useEffect(() => {
-    if (!loading && (query || Object.values(filters).some((v) => v != null))) announce(`${totalItems} results`);
+    if (!loading && (query || Object.values(filters).some((v) => v != null))) announce(text.results(totalItems));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalItems]);
 
@@ -143,7 +196,7 @@ export function DataGrid<T>({
   const activeFilterCount = Object.values(filters).filter((v) => v != null).length;
 
   const settingsItems: MenuEntry[] = [
-    { type: 'label', label: 'Columns' },
+    { type: 'label', label: text.columns },
     ...columns.map((c) => ({
       id: `col:${c.id}`,
       label: getColumnText(c),
@@ -151,21 +204,21 @@ export function DataGrid<T>({
       disabled: c.alwaysVisible || (!hidden.has(c.id) && visibleColumns.length === 1),
     })),
     { type: 'separator' },
-    { type: 'label', label: 'Row density' },
-    { id: 'density:cozy', label: 'Cozy', checked: density === 'cozy' },
-    { id: 'density:compact', label: 'Compact', checked: density === 'compact' },
-    { id: 'density:condensed', label: 'Condensed', checked: density === 'condensed' },
+    { type: 'label', label: text.rowDensity },
+    { id: 'density:cozy', label: text.cozy, checked: density === 'cozy' },
+    { id: 'density:compact', label: text.compact, checked: density === 'compact' },
+    { id: 'density:condensed', label: text.condensed, checked: density === 'condensed' },
   ];
 
   return (
-    <section className={cx(styles.grid, className)} aria-labelledby={titleId}>
+    <section className={cx(styles.grid, className)} aria-labelledby={titleId} dir={dir} lang={lang}>
       <div className={styles.toolbar}>
         <h2 id={titleId} className={styles.title}>
           {title} <span className={styles.count}>({totalItems})</span>
         </h2>
         {searchable && (
           <div className={styles.search}>
-            <SearchField size="sm" value={query} onChange={setQuery} placeholder={searchPlaceholder} aria-label={`Search ${title}`} />
+            <SearchField size="sm" value={query} onChange={setQuery} placeholder={searchPlaceholder ?? text.searchPlaceholder} aria-label={text.searchLabel(title)} clearLabel={text.clearSearch} />
           </div>
         )}
         {filterColumns.length > 0 && (
@@ -174,28 +227,32 @@ export function DataGrid<T>({
               <div key={column.id} className={styles.filter}>
                 <Select
                   size="sm"
-                  aria-label={`Filter by ${getColumnText(column)}`}
-                  placeholder={`${getColumnText(column)}: All`}
+                  aria-label={text.filterLabel(getColumnText(column))}
+                  dir={dir}
+                  lang={lang}
+                  placeholder={text.filterValue(getColumnText(column), text.all)}
                   value={filters[column.id] ?? null}
-                  options={[{ value: '__all__', label: 'All' }, ...(column.filterOptions ?? [])]}
-                  renderValue={(o) => `${getColumnText(column)}: ${o.label}`}
+                  options={[{ value: '__all__', label: text.all }, ...(column.filterOptions ?? [])]}
+                  renderValue={(o) => text.filterValue(getColumnText(column), o.label)}
                   onChange={(v) => setFilters({ ...filters, [column.id]: v === '__all__' ? null : v })}
                 />
               </div>
             ))}
             {activeFilterCount > 0 && (
               <Button size="sm" variant="tertiary" onClick={() => setFilters({})}>
-                Clear filters
+                {text.clearFilters}
               </Button>
             )}
           </div>
         )}
         <div className={styles.actions}>
           {toolbarActions}
-          {resizableColumns && <Button size="sm" aria-expanded={showWidths} onClick={() => setShowWidths((open) => !open)}>Column widths</Button>}
+          {resizableColumns && <Button size="sm" aria-expanded={showWidths} onClick={() => setShowWidths((open) => !open)}>{text.columnWidths}</Button>}
           <DropdownMenu
             placement="bottom-end"
-            aria-label="View settings"
+            aria-label={text.viewSettings}
+            dir={dir}
+            lang={lang}
             items={settingsItems}
             onAction={(id) => {
               const [kind, value] = id.split(':');
@@ -207,26 +264,26 @@ export function DataGrid<T>({
                   onVisibleColumnIdsChange?.(next);
                 }
             }}
-            trigger={<IconButton icon={<Settings2 />} label="View settings" size="sm" />}
+            trigger={<IconButton icon={<Settings2 />} label={text.viewSettings} size="sm" />}
           />
         </div>
       </div>
-      {resizableColumns && showWidths && <div className={styles.widthControls} aria-label="Column widths">
+      {resizableColumns && showWidths && <div className={styles.widthControls} aria-label={text.columnWidths}>
         {visibleColumns.map((column) => <label key={column.id}>
-          {getColumnText(column)} width: {widths[column.id] ?? (typeof column.width === 'number' ? column.width : 160)}px
+          {text.columnWidth(getColumnText(column), widths[column.id] ?? (typeof column.width === 'number' ? column.width : 160))}
           <input type="range" min="80" max="600" step="10" value={widths[column.id] ?? (typeof column.width === 'number' ? column.width : 160)} onChange={(event) => setWidths((current) => ({ ...current, [column.id]: Number(event.target.value) }))} />
         </label>)}
       </div>}
       {selected.length > 0 && tableProps.selectionMode && tableProps.selectionMode !== 'none' && (
         <div className={styles.selectionBar} role="status">
-          <strong>{selected.length} selected</strong>
+          <strong>{text.selected(selected.length)}</strong>
           {selectionActions?.(selected)}
           <Button size="sm" variant="tertiary" neutral onClick={() => setSelected([])}>
-            Clear selection
+            {text.clearSelection}
           </Button>
         </div>
       )}
-      {server?.stale && <div role="status">Showing previous results; they may be out of date.</div>}
+      {server?.stale && <div role="status">{text.stale}</div>}
       {server?.error && <div role="alert">{server.error}</div>}
       <Table<T>
         {...tableProps}
@@ -237,24 +294,29 @@ export function DataGrid<T>({
         getRowId={getRowId}
         loading={loading}
         manualSorting
-        selectAllLabel={tableProps.selectAllLabel ?? (effectivePageSize > 0 ? 'Select all rows on this page' : 'Select all rows')}
+        selectAllLabel={tableProps.selectAllLabel ?? (effectivePageSize > 0 ? text.selectAllPage : text.selectAll)}
+        selectionHeaderLabel={tableProps.selectionHeaderLabel ?? text.selectionHeader}
+        selectRowLabel={tableProps.selectRowLabel ?? text.selectRow}
         sort={sortState}
         onSortChange={setSort}
         selectedIds={selected}
         onSelectionChange={setSelected}
         density={density}
-        emptyState={emptyState ?? (server?.error ? 'Data is unavailable.' : query || activeFilterCount || server?.hasActiveFilters ? 'No results match your search or filters.' : 'No data')}
+        emptyState={emptyState ?? (server?.error ? text.unavailable : query || activeFilterCount || server?.hasActiveFilters ? text.noResults : text.noData)}
       />
       {effectivePageSize > 0 && totalItems > 0 && (
         <div className={styles.footer}>
           <Pagination
             page={currentPage}
+            messages={paginationMessages}
+            dir={dir}
+            lang={lang}
             onPageChange={server ? server.onPageChange : setPage}
             totalItems={totalItems}
             pageSize={effectivePageSize}
             pageSizeOptions={pageSizeOptions}
             onPageSizeChange={server ? server.onPageSizeChange : setPageSize}
-            aria-label={`${title} pagination`}
+            aria-label={paginationLabel ?? `${title} pagination`}
           />
         </div>
       )}

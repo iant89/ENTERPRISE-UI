@@ -26,6 +26,9 @@ export interface DropdownMenuProps {
   /** Accessible name for the menu. Defaults to being labelled by the trigger. */
   'aria-label'?: string;
   className?: string;
+  /** Direction and language of the portaled menu. */
+  dir?: 'ltr' | 'rtl' | 'auto';
+  lang?: string;
 }
 
 /**
@@ -42,6 +45,8 @@ export function DropdownMenu({
   onOpenChange,
   'aria-label': ariaLabel,
   className,
+  dir,
+  lang,
 }: DropdownMenuProps) {
   const [isOpen, setOpen] = useControllableState(open, defaultOpen, onOpenChange);
   const [focusTarget, setFocusTarget] = useState<'first' | 'last'>('first');
@@ -83,6 +88,8 @@ export function DropdownMenu({
         <Portal>
           <Menu
             ref={menuRef}
+            dir={dir}
+            lang={lang}
             id={id}
             items={items}
             autoFocus={focusTarget}

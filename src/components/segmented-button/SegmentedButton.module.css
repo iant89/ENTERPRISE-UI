@@ -1,0 +1,10 @@
+.root { display: inline-flex; border: var(--eui-border-width) solid var(--eui-color-border-strong); border-radius: var(--eui-radius-md); overflow: hidden; background: var(--eui-color-surface); }
+.item { display: inline-flex; align-items: center; gap: var(--eui-space-1); min-block-size: var(--eui-control-height); padding: 0 var(--eui-control-padding-x); border: 0; border-inline-start: var(--eui-border-width) solid var(--eui-color-border); background: transparent; color: var(--eui-color-text); font: inherit; font-size: var(--eui-font-size-sm); cursor: pointer; }
+.item:first-child { border-inline-start: 0; }
+.item:hover:not(:disabled) { background: var(--eui-color-surface-hover); }
+.item:focus-visible { outline: var(--eui-focus-width) solid var(--eui-color-focus); outline-offset: calc(-1 * var(--eui-focus-width)); }
+.item:disabled { opacity: var(--eui-disabled-opacity); cursor: var(--eui-disabled-cursor); }
+.selected, .selected:hover:not(:disabled) { background: var(--eui-color-surface-selected); color: var(--eui-color-selected-text); font-weight: var(--eui-font-weight-semibold); }
+.sm .item { min-block-size: var(--eui-control-height-sm); }
+.icon { display: inline-flex; }
+.icon svg { inline-size: var(--eui-icon-size-sm); block-size: var(--eui-icon-size-sm); }

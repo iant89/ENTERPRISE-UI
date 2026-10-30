@@ -40,6 +40,7 @@ export * from './components/icon-button';
 export * from './components/split-button';
 export * from './components/toggle-button';
 export * from './components/button-group';
+export * from './components/segmented-button';
 
 // Forms
 export * from './components/form-field';
@@ -59,9 +60,13 @@ export * from './components/search-field';
 export * from './components/select';
 export * from './components/combo-box';
 export * from './components/multi-select';
+export * from './components/multi-input';
+export * from './components/token';
 export * from './components/checkbox';
 export * from './components/radio-group';
 export * from './components/switch';
+export * from './components/slider';
+export * from './components/range-slider';
 export * from './components/calendar';
 export * from './components/calendar-legend';
 export * from './components/color-palette';
@@ -90,6 +95,8 @@ export * from './components/status-indicator';
 export * from './components/timeline';
 export * from './components/object-identifier';
 export * from './components/metric-card';
+export * from './components/title';
+export * from './components/text';
 
 // Feedback
 export * from './components/dialog';
@@ -98,6 +105,7 @@ export * from './components/toast';
 export * from './components/message-strip';
 export * from './components/tooltip';
 export * from './components/popover';
+export * from './components/responsive-popover';
 export * from './components/progress-bar';
 export * from './components/spinner';
 export * from './components/busy-indicator';
@@ -116,6 +124,7 @@ export * from './patterns/empty-state';
 // Transport-independent data loading
 export * from './data';
 export * from './components/date-range-picker';
+export * from './components/dynamic-date-range';
 export * from './components/filter-token';
 export * from './components/saved-views';
 export * from './patterns/list-report';

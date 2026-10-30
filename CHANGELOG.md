@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added roadmap components: Slider, RangeSlider, SegmentedButton, Title, Text, Token, Tokenizer, MultiInput, ResponsivePopover, DynamicDateRange, DynamicPage, DynamicSideContent, FlexibleColumnLayout, HeroBanner, MediaGallery, ProductSwitch, UserMenu, UserSettingsDialog, ViewSettingsDialog, UploadCollection, AIButton and PromptInput.
+- Carousel, RatingIndicator, CopyButton, AppBreadcrumbBar and DiffViewer now forward refs and accept `className` and native attributes; added documentation pages for Calendar, DateRangePicker, FilterToken and SavedViews.
 - Added DataGrid message overrides, locale-sensitive local search, and explicit direction and language for grid popups.
 - Added localized pagination messages and number formatting with RTL chevrons; DataGrid can pass pagination translations.
 

@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useRef, type ReactElement } from 'react';
 import {
   Accessibility, BookOpen, Boxes, Code2, Component, LayoutDashboard, LayoutTemplate, Palette, Rocket, SwatchBook, Workflow,
-  Moon, Sun, Contrast, Monitor, Rows3, Columns3, FormInput, MousePointerClick, Navigation, PanelsTopLeft, Table2, MessageSquareWarning,
-} from 'lucide-react';
+  Moon, Sun, Contrast, Monitor, Rows3, Columns3, FormInput, MousePointerClick, Navigation, PanelsTopLeft, Table2, MessageSquareWarning, PencilRuler } from 'lucide-react';
 import {
   AppShell, ApplicationHeader, ComboBox, DropdownMenu, IconButton, NavigationGroup, NavigationItem, SideNavigation, ThemeProvider,
   ToastProvider, ToggleButton, Tooltip, type ThemePreference,
@@ -184,6 +183,7 @@ export function App() {
               <NavigationGroup label="Components">
                 <NavigationItem id="/components" label="All components" icon={<Component />} href={href('/components')} />
                 <NavigationItem id="/playground" label="Playground" icon={<Code2 />} href={href('/playground')} />
+                <NavigationItem id="studio" label="Studio" icon={<PencilRuler />} href="studio/" />
                 <NavigationItem id="/gallery" label="Gallery" icon={<LayoutDashboard />} href={href('/gallery')} />
                 {categories.map((c) => (
                   <NavigationItem key={c.id} id={`cat-${c.id}`} label={c.id} icon={CATEGORY_ICONS[c.id]}>

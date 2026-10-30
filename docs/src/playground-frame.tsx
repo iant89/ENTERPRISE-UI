@@ -61,12 +61,36 @@ function run(code: string, theme: UI.ThemePreference, density: UI.Density) {
   }
 }
 
+// Design mode (Enterprise UI Studio): report the boxes of elements tagged with `data-studio-id`
+// so the host can draw selection outlines and resolve drops without reaching into this frame.
+let design = false;
+let layoutFrame = 0;
+function reportLayout() {
+  layoutFrame = 0;
+  if (!design) return;
+  const nodes = [...document.querySelectorAll<HTMLElement>('[data-studio-id]')].map((element) => {
+    const rect = element.getBoundingClientRect();
+    return { id: element.dataset.studioId!, x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+  });
+  window.parent.postMessage({ source: 'eui-playground', type: 'layout', nodes }, '*');
+}
+const scheduleLayout = () => { if (design && !layoutFrame) layoutFrame = requestAnimationFrame(reportLayout); };
+new ResizeObserver(scheduleLayout).observe(document.documentElement);
+new MutationObserver(scheduleLayout).observe(document.body, { subtree: true, childList: true, attributes: true });
+window.addEventListener('scroll', scheduleLayout, true);
+
 window.addEventListener('message', (event) => {
   if (event.source !== window.parent || event.data?.source !== 'eui-docs') return;
   if (event.data.type === 'init') { send('ready'); return; }
+  if (event.data.type === 'scroll') {
+    if (typeof event.data.deltaY === 'number') window.scrollBy(0, event.data.deltaY);
+    return;
+  }
   if (event.data.type !== 'render') return;
   const { code, theme, density } = event.data;
   if (typeof code !== 'string' || ![...UI.THEMES.map((t) => t.name as string), 'system'].includes(theme) || !['cozy', 'compact'].includes(density)) return;
+  design = event.data.design === true;
   run(code, theme, density);
+  scheduleLayout();
 });
 send('ready');

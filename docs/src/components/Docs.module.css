@@ -206,3 +206,105 @@
     border-top: var(--eui-border-width) solid var(--eui-color-border-subtle);
   }
 }
+
+/* API reference */
+.api {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-6);
+}
+
+.apiGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-2);
+}
+
+.apiGroupTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--eui-space-2);
+  margin: 0;
+  font-size: var(--eui-font-size-lg);
+  font-weight: var(--eui-font-weight-semibold);
+  color: var(--eui-color-text);
+}
+
+.apiGroupIntro {
+  margin: 0;
+  max-width: 72ch;
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+  line-height: 1.6;
+}
+
+.count {
+  display: inline-flex;
+  min-width: 1.5rem;
+  justify-content: center;
+  padding: 0 var(--eui-space-2);
+  border-radius: 999px;
+  background: var(--eui-color-neutral-subtle);
+  color: var(--eui-color-neutral-text);
+  font-size: var(--eui-font-size-xs);
+  font-weight: var(--eui-font-weight-semibold);
+  line-height: 1.5rem;
+}
+
+.propCode {
+  font-weight: var(--eui-font-weight-semibold);
+  color: var(--eui-color-text);
+}
+
+.none {
+  color: var(--eui-color-text-secondary);
+}
+
+.signature {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-1);
+}
+
+.returns {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.tokenGroups {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: var(--eui-space-4);
+  margin: 0;
+}
+
+.tokenGroup {
+  padding: var(--eui-space-3) var(--eui-space-4);
+  border: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  border-radius: var(--eui-radius-md);
+  background: var(--eui-color-surface);
+}
+
+.tokenGroup dt {
+  margin-bottom: var(--eui-space-2);
+  font-size: var(--eui-font-size-sm);
+  font-weight: var(--eui-font-weight-semibold);
+  color: var(--eui-color-text);
+}
+
+.tokenGroup dd {
+  margin: 0;
+}
+
+.tokenList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--eui-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tokenList code {
+  font-size: var(--eui-font-size-xs);
+}

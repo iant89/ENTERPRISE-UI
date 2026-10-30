@@ -1,4 +1,4 @@
-/** Documentation metadata for every component page. Props tables come from docs/generated/api.json. */
+/** Documentation metadata for every component page. API reference tables come from docs/generated/api.json. */
 
 export type Category = 'Layout' | 'Navigation' | 'Buttons' | 'Forms' | 'Data display' | 'Feedback' | 'Patterns';
 
@@ -22,7 +22,7 @@ export interface ComponentDoc {
   name: string;
   category: Category;
   summary: string;
-  /** Components whose props are documented on this page. */
+  /** Components whose properties are documented on this page. */
   components: string[];
   /** Examples folder (defaults to slug). */
   examples?: string;
@@ -90,7 +90,7 @@ export const docs: ComponentDoc[] = [
   { slug: 'option-custom', name: 'OptionCustom', category: 'Forms', components: ['OptionCustom'], summary: 'A Select choice with custom content.', a11y: ['The label remains the accessible name and type-ahead text.'], related: ['option', 'select'] },
   { slug: 'option-group', name: 'OptionGroup', category: 'Forms', components: ['OptionGroup'], summary: 'Groups Select choices under a heading.', a11y: ['The heading names the group and is not a choice.'], related: ['option'] },
   { slug: 'list-item-standard', name: 'ListItemStandard', category: 'Data display', components: ['ListItemStandard'], summary: 'A text row for List.', a11y: ['Selection and keyboard behavior come from the parent list.', 'Highlight state includes visible text.'], related: ['list'] },
-  { slug: 'list-item-custom', name: 'ListItemCustom', category: 'Data display', components: ['ListItemCustom'], summary: 'A List row with custom content.', a11y: ['The text prop is the accessible name and type-ahead value.'], related: ['list-item-standard'] },
+  { slug: 'list-item-custom', name: 'ListItemCustom', category: 'Data display', components: ['ListItemCustom'], summary: 'A List row with custom content.', a11y: ['The text property is the accessible name and type-ahead value.'], related: ['list-item-standard'] },
   { slug: 'list-item-group', name: 'ListItemGroup', category: 'Data display', components: ['ListItemGroup'], summary: 'Groups list rows under a heading.', a11y: ['The heading is not a selectable row.'], related: ['list'] },
   { slug: 'menu-item', name: 'MenuItem', category: 'Navigation', components: ['MenuItem'], summary: 'An action inside Menu.', a11y: ['Keyboard behavior comes from the parent menu.', 'Disabled items are skipped.'], related: ['menu'] },
   { slug: 'menu-item-group', name: 'MenuItemGroup', category: 'Navigation', components: ['MenuItemGroup'], summary: 'Groups menu actions under a label.', a11y: ['The label is not an action and is skipped by arrow keys.'], related: ['menu-item'] },
@@ -109,7 +109,7 @@ export const docs: ComponentDoc[] = [
     summary: 'Page header with breadcrumbs, title, subtitle, actions, header content and a filter/toolbar area, followed by a responsive content region.',
     a11y: ['The title renders as the page’s only `<h1>`.', 'Breadcrumbs render as a labelled `navigation` landmark.', 'Actions keep their DOM order on all screen sizes, matching the visual order.'],
   },
-  { slug: 'container', name: 'Container', category: 'Layout', components: ['Container'], summary: 'Centres content with a maximum width and responsive side padding.', a11y: ['Purely presentational; use the `as` prop to render a landmark such as `section` when appropriate.'] },
+  { slug: 'container', name: 'Container', category: 'Layout', components: ['Container'], summary: 'Centers content with a maximum width and responsive side padding.', a11y: ['Purely presentational; use the `as` property to render a landmark such as `section` when appropriate.'] },
   { slug: 'grid', name: 'Grid', category: 'Layout', components: ['Grid', 'GridItem'], summary: 'Responsive CSS grid with per-breakpoint column counts or auto-fit columns.', a11y: ['Visual order follows DOM order; do not use spans to reorder meaningful content.'] },
   { slug: 'flex', name: 'Flex', category: 'Layout', components: ['Flex'], summary: 'Flexbox layout primitive with token-based gaps.', a11y: ['Avoid `row-reverse`/`column-reverse` for content whose reading order matters (WCAG 1.3.2).'] },
   { slug: 'stack', name: 'Stack', category: 'Layout', components: ['Stack'], summary: 'One-dimensional layout with consistent spacing and optional dividers.', a11y: ['Dividers are decorative borders and are not announced.'] },

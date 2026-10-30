@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Badge, Page, SearchField, Stack, Table } from '@enterprise-ui/react';
-import { componentApi, hookApi, PropsTable } from '../components/PropsTable';
+import { ApiTables, componentApi, hookApi } from '../components/ApiTables';
 import { docs } from '../registry';
 import { href } from '../router';
 import { renderInlineCode } from '../components/ExampleBlock';
@@ -21,11 +21,11 @@ export function ApiReference() {
   return (
     <Page
       title="API reference"
-      subtitle="Props, types and defaults generated from the TypeScript source."
+      subtitle="Properties, events, states and slots, with types and defaults generated from the TypeScript source."
       breadcrumbs={[{ label: 'Docs', href: '#/' }, { label: 'Guides' }, { label: 'API reference' }]}
       toolbar={
         <div style={{ maxWidth: 360 }}>
-          <SearchField aria-label="Filter components and props" placeholder="Filter by component or prop" value={query} onChange={setQuery} />
+          <SearchField aria-label="Filter components and properties" placeholder="Filter by component or property" value={query} onChange={setQuery} />
         </div>
       }
     >
@@ -52,7 +52,7 @@ export function ApiReference() {
                       </>
                     )}
                   </span>
-                  <PropsTable component={c.name} />
+                  <ApiTables component={c.name} headingLevel={4} />
                 </div>
               </details>
             );

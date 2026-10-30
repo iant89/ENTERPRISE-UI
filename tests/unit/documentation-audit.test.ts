@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { docs, docsBySlug } from '../../docs/src/registry';
 import { examplesFor } from '../../docs/src/examples';
 import * as publicApi from '../../src';
-import { componentApi } from '../../docs/src/components/PropsTable';
+import { componentApi } from '../../docs/src/components/ApiTables';
 
 describe('documentation registry integrity', () => {
   it('has unique slugs and resolves all related documentation links', () => {

@@ -29,7 +29,7 @@ export default defineConfig({
       cssFileName: 'styles',
     },
     rollupOptions: {
-      external: [/^react($|\/)/, /^react-dom($|\/)/, /^lucide-react($|\/)/, /^@zxing\/library($|\/)/],
+      external: [/^react($|\/)/, /^react-dom($|\/)/, /^lucide-react($|\/)/],
       output: {
         preserveModules: true,
         preserveModulesRoot: 'src',

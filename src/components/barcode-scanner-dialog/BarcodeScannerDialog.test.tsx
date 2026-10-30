@@ -104,17 +104,36 @@ describe('BarcodeScannerDialog', () => {
 });
 
 describe('createDefaultBarcodeDecoder', () => {
-  it('uses the native BarcodeDetector when it supports the requested formats', async () => {
+  const stubNative = (formats: string[]) => {
+    class FakeDetector { static getSupportedFormats = async () => formats; detect = async () => [{ rawValue: 'n', format: formats[0] }]; }
+    vi.stubGlobal('BarcodeDetector', FakeDetector);
+  };
+  it('defaults to zxing even when a native detector exists', async () => {
+    stubNative(['qr_code']);
+    expect((await createDefaultBarcodeDecoder(['qr_code'])).kind).toBe('zxing');
+  });
+  it("'native' uses supported formats and falls back to zxing when unsupported", async () => {
+    stubNative(['qr_code']);
+    expect((await createDefaultBarcodeDecoder(['qr_code', 'ean_13'], 'native')).kind).toBe('native');
+    expect((await createDefaultBarcodeDecoder(['ean_13'], 'native')).kind).toBe('zxing');
+    vi.stubGlobal('BarcodeDetector', undefined);
+    expect((await createDefaultBarcodeDecoder(['qr_code'], 'native')).kind).toBe('zxing');
+  });
+  it("'auto' requires native support for every format", async () => {
+    stubNative(['qr_code']);
+    expect((await createDefaultBarcodeDecoder(['qr_code'], 'auto')).kind).toBe('native');
+    expect((await createDefaultBarcodeDecoder(['qr_code', 'ean_13'], 'auto')).kind).toBe('zxing');
+  });
+  it('decodes with the native BarcodeDetector when selected', async () => {
     const detect = vi.fn(async () => [{ rawValue: 'hello', format: 'qr_code' }]);
     class FakeDetector { static getSupportedFormats = async () => ['qr_code', 'ean_13']; detect = detect; }
     vi.stubGlobal('BarcodeDetector', FakeDetector);
-    const decoder = await createDefaultBarcodeDecoder(['qr_code']);
+    const decoder = await createDefaultBarcodeDecoder(['qr_code'], 'native');
     expect(decoder.kind).toBe('native');
     await expect(decoder.detect(document.createElement('video'))).resolves.toEqual({ text: 'hello', format: 'qr_code' });
   });
 
-  it('falls back to the lazily loaded zxing decoder', async () => {
-    vi.stubGlobal('BarcodeDetector', undefined);
+  it('loads the vendored zxing decoder lazily', async () => {
     const decoder = await act(() => createDefaultBarcodeDecoder(['qr_code', 'ean_13']));
     expect(decoder.kind).toBe('zxing');
     // jsdom video has no frames yet: nothing to decode.

@@ -1,0 +1,4 @@
+This directory contains the ESM build of ZXing for JavaScript (@zxing/library 0.23.0),
+https://github.com/zxing-js/library, a port of ZXing (https://github.com/zxing/zxing).
+Licensed under the Apache License, Version 2.0 (see LICENSE). Copyright the ZXing authors
+and zxing-js contributors. Modified only as described in ../README.md.

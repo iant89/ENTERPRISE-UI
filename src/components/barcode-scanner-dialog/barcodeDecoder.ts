@@ -23,13 +23,16 @@ export const zxingFormatNames: Record<BarcodeFormat, string> = {
   ean_8: 'EAN_8', ean_13: 'EAN_13', itf: 'ITF', pdf417: 'PDF_417', qr_code: 'QR_CODE', upc_a: 'UPC_A', upc_e: 'UPC_E',
 };
 
-async function createNativeDecoder(formats: BarcodeFormat[]): Promise<BarcodeDecoder | null> {
+/** Which decoder to use: the vendored zxing (default), the platform `BarcodeDetector`, or native only when it covers every format. */
+export type BarcodeDecoderPreference = 'zxing' | 'native' | 'auto';
+
+async function createNativeDecoder(formats: BarcodeFormat[], allowPartial: boolean): Promise<BarcodeDecoder | null> {
   const Detector = (globalThis as { BarcodeDetector?: NativeDetectorClass }).BarcodeDetector;
   if (!Detector) return null;
   try {
     const supported = (await Detector.getSupportedFormats?.()) ?? formats;
     const usable = formats.filter((f) => supported.includes(f));
-    if (usable.length < formats.length) return null; // let zxing cover formats the platform lacks
+    if (usable.length === 0 || (!allowPartial && usable.length < formats.length)) return null;
     const detector = new Detector({ formats: usable });
     return {
       kind: 'native',
@@ -43,9 +46,9 @@ async function createNativeDecoder(formats: BarcodeFormat[]): Promise<BarcodeDec
   }
 }
 
-/** Lazily loads @zxing/library (Apache-2.0) only when the native detector is unavailable. */
+/** Lazily loads the vendored @zxing/library 0.23.0 (Apache-2.0, see vendor/README.md) only when the native detector is unavailable. */
 async function createZxingDecoder(formats: BarcodeFormat[]): Promise<BarcodeDecoder> {
-  const zx = await import('@zxing/library');
+  const zx = await import('../../../vendor/zxing-library/esm/index.js');
   const reader = new zx.MultiFormatReader();
   const hints = new Map();
   hints.set(zx.DecodeHintType.POSSIBLE_FORMATS, formats.map((f) => zx.BarcodeFormat[zxingFormatNames[f] as keyof typeof zx.BarcodeFormat]));
@@ -76,7 +79,15 @@ async function createZxingDecoder(formats: BarcodeFormat[]): Promise<BarcodeDeco
   };
 }
 
-/** Native `BarcodeDetector` when it supports every requested format, otherwise the lazily loaded zxing decoder. */
-export async function createDefaultBarcodeDecoder(formats: BarcodeFormat[]): Promise<BarcodeDecoder> {
-  return (await createNativeDecoder(formats)) ?? createZxingDecoder(formats);
+/**
+ * Creates a decoder. `'zxing'` (default) always uses the vendored, lazily loaded zxing build, which behaves the same in every browser.
+ * `'native'` uses the platform `BarcodeDetector` for the formats it supports and falls back to zxing when it is unavailable or supports none.
+ * `'auto'` uses native only when it supports every requested format.
+ */
+export async function createDefaultBarcodeDecoder(formats: BarcodeFormat[], preference: BarcodeDecoderPreference = 'zxing'): Promise<BarcodeDecoder> {
+  if (preference !== 'zxing') {
+    const native = await createNativeDecoder(formats, preference === 'native');
+    if (native) return native;
+  }
+  return createZxingDecoder(formats);
 }

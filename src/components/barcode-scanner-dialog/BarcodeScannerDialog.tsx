@@ -4,7 +4,7 @@ import { Dialog } from '../dialog';
 import { Button } from '../button';
 import { Input } from '../input';
 import { MessageStrip } from '../message-strip';
-import { allBarcodeFormats, createDefaultBarcodeDecoder, type BarcodeDecoder, type BarcodeFormat } from './barcodeDecoder';
+import { allBarcodeFormats, createDefaultBarcodeDecoder, type BarcodeDecoder, type BarcodeDecoderPreference, type BarcodeFormat } from './barcodeDecoder';
 import styles from './BarcodeScannerDialog.module.css';
 
 export type BarcodeScanErrorKind = 'insecure-context' | 'unsupported' | 'permission-denied' | 'no-camera' | 'camera-error' | 'decoder-error';
@@ -54,7 +54,12 @@ export interface BarcodeScannerDialogProps {
   allowManualEntry?: boolean;
   /** Milliseconds between decode attempts. @default 150 */
   scanInterval?: number;
-  /** Override decoding (custom decoders or tests). Defaults to native BarcodeDetector with a lazily loaded zxing fallback. */
+  /**
+   * Decoder choice. `'zxing'` uses the vendored zxing decoder (lazy-loaded). `'native'` uses the browser `BarcodeDetector` and falls back to zxing
+   * when it is unsupported. `'auto'` uses native only if it supports every requested format. @default 'zxing'
+   */
+  decoder?: BarcodeDecoderPreference;
+  /** Fully custom decoder factory (for example in tests); takes precedence over `decoder`. */
   createDecoder?: (formats: BarcodeFormat[]) => Promise<BarcodeDecoder>;
   /** Localized text. */
   labels?: Partial<Omit<BarcodeScannerDialogLabels, 'errors'>> & { errors?: Partial<BarcodeScannerDialogLabels['errors']> };
@@ -73,7 +78,7 @@ function classify(error: unknown): BarcodeScanErrorKind {
  * The stream stops on success, close and unmount. The ref targets the dialog's content root.
  */
 export const BarcodeScannerDialog = forwardRef<HTMLDivElement, BarcodeScannerDialogProps>(function BarcodeScannerDialog(
-  { open, onClose, onScanSuccess, onScanError, formats = allBarcodeFormats, allowManualEntry = true, scanInterval = 150, createDecoder = createDefaultBarcodeDecoder, labels, className },
+  { open, onClose, onScanSuccess, onScanError, formats = allBarcodeFormats, allowManualEntry = true, scanInterval = 150, decoder: decoderPreference = 'zxing', createDecoder, labels, className },
   ref,
 ) {
   const text = { ...defaultLabels, ...labels, errors: { ...defaultLabels.errors, ...labels?.errors } };
@@ -104,7 +109,7 @@ export const BarcodeScannerDialog = forwardRef<HTMLDivElement, BarcodeScannerDia
       if (typeof window !== 'undefined' && window.isSecureContext === false) return fail('insecure-context');
       if (!navigator.mediaDevices?.getUserMedia) return fail('unsupported');
       let decoder: BarcodeDecoder;
-      try { decoder = await callbacks.current.createDecoder(formatKey.split(',') as BarcodeFormat[]); } catch (e) { return fail('decoder-error', e); }
+      try { decoder = await (callbacks.current.createDecoder ?? ((f: BarcodeFormat[]) => createDefaultBarcodeDecoder(f, decoderPreference)))(formatKey.split(',') as BarcodeFormat[]); } catch (e) { return fail('decoder-error', e); }
       try {
         stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
       } catch (e) { return fail(classify(e), e); }
@@ -125,7 +130,7 @@ export const BarcodeScannerDialog = forwardRef<HTMLDivElement, BarcodeScannerDia
       timer = setTimeout(tick, 0);
     })();
     return () => { cancelled = true; stop(); };
-  }, [open, formatKey, scanInterval, attempt]);
+  }, [open, formatKey, scanInterval, attempt, decoderPreference]);
 
   const submitManual = (event: FormEvent) => {
     event.preventDefault();

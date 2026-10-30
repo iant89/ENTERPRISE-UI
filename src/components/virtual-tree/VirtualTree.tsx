@@ -3,7 +3,7 @@ import { ChevronRight } from 'lucide-react';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useId } from '../../hooks/useId';
 import type { TreeNode, TreeProps } from '../tree';
-import { getVirtualWindow } from '../virtual-list/useVirtualWindow';
+import { getVirtualWindow } from '../virtual-list/virtualWindow';
 import styles from './VirtualTree.module.css';
 
 export interface VirtualTreeProps extends Omit<TreeProps, 'className'> {
@@ -35,8 +35,8 @@ export function VirtualTree({ nodes, 'aria-label': label, expandedIds, defaultEx
   const id = useId(undefined, 'virtual-tree');
   const rowHeight = Number.isFinite(itemHeight) && itemHeight > 0 ? itemHeight : 1;
   const extra = Number.isFinite(overscan) ? Math.max(0, Math.floor(overscan)) : 0;
-  const window = getVirtualWindow(visible.length, rowHeight, viewportHeight, scrollTop, extra);
-  const start = virtualized ? window.start : 0; const end = virtualized ? window.end : visible.length;
+  const range = getVirtualWindow(visible.length, rowHeight, viewportHeight, scrollTop, extra);
+  const start = virtualized ? range.start : 0; const end = virtualized ? range.end : visible.length;
   const activeIndex = Math.max(0, visible.findIndex(({ node }) => node.id === activeId));
   const activeVisible = visible.length > 0 && activeIndex >= start && activeIndex < end;
   const optionId = (index: number) => `${id}-${index}`;

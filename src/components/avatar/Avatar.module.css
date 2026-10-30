@@ -13,7 +13,6 @@
   font-size: calc(var(--_size) * 0.4);
   font-weight: var(--eui-font-weight-semibold);
   line-height: 1;
-  overflow: hidden;
   user-select: none;
 }
 
@@ -36,6 +35,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: inherit;
 }
 
 .icon svg {
@@ -45,7 +45,7 @@
 
 .status {
   position: absolute;
-  right: 0;
+  inset-inline-end: 0;
   bottom: 0;
   width: max(8px, calc(var(--_size) * 0.28));
   height: max(8px, calc(var(--_size) * 0.28));
@@ -67,3 +67,6 @@
   content: attr(data-initials);
   content: attr(data-initials) / '';
 }
+
+.badge { position: absolute; inset-inline-end: 0; bottom: 0; display: inline-flex; }
+.statusWithBadge { inset-inline-end: auto; inset-inline-start: 0; }

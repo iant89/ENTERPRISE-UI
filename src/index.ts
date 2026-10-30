@@ -18,6 +18,7 @@ export * from './layouts/page';
 export * from './layouts/container';
 export * from './layouts/grid';
 export * from './layouts/flex';
+export * from './layouts/bar';
 export * from './layouts/stack';
 export * from './layouts/split-view';
 export * from './layouts/resizable-panel';
@@ -34,6 +35,7 @@ export * from './components/pagination';
 
 // Buttons
 export * from './components/button';
+export * from './components/button-badge';
 export * from './components/icon-button';
 export * from './components/split-button';
 export * from './components/toggle-button';
@@ -41,6 +43,14 @@ export * from './components/button-group';
 
 // Forms
 export * from './components/form-field';
+export * from './components/form';
+export * from './components/form-item';
+export * from './components/label';
+export * from './components/icon';
+export * from './components/input-icon';
+export * from './components/panel';
+export * from './components/rating-indicator';
+export * from './components/link';
 export * from './components/form-group';
 export * from './components/input';
 export * from './components/text-area';
@@ -53,7 +63,12 @@ export * from './components/checkbox';
 export * from './components/radio-group';
 export * from './components/switch';
 export * from './components/calendar';
+export * from './components/calendar-legend';
+export * from './components/color-palette';
+export * from './components/color-palette-popover';
+export * from './components/color-picker';
 export * from './components/date-picker';
+export * from './components/date-time-picker';
 export * from './components/time-picker';
 export type { SelectOption } from './components/listbox/types';
 
@@ -64,7 +79,12 @@ export * from './components/list';
 export * from './components/tree';
 export * from './components/tree-table';
 export * from './components/card';
+export * from './components/card-header';
+export * from './components/expandable-text';
+export * from './components/carousel';
 export * from './components/avatar';
+export * from './components/avatar-badge';
+export * from './components/avatar-group';
 export * from './components/badge';
 export * from './components/status-indicator';
 export * from './components/timeline';
@@ -80,6 +100,7 @@ export * from './components/tooltip';
 export * from './components/popover';
 export * from './components/progress-bar';
 export * from './components/spinner';
+export * from './components/busy-indicator';
 export * from './components/skeleton';
 
 // Enterprise patterns

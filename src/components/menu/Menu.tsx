@@ -21,6 +21,10 @@ export interface MenuItemDef {
   checked?: boolean;
   /** Render as a link. */
   href?: string;
+  /** Browsing context for link items. */
+  target?: string;
+  /** Override the item's accessible name. */
+  ariaLabel?: string;
   /**
    * Called when the item is activated (in addition to `onAction`). Receives the
    * click event — keyboard activation is delivered as a click — so link items
@@ -137,6 +141,7 @@ export const Menu = forwardRef<HTMLDivElement, MenuProps>(function Menu(
         const isCheckbox = entry.checked !== undefined;
         const common = {
           'data-eui-menu-item': '',
+          'aria-label': entry.ariaLabel,
           role: isCheckbox ? 'menuitemcheckbox' : 'menuitem',
           'aria-checked': isCheckbox ? entry.checked : undefined,
           'aria-disabled': entry.disabled || undefined,
@@ -163,7 +168,7 @@ export const Menu = forwardRef<HTMLDivElement, MenuProps>(function Menu(
         );
         if (entry.href && !entry.disabled) {
           return (
-            <a key={entry.id} href={entry.href} {...common} onClick={(event) => activate(entry, event)}>
+            <a key={entry.id} href={entry.href} target={entry.target} rel={entry.target === '_blank' ? 'noopener noreferrer' : undefined} {...common} onClick={(event) => activate(entry, event)}>
               {inner}
             </a>
           );

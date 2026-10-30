@@ -3,6 +3,8 @@ import { cx } from '../../utilities/cx';
 import styles from './Card.module.css';
 
 export interface CardProps extends Omit<HTMLAttributes<HTMLElement>, 'title' | 'onClick'> {
+  /** Custom header, for example CardHeader. Replaces the built-in header. */
+  header?: ReactNode;
   /** Card heading. */
   title?: ReactNode;
   subtitle?: ReactNode;
@@ -30,14 +32,14 @@ export interface CardProps extends Omit<HTMLAttributes<HTMLElement>, 'title' | '
 
 /** Container that groups related content and actions about a single subject. */
 export const Card = forwardRef<HTMLElement, CardProps>(function Card(
-  { title, subtitle, avatar, headerActions, footer, headingLevel = 3, headerDivider = false, noPadding = false, flat = false, selected = false, onClick, className, children, ...rest },
+  { header, title, subtitle, avatar, headerActions, footer, headingLevel = 3, headerDivider = false, noPadding = false, flat = false, selected = false, onClick, className, children, ...rest },
   ref,
 ) {
   const Heading = `h${headingLevel}` as const;
   const hasHeader = title || subtitle || avatar || headerActions;
   return (
     <article ref={ref} className={cx(styles.card, flat && styles.flat, selected && styles.selected, onClick && styles.interactive, className)} {...rest}>
-      {hasHeader && (
+      {header ?? (hasHeader && (
         <header className={cx(styles.header, headerDivider && styles.headerDivider)}>
           {avatar}
           <div className={styles.headerText}>
@@ -56,7 +58,7 @@ export const Card = forwardRef<HTMLElement, CardProps>(function Card(
           </div>
           {headerActions && <div className={styles.actions}>{headerActions}</div>}
         </header>
-      )}
+      ))}
       {children != null && <div className={cx(styles.body, noPadding && styles.noPadding)}>{children}</div>}
       {footer && <footer className={styles.footer}>{footer}</footer>}
     </article>

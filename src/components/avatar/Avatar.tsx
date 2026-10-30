@@ -16,6 +16,10 @@ export interface AvatarProps extends HTMLAttributes<HTMLSpanElement> {
   shape?: 'circle' | 'square';
   /** Presence indicator. */
   presence?: 'online' | 'away' | 'busy' | 'offline';
+  /** Decorative badge displayed at the lower end edge. Do not pass interactive elements. */
+  badge?: ReactNode;
+  /** Meaning of the badge, appended to the avatar accessible name. Required when the badge conveys information. */
+  badgeLabel?: string;
   /** Accent colour index 1–8. Derived from `name` when omitted. */
   accent?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
   /** Treat as decoration (hidden from assistive technology). @default false */
@@ -24,13 +28,14 @@ export interface AvatarProps extends HTMLAttributes<HTMLSpanElement> {
 
 /** Represents a person or object with an image, initials or icon. */
 export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
-  { name, src, icon, size = 'md', shape = 'circle', presence, accent, decorative = false, className, style, 'aria-label': ariaLabel, ...rest },
+  { name, src, icon, size = 'md', shape = 'circle', presence, badge, badgeLabel, accent, decorative = false, className, style, 'aria-label': ariaLabel, ...rest },
   ref,
 ) {
   const [failed, setFailed] = useState(false);
   const accentIndex = accent ?? (name ? (hashString(name) % 8) + 1 : 8);
   const baseLabel = ariaLabel ?? name;
-  const label = baseLabel ? (presence ? `${baseLabel} (${presence})` : baseLabel) : undefined;
+  const details = [presence, badge && badgeLabel].filter(Boolean).join(', ');
+  const label = baseLabel ? (details ? `${baseLabel} (${details})` : baseLabel) : undefined;
   const showImage = src && !failed;
   return (
     <span
@@ -52,7 +57,8 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
           {icon}
         </span>
       )}
-      {presence && <span className={cx(styles.status, styles[presence])} aria-hidden="true" />}
+      {presence && <span className={cx(styles.status, styles[presence], badge && styles.statusWithBadge)} aria-hidden="true" />}
+      {badge && <span className={styles.badge} aria-hidden="true">{badge}</span>}
     </span>
   );
 });

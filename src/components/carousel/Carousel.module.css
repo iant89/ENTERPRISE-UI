@@ -1,0 +1,1 @@
+.carousel { min-width: 0; }.slide { min-width: 0; }.controls { display: flex; align-items: center; justify-content: center; gap: var(--eui-space-3); padding: var(--eui-space-2); font-size: var(--eui-font-size-sm); }

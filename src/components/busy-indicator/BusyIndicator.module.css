@@ -1,0 +1,3 @@
+.root { position: relative; display: inline-block; }
+.indicator { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--eui-space-2); color: var(--eui-color-text); font-size: var(--eui-font-size-sm); }
+.overlay { position: absolute; inset: 0; background: color-mix(in srgb, var(--eui-color-surface) 85%, transparent); pointer-events: none; }

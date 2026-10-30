@@ -19,6 +19,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: ReactNode;
   /** Icon rendered after the label. */
   iconEnd?: ReactNode;
+  /** Decorative badge; include meaningful badge information in the button accessible name. */
+  badge?: ReactNode;
   /** Shows a spinner and marks the button busy; clicks are ignored. @default false */
   loading?: boolean;
   /** Stretch to the container width. @default false */
@@ -36,6 +38,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     size = 'md',
     icon,
     iconEnd,
+    badge,
     loading = false,
     fullWidth = false,
     neutral = false,
@@ -76,6 +79,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         )
       )}
       {children != null && children !== false && <span className={styles.label}>{children}</span>}
+      {badge}
       {iconEnd && (
         <span className={styles.icon} aria-hidden="true">
           {iconEnd}

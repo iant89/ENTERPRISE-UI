@@ -1,0 +1,4 @@
+.badge { display: inline-flex; align-items: center; justify-content: center; min-width: 1.1rem; height: 1.1rem; padding: 0 .25rem; border-radius: 1rem; background: var(--eui-color-error); color: var(--eui-color-on-error); font-size: .65rem; line-height: 1; }
+.overlay, .dot { position: absolute; inset-inline-end: -.3rem; top: -.3rem; border: 1px solid var(--eui-color-surface); }
+.dot { width: .65rem; min-width: 0; height: .65rem; padding: 0; }
+@media (forced-colors: active) { .badge { border: 1px solid ButtonText; } }

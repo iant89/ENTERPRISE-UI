@@ -117,8 +117,8 @@ set a custom size.
 
 - Tag: `ui5-avatar-badge`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/AvatarBadge.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/avatar-badge`, composed via `Avatar.badge` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify UI5 behavior, accessibility and visual/RTL integration before completion.
 
 #### Description and keyboard interaction
 
@@ -177,8 +177,8 @@ The badge does not receive keyboard focus.
 
 - Tag: `ui5-avatar-group`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/AvatarGroup.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/avatar-group` (React adaptation; parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -285,8 +285,8 @@ shortcuts in order to perform a navigation:
 
 - Tag: `ui5-bar`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/Bar.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/layouts/bar` (React adaptation; parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -364,7 +364,7 @@ In order to use this functionality, you need to import the following module:
 - Tag: `ui5-breadcrumbs`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/Breadcrumbs.d.ts).
 - Local implementation: `src/components/breadcrumbs` (candidate only; parity unverified)
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Status: [ ] Existing React implementation extended with item composition and focused regression tests; responsive overflow and upstream keyboard/behavior parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -436,8 +436,8 @@ The `ui5-breadcrumbs` provides advanced keyboard handling.
 
 - Tag: `ui5-breadcrumbs-item`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/BreadcrumbsItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/breadcrumbs/BreadcrumbsItem.tsx` (React adaptation; parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -483,8 +483,8 @@ The `ui5-breadcrumbs-item` component defines the content of an item in `ui5-brea
 
 - Tag: `ui5-busy-indicator`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/BusyIndicator.d.ts).
-- Local implementation: `src/components/spinner` (candidate only; parity unverified)
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/busy-indicator`, built on Spinner (React adaptation; UI5 parity unverified)
+- Status: [ ] Initial React implementation, documentation and tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -655,8 +655,8 @@ the mouse cursor. A disabled `ui5-button` appears inactive and cannot be pressed
 
 - Tag: `ui5-button-badge`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ButtonBadge.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/button-badge` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -934,8 +934,8 @@ The `ui5-date-range` component defines a range of dates to be used inside `ui5-c
 
 - Tag: `ui5-calendar-legend`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/CalendarLegend.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/calendar-legend` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -987,8 +987,8 @@ and a corresponding textual label.
 
 - Tag: `ui5-calendar-legend-item`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/CalendarLegendItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/calendar-legend` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -1098,8 +1098,8 @@ Note: We recommend the usage of `ui5-card-header` for the header slot, so advant
 
 - Tag: `ui5-card-header`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/CardHeader.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/card-header` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -1162,8 +1162,8 @@ In case you enable `interactive` property, you can press the `ui5-card-header` b
 
 - Tag: `ui5-carousel`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/Carousel.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/carousel` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -1371,8 +1371,8 @@ The user can use the following keyboard shortcuts to toggle the checked state of
 
 - Tag: `ui5-color-palette`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ColorPalette.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/color-palette` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -1428,8 +1428,8 @@ To define the colors, use the `ui5-color-palette-item` component inside the defa
 
 - Tag: `ui5-color-palette-item`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ColorPaletteItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/color-palette` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -1470,8 +1470,8 @@ The `ui5-color-palette-item` component represents a color in the the `ui5-color-
 
 - Tag: `ui5-color-palette-popover`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ColorPalettePopover.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/color-palette-popover` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -1543,8 +1543,8 @@ For the `ui5-color-palette-popover`
 
 - Tag: `ui5-color-picker`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ColorPicker.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/color-picker` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -2178,8 +2178,8 @@ The following shortcuts are available:
 
 - Tag: `ui5-datetime-picker`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/DateTimePicker.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/date-time-picker` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -2536,8 +2536,8 @@ The component comes with a set of standard options, including:
 
 - Tag: `ui5-expandable-text`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ExpandableText.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/expandable-text` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -2676,8 +2676,8 @@ For the `ui5-file-uploader`
 
 - Tag: `ui5-form`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/Form.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/form` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -2916,8 +2916,8 @@ e.g to group FormItems that logically belong together.
 
 - Tag: `ui5-form-item`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/FormItem.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/form-item` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -2970,8 +2970,8 @@ The FormItem is being used in FormGroup (ui5-form-group) or directly in Form (ui
 
 - Tag: `ui5-icon`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/Icon.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/icon` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -3203,8 +3203,8 @@ The `ui5-input` provides the following keyboard shortcuts:
 
 - Tag: `ui5-input-icon`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/InputIcon.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/input-icon` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -3252,8 +3252,8 @@ For decorative icons, use the standard `ui5-icon` component instead.
 
 - Tag: `ui5-label`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/Label.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/label` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -3311,8 +3311,8 @@ For a broader choice of designs, you can use custom styles.
 
 - Tag: `ui5-link`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/Link.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/link` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -4721,8 +4721,8 @@ The `ui5-option-group` component is used to group options within a `ui5-select`.
 
 - Tag: `ui5-panel`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/Panel.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/panel` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 
@@ -5170,8 +5170,8 @@ You can move the currently selected range by clicking on it and dragging it alon
 
 - Tag: `ui5-rating-indicator`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/RatingIndicator.d.ts).
-- Local implementation: No same-name local implementation identified; verify before implementation.
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/rating-indicator` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; upstream behavior and accessibility parity remain unverified.
 
 #### Description and keyboard interaction
 

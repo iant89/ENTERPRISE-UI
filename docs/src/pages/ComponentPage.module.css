@@ -1,0 +1,3 @@
+.playgroundButton { display: inline-flex; align-items: center; gap: .5rem; padding: .6rem .85rem; margin-bottom: 1rem; border: 1px solid var(--eui-color-primary); border-radius: var(--eui-radius-sm); background: var(--eui-color-primary); color: var(--eui-color-on-primary); font-weight: var(--eui-font-weight-semibold); font-size: var(--eui-font-size-sm); text-decoration: none; }
+.playgroundButton:hover { background: var(--eui-color-primary-hover); border-color: var(--eui-color-primary-hover); }
+.playgroundButton:focus-visible { outline: var(--eui-focus-width) solid var(--eui-color-focus); outline-offset: var(--eui-focus-offset); }

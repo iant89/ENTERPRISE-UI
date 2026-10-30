@@ -1,0 +1,6 @@
+/* SAP "72" font from @sap-theming/theming-base-content 11.36.5 (Apache-2.0). See ./fonts/README.md.
+ * Used by the SAP themes through --eui-font-family ("72", "72full", Arial, Helvetica, sans-serif). */
+@font-face { font-family: '72'; font-style: normal; font-weight: 400; font-display: swap; src: url('./fonts/72-Regular.woff2') format('woff2'); }
+@font-face { font-family: '72'; font-style: normal; font-weight: 700; font-display: swap; src: url('./fonts/72-Bold.woff2') format('woff2'); }
+@font-face { font-family: '72full'; font-style: normal; font-weight: 400; font-display: swap; src: url('./fonts/72-Regular-full.woff2') format('woff2'); }
+@font-face { font-family: '72full'; font-style: normal; font-weight: 700; font-display: swap; src: url('./fonts/72-Bold-full.woff2') format('woff2'); }

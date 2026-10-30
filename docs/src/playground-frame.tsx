@@ -4,6 +4,8 @@ import * as UI from '@enterprise-ui/react';
 import * as Icons from 'lucide-react';
 import { transform } from 'sucrase';
 import '../../src/styles/index.css';
+// SAP 72 font for the SAP themes (the package exposes it as sap-fonts.css).
+import '../../src/themes/sap-fonts.css';
 
 // Runs in a sandboxed, opaque-origin iframe. Never execute editor code in the docs page.
 const root = createRoot(document.getElementById('root')!);

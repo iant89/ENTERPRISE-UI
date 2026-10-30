@@ -7,7 +7,21 @@ files of [`@sap-theming/theming-base-content`](https://github.com/SAP/theming-ba
 Copyright (c) SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 — see
 `SAP-THEMING-BASE-CONTENT-LICENSE.txt` in this folder. The values were transformed (mapped to `--eui-*` tokens and, where a
 SAP value missed the library's WCAG contrast pairs, adjusted as listed below). This library is not affiliated with or endorsed by SAP.
-"SAP", "Fiori", "Horizon", "Quartz" and "72" are trademarks of SAP SE; the "72" font files are not bundled.
+"SAP", "Fiori", "Horizon", "Quartz" and "72" are trademarks of SAP SE.
+
+## 72 font
+
+The SAP themes set `--eui-font-family: "72", "72full", Arial, Helvetica, sans-serif`. The 72 font (Regular and Bold woff2, Latin
+subset as `72` and full character set as `72full`) is bundled in `fonts/`, copied unmodified from the same package
+(Apache-2.0 per its REUSE metadata, see `fonts/README.md` and `fonts/LICENSE.txt`). It is opt-in so apps that don't use the
+SAP themes don't download it:
+
+```ts
+import '@enterprise-ui/react/styles.css';
+import '@enterprise-ui/react/sap-fonts.css'; // @font-face for 72 / 72full, woff2 files in dist/fonts
+```
+
+Semibold, italic, light and condensed cuts are not bundled; the browser synthesizes them from Regular/Bold.
 
 ## Regenerate
 

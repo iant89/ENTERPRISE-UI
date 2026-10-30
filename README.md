@@ -349,5 +349,5 @@ No license has been chosen yet. Until one is added, all rights are reserved by t
 
 - SAP Fiori themes (`sap-horizon`, `sap-horizon-dark`, `sap-fiori-3`, `sap-fiori-3-dark`) are generated from
   [`@sap-theming/theming-base-content`](https://github.com/SAP/theming-base-content), © SAP SE or an SAP affiliate company,
-  Apache-2.0. See `src/themes/SAP-THEMES.md` and `src/themes/SAP-THEMING-BASE-CONTENT-LICENSE.txt`.
+  Apache-2.0, including the bundled 72 font (`@enterprise-ui/react/sap-fonts.css`). See `src/themes/SAP-THEMES.md`, `src/themes/fonts/README.md` and `src/themes/SAP-THEMING-BASE-CONTENT-LICENSE.txt`.
 - The barcode decoder vendors ZXing (`vendor/zxing-library`, Apache-2.0); see `vendor/README.md`.

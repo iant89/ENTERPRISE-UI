@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { THEMES } from '../../src/themes';
@@ -40,5 +40,15 @@ describe('SAP Fiori themes', () => {
       expect(css).toContain('--eui-shadow-level-3: var(--eui-shadow-xl);');
       expect(css).toContain('--eui-shadow-interaction: 0 0 0 0 transparent;');
     }
+  });
+
+  it('bundle the 72 font as opt-in woff2 @font-face rules with its license', () => {
+    const css = readFileSync(resolve('src/themes/sap-fonts.css'), 'utf8');
+    for (const [family, weight, file] of [['72', 400, '72-Regular'], ['72', 700, '72-Bold'], ['72full', 400, '72-Regular-full'], ['72full', 700, '72-Bold-full']] as const) {
+      expect(css).toContain(`font-family: '${family}'; font-style: normal; font-weight: ${weight}; font-display: swap; src: url('./fonts/${file}.woff2') format('woff2');`);
+      expect(existsSync(resolve(`src/themes/fonts/${file}.woff2`))).toBe(true);
+    }
+    expect(readFileSync(resolve('src/themes/fonts/LICENSE.txt'), 'utf8')).toContain('Apache License');
+    expect(readFileSync(resolve('src/styles/index.css'), 'utf8')).not.toContain('sap-fonts.css');
   });
 });

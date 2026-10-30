@@ -85,7 +85,7 @@ export function AccessibilityPage() {
       </Grid>
 
       <section className="docs-section" aria-labelledby="contrast">
-        <h2 id="contrast">Colour contrast</h2>
+        <h2 id="contrast">Color contrast</h2>
         <p className="docs-muted" style={{ margin: 0 }}>Computed live from the active theme’s tokens. Switch themes in the header to compare.</p>
         <ContrastTable />
       </section>
@@ -111,7 +111,7 @@ export function AccessibilityPage() {
       <section className="docs-section" aria-labelledby="testing">
         <h2 id="testing">How accessibility is tested</h2>
         <ul className={styles.checklist}>
-          <li>Unit tests (Vitest + Testing Library) assert roles, names, states and keyboard behaviour, and run axe-core against every documentation example.</li>
+          <li>Unit tests (Vitest + Testing Library) assert roles, names, states and keyboard behavior, and run axe-core against every documentation example.</li>
           <li>Browser tests run axe-core on documentation pages in light theme and a representative selection in dark and high-contrast themes; they do not cover every state or browser.</li>
           <li><code>scripts/contrast.mjs</code> verifies theme token pairs against WCAG thresholds.</li>
         </ul>
@@ -119,7 +119,7 @@ export function AccessibilityPage() {
         <ul className={styles.checklist}>
           <li>Give every page one <code>h1</code> (Page does this) and keep heading levels in order.</li>
           <li>Always pass <code>label</code> to form controls and IconButtons; use <code>hideLabel</code> rather than omitting labels.</li>
-          <li>Pair status colours with text (StatusIndicator, Badge) — never rely on colour alone.</li>
+          <li>Pair status colors with text (StatusIndicator, Badge) — never rely on color alone.</li>
           <li>Provide <code>getRowLabel</code> for selectable tables so checkboxes have meaningful names.</li>
           <li>Keep toasts for non-essential confirmations; put required actions in the page or a dialog.</li>
           <li>Test with a keyboard, a screen reader (NVDA, JAWS, VoiceOver), 200% zoom and the high-contrast theme.</li>

@@ -21,7 +21,7 @@ See the [development roadmap](https://github.com/iant89/ENTERPRISE-UI/blob/main/
   - Wizard
   - Dashboard
   - and more
-- **Design tokens.** Every colour, spacing, type, radius, shadow, size, z-index, motion and density value is a CSS custom property (`--eui-*`).
+- **Design tokens.** Every color, spacing, type, radius, shadow, size, z-index, motion and density value is a CSS custom property (`--eui-*`).
 - **Themes.** Light, dark and high contrast, plus cozy and compact density. Switch them at runtime, or scope one to any part of the page.
 - **Accessibility.** Targets WCAG 2.2 AA, with semantic HTML, WAI-ARIA keyboard patterns, focus trapping and restoration, live announcements and reduced motion.
 - **Responsive.** Works on desktop, tablet and phone. The navigation becomes a drawer on small screens, and tables can stack into cards.
@@ -201,7 +201,7 @@ The shell also renders a "Skip to main content" link.
 <ThemeProvider theme="dark" density="compact">…</ThemeProvider>
 ```
 
-Read the current theme and density with `useTheme()`. To apply your brand colours, override the tokens on a themed element:
+Read the current theme and density with `useTheme()`. To apply your brand colors, override the tokens on a themed element:
 
 ```css
 [data-eui-theme='light'].my-brand {
@@ -211,7 +211,7 @@ Read the current theme and density with `useTheme()`. To apply your brand colour
 }
 ```
 
-When you override colours, keep text at 4.5:1 contrast or better, and borders and focus rings at 3:1. Run `node scripts/contrast.mjs` to check the built-in themes.
+When you override colors, keep text at 4.5:1 contrast or better, and borders and focus rings at 3:1. Run `node scripts/contrast.mjs` to check the built-in themes.
 
 ### Tokens without components
 
@@ -304,7 +304,7 @@ scripts/        API extraction, contrast checker, build helpers
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Starts the documentation site |
-| `npm test` | Runs unit, behaviour and accessibility tests (Vitest, Testing Library, axe-core) |
+| `npm test` | Runs unit, behavior and accessibility tests (Vitest, Testing Library, axe-core) |
 | `npm run test:e2e` | Builds the docs and runs the Playwright tests (described below) |
 | `npm run test:e2e:update` | Refreshes the visual-regression baselines |
 | `npm run check` | Runs the type check, lint and unit tests |

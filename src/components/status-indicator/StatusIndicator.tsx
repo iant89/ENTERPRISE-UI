@@ -5,12 +5,12 @@ import type { Tone } from '../../utilities/types';
 import styles from './StatusIndicator.module.css';
 
 export interface StatusIndicatorProps extends HTMLAttributes<HTMLSpanElement> {
-  /** Status text. Always provide text — colour alone must not convey meaning. */
+  /** Status text. Always provide text — color alone must not convey meaning. */
   children: ReactNode;
   /** @default 'neutral' */
   tone?: Tone;
   /**
-   * `icon` shows a semantic icon, `dot` a coloured dot, `none` text only.
+   * `icon` shows a semantic icon, `dot` a colored dot, `none` text only.
    * @default 'icon'
    */
   indicator?: 'icon' | 'dot' | 'none';
@@ -30,7 +30,7 @@ const ICONS: Record<Tone, typeof Info> = {
   error: XCircle,
 };
 
-/** Shows the status of an object (e.g. "Approved", "Overdue") with colour, icon and text. */
+/** Shows the status of an object (e.g. "Approved", "Overdue") with color, icon and text. */
 export const StatusIndicator = forwardRef<HTMLSpanElement, StatusIndicatorProps>(function StatusIndicator(
   { children, tone = 'neutral', indicator = 'icon', icon, inverted = false, size = 'md', className, ...rest },
   ref,

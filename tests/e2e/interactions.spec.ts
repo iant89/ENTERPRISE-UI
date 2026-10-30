@@ -80,7 +80,7 @@ test.describe('keyboard interaction in a real browser', () => {
   });
 });
 
-test.describe('responsive behaviour @mobile', () => {
+test.describe('responsive behavior @mobile', () => {
   test('navigation becomes a modal drawer on phones @mobile', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'phone viewport only');
     await open(page, '/');

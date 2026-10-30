@@ -76,7 +76,7 @@ export interface TableProps<T> {
   onRowClick?: (row: T) => void;
   /** Accessible label for a row's selection checkbox. */
   getRowLabel?: (row: T) => string;
-  /** Status colour shown as a bar at the start of the row. */
+  /** Status color shown as a bar at the start of the row. */
   getRowHighlight?: (row: T) => Tone | undefined;
   /** Show skeleton rows. @default false */
   loading?: boolean;

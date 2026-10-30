@@ -14,7 +14,7 @@ import styles from './ThemeProvider.module.css';
 
 export interface ThemeProviderProps extends HTMLAttributes<HTMLDivElement> {
   /**
-   * Colour theme. `system` follows the operating system's light/dark and
+   * Color theme. `system` follows the operating system's light/dark and
    * increased-contrast preferences.
    * @default 'light'
    */

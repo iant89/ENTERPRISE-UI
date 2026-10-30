@@ -15,7 +15,7 @@ export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
   size?: ButtonSize;
   /** @default false */
   loading?: boolean;
-  /** Use neutral (grey) colours. @default false */
+  /** Use neutral (gray) colors. @default false */
   neutral?: boolean;
   /** Hide the native `title` tooltip (e.g. when wrapped in a Tooltip). @default false */
   hideTitle?: boolean;

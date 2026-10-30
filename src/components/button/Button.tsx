@@ -25,7 +25,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
   /** Stretch to the container width. @default false */
   fullWidth?: boolean;
-  /** Use neutral (grey) colours instead of the brand colour. @default false */
+  /** Use neutral (gray) colors instead of the brand color. @default false */
   neutral?: boolean;
   /** @default 'button' */
   type?: 'button' | 'submit' | 'reset';

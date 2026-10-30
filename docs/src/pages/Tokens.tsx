@@ -57,7 +57,7 @@ export function Tokens() {
       breadcrumbs={[{ label: 'Docs', href: '#/' }, { label: 'Foundations' }, { label: 'Design tokens' }]}
     >
       <MessageStrip tone="information">
-        All tokens are prefixed with <code>--eui-</code>. Colour tokens are redefined by each theme; size tokens by the density setting. Use them in your own CSS:
+        All tokens are prefixed with <code>--eui-</code>. Color tokens are redefined by each theme; size tokens by the density setting. Use them in your own CSS:
         <code>padding: var(--eui-space-4)</code>.
       </MessageStrip>
       <Grid columns={{ base: 1, md: 3 }} gap={4}>

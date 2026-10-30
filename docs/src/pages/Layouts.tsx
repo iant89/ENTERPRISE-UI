@@ -29,14 +29,14 @@ export function Layouts() {
         <h2 id="shell">Application shell</h2>
         <p className="docs-muted" style={{ margin: 0 }}>
           AppShell + ApplicationHeader + SideNavigation + Page. Configure branding, navigation and page content; the shell handles responsive
-          behaviour, landmarks and the skip link.
+          behavior, landmarks and the skip link.
         </p>
         <ThemeProvider transparent className={styles.frame} style={{ height: 640 }} data-embedded-app="">
           <InventoryApp />
         </ThemeProvider>
       </section>
       <section className="docs-section" aria-labelledby="responsive">
-        <h2 id="responsive">Responsive behaviour</h2>
+        <h2 id="responsive">Responsive behavior</h2>
         <Table
           caption="Breakpoints"
           responsive="stack"
@@ -49,7 +49,7 @@ export function Layouts() {
           ]}
         />
         <MessageStrip tone="information">
-          Use <code>useBreakpoint()</code> or <code>useMediaQuery()</code> for behaviour that must change in JavaScript, and the exported
+          Use <code>useBreakpoint()</code> or <code>useMediaQuery()</code> for behavior that must change in JavaScript, and the exported
           <code>breakpoints</code> constants in media queries.
         </MessageStrip>
       </section>

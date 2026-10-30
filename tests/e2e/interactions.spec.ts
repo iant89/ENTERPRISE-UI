@@ -65,7 +65,7 @@ test.describe('keyboard interaction in a real browser', () => {
   test('theme switching applies and persists', async ({ page }) => {
     await page.goto('/#/');
     await page.getByRole('button', { name: 'Change theme' }).click();
-    await page.getByRole('menuitemcheckbox', { name: 'Dark' }).click();
+    await page.getByRole('menuitemcheckbox', { name: 'Dark', exact: true }).click();
     await expect(page.locator('#root > [data-eui-theme]')).toHaveAttribute('data-eui-theme', 'dark');
     await page.reload();
     await expect(page.locator('#root > [data-eui-theme]')).toHaveAttribute('data-eui-theme', 'dark');

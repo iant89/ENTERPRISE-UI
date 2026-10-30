@@ -1,4 +1,4 @@
-import { Grid, MessageStrip, Page, ThemeProvider } from '@enterprise-ui/react';
+import { Grid, MessageStrip, Page, THEMES, ThemeProvider } from '@enterprise-ui/react';
 import { CodeBlock } from '../components/CodeBlock';
 import { ThemeSample } from './ThemeSample';
 import styles from './Pages.module.css';
@@ -33,19 +33,44 @@ export function Themes() {
   return (
     <Page
       title="Themes"
-      subtitle="Light, dark and high-contrast themes plus cozy and compact densities — switchable at runtime, scoped to any subtree."
+      subtitle="Light, dark and high-contrast themes, four SAP Fiori themes (Horizon and Quartz), plus cozy and compact densities — switchable at runtime, scoped to any subtree."
       breadcrumbs={[{ label: 'Docs', href: '#/' }, { label: 'Foundations' }, { label: 'Themes' }]}
     >
       <section className="docs-section" aria-labelledby="themes-compare">
         <h2 id="themes-compare">Side by side</h2>
         <Grid columns={{ base: 1, md: 3 }} gap={4}>
-          {(['light', 'dark', 'high-contrast'] as const).map((theme) => (
-            <ThemeProvider key={theme} theme={theme} className={styles.themePreview}>
-              <h3 className={styles.themeLabel}>{theme === 'high-contrast' ? 'High contrast' : theme[0].toUpperCase() + theme.slice(1)}</h3>
+          {THEMES.filter((t) => !t.name.startsWith('sap-')).map(({ name, label }) => (
+            <ThemeProvider key={name} theme={name} className={styles.themePreview}>
+              <h3 className={styles.themeLabel}>{label}</h3>
               <ThemeSample />
             </ThemeProvider>
           ))}
         </Grid>
+      </section>
+      <section className="docs-section" aria-labelledby="themes-sap">
+        <h2 id="themes-sap">SAP Fiori themes</h2>
+        <p className="docs-muted" style={{ margin: 0 }}>
+          Morning Horizon, Evening Horizon, Quartz Light and Quartz Dark map real parameters from SAP's open-source{' '}
+          <a href="https://github.com/SAP/theming-base-content">theming base content</a> (Apache-2.0) onto the library tokens — colours, the
+          SAP shadow levels, corner radii and the 72 font stack. Use <code>theme="sap-horizon"</code> and friends.
+        </p>
+        <Grid columns={{ base: 1, md: 2 }} gap={4}>
+          {THEMES.filter((t) => t.name.startsWith('sap-')).map(({ name, label }) => (
+            <ThemeProvider key={name} theme={name} className={styles.themePreview}>
+              <h3 className={styles.themeLabel}>{label}</h3>
+              <ThemeSample />
+            </ThemeProvider>
+          ))}
+        </Grid>
+      </section>
+      <section className="docs-section" aria-labelledby="themes-elevation">
+        <h2 id="themes-elevation">Elevation</h2>
+        <p className="docs-muted" style={{ margin: 0 }}>
+          Following the SAP Fiori shadow concept, <code>--eui-shadow-level-0</code> is for cards and tiles, <code>-level-1</code> for menus and floating
+          footers, <code>-level-2</code> for popovers and toasts and <code>-level-3</code> for dialogs. <code>--eui-shadow-interaction</code>,{' '}
+          <code>-selected</code>, <code>-negative</code>, <code>-critical</code>, <code>-positive</code> and <code>-informative</code> add the inset state
+          shadows on hover, selection and value states; they are transparent in the Light, Dark and High contrast themes.
+        </p>
       </section>
       <section className="docs-section" aria-labelledby="themes-density">
         <h2 id="themes-density">Density</h2>

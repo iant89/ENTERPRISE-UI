@@ -7,7 +7,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 const src = (f) => readFileSync(new URL(`../src/${f}`, import.meta.url), 'utf8');
 const dist = (f) => new URL(`../dist/${f}`, import.meta.url);
 
-const tokens = ['tokens/tokens.css', 'themes/light.css', 'themes/dark.css', 'themes/high-contrast.css'].map(src).join('\n');
+const tokens = ['tokens/tokens.css', 'themes/light.css', 'themes/dark.css', 'themes/high-contrast.css', 'themes/sap-horizon.css', 'themes/sap-horizon-dark.css', 'themes/sap-fiori-3.css', 'themes/sap-fiori-3-dark.css'].map(src).join('\n');
 writeFileSync(dist('tokens.css'), tokens);
 
 const stub = '// Stylesheet entry point. Import for its side effects.\nexport {};\n';

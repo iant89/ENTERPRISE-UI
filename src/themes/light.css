@@ -89,4 +89,17 @@
   --eui-shadow-lg: 0 0 4px rgba(34, 53, 72, 0.12), 0 8px 24px rgba(34, 53, 72, 0.16);
   --eui-shadow-xl: 0 0 4px rgba(34, 53, 72, 0.14), 0 16px 48px rgba(34, 53, 72, 0.24);
   --eui-shadow-header: 0 1px 0 #d9d9d9, 0 2px 4px rgba(34, 53, 72, 0.06);
+  /* SAP Shadow Concept: content levels 0 (cards) · 1 (menus, floating footer) · 2 (popover, toast) · 3 (dialog). */
+  --eui-shadow-level-0: var(--eui-shadow-sm);
+  --eui-shadow-level-1: var(--eui-shadow-md);
+  --eui-shadow-level-2: var(--eui-shadow-lg);
+  --eui-shadow-level-3: var(--eui-shadow-xl);
+  /* Interaction shadows are transparent here so these themes render exactly as before. */
+  --eui-shadow-interaction: 0 0 0 0 transparent;
+  --eui-shadow-selected: 0 0 0 0 transparent;
+  --eui-shadow-negative: 0 0 0 0 transparent;
+  --eui-shadow-critical: 0 0 0 0 transparent;
+  --eui-shadow-positive: 0 0 0 0 transparent;
+  --eui-shadow-informative: 0 0 0 0 transparent;
+  --eui-shadow-text: none;
 }

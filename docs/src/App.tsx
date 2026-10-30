@@ -38,7 +38,16 @@ const PAGES = [
   { path: '/api', label: 'API reference', icon: <Code2 /> },
 ];
 
-const THEME_ICONS: Record<ThemePreference, ReactElement> = { light: <Sun />, dark: <Moon />, 'high-contrast': <Contrast />, system: <Monitor /> };
+const THEME_ICONS: Record<ThemePreference, ReactElement> = {
+  light: <Sun />,
+  dark: <Moon />,
+  'high-contrast': <Contrast />,
+  'sap-horizon': <Sun />,
+  'sap-horizon-dark': <Moon />,
+  'sap-fiori-3': <Sun />,
+  'sap-fiori-3-dark': <Moon />,
+  system: <Monitor />,
+};
 
 function renderPage(path: string) {
   if (path === '/') return <Overview />;
@@ -146,6 +155,13 @@ export function App() {
                       { id: 'light', label: 'Light', icon: <Sun />, checked: theme === 'light' },
                       { id: 'dark', label: 'Dark', icon: <Moon />, checked: theme === 'dark' },
                       { id: 'high-contrast', label: 'High contrast', icon: <Contrast />, checked: theme === 'high-contrast' },
+                      { type: 'separator' },
+                      { type: 'label', label: 'SAP Fiori' },
+                      { id: 'sap-horizon', label: 'Morning Horizon', icon: <Sun />, checked: theme === 'sap-horizon' },
+                      { id: 'sap-horizon-dark', label: 'Evening Horizon', icon: <Moon />, checked: theme === 'sap-horizon-dark' },
+                      { id: 'sap-fiori-3', label: 'Quartz Light', icon: <Sun />, checked: theme === 'sap-fiori-3' },
+                      { id: 'sap-fiori-3-dark', label: 'Quartz Dark', icon: <Moon />, checked: theme === 'sap-fiori-3-dark' },
+                      { type: 'separator' },
                       { id: 'system', label: 'Match system', icon: <Monitor />, checked: theme === 'system' },
                     ]}
                     trigger={<IconButton icon={THEME_ICONS[theme]} label="Change theme" neutral hideTitle />}

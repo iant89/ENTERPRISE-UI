@@ -44,7 +44,7 @@ window.addEventListener('message', (event) => {
   if (event.data.type === 'init') { send('ready'); return; }
   if (event.data.type !== 'render') return;
   const { code, theme, density } = event.data;
-  if (typeof code !== 'string' || !['light', 'dark', 'high-contrast', 'system'].includes(theme) || !['cozy', 'compact'].includes(density)) return;
+  if (typeof code !== 'string' || ![...UI.THEMES.map((t) => t.name as string), 'system'].includes(theme) || !['cozy', 'compact'].includes(density)) return;
   run(code, theme, density);
 });
 send('ready');

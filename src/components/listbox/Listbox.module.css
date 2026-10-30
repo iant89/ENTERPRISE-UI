@@ -34,7 +34,7 @@
 
 .option[aria-selected='true'] {
   background: var(--eui-color-surface-selected);
-  box-shadow: inset 3px 0 0 var(--eui-color-primary);
+  box-shadow: inset 3px 0 0 var(--eui-color-primary), var(--eui-shadow-selected);
 }
 
 .active {

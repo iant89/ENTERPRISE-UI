@@ -24,7 +24,7 @@ test.describe('documentation pages render without errors and pass axe', () => {
 });
 
 test.describe('themes meet contrast requirements', () => {
-  for (const theme of ['dark', 'high-contrast']) {
+  for (const theme of ['dark', 'high-contrast', 'sap-horizon', 'sap-horizon-dark', 'sap-fiori-3', 'sap-fiori-3-dark']) {
     for (const path of ['/gallery', '/components/data-grid', '/components/input', '/components/status-indicator', '/']) {
       test(`${theme} ${path}`, async ({ page }) => {
         await open(page, path, theme);

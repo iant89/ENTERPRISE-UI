@@ -6,7 +6,7 @@
   color: var(--eui-color-text);
   border: var(--eui-border-width) solid var(--eui-color-border-subtle);
   border-radius: var(--eui-radius-lg);
-  box-shadow: var(--eui-shadow-sm);
+  box-shadow: var(--eui-shadow-level-0);
   overflow: hidden;
 }
 
@@ -21,7 +21,7 @@
 }
 
 .interactive:hover {
-  box-shadow: var(--eui-shadow-md);
+  box-shadow: var(--eui-shadow-level-1), var(--eui-shadow-interaction);
   border-color: var(--eui-color-border);
 }
 
@@ -32,7 +32,7 @@
 
 .selected {
   border-color: var(--eui-color-primary);
-  box-shadow: 0 0 0 1px var(--eui-color-primary), var(--eui-shadow-sm);
+  box-shadow: 0 0 0 1px var(--eui-color-primary), var(--eui-shadow-selected), var(--eui-shadow-level-0);
 }
 
 .header {

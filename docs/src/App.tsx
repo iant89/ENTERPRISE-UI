@@ -22,6 +22,7 @@ import { Patterns } from './pages/Patterns';
 import { AccessibilityPage } from './pages/Accessibility';
 import { ApiReference } from './pages/ApiReference';
 import { NotFound } from './pages/NotFound';
+import { PlaygroundPage } from './pages/PlaygroundPage';
 import InventoryApp from '../../examples/apps/InventoryApp';
 
 const PAGES = [
@@ -87,6 +88,10 @@ export function App() {
     ],
     [],
   );
+
+  if (path === '/playground' || path.startsWith('/playground/')) {
+    return <ThemeProvider theme={theme} density={density} style={{ height: '100%' }}><PlaygroundPage initialSlug={path.split('/')[2] || 'button'} theme={theme} density={density} /></ThemeProvider>;
+  }
 
   if (path === '/demo') {
     return (
@@ -162,6 +167,7 @@ export function App() {
               </NavigationGroup>
               <NavigationGroup label="Components">
                 <NavigationItem id="/components" label="All components" icon={<Component />} href={href('/components')} />
+                <NavigationItem id="/playground" label="Playground" icon={<Code2 />} href={href('/playground')} />
                 <NavigationItem id="/gallery" label="Gallery" icon={<LayoutDashboard />} href={href('/gallery')} />
                 {categories.map((c) => (
                   <NavigationItem key={c.id} id={`cat-${c.id}`} label={c.id} icon={CATEGORY_ICONS[c.id]}>

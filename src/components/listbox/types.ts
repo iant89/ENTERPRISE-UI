@@ -9,4 +9,8 @@ export interface SelectOption<V extends string = string> {
   disabled?: boolean;
   /** Options with the same group are rendered under a group heading. */
   group?: string;
+  /** Accessible name of the group when it should differ from the visible heading. */
+  groupAccessibleName?: string;
+  /** Custom option content. The label remains the accessible name. */
+  content?: ReactNode;
 }

@@ -865,8 +865,8 @@ Or, you can use the global configuration and set the `calendarType` key:
 
 - Tag: `ui5-date`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/CalendarDate.d.ts).
-- Local implementation: covered by `Calendar` value / `DatePicker` (dates are props, not child elements) (React data-driven adaptation; UI5 parity unverified).
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/calendar` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -899,8 +899,8 @@ The `ui5-date` component defines a calendar date to be used inside `ui5-calendar
 
 - Tag: `ui5-date-range`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/CalendarDateRange.d.ts).
-- Local implementation: covered by `DateRangePicker` value (React data-driven adaptation; UI5 parity unverified).
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/calendar` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -1738,8 +1738,8 @@ The `ui5-combobox` provides advanced keyboard handling.
 
 - Tag: `ui5-cb-item`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ComboBoxItem.d.ts).
-- Local implementation: covered by `ComboBox` `options` (`SelectOption`) (React data-driven adaptation; UI5 parity unverified).
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/combo-box` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -1778,8 +1778,8 @@ The `ui5-cb-item` represents the item for a `ui5-combobox`.
 
 - Tag: `ui5-cb-item-custom`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ComboBoxItemCustom.d.ts).
-- Local implementation: covered by `SelectOption` `description`/`icon` (React data-driven adaptation; UI5 parity unverified).
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/combo-box` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -1825,8 +1825,8 @@ For highlighting functionality, see `@ui5/webcomponents-base/dist/util/generateH
 
 - Tag: `ui5-cb-item-group`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ComboBoxItemGroup.d.ts).
-- Local implementation: covered by `SelectOption.group` (React data-driven adaptation; UI5 parity unverified).
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/combo-box` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -3583,8 +3583,8 @@ In order to use this functionality, you need to import the following module:
 
 - Tag: `ui5-li-custom`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ListItemCustom.d.ts).
-- Local implementation: covered by `List` items (`leading`/`trailing`/`meta`) (React data-driven adaptation; UI5 parity unverified).
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/list` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -3668,8 +3668,8 @@ See the `ui5-list` "Keyboard Handling" section for the full behavior.
 
 - Tag: `ui5-li-group`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ListItemGroup.d.ts).
-- Local implementation: covered by `List` `header` / multiple lists (React data-driven adaptation; UI5 parity unverified).
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/list` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -3725,8 +3725,8 @@ This is the item to use inside a `ui5-list`.
 
 - Tag: `ui5-li`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/ListItemStandard.d.ts).
-- Local implementation: covered by `List` `items` (`ListItemData`) (React data-driven adaptation; UI5 parity unverified).
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/list` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -3899,8 +3899,8 @@ The menu does not manage these aspects when the menu item state changes.
 
 - Tag: `ui5-menu-item`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/MenuItem.d.ts).
-- Local implementation: covered by `Menu` `items` (`MenuItemDef`) (React data-driven adaptation; UI5 parity unverified).
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/menu` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -3977,8 +3977,8 @@ and each `ui5-menu-item` is represented by a list item in that list. Therefore, 
 
 - Tag: `ui5-menu-item-group`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/MenuItemGroup.d.ts).
-- Local implementation: covered by `Menu` `{ type: 'label' }` entries (React data-driven adaptation; UI5 parity unverified).
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/menu` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -4034,8 +4034,8 @@ The items are addeed to the group's `items` slot.
 
 - Tag: `ui5-menu-separator`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/MenuSeparator.d.ts).
-- Local implementation: covered by `Menu` `{ type: 'separator' }` entries (React data-driven adaptation; UI5 parity unverified).
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/menu` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -4571,8 +4571,8 @@ use the regular `ui5-input` instead.
 
 - Tag: `ui5-option`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/Option.d.ts).
-- Local implementation: covered by `Select` `options` (React data-driven adaptation; UI5 parity unverified).
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/select` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -4624,8 +4624,8 @@ The `ui5-option` component defines the content of an option in the `ui5-select`.
 
 - Tag: `ui5-option-custom`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/OptionCustom.d.ts).
-- Local implementation: covered by `SelectOption` `description`/`icon` (React data-driven adaptation; UI5 parity unverified).
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/select` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -4678,8 +4678,8 @@ The component accepts arbitrary HTML content to allow full customization.
 
 - Tag: `ui5-option-group`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/OptionGroup.d.ts).
-- Local implementation: covered by `SelectOption.group` (React data-driven adaptation; UI5 parity unverified).
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/select` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -5684,8 +5684,8 @@ resizing the width of the control. You can move the slider handle in several dif
 
 - Tag: `ui5-special-date`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/SpecialCalendarDate.d.ts).
-- Local implementation: covered by `Calendar` `isDateDisabled` + `CalendarLegend` (React data-driven adaptation; UI5 parity unverified).
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/calendar` (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 
@@ -5815,8 +5815,8 @@ There are separate events that are fired on activating of `ui5-split-button` par
 
 - Tag: `ui5-step-input`
 - Package: `@ui5/webcomponents@2.28.1`; [TypeScript declaration](https://unpkg.com/@ui5/webcomponents@2.28.1/dist/StepInput.d.ts).
-- Local implementation: covered by `src/components/number-input` (stepper buttons, keyboard stepping) (React data-driven adaptation; UI5 parity unverified).
-- Status: [ ] Implement or verify behavior, tests, accessibility, documentation and integration.
+- Local implementation: `src/components/step-input`, implemented with NumberInput (React adaptation; UI5 parity unverified).
+- Status: [ ] Initial React implementation, documentation and focused tests added; verify upstream behavior and accessibility before completion.
 
 #### Description and keyboard interaction
 

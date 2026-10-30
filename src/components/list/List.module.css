@@ -143,6 +143,29 @@ li:last-child > .item,
   height: var(--eui-icon-size);
 }
 
+.groupHeader {
+  padding: var(--eui-space-2) var(--eui-space-4) var(--eui-space-1);
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+  font-weight: var(--eui-font-weight-bold);
+}
+
+.groupList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.highlight {
+  font-size: var(--eui-font-size-xs);
+  font-weight: var(--eui-font-weight-semibold);
+}
+
+.positive { color: var(--eui-color-success-text); }
+.critical { color: var(--eui-color-warning-text); }
+.negative { color: var(--eui-color-error-text); }
+.information { color: var(--eui-color-info-text); }
+
 .empty {
   padding: var(--eui-space-6) var(--eui-space-4);
   color: var(--eui-color-text-secondary);

@@ -61,6 +61,7 @@ export const ListboxPopup = forwardRef<HTMLUListElement, ListboxPopupProps>(func
         key={option.value}
         id={optionId(id, index)}
         role="option"
+        aria-label={option.content ? option.label : undefined}
         aria-selected={selected}
         aria-disabled={option.disabled || undefined}
         className={cx(styles.option, index === activeIndex && styles.active)}
@@ -79,19 +80,19 @@ export const ListboxPopup = forwardRef<HTMLUListElement, ListboxPopupProps>(func
           </span>
         )}
         <span className={styles.text}>
-          <span className={styles.label}>{highlightLabel(option.label, highlight)}</span>
-          {option.description && <span className={styles.description}>{option.description}</span>}
+          <span className={styles.label}>{option.content ?? highlightLabel(option.label, highlight)}</span>
+          {option.description && <span className={styles.description}> {option.description}</span>}
         </span>
       </li>
     );
   };
 
   // Group consecutive options that share a `group`.
-  const blocks: Array<{ group?: string; items: Array<{ option: SelectOption; index: number }> }> = [];
+  const blocks: Array<{ group?: string; groupAccessibleName?: string; items: Array<{ option: SelectOption; index: number }> }> = [];
   options.forEach((option, index) => {
     const last = blocks[blocks.length - 1];
     if (last && last.group === option.group) last.items.push({ option, index });
-    else blocks.push({ group: option.group, items: [{ option, index }] });
+    else blocks.push({ group: option.group, groupAccessibleName: option.groupAccessibleName, items: [{ option, index }] });
   });
 
   return (
@@ -120,7 +121,12 @@ export const ListboxPopup = forwardRef<HTMLUListElement, ListboxPopupProps>(func
               <div id={`${id}-group-${b}`} className={styles.groupLabel} aria-hidden="true">
                 {block.group}
               </div>
-              <ul role="group" aria-labelledby={`${id}-group-${b}`} className={styles.group}>
+              <ul
+                role="group"
+                aria-labelledby={block.groupAccessibleName && block.groupAccessibleName !== block.group ? undefined : `${id}-group-${b}`}
+                aria-label={block.groupAccessibleName && block.groupAccessibleName !== block.group ? block.groupAccessibleName : undefined}
+                className={styles.group}
+              >
                 {block.items.map(({ option, index }) => renderOption(option, index))}
               </ul>
             </li>

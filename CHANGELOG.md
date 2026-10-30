@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Added DataGrid message overrides, locale-sensitive local search, and explicit direction and language for grid popups.
+- Added localized pagination messages and number formatting with RTL chevrons; DataGrid can pass pagination translations.
+
 These notes describe work in the current development branch, not a published or stable release.
 
 - Added a transport-neutral data adapter, server-driven DataGrid, filtering controls, saved views and ListReport.

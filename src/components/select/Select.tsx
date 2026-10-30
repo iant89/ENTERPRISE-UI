@@ -35,6 +35,9 @@ export interface SelectProps<V extends string = string> extends FieldProps {
   'aria-label'?: string;
   'aria-describedby'?: string;
   className?: string;
+  /** Direction and language for the control and portaled listbox. */
+  dir?: 'ltr' | 'rtl' | 'auto';
+  lang?: string;
   /** Custom rendering of the selected value. */
   renderValue?: (option: SelectOption<V>) => ReactNode;
 }
@@ -47,7 +50,7 @@ function SelectInner<V extends string = string>(
   {
     label, description, error, status, statusMessage, hideLabel, labelPosition,
     options, value, defaultValue = null, onChange, placeholder = 'Select', size = 'md',
-    id, name, required, disabled, readOnly, 'aria-label': ariaLabel, 'aria-describedby': ariaDescribedBy, className, renderValue,
+    id, name, required, disabled, readOnly, 'aria-label': ariaLabel, 'aria-describedby': ariaDescribedBy, className, renderValue, dir, lang,
   }: SelectProps<V>,
   ref: React.ForwardedRef<HTMLDivElement>,
 ) {
@@ -145,6 +148,8 @@ function SelectInner<V extends string = string>(
         ref={merged}
         id={control.id}
         role="combobox"
+        dir={dir}
+        lang={lang}
         tabIndex={control.disabled ? -1 : 0}
         aria-haspopup="listbox"
         aria-expanded={open}
@@ -182,6 +187,8 @@ function SelectInner<V extends string = string>(
       {open && (
         <ListboxPopup
           ref={listRef}
+          dir={dir}
+          lang={lang}
           id={listId}
           options={options}
           activeIndex={active}

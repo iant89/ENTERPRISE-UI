@@ -1,1 +1,1 @@
-export { Pagination, getPageRange, type PaginationProps } from './Pagination';
+export { Pagination, getPageRange, type PaginationProps, type PaginationMessages } from './Pagination';

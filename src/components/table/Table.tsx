@@ -65,6 +65,10 @@ export interface TableProps<T> {
   selectionMode?: SelectionMode;
   /** Accessible label for the select-all checkbox. @default 'Select all rows' */
   selectAllLabel?: string;
+  /** Accessible selection-column heading. @default 'Selection' */
+  selectionHeaderLabel?: string;
+  /** Format the accessible selection control name from the row label. */
+  selectRowLabel?: (rowLabel: string) => string;
   selectedIds?: string[];
   defaultSelectedIds?: string[];
   onSelectionChange?: (ids: string[]) => void;
@@ -134,7 +138,7 @@ const defaultRowId = (row: unknown, index: number) => {
 export function Table<T>({
   columns, data, getRowId = defaultRowId, caption, hideCaption = true, 'aria-label': ariaLabel,
   sort, defaultSort = null, onSortChange, manualSorting = false,
-  selectionMode = 'none', selectAllLabel = 'Select all rows', selectedIds, defaultSelectedIds = [], onSelectionChange,
+  selectionMode = 'none', selectAllLabel = 'Select all rows', selectionHeaderLabel = 'Selection', selectRowLabel = (label) => `Select ${label}`, selectedIds, defaultSelectedIds = [], onSelectionChange,
   onRowClick, getRowLabel, getRowHighlight, loading = false, loadingRowCount = 5, emptyState,
   density, striped = false, stickyHeader = true, maxHeight, responsive = 'scroll', borderless = false, className, virtualization,
 }: TableProps<T>) {
@@ -268,7 +272,7 @@ export function Table<T>({
                 {selectionMode === 'multiple' ? (
                   <Checkbox aria-label={selectAllLabel} checked={allSelected} indeterminate={someSelected} onChange={toggleAll} disabled={loading || rows.length === 0} />
                 ) : (
-                  <span className="eui-visually-hidden">Selection</span>
+                  <span className="eui-visually-hidden">{selectionHeaderLabel}</span>
                 )}
               </th>
             )}
@@ -349,12 +353,12 @@ export function Table<T>({
                   {hasSelection && (
                     <td className={cx(styles.td, styles.selectCell, highlight && styles.highlight, highlight && styles[`hl-${highlight}`])}>
                       <div className={virtual ? styles.virtualContent : undefined} style={virtual ? { height: rowHeight } : undefined}>{selectionMode === 'multiple' ? (
-                        <Checkbox aria-label={`Select ${rowLabel}`} checked={isSelected} onChange={() => toggleRow(id)} />
+                        <Checkbox aria-label={selectRowLabel(rowLabel)} checked={isSelected} onChange={() => toggleRow(id)} />
                       ) : (
                         <input
                           type="radio"
                           name={`${tableId}-selection`}
-                          aria-label={`Select ${rowLabel}`}
+                          aria-label={selectRowLabel(rowLabel)}
                           checked={isSelected}
                           onChange={() => toggleRow(id)}
                           style={{ accentColor: 'var(--eui-color-primary)', width: 16, height: 16 }}

@@ -6,7 +6,27 @@ import { IconButton } from '../icon-button';
 import { Select } from '../select';
 import styles from './Pagination.module.css';
 
+/** Override visible and accessible pagination text; format numeric values with the host locale. */
+export interface PaginationMessages {
+  summary: (from: number, to: number, total: number) => string;
+  rowsPerPage: string;
+  firstPage: string;
+  previousPage: string;
+  nextPage: string;
+  lastPage: string;
+  pageLabel: (page: number) => string;
+  pageNumber: (page: number) => string;
+  compactPage: (page: number, pageCount: number) => string;
+}
+const defaultMessages: PaginationMessages = {
+  summary: (from, to, total) => `${from}–${to} of ${total}`, rowsPerPage: 'Rows per page',
+  firstPage: 'First page', previousPage: 'Previous page', nextPage: 'Next page', lastPage: 'Last page',
+  pageLabel: (page) => `Page ${page}`, pageNumber: String, compactPage: (page, total) => `Page ${page} of ${total}`,
+};
+
 export interface PaginationProps extends Omit<HTMLAttributes<HTMLElement>, 'onChange'> {
+  /** Override built-in labels and number formatting. */
+  messages?: Partial<PaginationMessages>;
   /** Current page, 1-based. */
   page: number;
   onPageChange: (page: number) => void;
@@ -44,10 +64,11 @@ export function getPageRange(page: number, pageCount: number, siblingCount = 1):
 export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagination(
   {
     page, onPageChange, totalItems, pageSize = 10, pageSizeOptions, onPageSizeChange, siblingCount = 1,
-    showSummary = true, showFirstLast = true, className, 'aria-label': ariaLabel = 'Pagination', ...rest
+    showSummary = true, showFirstLast = true, messages, className, dir, lang, 'aria-label': ariaLabel = 'Pagination', ...rest
   },
   ref,
 ) {
+  const text = { ...defaultMessages, ...messages };
   const pageCount = Math.max(1, Math.ceil(totalItems / pageSize));
   const current = Math.min(Math.max(1, page), pageCount);
   const from = totalItems === 0 ? 0 : (current - 1) * pageSize + 1;
@@ -55,21 +76,23 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagi
   const go = (p: number) => onPageChange(Math.min(Math.max(1, p), pageCount));
 
   return (
-    <nav ref={ref} aria-label={ariaLabel} className={cx(styles.root, className)} {...rest}>
+    <nav ref={ref} dir={dir} lang={lang} aria-label={ariaLabel} className={cx(styles.root, className)} {...rest}>
       {showSummary && (
         <span className={styles.summary}>
-          {from}–{to} of {totalItems}
+          {text.summary(from, to, totalItems)}
         </span>
       )}
       <div className={styles.controls}>
         {pageSizeOptions && onPageSizeChange && (
           <div className={styles.pageSize}>
-            <span aria-hidden="true">Rows per page</span>
+            <span aria-hidden="true">{text.rowsPerPage}</span>
             <Select
-              aria-label="Rows per page"
+              aria-label={text.rowsPerPage}
+              dir={dir === 'ltr' || dir === 'rtl' || dir === 'auto' ? dir : undefined}
+              lang={lang}
               size="sm"
               value={String(pageSize)}
-              options={pageSizeOptions.map((n) => ({ value: String(n), label: String(n) }))}
+              options={pageSizeOptions.map((n) => ({ value: String(n), label: text.pageNumber(n) }))}
               onChange={(v) => v && onPageSizeChange(Number(v))}
             />
           </div>
@@ -77,11 +100,11 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagi
         <ul className={styles.list}>
           {showFirstLast && (
             <li>
-              <IconButton icon={<ChevronsLeft />} label="First page" size="sm" disabled={current === 1} onClick={() => go(1)} />
+              <IconButton icon={<ChevronsLeft />} label={text.firstPage} size="sm" disabled={current === 1} onClick={() => go(1)} />
             </li>
           )}
           <li>
-            <IconButton icon={<ChevronLeft />} label="Previous page" size="sm" disabled={current === 1} onClick={() => go(current - 1)} />
+            <IconButton icon={<ChevronLeft />} label={text.previousPage} size="sm" disabled={current === 1} onClick={() => go(current - 1)} />
           </li>
           <li className={styles.pages}>
             {getPageRange(current, pageCount, siblingCount).map((p, i) =>
@@ -95,24 +118,24 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagi
                   size="sm"
                   variant="tertiary"
                   className={styles.page}
-                  aria-label={`Page ${p}`}
+                  aria-label={text.pageLabel(p)}
                   aria-current={p === current ? 'page' : undefined}
                   onClick={() => go(p)}
                 >
-                  {p}
+                  {text.pageNumber(p)}
                 </Button>
               ),
             )}
           </li>
           <li className={cx(styles.compact, styles.mobileOnly)} aria-live="polite">
-            Page {current} of {pageCount}
+            {text.compactPage(current, pageCount)}
           </li>
           <li>
-            <IconButton icon={<ChevronRight />} label="Next page" size="sm" disabled={current === pageCount} onClick={() => go(current + 1)} />
+            <IconButton icon={<ChevronRight />} label={text.nextPage} size="sm" disabled={current === pageCount} onClick={() => go(current + 1)} />
           </li>
           {showFirstLast && (
             <li>
-              <IconButton icon={<ChevronsRight />} label="Last page" size="sm" disabled={current === pageCount} onClick={() => go(pageCount)} />
+              <IconButton icon={<ChevronsRight />} label={text.lastPage} size="sm" disabled={current === pageCount} onClick={() => go(pageCount)} />
             </li>
           )}
         </ul>

@@ -88,3 +88,6 @@
     display: inline;
   }
 }
+
+/* The sequence follows writing direction; mirror directional chevrons in RTL. */
+.root:dir(rtl) .list > li > button svg { transform: scaleX(-1); }

@@ -21,6 +21,10 @@ export interface SearchFieldProps
   onClear?: () => void;
   /** Show a busy indicator, e.g. while results load. @default false */
   loading?: boolean;
+  /** Accessible label for the clear button. @default 'Clear search' */
+  clearLabel?: string;
+  /** Accessible label for the busy indicator. @default 'Searching' */
+  loadingLabel?: string;
   /** @default 'md' */
   size?: 'sm' | 'md' | 'lg';
   /** Accessible label when no visible `label` is given. @default 'Search' */
@@ -31,7 +35,7 @@ export interface SearchFieldProps
 export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(function SearchField(
   {
     label, description, error, status, statusMessage, hideLabel, labelPosition,
-    value, defaultValue = '', onChange, onSearch, onClear, loading = false, size = 'md',
+    value, defaultValue = '', onChange, onSearch, onClear, loading = false, clearLabel = 'Clear search', loadingLabel = 'Searching', size = 'md',
     id, disabled, required, className, placeholder = 'Search', onKeyDown, 'aria-label': ariaLabel, 'aria-describedby': ariaDescribedBy, ...rest
   },
   ref,
@@ -79,9 +83,9 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
         {...control.ariaProps}
         {...rest}
       />
-      {loading && <Spinner size="sm" label="Searching" />}
+      {loading && <Spinner size="sm" label={loadingLabel} />}
       {text && !control.disabled && (
-        <button type="button" className={styles.fieldButton} aria-label="Clear search" onClick={clear}>
+        <button type="button" className={styles.fieldButton} aria-label={clearLabel} onClick={clear}>
           <X aria-hidden="true" />
         </button>
       )}

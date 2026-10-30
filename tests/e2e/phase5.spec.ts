@@ -200,3 +200,44 @@ test('localized bulk action confirms and warns about unknown outcomes', async ({
   const result = await new AxeBuilder({ page: page as never }).include('[data-example="bulk-action-bar/02-localized"]').disableRules(['region', 'heading-order']).analyze();
   expect(result.violations).toEqual([]);
 });
+
+test('localized pagination navigates in compact RTL layout', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('eui-docs-density', 'compact'));
+  await page.goto('/#/components/pagination');
+  const root = page.locator('[data-example="pagination/02-localized"]');
+  const nav = root.getByRole('navigation', { name: 'تنقل صفحات الطلبات' });
+  await expect(nav).toHaveAttribute('dir', 'rtl');
+  const next = nav.getByRole('button', { name: 'الصفحة التالية' });
+  await expect(next.locator('svg')).toHaveCSS('transform', 'matrix(-1, 0, 0, 1, 0, 0)');
+  await next.click();
+  const three = await page.evaluate(() => new Intl.NumberFormat('ar').format(3));
+  if ((page.viewportSize()?.width ?? 0) < 600) await expect(nav.getByText(new RegExp(`الصفحة ${three} من`))).toBeVisible();
+  else await expect(nav.getByRole('button', { name: `الصفحة ${three}` })).toHaveAttribute('aria-current', 'page');
+  const result = await new AxeBuilder({ page: page as never }).include('[data-example="pagination/02-localized"]').disableRules(['region', 'heading-order']).analyze();
+  expect(result.violations).toEqual([]);
+});
+
+test('localized DataGrid supports RTL search, selection and portaled controls', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('eui-docs-density', 'compact'));
+  await page.goto('/#/components/data-grid');
+  const example = page.locator('[data-example="data-grid/04-localized"]');
+  const grid = example.getByRole('region', { name: /طلبات الشراء/ });
+  await expect(grid).toHaveAttribute('dir', 'rtl');
+  await grid.getByRole('checkbox', { name: 'تحديد PO-101' }).check();
+  await expect(grid.getByRole('button', { name: 'إلغاء التحديد' })).toBeVisible();
+  await grid.getByRole('button', { name: 'إعدادات العرض' }).click();
+  const menu = page.getByRole('menu', { name: 'إعدادات العرض' });
+  await expect(menu).toHaveAttribute('dir', 'rtl');
+  await expect(menu).toHaveAttribute('lang', 'ar');
+  await page.keyboard.press('Escape');
+  await grid.getByRole('combobox', { name: 'تصفية حسب الحالة' }).click();
+  const filter = page.getByRole('listbox', { name: 'تصفية حسب الحالة' });
+  await expect(filter).toHaveAttribute('dir', 'rtl');
+  await filter.getByRole('option', { name: 'مفتوح' }).click();
+  const search = grid.getByRole('searchbox', { name: 'البحث في طلبات الشراء' });
+  await search.fill('ACME');
+  await expect(grid.getByText('شركة الأفق — ACME')).toBeVisible();
+  await expect(grid.getByRole('button', { name: 'مسح البحث' })).toBeVisible();
+  const result = await new AxeBuilder({ page: page as never }).include('[data-example="data-grid/04-localized"]').disableRules(['region', 'heading-order']).analyze();
+  expect(result.violations).toEqual([]);
+});

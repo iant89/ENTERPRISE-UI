@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { act, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import { renderWithTheme } from '../../../tests/utils';
 import { Button } from '../button';
 import { ToastProvider, useToast } from './Toast';
@@ -45,5 +45,22 @@ describe('Toast', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
     expect(() => renderWithTheme(<Trigger />)).toThrow(/ToastProvider/);
     spy.mockRestore();
+  });
+
+  it('stays open while focused even after the pointer leaves', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const { user } = renderWithTheme(
+      <ToastProvider>
+        <Trigger />
+      </ToastProvider>,
+    );
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+    const toast = screen.getByText('Order saved', { selector: 'span' }).closest('li')!;
+    fireEvent.pointerEnter(toast);
+    act(() => screen.getByRole('button', { name: 'Dismiss notification' }).focus());
+    fireEvent.pointerLeave(toast);
+    await act(async () => { vi.advanceTimersByTime(2000); });
+    expect(screen.getByText('Order saved', { selector: 'span' })).toBeInTheDocument();
+    vi.useRealTimers();
   });
 });

@@ -16,7 +16,9 @@ export function useClickOutside(
     const listener = (event: PointerEvent) => {
       const target = event.target as Node | null;
       if (!target) return;
-      if (refs.some((ref) => ref.current?.contains(target))) return;
+      // composedPath() sees through shadow roots, where `event.target` is retargeted to the host element.
+      const path = typeof event.composedPath === 'function' ? event.composedPath() : [];
+      if (refs.some((ref) => { const el = ref.current; return !!el && (el.contains(target) || path.includes(el)); })) return;
       handler(event);
     };
     document.addEventListener('pointerdown', listener, true);

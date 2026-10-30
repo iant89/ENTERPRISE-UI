@@ -38,6 +38,7 @@ export function ComponentPage({ slug }: { slug: string }) {
       {playground && (
         <section className="docs-section" aria-labelledby="playground">
           <h2 id="playground">Interactive preview</h2>
+          <p className="docs-muted">Experiment with props below, or <a href={href(`/playground/${slug}`)}>open the full playground</a> to edit JSX and see a live preview.</p>
           <Playground def={playground} name={doc.name} />
         </section>
       )}

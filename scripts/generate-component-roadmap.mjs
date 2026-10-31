@@ -1,11 +1,12 @@
 /** Generate a reference inventory from pinned UI5 package metadata and the matching docs source.
  * Usage: node scripts/generate-component-roadmap.mjs <metadata-root> <extracted-ui5-source-root>
- * See Component-Impl-Roadmap.md for provenance and limitations.
+ * See docs/roadmap/README.md for provenance and limitations.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import ts from 'typescript';
 import { compactRoadmap } from './compact-component-roadmap.mjs';
+import { writeRoadmap } from './roadmap-parts.mjs';
 
 const [metadataRoot, sourceRoot] = process.argv.slice(2);
 if (!metadataRoot || !sourceRoot) throw new Error('Provide the extracted npm package root and UI5 source root');
@@ -139,5 +140,5 @@ for (const [group, names] of Object.entries(groups)) {
 }
 if (missing.length) throw new Error(`Requested components absent from metadata: ${missing.join(', ')}`);
 out += `## Inventory summary\n\n${count} requested entries, with core and compat variants kept separate. Metadata and samples are a pinned starting point, not proof of current nightly parity.\n`;
-fs.writeFileSync('Component-Impl-Roadmap.md', compactRoadmap(out));
-console.log(`Wrote ${count} entries to Component-Impl-Roadmap.md`);
+writeRoadmap(compactRoadmap(out));
+console.log(`Wrote ${count} entries to docs/roadmap/`);

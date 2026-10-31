@@ -2,6 +2,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
+import { readRoadmap, writeRoadmap } from './roadmap-parts.mjs';
 
 const emptyMarker = 'None listed in the pinned manifest; inherited or runtime behavior requires verification.';
 const emptySamples = 'No component-specific playground samples listed in the pinned samples index; check parent examples and the linked documentation.';
@@ -37,7 +38,8 @@ export function compactRoadmap(input) {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const filename = process.argv[2] ?? 'Component-Impl-Roadmap.md';
-  writeFileSync(filename, compactRoadmap(readFileSync(filename, 'utf8')));
-  console.log(`Grouped empty fields in ${filename}`);
+  const filename = process.argv[2];
+  if (filename) writeFileSync(filename, compactRoadmap(readFileSync(filename, 'utf8')));
+  else writeRoadmap(compactRoadmap(readRoadmap()));
+  console.log(`Grouped empty fields in ${filename ?? 'docs/roadmap/'}`);
 }

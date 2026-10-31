@@ -17,8 +17,11 @@ export interface PaletteCommand {
 }
 
 export interface CommandPaletteProps {
+  /** Whether the palette is open. */
   open: boolean;
+  /** Called with `false` when the user closes the palette. */
   onOpenChange: (open: boolean) => void;
+  /** Commands the user can search and run. */
   commands: PaletteCommand[];
   /** Called with the selected command; the host performs navigation or the action. */
   onSelect: (command: PaletteCommand) => void;
@@ -26,7 +29,9 @@ export interface CommandPaletteProps {
   recentIds?: string[];
   /** Enable the global Ctrl/Command+K shortcut. Mount only one shortcut-enabled palette. @default false */
   globalShortcut?: boolean;
+  /** Title of the palette, used as its accessible name. */
   title?: string;
+  /** Accessible name of the search field. */
   searchLabel?: string;
   /** Accessible name of the results list. @default "Commands" */
   resultsLabel?: string;
@@ -42,6 +47,7 @@ export interface CommandPaletteProps {
   locale?: string;
   /** Direction and language of the portaled dialog. */
   dir?: 'ltr' | 'rtl' | 'auto';
+  /** BCP 47 language tag for the text, so screen readers pronounce it correctly. */
   lang?: string;
 }
 

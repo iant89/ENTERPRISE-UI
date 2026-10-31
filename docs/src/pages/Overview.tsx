@@ -93,7 +93,7 @@ export function Overview() {
                 <Input label="Budget" defaultValue="12,000" endAdornment="USD" status="warning" statusMessage="Exceeds your approval limit; a manager will be asked." />
               </Stack>
             </Card>
-            <Card title="Browse by category" subtitle="Every component has live examples, props tables, keyboard and accessibility notes" noPadding>
+            <Card title="Browse by category" subtitle="Every component has live examples, an API reference, and keyboard and accessibility notes" noPadding>
               <List
                 items={categories.map((c) => ({
                   id: c.id,

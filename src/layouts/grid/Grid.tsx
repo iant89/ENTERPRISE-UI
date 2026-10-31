@@ -15,6 +15,7 @@ export interface GridProps extends HTMLAttributes<HTMLElement> {
   /** Gap on the spacing scale. @default 4 */
   gap?: Responsive<Space>;
   /** @default 'div' */
+  /** HTML element rendered as the root. */
   as?: ElementType;
 }
 

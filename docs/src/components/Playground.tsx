@@ -17,7 +17,7 @@ export interface PlaygroundDef {
   code: (values: PlaygroundValues) => string;
 }
 
-/** Interactive preview whose props are driven by form controls. */
+/** Interactive preview whose properties are driven by form controls. */
 export function Playground({ def, name }: { def: PlaygroundDef; name: string }) {
   const [values, setValues] = useState<PlaygroundValues>(() => Object.fromEntries(def.controls.map((c) => [c.name, c.default])));
   const set = (key: string, value: string | boolean | number) => setValues((v) => ({ ...v, [key]: value }));
@@ -46,9 +46,9 @@ export function Playground({ def, name }: { def: PlaygroundDef; name: string }) 
   );
 }
 
-/** Builds a JSX string, omitting props equal to their defaults. */
-export function jsx(component: string, props: Record<string, unknown>, defaults: Record<string, unknown>, children?: string): string {
-  const attrs = Object.entries(props)
+/** Builds a JSX string, omitting properties equal to their defaults. */
+export function jsx(component: string, properties: Record<string, unknown>, defaults: Record<string, unknown>, children?: string): string {
+  const attrs = Object.entries(properties)
     .filter(([key, value]) => value !== defaults[key] && value !== undefined && value !== '')
     .map(([key, value]) => {
       if (value === true) return key;

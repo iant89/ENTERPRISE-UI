@@ -5,6 +5,7 @@ import type { Density, ThemePreference } from '@enterprise-ui/react';
 import { playgrounds } from '../playgrounds';
 import { docsBySlug } from '../registry';
 import { href } from '../router';
+import { decodePlaygroundCode, playgroundCodeParam } from '../playgroundLink';
 import styles from './PlaygroundPage.module.css';
 
 const defaultsFor = (slug: string) => {
@@ -16,13 +17,29 @@ export function PlaygroundPage({ initialSlug, theme, density }: { initialSlug: s
   const options = useMemo(() => Object.keys(playgrounds).sort((a, b) => (docsBySlug.get(a)?.name ?? a).localeCompare(docsBySlug.get(b)?.name ?? b)), []);
   const slug = playgrounds[initialSlug] ? initialSlug : 'button';
   const [code, setCode] = useState(() => defaultsFor(slug));
+  // Code opened from an example ("Open in Playground") replaces the component defaults; Reset restores it.
+  const [initialCode, setInitialCode] = useState<string | null>(null);
+  const encoded = playgroundCodeParam();
   const [error, setError] = useState('');
   const [ready, setReady] = useState(false);
   const [copied, setCopied] = useState(false);
   const frame = useRef<HTMLIFrameElement>(null);
   const name = docsBySlug.get(slug)?.name ?? slug;
   const send = useCallback(() => frame.current?.contentWindow?.postMessage({ source: 'eui-docs', type: 'render', code, theme, density }, '*'), [code, theme, density]);
-  useEffect(() => { setCode(defaultsFor(slug)); setError(''); }, [slug]);
+  useEffect(() => {
+    if (encoded) return;
+    setInitialCode(null); setCode(defaultsFor(slug)); setError('');
+  }, [slug, encoded]);
+  useEffect(() => {
+    if (!encoded) return;
+    let active = true;
+    void decodePlaygroundCode(encoded).then((decoded) => {
+      if (!active) return;
+      if (decoded === null) { setError('The shared example could not be opened. The link may be incomplete or expired.'); return; }
+      setInitialCode(decoded); setCode(decoded); setError('');
+    });
+    return () => { active = false; };
+  }, [encoded]);
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
       if (event.source !== frame.current?.contentWindow || event.data?.source !== 'eui-playground') return;
@@ -51,7 +68,7 @@ export function PlaygroundPage({ initialSlug, theme, density }: { initialSlug: s
         <div className={styles.panelFoot}><span><span className={styles.dot} /> {error ? 'Preview needs attention' : ready ? 'Preview is ready' : 'Starting preview…'}</span><span>ISOLATED RENDER</span></div>
       </section>
       <section className={styles.panel} aria-labelledby="editor-heading">
-        <div className={styles.panelBar}><div><span className={styles.panelIndex}>02 / SOURCE</span><h2 id="editor-heading">Editor</h2></div><div className={styles.actions}><Button size="sm" icon={<RotateCcw />} onClick={() => { setCode(defaultsFor(slug)); setError(''); }}>Reset</Button><Button size="sm" variant="primary" icon={copied ? <Check /> : <Copy />} onClick={() => void copy()}>{copied ? 'Copied' : 'Copy code'}</Button></div></div>
+        <div className={styles.panelBar}><div><span className={styles.panelIndex}>02 / SOURCE</span><h2 id="editor-heading">Editor</h2></div><div className={styles.actions}><Button size="sm" icon={<RotateCcw />} onClick={() => { setCode(initialCode ?? defaultsFor(slug)); setError(''); }}>Reset</Button><Button size="sm" variant="primary" icon={copied ? <Check /> : <Copy />} onClick={() => void copy()}>{copied ? 'Copied' : 'Copy code'}</Button></div></div>
         <div className={styles.fileBar}><span className={styles.fileIcon}>✳</span><span>Example.tsx</span><span className={styles.fileMeta}>TSX</span></div>
         <div className={styles.editorWrap}><textarea className={styles.editor} aria-label={`${name} playground code`} spellCheck={false} value={code} onChange={(event) => setCode(event.target.value)} /></div>
         {error && <div className={styles.error} role="alert"><strong>Preview error</strong><span>{error}</span></div>}

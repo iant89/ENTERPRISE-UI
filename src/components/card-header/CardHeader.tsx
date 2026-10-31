@@ -5,12 +5,16 @@ import styles from './CardHeader.module.css';
 export interface CardHeaderProps extends Omit<HTMLAttributes<HTMLElement>, 'title' | 'onClick'> {
   /** Heading of the card. */
   title: ReactNode;
+  /** Secondary text shown below the title. */
   subtitle?: ReactNode;
+  /** Short text shown at the end of the header, such as a count or status. */
   additionalText?: ReactNode;
+  /** Avatar or icon shown before the title. */
   avatar?: ReactNode;
   /** Actions remain independent from the header activation target. */
   actions?: ReactNode;
   /** @default 3 */
+  /** Heading level used for the title, so the document outline stays correct. */
   headingLevel?: 2 | 3 | 4 | 5 | 6;
   /** When supplied, the title is a native button. */
   onPress?: () => void;

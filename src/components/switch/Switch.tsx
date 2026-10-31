@@ -5,11 +5,16 @@ import { useControllableState } from '../../hooks/useControllableState';
 import styles from './Switch.module.css';
 
 export interface SwitchProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'checked' | 'defaultChecked'> {
+  /** Visible label of the switch. Also used as its accessible name. */
   label?: ReactNode;
+  /** Secondary text shown below the main text. */
   description?: ReactNode;
+  /** Whether the switch is on. Providing it makes it controlled. */
   checked?: boolean;
   /** @default false */
+  /** Whether the switch is on initially when it is uncontrolled. */
   defaultChecked?: boolean;
+  /** Called with the new checked state when the user toggles the switch. */
   onChange?: (checked: boolean) => void;
   /** Place the label before the switch. @default 'end' */
   labelPlacement?: 'start' | 'end';

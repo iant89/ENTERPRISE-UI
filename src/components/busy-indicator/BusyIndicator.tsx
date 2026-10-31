@@ -9,6 +9,7 @@ export interface BusyIndicatorProps extends HTMLAttributes<HTMLDivElement> {
   /** Delay before showing the indicator, in milliseconds. @default 1000 */
   delay?: number;
   /** @default 'md' */
+  /** Size of the busy indicator. */
   size?: SpinnerProps['size'];
   /** Localized operation description. @default 'Loading' */
   text?: string;

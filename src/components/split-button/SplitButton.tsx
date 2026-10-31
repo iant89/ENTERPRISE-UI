@@ -16,14 +16,19 @@ export interface SplitButtonProps {
   /** Called with the id of the chosen menu item. */
   onAction?: (id: string) => void;
   /** @default 'secondary' */
+  /** Visual emphasis. */
   variant?: 'primary' | 'secondary';
   /** @default 'md' */
+  /** Size of the split button. */
   size?: ButtonSize;
+  /** Icon shown before the text. */
   icon?: ReactNode;
   /** @default false */
+  /** Disables the split button. A disabled control cannot be focused or changed. */
   disabled?: boolean;
   /** Accessible name for the menu toggle. @default 'More options' */
   menuLabel?: string;
+  /** Additional CSS class names for the root element. */
   className?: string;
 }
 

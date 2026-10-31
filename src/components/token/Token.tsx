@@ -11,8 +11,10 @@ export interface TokenProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'child
   /** Localized delete button name. @default `Remove ${text}` */
   deleteLabel?: string;
   /** @default false */
+  /** Hides the remove button. The token can still be focused. */
   readOnly?: boolean;
   /** @default false */
+  /** Disables the token. A disabled control cannot be focused or changed. */
   disabled?: boolean;
   /** Selected appearance (for example in a Tokenizer). @default false */
   selected?: boolean;

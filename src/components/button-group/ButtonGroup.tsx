@@ -6,6 +6,7 @@ export interface ButtonGroupProps extends HTMLAttributes<HTMLDivElement> {
   /** Join buttons into a single segmented control. @default false */
   attached?: boolean;
   /** @default 'horizontal' */
+  /** Layout direction. */
   orientation?: 'horizontal' | 'vertical';
   /** Stretch buttons to fill the width equally. @default false */
   fullWidth?: boolean;

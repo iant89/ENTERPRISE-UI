@@ -20,6 +20,7 @@ export interface ComboBoxItemProps {
   /** Secondary text shown beside the label. */
   additionalText?: string;
   /** @default false */
+  /** Disables the item. Keyboard navigation skips it. */
   disabled?: boolean;
 }
 /** A labelled choice for ComboBox. Filtering and selection use the label and value. */
@@ -35,6 +36,7 @@ export interface ComboBoxItemCustomProps {
   /** Secondary text shown beside the custom content. */
   additionalText?: string;
   /** @default false */
+  /** Disables the item. Keyboard navigation skips it. */
   disabled?: boolean;
   /** Visual content. The label remains the accessible name. */
   children?: ReactNode;
@@ -49,6 +51,7 @@ export interface ComboBoxItemGroupProps {
   headerText: string;
   /** Accessible name when it should differ from the visible heading. */
   headerAccessibleName?: string;
+  /** Content rendered inside the combo box item group. */
   children?: ReactNode;
 }
 /** Groups ComboBox items under a heading. The heading is not a selectable choice. */
@@ -64,6 +67,7 @@ export interface OptionProps {
   /** Secondary text shown beside the label. */
   additionalText?: string;
   /** @default false */
+  /** Disables the option. Keyboard navigation skips it. */
   disabled?: boolean;
 }
 /** A labelled choice for Select. */
@@ -79,6 +83,7 @@ export interface OptionCustomProps {
   /** Secondary text shown beside the custom content. */
   additionalText?: string;
   /** @default false */
+  /** Disables the option. Keyboard navigation skips it. */
   disabled?: boolean;
   /** Visual content. The label remains the accessible name. */
   children?: ReactNode;
@@ -93,6 +98,7 @@ export interface OptionGroupProps {
   headerText: string;
   /** Accessible name when it should differ from the visible heading. */
   headerAccessibleName?: string;
+  /** Content rendered inside the option group. */
   children?: ReactNode;
 }
 /** Groups Select options under a heading. The heading is not a selectable choice. */

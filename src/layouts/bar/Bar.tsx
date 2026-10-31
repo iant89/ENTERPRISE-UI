@@ -10,6 +10,7 @@ export interface BarProps extends HTMLAttributes<HTMLDivElement> {
   /** Content at the logical end of the bar. */
   endContent?: ReactNode;
   /** @default 'header' */
+  /** Visual role of the bar. It sets the background, border and elevation. */
   design?: 'header' | 'subheader' | 'footer' | 'floating-footer';
 }
 

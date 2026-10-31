@@ -30,7 +30,9 @@ export interface FormFieldProps extends FieldProps, Omit<HTMLAttributes<HTMLDivE
   /** Marks the field as required (asterisk + `aria-required`). @default false */
   required?: boolean;
   /** @default false */
+  /** Disables the form field. A disabled control cannot be focused or changed. */
   disabled?: boolean;
+  /** Content rendered inside the form field. */
   children: ReactNode;
 }
 

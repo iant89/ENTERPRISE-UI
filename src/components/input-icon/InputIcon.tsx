@@ -2,6 +2,7 @@ import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cx } from '../../utilities/cx';
 import styles from './InputIcon.module.css';
 export interface InputIconProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+  /** Icon shown before the text. */
   icon: ReactNode;
   /** Required accessible name for the icon action. */
   label: string;

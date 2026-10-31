@@ -12,12 +12,16 @@ export interface NumberInputProps
   /** Controlled value; `null` when empty. */
   value?: number | null;
   /** @default null */
+  /** The initial value when the component is uncontrolled. */
   defaultValue?: number | null;
   /** Called with the committed number (after blur, Enter or stepping). */
   onChange?: (value: number | null) => void;
+  /** Smallest allowed value. */
   min?: number;
+  /** Largest allowed value. */
   max?: number;
   /** @default 1 */
+  /** Amount the value changes by per step. */
   step?: number;
   /** Decimal places to round to. */
   precision?: number;
@@ -26,6 +30,7 @@ export interface NumberInputProps
   /** Unit displayed after the value, e.g. `kg` or `EUR`. */
   unit?: ReactNode;
   /** @default 'md' */
+  /** Size of the number input. */
   size?: 'sm' | 'md' | 'lg';
 }
 

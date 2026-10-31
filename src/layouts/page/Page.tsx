@@ -28,6 +28,7 @@ export interface PageProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'>
   width?: 'full' | 'contained';
   /** Remove content padding. @default false */
   flush?: boolean;
+  /** Content rendered inside the page. */
   children?: ReactNode;
 }
 

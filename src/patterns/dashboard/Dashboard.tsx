@@ -6,18 +6,23 @@ import type { Responsive, Space } from '../../layouts/space';
 import styles from './Dashboard.module.css';
 
 export interface DashboardProps extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
+  /** Title of the dashboard. */
   title?: ReactNode;
+  /** Short description shown below the title. */
   description?: ReactNode;
   /** Header actions (refresh, date range, …). */
   actions?: ReactNode;
   /** Filter area between header and widgets. */
   filters?: ReactNode;
   /** @default { base: 1, sm: 2, md: 4 } */
+  /** Number of grid columns, either fixed or per breakpoint. */
   columns?: Responsive<number>;
   /** @default 4 */
+  /** Spacing between children, as a spacing-scale step. */
   gap?: Space;
   /** Heading level of the title. @default 2 */
   headingLevel?: 2 | 3;
+  /** Content rendered inside the dashboard. */
   children: ReactNode;
 }
 
@@ -54,6 +59,7 @@ export const Dashboard = forwardRef<HTMLElement, DashboardProps>(function Dashbo
 export interface DashboardWidgetProps extends HTMLAttributes<HTMLDivElement> {
   /** Columns to span (capped to the available columns), or `full`. @default 1 */
   span?: 1 | 2 | 3 | 4 | 'full';
+  /** Content rendered inside the dashboard widget. */
   children: ReactNode;
 }
 

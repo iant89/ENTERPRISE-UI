@@ -24,7 +24,9 @@ export interface FilterBarProps extends Omit<HTMLAttributes<HTMLFormElement>, 'o
   /** Controlled expanded state of the filter area. */
   expanded?: boolean;
   /** @default true */
+  /** Whether the filter fields are expanded initially when the expanded state is uncontrolled. */
   defaultExpanded?: boolean;
+  /** Called with the new expanded state when the user expands or collapses it. */
   onExpandedChange?: (expanded: boolean) => void;
   /** Extra actions (e.g. Adapt Filters). */
   actions?: ReactNode;

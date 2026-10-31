@@ -4,8 +4,11 @@ import styles from './Skeleton.module.css';
 
 export interface SkeletonProps extends HTMLAttributes<HTMLSpanElement> {
   /** @default 'text' */
+  /** Shape of the placeholder. */
   variant?: 'text' | 'rect' | 'circle';
+  /** Width of the placeholder. */
   width?: CSSProperties['width'];
+  /** Height of the placeholder. */
   height?: CSSProperties['height'];
   /** Number of text lines (the last is shorter). @default 1 */
   lines?: number;

@@ -46,7 +46,9 @@ export type TableDensity = 'cozy' | 'compact' | 'condensed';
 export type SelectionMode = 'none' | 'single' | 'multiple';
 
 export interface TableProps<T> {
+  /** Column definitions. */
   columns: TableColumn<T>[];
+  /** Rows to display. */
   data: T[];
   /** Returns a stable id for a row. Defaults to `row.id`, then the index. */
   getRowId?: (row: T, index: number) => string;
@@ -54,14 +56,18 @@ export interface TableProps<T> {
   caption?: ReactNode;
   /** Visually hide the caption. @default true */
   hideCaption?: boolean;
+  /** Accessible name, used when there is no visible label. */
   'aria-label'?: string;
   /** Controlled sort. */
   sort?: SortState | null;
+  /** Sort applied initially when sorting is uncontrolled. */
   defaultSort?: SortState | null;
+  /** Called with the new sort, or `null` when sorting is cleared. */
   onSortChange?: (sort: SortState | null) => void;
   /** Data is already sorted (server-side); only render the indicator. @default false */
   manualSorting?: boolean;
   /** @default 'none' */
+  /** Whether no items, one item or several items can be selected. */
   selectionMode?: SelectionMode;
   /** Accessible label for the select-all checkbox. @default 'Select all rows' */
   selectAllLabel?: string;
@@ -69,8 +75,11 @@ export interface TableProps<T> {
   selectionHeaderLabel?: string;
   /** Format the accessible selection control name from the row label. */
   selectRowLabel?: (rowLabel: string) => string;
+  /** IDs of the selected items. Providing it makes the selection controlled. */
   selectedIds?: string[];
+  /** IDs of the items selected initially when the selection is uncontrolled. */
   defaultSelectedIds?: string[];
+  /** Called with the new selection when the user changes it. */
   onSelectionChange?: (ids: string[]) => void;
   /** Makes rows activatable (click / Enter) and shows a navigation chevron. */
   onRowClick?: (row: T) => void;
@@ -81,15 +90,18 @@ export interface TableProps<T> {
   /** Show skeleton rows. @default false */
   loading?: boolean;
   /** @default 5 */
+  /** Number of skeleton rows shown while `loading` is true. */
   loadingRowCount?: number;
   /** Shown when `data` is empty. */
   emptyState?: ReactNode;
   /** Row height. Inherits the theme density when omitted. */
   density?: TableDensity;
   /** @default false */
+  /** Shades alternate rows to make wide tables easier to scan. */
   striped?: boolean;
   /** Keep the header visible while scrolling (set `maxHeight`). @default true */
   stickyHeader?: boolean;
+  /** Maximum height before the content scrolls. */
   maxHeight?: CSSProperties['maxHeight'];
   /** Opt in to fixed-height row windowing. Use stable getRowId and non-wrapping cells. */
   virtualization?: { rowHeight: number; height: number; overscan?: number };
@@ -97,6 +109,7 @@ export interface TableProps<T> {
   responsive?: 'scroll' | 'stack';
   /** Remove the outer border (when inside a Card). @default false */
   borderless?: boolean;
+  /** Additional CSS class names for the root element. */
   className?: string;
 }
 

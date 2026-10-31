@@ -13,8 +13,11 @@ export type FlexibleColumnLayoutMode =
   | 'EndColumnFullScreen';
 
 export interface FlexibleColumnLayoutProps extends HTMLAttributes<HTMLDivElement> {
+  /** Content of the first column, usually a list. */
   startColumn: ReactNode;
+  /** Content of the middle column, usually the details of the selected item. */
   midColumn?: ReactNode;
+  /** Content of the last column, usually a further level of detail. */
   endColumn?: ReactNode;
   /** Application-controlled layout (list → detail → detail-detail). @default 'OneColumn' */
   layout?: FlexibleColumnLayoutMode;

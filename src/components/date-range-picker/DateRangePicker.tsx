@@ -7,12 +7,19 @@ import styles from './DateRangePicker.module.css';
 /** ISO calendar dates, inclusive at both ends. Empty string means no boundary. */
 export interface DateRange { start: string; end: string }
 export interface DateRangePickerProps {
+  /** Visible label of the date range picker. Also used as its accessible name. */
   label: string;
+  /** The current value. Providing it makes the component controlled; update it from the change callback. */
   value?: DateRange;
+  /** The initial value when the component is uncontrolled. */
   defaultValue?: DateRange;
+  /** Called with the new range when the user changes either date. */
   onChange?: (value: DateRange) => void;
+  /** Earliest selectable date, as `YYYY-MM-DD`. */
   min?: string;
+  /** Latest selectable date, as `YYYY-MM-DD`. */
   max?: string;
+  /** Disables the date range picker. A disabled control cannot be focused or changed. */
   disabled?: boolean;
   /** Preset labels may be replaced for localization. */
   presetLabels?: { today: string; last7Days: string; thisMonth: string };

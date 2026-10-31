@@ -39,17 +39,24 @@ export interface ListProps {
   /** Header text shown above the list. */
   header?: ReactNode;
   /** @default 'none' */
+  /** Whether no items, one item or several items can be selected. */
   selectionMode?: 'none' | 'single' | 'multiple';
+  /** IDs of the selected items. Providing it makes the selection controlled. */
   selectedIds?: string[];
+  /** IDs of the items selected initially when the selection is uncontrolled. */
   defaultSelectedIds?: string[];
+  /** Called with the new selection when the user changes it. */
   onSelectionChange?: (ids: string[]) => void;
   /** Makes items activatable (navigation). Shows a chevron when there is no selection. */
   onItemClick?: (item: ListItemData) => void;
   /** Highlight this item as the current one (navigation lists). */
   currentId?: string;
   /** @default true */
+  /** Draws a separator between items. */
   dividers?: boolean;
+  /** Content shown when the list has no items. */
   emptyState?: ReactNode;
+  /** Additional CSS class names for the root element. */
   className?: string;
 }
 

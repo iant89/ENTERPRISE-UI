@@ -12,9 +12,13 @@ export interface CalendarProps {
   /** Selected date. */
   value?: Date | null;
   /** @default null */
+  /** The initial value when the component is uncontrolled. */
   defaultValue?: Date | null;
+  /** Called with the date the user selects. */
   onChange?: (date: Date) => void;
+  /** Earliest selectable date. */
   min?: Date | null;
+  /** Latest selectable date. */
   max?: Date | null;
   /** Return true for dates that cannot be selected. */
   isDateDisabled?: (date: Date) => boolean;
@@ -28,6 +32,7 @@ export interface CalendarProps {
   highlightWeekends?: boolean;
   /** CalendarDate, CalendarDateRange and SpecialCalendarDate markers. */
   children?: ReactNode;
+  /** Additional CSS class names for the root element. */
   className?: string;
 }
 

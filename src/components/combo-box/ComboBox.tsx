@@ -23,7 +23,9 @@ export interface ComboBoxProps
   /** Controlled selected value. */
   value?: string | null;
   /** @default null */
+  /** The initial value when the component is uncontrolled. */
   defaultValue?: string | null;
+  /** Called with the new value when the user changes it. */
   onChange?: (value: string | null) => void;
   /** Called as the user types (e.g. to load options from a server). */
   onInputChange?: (text: string) => void;
@@ -42,6 +44,7 @@ export interface ComboBoxProps
   /** Shown when no option matches. @default 'No matches' */
   emptyText?: ReactNode;
   /** @default 'md' */
+  /** Size of the combo box. */
   size?: 'sm' | 'md' | 'lg';
   /** Show a clear button when there is a value. @default true */
   clearable?: boolean;

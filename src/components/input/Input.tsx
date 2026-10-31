@@ -5,6 +5,7 @@ import styles from './InputBox.module.css';
 
 export interface InputProps extends FieldProps, Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   /** @default 'md' */
+  /** Size of the input. */
   size?: 'sm' | 'md' | 'lg';
   /** Content before the text (icon, currency symbol). */
   startAdornment?: ReactNode;

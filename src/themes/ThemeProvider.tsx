@@ -32,6 +32,7 @@ export interface ThemeProviderProps extends HTMLAttributes<HTMLDivElement> {
    * @default false
    */
   transparent?: boolean;
+  /** Content rendered inside the theme provider. */
   children?: ReactNode;
 }
 

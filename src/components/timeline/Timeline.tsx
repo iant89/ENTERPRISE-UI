@@ -16,6 +16,7 @@ export interface TimelineItem {
 }
 
 export interface TimelineProps extends HTMLAttributes<HTMLOListElement> {
+  /** Items shown in the timeline. */
   items: TimelineItem[];
   /** Locale for Date timestamps. */
   locale?: string;

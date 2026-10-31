@@ -18,35 +18,46 @@ export interface ListReportView {
 }
 
 export interface ListReportProps<T> {
+  /** Title of the page. */
   title: string;
+  /** Data source that loads pages of rows for the current sort, filters and search. */
   adapter: DataAdapter<T>;
   /** Change this value to refresh after an external mutation. */
   refreshKey?: unknown;
+  /** Column definitions. */
   columns: DataGridColumn<T>[];
+  /** Returns a stable, unique ID for a row. */
   getRowId: (row: T, index: number) => string;
   /** Applied filters. The application owns the filter controls and their values. */
   filters: DataFilter[];
+  /** Called with the new filters when the user applies or clears filters. */
   onFiltersChange: (filters: DataFilter[]) => void;
   /** Filter controls that update filters via the host. Filters apply immediately. */
   filterControls?: ReactNode;
   /** Optional saved-view selector or other page-level content. */
   header?: ReactNode;
+  /** Actions shown in the table toolbar. */
   toolbarActions?: ReactNode;
   /** Wrap the report in a Page with a page heading. @default false */
   pageLayout?: boolean;
   /** Optional responsive page-level command toolbar. */
   pageActions?: CommandAction[];
+  /** Renders actions for the selected row IDs. They are shown in the bulk action bar. */
   selectionActions?: (ids: string[]) => ReactNode;
   /** Initial page size in uncontrolled mode. @default 10 */
   pageSize?: number;
   /** Controlled view settings, suitable for restoring a saved view. */
   view?: ListReportView;
+  /** Called with the view settings when the user changes sorting, columns or density. */
   onViewChange?: (view: ListReportView) => void;
   /** Selection may be controlled independently from the view. */
   /** Defaults to multiple when selection callbacks or actions are supplied. */
   selectionMode?: SelectionMode;
+  /** IDs of the selected items. Providing it makes the selection controlled. */
   selectedIds?: string[];
+  /** Called with the new selection when the user changes it. */
   onSelectionChange?: (ids: string[]) => void;
+  /** Returns the display name of a filter field. */
   getFilterName?: (field: string) => string;
 }
 

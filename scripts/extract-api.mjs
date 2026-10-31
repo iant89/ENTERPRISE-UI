@@ -1,8 +1,9 @@
-// Extracts component props (types, defaults, JSDoc) from the library source
-// with the TypeScript compiler API and writes docs/generated/api.json.
+// Extracts component properties (types, defaults, JSDoc) from the library source with the
+// TypeScript compiler API, plus the design tokens each component's CSS module reads, and
+// writes docs/generated/api.json.
 // Usage: node scripts/extract-api.mjs
 import ts from 'typescript';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -72,6 +73,24 @@ function propsOf(typeSymbol) {
   return { props, inheritsNative };
 }
 
+/** Design tokens (`--eui-*`) read by the CSS modules next to a component's source file. */
+const tokenCache = new Map();
+function cssVariablesFor(file) {
+  if (!file) return [];
+  const dir = dirname(resolve(root, file));
+  if (tokenCache.has(dir)) return tokenCache.get(dir);
+  const tokens = new Set();
+  if (existsSync(dir)) {
+    for (const name of readdirSync(dir)) {
+      if (!name.endsWith('.module.css')) continue;
+      for (const match of readFileSync(resolve(dir, name), 'utf8').matchAll(/var\((--eui-[a-z0-9-]+)/g)) tokens.add(match[1]);
+    }
+  }
+  const list = [...tokens].sort();
+  tokenCache.set(dir, list);
+  return list;
+}
+
 const exportMap = new Map(exports.map((s) => [s.getName(), s]));
 const components = {};
 const hooks = {};
@@ -88,7 +107,7 @@ for (const symbol of exports) {
   }
   if (!isPascal(name)) continue;
   const propsSymbol = exportMap.get(`${name}Props`);
-  let entry = { name, description: jsDoc(resolved), source: file, props: [], inheritsNative: false };
+  let entry = { name, description: jsDoc(resolved), source: file, props: [], inheritsNative: false, cssVariables: cssVariablesFor(file) };
   if (propsSymbol) {
     const target = propsSymbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(propsSymbol) : propsSymbol;
     entry = { ...entry, ...propsOf(target) };

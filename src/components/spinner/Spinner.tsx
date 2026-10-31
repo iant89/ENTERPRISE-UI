@@ -6,6 +6,7 @@ const SIZES = { sm: 16, md: 24, lg: 40 } as const;
 
 export interface SpinnerProps extends HTMLAttributes<HTMLSpanElement> {
   /** @default 'md' */
+  /** Size of the spinner. */
   size?: keyof typeof SIZES;
   /**
    * Accessible label announced to screen readers.

@@ -4,11 +4,15 @@ import { cx } from '../../utilities/cx';
 import styles from './ExpandableText.module.css';
 
 export interface ExpandableTextProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
+  /** Full text. It is truncated until the user expands it. */
   text: string;
   /** Maximum Unicode code points shown while collapsed. @default 100 */
   maxCharacters?: number;
+  /** Whether it is expanded. Providing it makes the expanded state controlled. */
   expanded?: boolean;
+  /** Whether it is expanded initially when the expanded state is uncontrolled. */
   defaultExpanded?: boolean;
+  /** Called with the new expanded state when the user expands or collapses it. */
   onExpandedChange?: (expanded: boolean) => void;
   /** Localized expand control. @default 'Show more' */
   moreLabel?: string;

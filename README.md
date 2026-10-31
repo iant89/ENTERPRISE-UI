@@ -149,7 +149,7 @@ function SupplierForm() {
 }
 ```
 
-Components are controlled when you pass `value`, `checked` or `open`. Without them, they manage their own state, starting from the `default*` prop.
+Components are controlled when you pass `value`, `checked` or `open`. Without them, they manage their own state, starting from the `default*` property.
 
 ### Application shell
 
@@ -280,7 +280,7 @@ Each of the 64 component pages has:
 
 - a live preview, with interactive controls where useful;
 - TypeScript examples, including disabled and error states;
-- a table of props and their defaults, generated from the source;
+- a table of properties and their defaults, generated from the source;
 - the keyboard model;
 - accessibility notes.
 
@@ -326,7 +326,7 @@ Styling uses CSS Modules. Class names are stable and readable, in the form `eui-
 To add a component:
 
 1. Create `src/components/<name>/` with the component, a `.module.css` file that uses only `--eui-*` tokens, an `index.ts` and a test.
-2. Document every prop with JSDoc, including `@default` where there is one. The API reference is generated from these comments.
+2. Document every property with JSDoc, including `@default` where there is one. The API reference is generated from these comments.
 3. Export the component from `src/index.ts`.
 4. Add a docs entry in `docs/src/registry.ts`, with a summary, keyboard model and accessibility notes.
 5. Add one or more examples in `examples/<slug>/`. The test suite renders each example and checks it with axe.

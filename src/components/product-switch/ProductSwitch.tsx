@@ -15,6 +15,7 @@ export interface ProductSwitchItem {
 }
 
 export interface ProductSwitchProps extends Omit<HTMLAttributes<HTMLElement>, 'onSelect'> {
+  /** Items shown in the product switch. */
   items: ProductSwitchItem[];
   /** Called for items without `href`, and before native navigation for items with one. */
   onItemClick?: (item: ProductSwitchItem) => void;

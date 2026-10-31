@@ -7,15 +7,18 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   /** Badge text. Omit and set `count` for a numeric counter. */
   children?: ReactNode;
   /** @default 'neutral' */
+  /** Semantic color of the badge. */
   tone?: Tone;
   /** Filled background for higher emphasis. @default false */
   solid?: boolean;
   /** Numeric counter, rendered as a pill. Values above `max` show `max+`. */
   count?: number;
   /** @default 99 */
+  /** Largest count shown. Larger counts appear as, for example, `99+`. */
   max?: number;
   /** Render only a small dot (requires `aria-label` for meaning). @default false */
   dot?: boolean;
+  /** Icon shown before the badge text. */
   icon?: ReactNode;
 }
 

@@ -14,23 +14,33 @@ export interface RadioOption<V extends string = string> {
 export interface RadioGroupProps<V extends string = string> {
   /** Group label, rendered as the fieldset legend. */
   label: ReactNode;
+  /** Choices offered to the user. */
   options: RadioOption<V>[];
+  /** The current value. Providing it makes the component controlled; update it from the change callback. */
   value?: V | null;
   /** @default null */
+  /** The initial value when the component is uncontrolled. */
   defaultValue?: V | null;
+  /** Called with the new value when the user changes it. */
   onChange?: (value: V) => void;
   /** Input `name`. Generated when omitted. */
   name?: string;
   /** @default 'vertical' */
+  /** Layout direction. */
   orientation?: 'vertical' | 'horizontal';
+  /** Secondary text shown below the main text. */
   description?: ReactNode;
+  /** Error message shown below the field. It also marks the field as invalid. */
   error?: ReactNode;
   /** @default false */
+  /** Marks the field as required and shows a required indicator. */
   required?: boolean;
   /** @default false */
+  /** Disables the radio group. A disabled control cannot be focused or changed. */
   disabled?: boolean;
   /** Visually hide the legend. @default false */
   hideLabel?: boolean;
+  /** Additional CSS class names for the root element. */
   className?: string;
 }
 

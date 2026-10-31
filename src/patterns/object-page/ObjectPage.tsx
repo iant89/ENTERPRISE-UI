@@ -23,9 +23,11 @@ export interface ObjectPageProps {
   title: ReactNode;
   /** Object type or identifier. */
   subtitle?: ReactNode;
+  /** Avatar or image shown next to the title. */
   avatar?: ReactNode;
   /** Status next to the title (e.g. a StatusIndicator). */
   status?: ReactNode;
+  /** Breadcrumb trail shown above the title, as items or custom content. */
   breadcrumbs?: BreadcrumbItem[] | ReactNode;
   /** Object actions (Edit, Delete, …). */
   actions?: ReactNode;
@@ -33,6 +35,7 @@ export interface ObjectPageProps {
   attributes?: ObjectAttribute[];
   /** Additional header content (e.g. KPIs, a ProgressBar). */
   headerContent?: ReactNode;
+  /** Sections of the page. Each one gets an anchor in the navigation bar. */
   sections: ObjectPageSection[];
   /**
    * `anchors`: all sections on one scrolling page with an anchor bar that
@@ -40,7 +43,9 @@ export interface ObjectPageProps {
    * @default 'anchors'
    */
   navigation?: 'anchors' | 'tabs';
+  /** Called when the user activates the back button. The button is shown only when this is set. */
   onBack?: () => void;
+  /** Additional CSS class names for the root element. */
   className?: string;
 }
 

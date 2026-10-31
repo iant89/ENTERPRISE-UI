@@ -18,6 +18,7 @@ export interface BreadcrumbsItemProps {
   separator?: boolean;
   /** Called on activation. A handler can prevent the default link navigation. */
   onClick?: (event: MouseEvent<HTMLElement>) => void;
+  /** Additional CSS class names for the root element. */
   className?: string;
 }
 

@@ -27,15 +27,20 @@ export interface WizardProps {
   /** Controlled current step index. */
   step?: number;
   /** @default 0 */
+  /** Zero-based index of the step shown initially when the step is uncontrolled. */
   defaultStep?: number;
+  /** Called with the zero-based index of the step the user moves to. */
   onStepChange?: (index: number) => void;
   /** Called after the last step validates. */
   onFinish: () => void | Promise<unknown>;
+  /** Called when the user cancels the wizard. */
   onCancel?: () => void;
   /** @default 'Finish' */
+  /** Text of the button on the last step. */
   finishLabel?: string;
   /** Accessible name for the wizard. */
   'aria-label'?: string;
+  /** Additional CSS class names for the root element. */
   className?: string;
 }
 

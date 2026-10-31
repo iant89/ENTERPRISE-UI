@@ -8,6 +8,7 @@ export interface StatusIndicatorProps extends HTMLAttributes<HTMLSpanElement> {
   /** Status text. Always provide text — color alone must not convey meaning. */
   children: ReactNode;
   /** @default 'neutral' */
+  /** Semantic tone that sets the color and icon. The text must still convey the status. */
   tone?: Tone;
   /**
    * `icon` shows a semantic icon, `dot` a colored dot, `none` text only.
@@ -19,6 +20,7 @@ export interface StatusIndicatorProps extends HTMLAttributes<HTMLSpanElement> {
   /** Filled, high-emphasis variant. @default false */
   inverted?: boolean;
   /** @default 'md' */
+  /** Size of the status indicator. */
   size?: 'sm' | 'md';
 }
 

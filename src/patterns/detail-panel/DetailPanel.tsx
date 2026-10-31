@@ -9,13 +9,19 @@ import { IconButton } from '../../components/icon-button';
 import styles from './DetailPanel.module.css';
 
 export interface DetailPanelProps {
+  /** Whether the panel is open. */
   open: boolean;
+  /** Called when the user closes the panel. */
   onClose: () => void;
+  /** Title of the panel. It is also its accessible name. */
   title: ReactNode;
+  /** Secondary text shown below the title. */
   subtitle?: ReactNode;
   /** Actions in the header (next to the close button). */
   headerActions?: ReactNode;
+  /** Content shown in the footer. */
   footer?: ReactNode;
+  /** Content rendered inside the detail panel. */
   children: ReactNode;
   /** Panel width (CSS length). @default '28rem' */
   width?: string;
@@ -25,6 +31,7 @@ export interface DetailPanelProps {
    * @default 'overlay'
    */
   mode?: 'overlay' | 'inline';
+  /** Additional CSS class names for the root element. */
   className?: string;
 }
 

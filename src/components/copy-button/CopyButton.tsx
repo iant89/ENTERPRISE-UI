@@ -9,13 +9,17 @@ export interface CopyButtonMessages {
 const defaultMessages: CopyButtonMessages = { copied: 'Copied.', failed: 'Could not copy.', clipboardUnavailable: 'Clipboard access is unavailable.' };
 
 export interface CopyButtonProps extends Omit<ButtonProps, 'onClick' | 'children'> {
+  /** Text that is copied to the clipboard. */
   value: string;
   /** Override clipboard access for applications or tests. */
   copy?: (value: string) => Promise<void>;
+  /** Accessible name and tooltip of the button. */
   label?: string;
   /** Overrides success, failure and clipboard-unavailable messages. */
   messages?: Partial<CopyButtonMessages>;
+  /** Called after the text was copied to the clipboard. */
   onCopied?: () => void;
+  /** Called with the error when copying fails. */
   onError?: (error: unknown) => void;
 }
 /** Copies text with a visible and politely announced success or failure. */

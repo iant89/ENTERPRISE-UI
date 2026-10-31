@@ -16,15 +16,24 @@ export interface TreeNode {
 }
 
 export interface TreeProps {
+  /** Hierarchical nodes to display. */
   nodes: TreeNode[];
+  /** Accessible name, used when there is no visible label. */
   'aria-label': string;
+  /** IDs of the expanded nodes. Providing it makes the expanded state controlled. */
   expandedIds?: string[];
+  /** IDs of the nodes expanded initially when the expanded state is uncontrolled. */
   defaultExpandedIds?: string[];
+  /** Called with the IDs of the expanded nodes when the user expands or collapses a node. */
   onExpandedChange?: (ids: string[]) => void;
+  /** ID of the selected item. Providing it makes the selection controlled. */
   selectedId?: string | null;
   /** @default null */
+  /** ID of the node selected initially when the selection is uncontrolled. */
   defaultSelectedId?: string | null;
+  /** Called with the ID and node the user selects. */
   onSelect?: (id: string | null, node?: TreeNode) => void;
+  /** Additional CSS class names for the root element. */
   className?: string;
 }
 

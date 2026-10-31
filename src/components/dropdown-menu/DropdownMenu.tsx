@@ -14,20 +14,27 @@ import floating from '../popover/Floating.module.css';
 export interface DropdownMenuProps {
   /** Element that opens the menu (usually a Button or IconButton). */
   trigger: ReactElement;
+  /** Items shown in the dropdown menu. */
   items: MenuEntry[];
   /** Called with the id of the chosen item. */
   onAction?: (id: string) => void;
   /** @default 'bottom-start' */
+  /** Preferred position relative to the trigger. It flips automatically when there is not enough space. */
   placement?: Placement;
+  /** Whether it is open. Providing it makes the open state controlled. */
   open?: boolean;
   /** @default false */
+  /** Whether it is open initially when the open state is uncontrolled. */
   defaultOpen?: boolean;
+  /** Called with the new open state when the user opens or closes it. */
   onOpenChange?: (open: boolean) => void;
   /** Accessible name for the menu. Defaults to being labelled by the trigger. */
   'aria-label'?: string;
+  /** Additional CSS class names for the root element. */
   className?: string;
   /** Direction and language of the portaled menu. */
   dir?: 'ltr' | 'rtl' | 'auto';
+  /** BCP 47 language tag for the text, so screen readers pronounce it correctly. */
   lang?: string;
 }
 

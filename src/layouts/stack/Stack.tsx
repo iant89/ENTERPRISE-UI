@@ -5,16 +5,21 @@ import styles from './Stack.module.css';
 
 export interface StackProps extends HTMLAttributes<HTMLElement> {
   /** @default 'vertical' */
+  /** Direction in which children are laid out. */
   direction?: 'vertical' | 'horizontal';
   /** Gap on the spacing scale. @default 3 */
   gap?: Space;
+  /** Cross-axis alignment of the children. */
   align?: CSSProperties['alignItems'];
+  /** Main-axis distribution of the children. */
   justify?: CSSProperties['justifyContent'];
   /** @default false */
+  /** Whether children wrap onto new lines when they do not fit. */
   wrap?: boolean;
   /** Draw a divider between children. @default false */
   dividers?: boolean;
   /** @default 'div' */
+  /** HTML element rendered as the root. */
   as?: ElementType;
 }
 

@@ -10,10 +10,13 @@ export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
   /** Accessible name — required because the button has no visible text. Also shown as a native tooltip. */
   label: string;
   /** @default 'tertiary' */
+  /** Visual emphasis. */
   variant?: ButtonVariant;
   /** @default 'md' */
+  /** Size of the icon button. */
   size?: ButtonSize;
   /** @default false */
+  /** Shows a busy state and prevents interaction until the work is done. */
   loading?: boolean;
   /** Use neutral (gray) colors. @default false */
   neutral?: boolean;

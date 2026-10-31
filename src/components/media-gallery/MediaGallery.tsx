@@ -14,9 +14,13 @@ export interface MediaGalleryItem {
 }
 
 export interface MediaGalleryProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
+  /** Items shown in the media gallery. */
   items: MediaGalleryItem[];
+  /** ID of the selected item. Providing it makes the selection controlled. */
   selectedId?: string;
+  /** Initial `selectedId` when it is uncontrolled. */
   defaultSelectedId?: string;
+  /** Called with the new selection when the user changes it. */
   onSelectionChange?: (id: string) => void;
   /** Accessible name for the gallery. */
   'aria-label': string;

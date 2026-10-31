@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Code2 } from 'lucide-react';
+import { Code2, SquareArrowOutUpRight } from 'lucide-react';
 import { Button, cx } from '@enterprise-ui/react';
 import type { Example } from '../examples';
 import { CodeBlock } from './CodeBlock';
+import { playgroundHref } from '../playgroundLink';
 import styles from './Docs.module.css';
 
 /** Live preview of an example with collapsible source code. */
@@ -24,6 +25,16 @@ export function ExampleBlock({ example, headingLevel = 3 }: { example: Example; 
       <div className={styles.exampleActions}>
         <Button size="sm" variant="tertiary" icon={<Code2 />} aria-expanded={showCode} aria-controls={codeId} onClick={() => setShowCode(!showCode)}>
           {showCode ? 'Hide code' : 'Show code'}
+        </Button>
+        <Button
+          size="sm"
+          variant="secondary"
+          icon={<SquareArrowOutUpRight />}
+          aria-describedby={`${codeId}-title`}
+          data-open-playground={example.id}
+          onClick={async () => { window.location.hash = (await playgroundHref(example.code)).slice(1); }}
+        >
+          Open in Playground
         </Button>
       </div>
       <div id={codeId} hidden={!showCode}>

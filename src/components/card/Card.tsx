@@ -7,6 +7,7 @@ export interface CardProps extends Omit<HTMLAttributes<HTMLElement>, 'title' | '
   header?: ReactNode;
   /** Card heading. */
   title?: ReactNode;
+  /** Secondary text shown below the title. */
   subtitle?: ReactNode;
   /** Leading visual in the header, e.g. an Avatar or icon. */
   avatar?: ReactNode;

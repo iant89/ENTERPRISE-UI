@@ -36,6 +36,7 @@ export interface SideNavigationProps extends HTMLAttributes<HTMLElement> {
   footer?: ReactNode;
   /** @default 'Main navigation' */
   'aria-label'?: string;
+  /** Content rendered inside the side navigation. */
   children: ReactNode;
 }
 
@@ -64,6 +65,7 @@ export function SideNavigation({ activeId, onNavigate, collapsed, footer, classN
 export interface NavigationGroupProps {
   /** Section heading. */
   label: string;
+  /** Content rendered inside the navigation group. */
   children: ReactNode;
 }
 
@@ -85,7 +87,9 @@ export function NavigationGroup({ label, children }: NavigationGroupProps) {
 export interface NavigationItemProps {
   /** Unique id, compared with `activeId`. */
   id: string;
+  /** Visible label of the navigation item. Also used as its accessible name. */
   label: string;
+  /** Icon shown before the label. It remains visible when the navigation is collapsed. */
   icon?: ReactNode;
   /** Link target. Items without `href` render as buttons. */
   href?: string;

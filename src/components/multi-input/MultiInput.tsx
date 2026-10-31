@@ -9,7 +9,9 @@ export interface MultiInputProps extends Omit<InputProps, 'value' | 'defaultValu
   /** Committed values. */
   value?: string[];
   /** @default [] */
+  /** The initial value when the component is uncontrolled. */
   defaultValue?: string[];
+  /** Called with the new value when the user changes it. */
   onChange?: (value: string[]) => void;
   /** Validates or normalizes typed text before it becomes a token; return null to reject. */
   parseValue?: (text: string) => string | null;

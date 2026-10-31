@@ -64,18 +64,23 @@ const defaultMessages: BulkActionBarMessages = {
   undoOutcomeUnknown: (reason) => `Undo outcome unknown: ${reason} Verify the result before retrying.`,
 };
 export interface BulkActionBarProps {
+  /** IDs of the selected items. The bar is shown while it is not empty. */
   selectedIds: string[];
+  /** Actions that apply to the selected items. */
   actions: BulkAction[];
+  /** Called when the user clears the selection. A clear button is shown only when this is set. */
   onClearSelection?: () => void;
   /** Fired for each completed execution, including a retry. */
   onResult?: (actionId: string, result: BulkActionResult) => void;
   /** Called after undo succeeds so the host can refresh its data. */
   onUndo?: (actionId: string, ids: string[]) => void;
+  /** Accessible name, used when there is no visible label. */
   'aria-label'?: string;
   /** Overrides built-in text and announcements. */
   messages?: Partial<BulkActionBarMessages>;
   /** Also applied to the portaled confirmation dialog. */
   dir?: 'ltr' | 'rtl' | 'auto';
+  /** BCP 47 language tag for the text, so screen readers pronounce it correctly. */
   lang?: string;
 }
 interface Report { action: BulkAction; succeeded: string[]; failed: BulkActionFailure[] }

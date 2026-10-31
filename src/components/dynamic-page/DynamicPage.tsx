@@ -12,6 +12,7 @@ export interface DynamicPageProps extends Omit<HTMLAttributes<HTMLDivElement>, '
   snappedSubtitle?: ReactNode;
   /** Text shown under the title when the header is expanded. */
   subtitle?: ReactNode;
+  /** Breadcrumbs shown above the title. */
   breadcrumbs?: ReactNode;
   /** Title-bar actions (always visible). */
   actions?: ReactNode;
@@ -19,19 +20,25 @@ export interface DynamicPageProps extends Omit<HTMLAttributes<HTMLDivElement>, '
   headerContent?: ReactNode;
   /** Sticky footer, typically finalizing actions. */
   footer?: ReactNode;
+  /** Whether the header content is expanded. Providing it makes the expanded state controlled. */
   headerExpanded?: boolean;
   /** @default true */
+  /** Whether the header content is expanded initially when the expanded state is uncontrolled. */
   defaultHeaderExpanded?: boolean;
+  /** Called with the new expanded state when the user expands or collapses the header. */
   onHeaderExpandedChange?: (expanded: boolean) => void;
   /** Keep the header expanded while scrolling. Controlled with `onHeaderPinnedChange`. */
   headerPinned?: boolean;
   /** @default false */
+  /** Whether the header is pinned initially. A pinned header stays expanded while the page scrolls. */
   defaultHeaderPinned?: boolean;
+  /** Called with the new pinned state when the user pins or unpins the header. */
   onHeaderPinnedChange?: (pinned: boolean) => void;
   /** Hide the pin button. @default false */
   hidePinButton?: boolean;
   /** Localized control names. */
   labels?: { expand: string; collapse: string; pin: string; unpin: string };
+  /** Content rendered inside the dynamic page. */
   children?: ReactNode;
 }
 

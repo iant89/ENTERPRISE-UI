@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useThemeContext } from '../themes/ThemeContext';
 
 export interface PortalProps {
+  /** Content rendered inside the portal. */
   children: ReactNode;
   /** Explicit target. Defaults to the nearest ThemeProvider's layer, then `document.body`. */
   container?: HTMLElement | null;

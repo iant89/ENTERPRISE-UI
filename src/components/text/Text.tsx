@@ -6,8 +6,10 @@ export interface TextProps extends HTMLAttributes<HTMLElement> {
   /** Element to render. @default 'span' */
   as?: 'span' | 'p' | 'div' | 'strong' | 'em' | 'small';
   /** @default 'md' */
+  /** Size of the text. */
   size?: 'xs' | 'sm' | 'md' | 'lg';
   /** @default 'default' */
+  /** Semantic text color. */
   tone?: 'default' | 'secondary' | 'error' | 'warning' | 'success' | 'information';
   /** Clamp to this many lines with an ellipsis. Content remains in the DOM for assistive technology. */
   maxLines?: number;

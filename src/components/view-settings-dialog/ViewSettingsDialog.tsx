@@ -21,15 +21,22 @@ export interface ViewSettings {
 }
 
 export interface ViewSettingsDialogProps {
+  /** Whether the dialog is open. */
   open: boolean;
+  /** Called when the user closes the dialog. */
   onClose: () => void;
   /** Called with the confirmed settings. The application applies them to its data. */
   onConfirm: (settings: ViewSettings) => void;
+  /** Current sort, group and filter settings. */
   settings: ViewSettings;
+  /** Fields the user can sort by. */
   sortItems?: ViewSettingsSortItem[];
+  /** Fields the user can group by. */
   groupItems?: ViewSettingsGroupItem[];
+  /** Fields and values the user can filter by. */
   filterItems?: ViewSettingsFilterItem[];
   /** @default 'View settings' */
+  /** Title of the dialog. */
   title?: string;
   /** Localized labels. */
   labels?: Partial<typeof defaultLabels>;

@@ -8,10 +8,11 @@ export interface ContainerProps extends HTMLAttributes<HTMLElement> {
   /** Remove the responsive horizontal padding. @default false */
   flush?: boolean;
   /** @default 'div' */
+  /** HTML element rendered as the root. */
   as?: ElementType;
 }
 
-/** Centres content with a maximum width and responsive horizontal padding. */
+/** Centers content with a maximum width and responsive horizontal padding. */
 export const Container = forwardRef<HTMLElement, ContainerProps>(function Container({ size = 'xl', flush = false, as: As = 'div', className, ...rest }, ref) {
   return <As ref={ref} className={cx(styles.container, styles[size], flush && styles.flush, className)} {...rest} />;
 });

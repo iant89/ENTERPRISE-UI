@@ -6,14 +6,17 @@ import styles from './Token.module.css';
 export interface TokenizerItem { id: string; text: string; readOnly?: boolean }
 
 export interface TokenizerProps extends Omit<HTMLAttributes<HTMLUListElement>, 'onChange'> {
+  /** Tokens to display. */
   tokens: TokenizerItem[];
   /** Called with the id of a token to remove (delete button, Backspace or Delete). */
   onTokenDelete?: (id: string) => void;
   /** Accessible list name. */
   'aria-label': string;
   /** @default false */
+  /** Hides the remove buttons. The tokens can still be focused. */
   readOnly?: boolean;
   /** @default false */
+  /** Disables the tokenizer. A disabled control cannot be focused or changed. */
   disabled?: boolean;
   /** Localized delete-button name. */
   deleteLabel?: (text: string) => string;

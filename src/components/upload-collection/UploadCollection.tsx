@@ -26,15 +26,18 @@ export interface UploadCollectionItem {
 }
 
 export interface UploadCollectionProps extends Omit<HTMLAttributes<HTMLElement>, 'onDrop'> {
+  /** Items shown in the upload collection. */
   items: UploadCollectionItem[];
   /** Accessible name and visible header. */
   title: string;
   /** Files dropped or chosen; the application uploads them and updates `items`. */
   onFilesSelected?: (files: File[]) => void;
+  /** Called with the ID of the item the user deletes. */
   onItemDelete?: (id: string) => void;
   /** Native file type filter for the chooser. */
   accept?: string;
   /** @default true */
+  /** Allows selecting more than one file. */
   multiple?: boolean;
   /** Shown when there are no items. */
   noDataText?: ReactNode;

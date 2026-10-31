@@ -4,6 +4,7 @@ import styles from './ColorPicker.module.css';
 export interface ColorPickerProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'value' | 'defaultValue' | 'onChange'> {
   /** Six-digit hexadecimal color, e.g. #0a6ed1. */
   value?: string;
+  /** The initial value when the component is uncontrolled. */
   defaultValue?: string;
   /** Called when the browser color picker changes. */
   onChange?: (color: string) => void;

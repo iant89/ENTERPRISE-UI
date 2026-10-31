@@ -24,15 +24,21 @@ const defaultMessages: NotificationCenterMessages = {
 export interface NotificationCenterProps {
   /** Application-controlled notifications, with unique IDs. */
   notifications: readonly NotificationItem[];
+  /** Called with the ID of the notification the user marks as read. */
   onMarkRead?: (id: string) => void;
+  /** Called with the ID of the notification the user dismisses. */
   onDismiss?: (id: string) => void;
+  /** Shows a busy state while notifications load. */
   loading?: boolean;
+  /** Error message shown in place of the list when notifications cannot be loaded. */
   error?: string;
   /** Overrides visible text and accessible names; omitted messages use English defaults. */
   messages?: Partial<NotificationCenterMessages>;
   /** Format timestamps for display. The original value remains the time element's dateTime. */
   formatTimestamp?: (timestamp: string) => string;
+  /** Text direction. `auto` follows the document. */
   dir?: 'ltr' | 'rtl' | 'auto';
+  /** BCP 47 language tag for the text, so screen readers pronounce it correctly. */
   lang?: string;
 }
 /** A controlled list of notifications; persistence and delivery belong to the host. */

@@ -29,11 +29,13 @@ export interface CommandToolbarProps {
   title?: ReactNode;
   /** Content after the title (e.g. a SearchField). */
   start?: ReactNode;
+  /** Actions shown in the toolbar. Those that do not fit move into an overflow menu. */
   actions: CommandAction[];
   /** Accessible name. Defaults to the title text. */
   'aria-label'?: string;
   /** Surface background and bottom border. @default false */
   bordered?: boolean;
+  /** Additional CSS class names for the root element. */
   className?: string;
 }
 

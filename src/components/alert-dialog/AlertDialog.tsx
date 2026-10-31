@@ -4,22 +4,27 @@ import { Button } from '../button';
 import { Dialog } from '../dialog';
 
 export interface AlertDialogProps {
+  /** Whether the dialog is open. */
   open: boolean;
   /** Called when the user cancels (Cancel button or Escape). */
   onCancel: () => void;
   /** Called when the user confirms. May return a promise; the button shows a busy state until it settles. */
   onConfirm: () => void | Promise<unknown>;
+  /** Title of the dialog. It is also its accessible name. */
   title: ReactNode;
   /** Explain the consequence of the action. */
   children: ReactNode;
   /** @default 'Confirm' */
+  /** Text of the confirm button. */
   confirmLabel?: string;
   /** @default 'Cancel' */
+  /** Text of the cancel button. */
   cancelLabel?: string;
   /** `error` styles the confirm button as destructive. @default 'warning' */
   tone?: 'information' | 'success' | 'warning' | 'error';
   /** Direction and language for the portaled dialog. */
   dir?: 'ltr' | 'rtl' | 'auto';
+  /** BCP 47 language tag for the text, so screen readers pronounce it correctly. */
   lang?: string;
 }
 

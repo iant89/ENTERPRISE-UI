@@ -15,17 +15,24 @@ export interface UserSettingsView {
 }
 
 export interface UserSettingsDialogProps {
+  /** Whether the dialog is open. */
   open: boolean;
+  /** Called when the user closes the dialog. */
   onClose: () => void;
   /** @default 'Settings' */
+  /** Title of the dialog. */
   title?: string;
+  /** Settings views listed in the navigation. */
   views: UserSettingsView[];
+  /** ID of the view that is shown. Providing it makes the selection controlled. */
   selectedViewId?: string;
+  /** Called with the ID of the view the user selects. */
   onSelectedViewChange?: (id: string) => void;
   /** Footer actions, e.g. Save/Cancel. Defaults to a Close button. */
   footer?: ReactNode;
   /** Localized navigation name. @default 'Settings categories' */
   navigationLabel?: string;
+  /** Text of the close button. */
   closeLabel?: string;
 }
 

@@ -15,14 +15,21 @@ export interface AuditFilters { actor: string; action: string; start: string; en
 export interface AuditTrailProps {
   /** Records must come from an authoritative audit source, not client UI events. */
   records: AuditRecord[];
+  /** Current filter values. */
   filters: AuditFilters;
+  /** Called with the new filter values when the user changes them. */
   onFiltersChange: (filters: AuditFilters) => void;
+  /** Shows a busy state while entries load. */
   loading?: boolean;
   /** Application-provided error and optional retry action. */
   error?: ReactNode;
+  /** Whether more entries can be loaded. Shows the load-more button. */
   hasMore?: boolean;
+  /** Called when the user asks for more entries. */
   onLoadMore?: () => void;
+  /** BCP 47 locale used to format numbers, dates and times. Defaults to the browser locale. */
   locale?: string;
+  /** IANA time zone used to display and interpret times, for example `Europe/Berlin`. */
   timeZone?: string;
   /** Override the default comparison table, for example to render DiffViewer. */
   renderChanges?: (record: AuditRecord) => ReactNode;

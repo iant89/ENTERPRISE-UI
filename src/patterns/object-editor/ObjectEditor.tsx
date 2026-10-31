@@ -9,16 +9,23 @@ export class ObjectSaveError extends Error {
   constructor(message: string, public fieldErrors: ObjectFieldErrors = {}, public conflict = false) { super(message); this.name = 'ObjectSaveError'; }
 }
 export interface ObjectEditorRenderProps<T> {
+  /** Whether the object is being viewed or edited. */
   mode: 'view' | 'edit';
+  /** Current draft of the object. */
   value: T;
   /** Current saved snapshot, for composing a change preview with DiffViewer. */
   baseline: T;
   /** Supply immutable replacement values; ignored in view mode. */
   onChange: (value: T) => void;
+  /** Validation errors by field name. */
   errors: ObjectFieldErrors;
+  /** Whether the draft differs from the saved object. */
   dirty: boolean;
+  /** Whether a save is in progress. */
   busy: boolean;
+  /** Whether the save failed because someone else changed the object. */
   conflict: boolean;
+  /** Version (ETag) of the saved object, used for conflict detection. */
   version: string | undefined;
   /** After explicitly resolving a conflict, use the latest server snapshot and a user-approved merged draft. */
   resolveConflict: (latestValue: T, latestVersion: string | undefined, mergedValue: T) => void;
@@ -30,13 +37,17 @@ export interface ObjectEditorRenderProps<T> {
 export interface ObjectEditorProps<T> {
   /** Initial snapshot. Remount with a new key when switching to a different object. */
   initialValue: T;
+  /** Version (ETag) of the initial object, sent with the first save. */
   initialVersion?: string;
   /** Compare immutable snapshots for unsaved changes. */
   isEqual: (a: T, b: T) => boolean;
+  /** Validates the draft and returns errors by field name. An empty object means the draft is valid. */
   validate?: (value: T) => ObjectFieldErrors;
   /** Persist and return the authoritative saved value and version. */
   onSave: (value: T, version: string | undefined, signal: AbortSignal) => Promise<{ value: T; version?: string }>;
+  /** Called when the user leaves the editor after saving or discarding. */
   onNavigate?: () => void;
+  /** Renders the editor content from the editor state (`mode`, `value`, `errors` and actions). */
   children: (props: ObjectEditorRenderProps<T>) => ReactNode;
 }
 

@@ -32,15 +32,19 @@ export interface ApplicationHeaderProps extends HTMLAttributes<HTMLElement> {
   notificationCount?: number;
   /** Notification panel content (shown in a popover). */
   notifications?: ReactNode;
+  /** Called when the user activates the notifications button. The button is shown only when this is set. */
   onNotificationsClick?: () => void;
   /** Help menu items. */
   helpItems?: MenuEntry[];
+  /** Called with the ID of the help menu entry the user chose. */
   onHelpAction?: (id: string) => void;
+  /** Called when the user activates the settings button. The button is shown only when this is set. */
   onSettingsClick?: () => void;
   /** Signed-in user. */
   user?: ApplicationHeaderUser;
   /** User profile menu items. */
   userMenuItems?: MenuEntry[];
+  /** Called with the ID of the user menu entry the user chose. */
   onUserAction?: (id: string) => void;
   /** Additional actions before the standard ones. */
   actions?: ReactNode;

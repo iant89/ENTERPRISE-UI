@@ -1,11 +1,15 @@
 import styles from './FilterToken.module.css';
 
 export interface FilterTokenProps {
+  /** Name of the filtered field. */
   name: string;
+  /** Filter value shown after the field name. */
   value: string;
+  /** Called when the user removes the filter. */
   onRemove: () => void;
   /** Override for localized accessible text. */
   removeLabel?: string;
+  /** Disables the filter token. A disabled control cannot be focused or changed. */
   disabled?: boolean;
 }
 

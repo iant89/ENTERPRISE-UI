@@ -14,6 +14,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
    */
   variant?: ButtonVariant;
   /** @default 'md' */
+  /** Size of the button. */
   size?: ButtonSize;
   /** Icon rendered before the label. */
   icon?: ReactNode;
@@ -28,6 +29,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Use neutral (gray) colors instead of the brand color. @default false */
   neutral?: boolean;
   /** @default 'button' */
+  /** Native button type. Use `submit` to submit the surrounding form. */
   type?: 'button' | 'submit' | 'reset';
 }
 

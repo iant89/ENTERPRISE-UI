@@ -32,7 +32,7 @@ export interface DatePickerProps
   formatDate?: (date: Date) => string;
   /** Parses typed text. Return `null` for invalid input. @default ISO parser */
   parseDate?: (text: string) => Date | null;
-  /** Message shown for unparseable input. @default 'Enter a valid date' */
+  /** Message shown for unparsable input. @default 'Enter a valid date' */
   invalidMessage?: string;
   /** @default 'md' */
   size?: 'sm' | 'md' | 'lg';

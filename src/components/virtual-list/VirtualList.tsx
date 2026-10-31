@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { useId } from '../../hooks/useId';
 import styles from './VirtualList.module.css';
-import { getVirtualWindow } from './useVirtualWindow';
+import { getVirtualWindow } from './virtualWindow';
 
 export interface VirtualListProps<T> {
   items: readonly T[];
@@ -32,9 +32,9 @@ export function VirtualList<T>({ items, getItemId, renderItem, 'aria-label': lab
   const rowHeight = Number.isFinite(itemHeight) && itemHeight > 0 ? itemHeight : 1;
   const extra = Number.isFinite(overscan) ? Math.max(0, Math.floor(overscan)) : 0;
   const maxScroll = Math.max(0, items.length * rowHeight - viewportHeight);
-  const window = getVirtualWindow(items.length, rowHeight, viewportHeight, scrollTop, extra);
-  const start = virtualized ? window.start : 0;
-  const end = virtualized ? window.end : items.length;
+  const range = getVirtualWindow(items.length, rowHeight, viewportHeight, scrollTop, extra);
+  const start = virtualized ? range.start : 0;
+  const end = virtualized ? range.end : items.length;
   const activeIndex = Math.max(0, items.findIndex((item) => getItemId(item) === activeId));
   const activeVisible = items.length > 0 && activeIndex >= start && activeIndex < end;
   const optionId = (index: number) => `${listId}-option-${index}`;

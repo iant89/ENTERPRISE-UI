@@ -8,7 +8,7 @@ import { products, statusTone, currency } from '../../../examples/data';
 import styles from './Pages.module.css';
 
 const features = [
-  { icon: <SwatchBook />, title: 'Design tokens', text: 'One token system for colour, spacing, typography, radii, shadows, motion and density — as CSS custom properties.', path: '/tokens' },
+  { icon: <SwatchBook />, title: 'Design tokens', text: 'One token system for color, spacing, typography, radii, shadows, motion and density — as CSS custom properties.', path: '/tokens' },
   { icon: <Palette />, title: 'Light, dark & high contrast', text: 'Three themes that meet WCAG AA contrast, switchable at runtime and scoped per subtree.', path: '/themes' },
   { icon: <Accessibility />, title: 'Accessible by default', text: 'Semantic HTML, WAI-ARIA patterns, keyboard support, focus management and live announcements.', path: '/accessibility' },
   { icon: <MonitorSmartphone />, title: 'Responsive', text: 'Shell, tables, forms and patterns adapt from desktop to tablet and phone with touch-friendly targets.', path: '/layouts' },

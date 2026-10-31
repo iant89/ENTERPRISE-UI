@@ -2,7 +2,7 @@
  * Enterprise UI Kit — foundation tokens.
  *
  * Theme-independent tokens (spacing, typography, radii, sizing, layering,
- * motion). Colour tokens live in ../themes/*.css so every theme can redefine
+ * motion). Color tokens live in ../themes/*.css so every theme can redefine
  * them. All tokens are prefixed with --eui-.
  */
 :root,

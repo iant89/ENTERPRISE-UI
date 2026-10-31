@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Fixed: a polite screen-reader announcement no longer clears an earlier assertive one before its 7-second window, and pending announcements are cancelled on unmount.
+- Fixed: a toast with keyboard focus is no longer auto-dismissed when the pointer leaves it.
+- Fixed: Tooltip closes when `disabled` becomes true while it is open.
+- Fixed: generated ids contain only `[A-Za-z0-9_-]` (React 19 ids such as `«r1»` are no longer passed through), so they are safe in CSS selectors.
+- Fixed: `useMediaQuery` subscribes through `addListener` on browsers without `MediaQueryList.addEventListener` (Safari before 14).
+- Fixed: outside-click dismissal recognises popups rendered inside shadow roots.
+- Fixed: `getInitials` no longer splits emoji and other astral characters.
+- Documentation and comments now consistently use US English spelling (color, behavior, gray) and several typos were corrected.
 - Added BarcodeScannerDialog: camera scanning with a vendored, lazily loaded `@zxing/library` 0.23.0 (Apache-2.0) decoder by default and an opt-in native BarcodeDetector (`decoder`), clear permission/camera/HTTPS error states and manual entry.
 - Added roadmap components: Slider, RangeSlider, SegmentedButton, Title, Text, Token, Tokenizer, MultiInput, ResponsivePopover, DynamicDateRange, DynamicPage, DynamicSideContent, FlexibleColumnLayout, HeroBanner, MediaGallery, ProductSwitch, UserMenu, UserSettingsDialog, ViewSettingsDialog, UploadCollection, AIButton and PromptInput.
 - Carousel, RatingIndicator, CopyButton, AppBreadcrumbBar and DiffViewer now forward refs and accept `className` and native attributes; added documentation pages for Calendar, DateRangePicker, FilterToken and SavedViews.

@@ -32,7 +32,7 @@ node scripts/generate-sap-themes.mjs ./package && node scripts/contrast.mjs
 
 ## Contrast adjustments (11.36.5)
 
-The generator prints these when it runs. `primary` is also the text colour of secondary and tertiary buttons, so it must reach 4.5:1 on surfaces.
+The generator prints these when it runs. `primary` is also the text color of secondary and tertiary buttons, so it must reach 4.5:1 on surfaces.
 
 - sap-horizon-dark: primary `#0070f2` → `#3890f5`, primary-hover `#0064d9` → `#4890e4`; on-primary becomes dark text (`#1d232a`)
 - sap-fiori-3: text-secondary `#6a6d70` → `#626467` (4.5:1 on list hover)

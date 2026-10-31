@@ -29,7 +29,7 @@ const format = (violations: Awaited<ReturnType<AxeBuilder['analyze']>>['violatio
   violations.map((v) => `${v.id} (${v.impact}): ${v.help}\n    ${v.nodes.slice(0, 5).map((n) => `${n.target.join(' ')} — ${n.failureSummary?.split('\n')[1] ?? ''}`).join('\n    ')}`);
 
 /**
- * Runs axe with WCAG 2.2 A/AA rules (including colour contrast).
+ * Runs axe with WCAG 2.2 A/AA rules (including color contrast).
  * The documentation page is checked with all rules; embedded examples are
  * checked with every rule except page-structure rules.
  */

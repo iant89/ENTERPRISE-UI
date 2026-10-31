@@ -14,7 +14,7 @@ export interface SpinnerProps extends HTMLAttributes<HTMLSpanElement> {
   label?: string;
   /** Show the label next to the spinner. @default false */
   showLabel?: boolean;
-  /** Use the current text colour instead of the primary colour. @default false */
+  /** Use the current text color instead of the primary color. @default false */
   inheritColor?: boolean;
   /** Render as decoration only (no role/label), e.g. inside a busy button. @default false */
   decorative?: boolean;

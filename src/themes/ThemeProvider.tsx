@@ -14,7 +14,7 @@ import styles from './ThemeProvider.module.css';
 
 export interface ThemeProviderProps extends HTMLAttributes<HTMLDivElement> {
   /**
-   * Colour theme. `system` follows the operating system's light/dark and
+   * Color theme. `system` follows the operating system's light/dark and
    * increased-contrast preferences.
    * @default 'light'
    */
@@ -55,17 +55,28 @@ export function ThemeProvider({
 
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
   const [messages, setMessages] = useState<{ polite: string; assertive: string }>({ polite: '', assertive: '' });
-  const clearTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  type Politeness = 'polite' | 'assertive';
+  // One pending frame and one clear timer per politeness level, so an assertive message is not wiped by a later polite one.
+  const frames = useRef<Partial<Record<Politeness, number>>>({});
+  const clearTimers = useRef<Partial<Record<Politeness, ReturnType<typeof setTimeout>>>>({});
 
-  const announce = useCallback((message: string, politeness: 'polite' | 'assertive' = 'polite') => {
-    // Clear first so repeating the same message is announced again.
+  const announce = useCallback((message: string, politeness: Politeness = 'polite') => {
+    // Clear the region first so that repeating the same message is announced again.
     setMessages((m) => ({ ...m, [politeness]: '' }));
-    requestAnimationFrame(() => setMessages((m) => ({ ...m, [politeness]: message })));
-    clearTimeout(clearTimer.current);
-    clearTimer.current = setTimeout(() => setMessages({ polite: '', assertive: '' }), 7000);
+    const frame = frames.current[politeness];
+    if (frame !== undefined) cancelAnimationFrame(frame);
+    frames.current[politeness] = requestAnimationFrame(() => {
+      frames.current[politeness] = undefined;
+      setMessages((m) => ({ ...m, [politeness]: message }));
+    });
+    clearTimeout(clearTimers.current[politeness]);
+    clearTimers.current[politeness] = setTimeout(() => setMessages((m) => ({ ...m, [politeness]: '' })), 7000);
   }, []);
 
-  useEffect(() => () => clearTimeout(clearTimer.current), []);
+  useEffect(() => () => {
+    for (const frame of Object.values(frames.current)) if (frame !== undefined) cancelAnimationFrame(frame);
+    for (const timer of Object.values(clearTimers.current)) clearTimeout(timer);
+  }, []);
 
   const value = useMemo<ThemeContextValue>(
     () => ({ theme, resolvedTheme, density, portalContainer, announce }),

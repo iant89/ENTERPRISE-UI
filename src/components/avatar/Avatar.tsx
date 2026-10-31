@@ -4,7 +4,7 @@ import { getInitials, hashString } from '../../utilities/format';
 import styles from './Avatar.module.css';
 
 export interface AvatarProps extends HTMLAttributes<HTMLSpanElement> {
-  /** Person or object name — used for initials, colour and the accessible name. */
+  /** Person or object name — used for initials, color and the accessible name. */
   name?: string;
   /** Image URL. Falls back to initials if it fails to load. */
   src?: string;
@@ -20,7 +20,7 @@ export interface AvatarProps extends HTMLAttributes<HTMLSpanElement> {
   badge?: ReactNode;
   /** Meaning of the badge, appended to the avatar accessible name. Required when the badge conveys information. */
   badgeLabel?: string;
-  /** Accent colour index 1–8. Derived from `name` when omitted. */
+  /** Accent color index 1–8. Derived from `name` when omitted. */
   accent?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
   /** Treat as decoration (hidden from assistive technology). @default false */
   decorative?: boolean;

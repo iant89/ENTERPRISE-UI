@@ -30,7 +30,7 @@ const readable = (bg, min, ...candidates) => {
   const list = candidates.filter(Boolean);
   return list.find((c) => ratio(c, bg) >= min) ?? list.sort((a, b) => ratio(b, bg) - ratio(a, bg))[0];
 };
-/** Moves a colour towards black (light themes) or white (dark themes) until it reaches `min` on `bg`. */
+/** Moves a color towards black (light themes) or white (dark themes) until it reaches `min` on `bg`. */
 const ensure = (fg, bg, min, dark) => {
   dark = lum(bg) < 0.18 ? true : lum(bg) > 0.5 ? false : dark;
   let c = fg;
@@ -45,7 +45,7 @@ for (const t of themes) {
   const css = readFileSync(join(root, 'content/Base/baseLib', t.sap, 'css_variables.css'), 'utf8');
   const p = Object.fromEntries([...css.matchAll(/--(sap[\w]+):\s*([^;]+);/g)].map((m) => [m[1], m[2].trim()]));
   const get = (k) => { if (!(k in p)) throw new Error(`${t.sap}: missing ${k}`); return p[k]; };
-  const c = (k) => { const v = hex(get(k)); if (!v) throw new Error(`${t.sap}: ${k} is not a hex colour (${get(k)})`); return v; };
+  const c = (k) => { const v = hex(get(k)); if (!v) throw new Error(`${t.sap}: ${k} is not a hex color (${get(k)})`); return v; };
   const dark = t.scheme === 'dark';
   const surface = c('sapGroup_ContentBackground');
   const background = c('sapBackgroundColor');
@@ -53,7 +53,7 @@ for (const t of themes) {
 
   const v = {};
   // Brand
-  // Primary doubles as the text colour of secondary/tertiary buttons, so it must reach 4.5:1 on surfaces and 3:1 on selected rows.
+  // Primary doubles as the text color of secondary/tertiary buttons, so it must reach 4.5:1 on surfaces and 3:1 on selected rows.
   const primary = fix('primary', fix('primary', c('sapButton_Emphasized_Background'), surface, 4.5), c('sapList_SelectionBackgroundColor'), 3);
   v['color-primary'] = primary;
   v['color-on-primary'] = readable(primary, 4.5, c('sapButton_Emphasized_TextColor'), c('sapContent_ContrastTextColor'), '#ffffff', '#000000');
@@ -75,7 +75,7 @@ for (const t of themes) {
   v['color-surface-selected'] = c('sapList_SelectionBackgroundColor');
   v['color-surface-selected-hover'] = c('sapList_Hover_SelectionBackground');
   v['color-overlay'] = `rgba(0, 0, 0, ${Number(get('sapBlockLayer_Opacity'))})`;
-  // The library header uses theme text colours, so the shell follows the base colour (Quartz's dark shell bar is a documented gap).
+  // The library header uses theme text colors, so the shell follows the base color (Quartz's dark shell bar is a documented gap).
   v['color-shell'] = c('sapBaseColor');
   v['color-shell-border'] = c('sapList_BorderColor');
   v['color-tooltip'] = c('sapTextColor');

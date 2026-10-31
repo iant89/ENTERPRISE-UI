@@ -1,4 +1,4 @@
-/* Global documentation-site styles (prose, code colours, layout helpers). */
+/* Global documentation-site styles (prose, code colors, layout helpers). */
 [data-eui-theme] {
   --docs-code-bg: #fbfcfd;
   --docs-code-fg: #32363a;

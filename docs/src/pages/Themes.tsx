@@ -51,7 +51,7 @@ export function Themes() {
         <h2 id="themes-sap">SAP Fiori themes</h2>
         <p className="docs-muted" style={{ margin: 0 }}>
           Morning Horizon, Evening Horizon, Quartz Light and Quartz Dark map real parameters from SAP's open-source{' '}
-          <a href="https://github.com/SAP/theming-base-content">theming base content</a> (Apache-2.0) onto the library tokens — colours, the
+          <a href="https://github.com/SAP/theming-base-content">theming base content</a> (Apache-2.0) onto the library tokens — colors, the
           SAP shadow levels, corner radii and the 72 font stack. Use <code>theme="sap-horizon"</code> and friends.
         </p>
         <Grid columns={{ base: 1, md: 2 }} gap={4}>
@@ -92,7 +92,7 @@ export function Themes() {
         <h2 id="themes-custom">Custom branding</h2>
         <CodeBlock code={custom} language="css" label="Custom theme" />
         <MessageStrip tone="warning" title="Check contrast:">
-          When overriding colour tokens, keep text at 4.5:1 and interactive borders and focus indicators at 3:1 against their backgrounds.
+          When overriding color tokens, keep text at 4.5:1 and interactive borders and focus indicators at 3:1 against their backgrounds.
           The repository includes <code>node scripts/contrast.mjs</code> to verify theme pairs.
         </MessageStrip>
         <h2 id="themes-motion">Reduced motion</h2>

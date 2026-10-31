@@ -23,7 +23,7 @@ export interface MetricCardProps extends Omit<HTMLAttributes<HTMLElement>, 'titl
   /** Unit or scale, e.g. `EUR`, `K`, `%`. */
   unit?: ReactNode;
   trend?: MetricTrend;
-  /** Colour the value by status (Fiori semantic KPI colouring). */
+  /** Color the value by status (Fiori semantic KPI coloring). */
   tone?: Exclude<Tone, 'neutral'>;
   icon?: ReactNode;
   /** Data points for a small trend line. */

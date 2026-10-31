@@ -44,17 +44,17 @@ export const tokenGroups: TokenGroup[] = [
   },
   {
     id: 'text', title: 'Text & borders', kind: 'color',
-    description: 'Foreground colours and separators.',
+    description: 'Foreground colors and separators.',
     tokens: [
       t('color-text', 'Primary text'), t('color-text-secondary', 'Secondary text, labels'),
-      t('color-text-placeholder', 'Placeholders'), t('color-icon', 'Default icon colour'),
+      t('color-text-placeholder', 'Placeholders'), t('color-icon', 'Default icon color'),
       t('color-border', 'Neutral borders and dividers'), t('color-border-subtle', 'Low-emphasis dividers'),
       t('color-border-strong', 'Input borders (3:1 contrast)'),
     ],
   },
   {
     id: 'semantic', title: 'Semantic', kind: 'color',
-    description: 'Status colours. Each has -text, -subtle and -border variants.',
+    description: 'Status colors. Each has -text, -subtle and -border variants.',
     tokens: [
       t('color-success', 'Positive'), t('color-success-subtle'), t('color-warning', 'Critical'), t('color-warning-subtle'),
       t('color-error', 'Negative'), t('color-error-subtle'), t('color-info', 'Information'), t('color-info-subtle'),
@@ -63,7 +63,7 @@ export const tokenGroups: TokenGroup[] = [
   },
   {
     id: 'accent', title: 'Accent palette', kind: 'color',
-    description: 'Categorical colours for avatars, charts and tags.',
+    description: 'Categorical colors for avatars, charts and tags.',
     tokens: [1, 2, 3, 4, 5, 6, 7, 8].map((n) => t(`color-accent-${n}`)),
   },
   {

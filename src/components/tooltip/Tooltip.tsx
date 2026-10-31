@@ -44,6 +44,12 @@ export function Tooltip({ content, children, placement = 'top', delay = 400, dis
     clearTimeout(hideTimer.current);
   }, []);
   useEscapeKey(() => setOpen(false), open);
+  // Close an open tooltip when it becomes disabled.
+  useEffect(() => {
+    if (!disabled) return;
+    clearTimeout(showTimer.current);
+    setOpen(false);
+  }, [disabled]);
 
   const show = (immediate: boolean) => {
     if (disabled) return;

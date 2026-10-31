@@ -2184,7 +2184,7 @@ The following shortcuts are available:
 #### Description and keyboard interaction
 
 ##### Overview
-The `DateTimePicker` component alows users to select both date (day, month and year) and time (hours, minutes and seconds)
+The `DateTimePicker` component allows users to select both date (day, month and year) and time (hours, minutes and seconds)
 and for the purpose it consists of input field and Date/Time picker.
 
 ##### Usage
@@ -2808,10 +2808,10 @@ Items are grouped into `ui5-form-group` elements, allowing the following navigat
 | `accessibleName` | `string \| undefined` | `undefined` | Defines the accessible ARIA name of the component. |
 | `accessibleNameRef` | `string \| undefined` | `undefined` | Defines id (or many ids) of the element (or elements) that label the component. |
 | `emptySpan` | `string` | `"S0 M0 L0 XL0"` | Defines the number of cells that are empty at the end of each form item, configurable by breakpoint.<br><br>By default, a form item spans 12 cells, fully divided between its label (4 cells) and field (8 cells), with no empty space at the end.<br>The `emptySpan` provides additional layout flexibility by defining empty space at the form item’s end.<br><br>**Note:**<br>- The maximum allowable empty space is 10 cells. At least 1 cell each must remain for the label and the field.<br>- When `emptySpan` is specified (greater than 0), ensure that the combined value of `emptySpan` and `labelSpan` does not exceed 11. This guarantees a minimum of 1 cell for the field. |
-| `headerLevel` | `` `${TitleLevel}` `` | `"H2"` | Defines the compoennt heading level,<br>set by the `headerText`. |
+| `headerLevel` | `` `${TitleLevel}` `` | `"H2"` | Defines the component heading level,<br>set by the `headerText`. |
 | `headerText` | `string \| undefined` | `undefined` | Defines the header text of the component.<br><br>**Note:** The property gets overridden by the `header` slot. |
-| `itemSpacing` | `` `${FormItemSpacing}` `` | `"Normal"` | Defines the vertical spacing between form items.<br><br>**Note:** If the Form is meant to be switched between "display"("non-edit") and "edit" modes,<br>we recommend using "Large" item spacing in "display"("non-edit") mode, and "Normal" - for "edit" mode,<br>to avoid "jumping" effect, caused by the hight difference between texts in "display"("non-edit") mode and the input fields in "edit" mode. |
-| `labelSpan` | `string` | `"S12 M4 L4 XL4"` | Defines the width proportion of the labels and fields of a form item by breakpoint.<br><br>By default, the labels take 4/12 (or 1/3) of the form item in M,L and XL sizes,<br>and 12/12 in S size, e.g in S the label is on top of its associated field.<br><br>The supported values are between 1 and 12. Greater the number, more space the label will use.<br><br>**Note:** If "12" is set, the label will be displayed on top of its assosiated field. |
+| `itemSpacing` | `` `${FormItemSpacing}` `` | `"Normal"` | Defines the vertical spacing between form items.<br><br>**Note:** If the Form is meant to be switched between "display"("non-edit") and "edit" modes,<br>we recommend using "Large" item spacing in "display"("non-edit") mode, and "Normal" - for "edit" mode,<br>to avoid "jumping" effect, caused by the height difference between texts in "display"("non-edit") mode and the input fields in "edit" mode. |
+| `labelSpan` | `string` | `"S12 M4 L4 XL4"` | Defines the width proportion of the labels and fields of a form item by breakpoint.<br><br>By default, the labels take 4/12 (or 1/3) of the form item in M,L and XL sizes,<br>and 12/12 in S size, e.g in S the label is on top of its associated field.<br><br>The supported values are between 1 and 12. Greater the number, more space the label will use.<br><br>**Note:** If "12" is set, the label will be displayed on top of its associated field. |
 | `layout` | `string` | `"S1 M1 L2 XL3"` | Defines the number of columns to distribute the form content by breakpoint.<br><br>Supported values:<br>- `S` - 1 column by default (1 column is recommended)<br>- `M` - 1 column by default (up to 2 columns are recommended)<br>- `L` - 2 columns by default (up to 3 columns are recommended)<br>- `XL` - 3 columns by default (up to 6 columns  are recommended) |
 
 #### Slots
@@ -2888,7 +2888,7 @@ e.g to group FormItems that logically belong together.
 | `accessibleNameRef` | `string \| undefined` | `undefined` | Defines id (or many ids) of the element (or elements) that label the component. |
 | `colSpan` | `string \| undefined` | `undefined` | Defines the number of columns to distribute the form content by breakpoint (S1 M2 L3 XL4 for example).<br><br>**Note:** This property is ignored if `columnSpan` is set, as it is expected that the column span is defined. |
 | `columnSpan` | `number \| undefined` | `undefined` | Defines column span of the component,<br>e.g how many columns the group should span to.<br><br>**Note:** If this property is set, it has higher priority than `colSpan` and `colSpan` will be ignored. |
-| `headerLevel` | `` `${TitleLevel}` `` | `"H3"` | Defines the compoennt heading level,<br>set by the `headerText`. |
+| `headerLevel` | `` `${TitleLevel}` `` | `"H3"` | Defines the component heading level,<br>set by the `headerText`. |
 | `headerText` | `string \| undefined` | `undefined` | Defines header text of the component. |
 
 #### Slots
@@ -3369,7 +3369,7 @@ on several lines instead of being truncated.
 | `accessibleName` | `string \| undefined` | `undefined` | Defines the accessible ARIA name of the component. |
 | `accessibleNameRef` | `string \| undefined` | `undefined` | Receives id(or many ids) of the elements that label the input |
 | `accessibleRole` | `` `${LinkAccessibleRole}` `` | `"Link"` | Defines the ARIA role of the component.<br><br>**Note:** Set the role to <code>LinkAccessibleRole.Button</code> when the link triggers an action instead of navigating (when the <code>href</code> property is not defined). Otherwise, the component keeps the default <code>"Link"</code> role, and some screen readers (for example, JAWS in browse mode) cannot activate it, as a link with no <code>href</code> has no destination to navigate to. |
-| `design` | `` `${LinkDesign}` `` | `"Default"` | Defines the component design.<br><br>**Note:** Avaialble options are `Default`, `Subtle`, and `Emphasized`. |
+| `design` | `` `${LinkDesign}` `` | `"Default"` | Defines the component design.<br><br>**Note:** Available options are `Default`, `Subtle`, and `Emphasized`. |
 | `disabled` | `boolean` | `false` | Defines whether the component is disabled.<br><br>**Note:** When disabled, the click event cannot be triggered by the user. |
 | `endIcon` | `string \| undefined` | `undefined` | Defines the icon, displayed as graphical element within the component after the link's text.<br>The SAP-icons font provides numerous options.<br><br>**Note:** Usage of icon-only link is not supported, the link must always have a text.<br><br>**Note:** We recommend using аn icon in the beginning or the end only, and with text.<br><br>See all the available icons within the [Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html). |
 | `href` | `string \| undefined` | `undefined` | Defines the component href.<br><br>**Note:** Standard hyperlink behavior is supported. |
@@ -3823,7 +3823,7 @@ An arbitrary hierarchy structure can be represented by recursively nesting menu 
 ##### Keyboard Handling
 
 The `ui5-menu` provides advanced keyboard handling.
-The user can use the following keyboard shortcuts in order to navigate trough the tree:
+The user can use the following keyboard shortcuts in order to navigate through the tree:
 
 - `Arrow Up` / `Arrow Down` - Navigates up and down the menu items that are currently visible.
 - `Arrow Right`, `Space` or `Enter` - Opens a sub-menu if there are menu items nested
@@ -3998,7 +3998,7 @@ If multiple items are marked as checked, the last checked item will take precede
 ##### Usage
 
 `ui5-menu-item-group` represents a collection of `ui5-menu-item` components that can have the same check mode.
-The items are addeed to the group's `items` slot.
+The items are added to the group's `items` slot.
 
 ##### ES6 Module Import
 
@@ -6056,7 +6056,7 @@ that can be used to split the `ui5-input` suggestions into groups.
 The `ui5-switch` component is used for changing between binary states.
 
 The component can display texts, that will be switched, based on the component state, via the `textOn` and `textOff` properties,
-but texts longer than 3 letters will be cutted off.
+but texts longer than 3 letters will be cut off.
 
 However, users are able to customize the width of `ui5-switch` with pure CSS (`<ui5-switch style="width: 200px">`), and set widths, depending on the texts they would use.
 
@@ -7442,7 +7442,7 @@ When opened:
 - [Shift]+[Ctrl]+[Page Down] - Decrements seconds by 1.
 - [A] or [P] - Selects AM or PM respectively.
 - [0]-[9] - Allows direct time selecting (hours/minutes/seconds).
-- [:] - Allows switching between hours/minutes/seconds clocks. If the last clock is displayed and [:] is pressed, the first clock is beind displayed.
+- [:] - Allows switching between hours/minutes/seconds clocks. If the last clock is displayed and [:] is pressed, the first clock is behind displayed.
 
 ##### ES6 Module Import
 
@@ -7457,13 +7457,13 @@ When opened:
 | `accessibleName` | `string \| undefined` | `undefined` | Defines the aria-label attribute for the component. |
 | `accessibleNameRef` | `string \| undefined` | `undefined` | Receives id (or many ids) of the elements that label the component. |
 | `dateValue` | `Date \| null` | `null` | Currently selected time represented as JavaScript Date instance |
-| `disabled` | `boolean` | `false` | Defines the disabled state of the comonent. |
+| `disabled` | `boolean` | `false` | Defines the disabled state of the component. |
 | `displayFormat` | `string \| undefined` | `undefined` | Determines the format, displayed in the input field. |
 | `formatPattern` | `string \| undefined` | `undefined` | Determines the format, displayed in the input field.<br><br>Example:<br>HH:mm:ss -> 11:42:35<br>hh:mm:ss a -> 2:23:15 PM<br>mm:ss -> 12:04 (only minutes and seconds)<br>**Deprecated:** Use displayFormat and valueFormat instead |
 | `name` | `string \| undefined` | `undefined` | Determines the name by which the component will be identified upon submission in an HTML form.<br><br>**Note:** This property is only applicable within the context of an HTML Form element. |
 | `open` | `boolean` | `false` | Defines the open or closed state of the popover. |
 | `placeholder` | `string \| undefined` | `undefined` | Defines a short hint, intended to aid the user with data entry when the<br>component has no value.<br><br>**Note:** When no placeholder is set, the format pattern is displayed as a placeholder.<br>Passing an empty string as the value of this property will make the component appear empty - without placeholder or format pattern. |
-| `readonly` | `boolean` | `false` | Defines the readonly state of the comonent. |
+| `readonly` | `boolean` | `false` | Defines the readonly state of the component. |
 | `required` | `boolean` | `false` | Defines whether the component is required. |
 | `value` | `string` | `""` | Defines a formatted time value. |
 | `valueFormat` | `string \| undefined` | `undefined` | Determines the format, used for the value attribute. |
@@ -8255,7 +8255,7 @@ The `ui5-tree` component provides a tree structure for displaying data in a hier
 ##### Keyboard Handling
 
 The `ui5-tree` provides advanced keyboard handling.
-The user can use the following keyboard shortcuts in order to navigate trough the tree:
+The user can use the following keyboard shortcuts in order to navigate through the tree:
 
 - [Up] or [Down] - Navigates up and down the tree items that are currently visible.
 - [Right] - Drills down the tree by expanding the tree nodes.
@@ -8504,7 +8504,7 @@ The `BarcodeScannerDialog` component provides barcode scanning functionality for
 Opening the dialog launches the device camera and scans for known barcode formats.
 
 A `scanSuccess` event fires whenever a barcode is identified
-and a `scanError` event fires when the scan failed (for example, due to missing permisions).
+and a `scanError` event fires when the scan failed (for example, due to missing permissions).
 
 Internally, the component  uses the zxing-js/library third party OSS.
 
@@ -9726,7 +9726,7 @@ This component provides a fast navigation using the following keyboard shortcuts
 
 | Slot | TypeScript slot type | Description |
 | --- | --- | --- |
-| `avatar` | `Slot<HTMLElement>` | Defines the avatar, displayed in the `ui5-li-notification`.<br><br>**Note:** Consider using the `ui5-avatar` to display icons, initials or images.<br><br>**Note:** In order to be complaint with the UX guidlines and for best experience,<br>we recommend using avatars with 2rem X 2rem in size (32px X 32px). In case you are using the `ui5-avatar`<br>you can set its `size` property to `XS` to get the required size - `<ui5-avatar size="XS"></ui5-avatar>`. |
+| `avatar` | `Slot<HTMLElement>` | Defines the avatar, displayed in the `ui5-li-notification`.<br><br>**Note:** Consider using the `ui5-avatar` to display icons, initials or images.<br><br>**Note:** In order to be complaint with the UX guidelines and for best experience,<br>we recommend using avatars with 2rem X 2rem in size (32px X 32px). In case you are using the `ui5-avatar`<br>you can set its `size` property to `XS` to get the required size - `<ui5-avatar size="XS"></ui5-avatar>`. |
 | `default` | `DefaultSlot<Node>` | Defines the content of the `ui5-li-notification`,<br>usually a description of the notification.<br><br>**Note:** Although this slot accepts HTML Elements, it is strongly recommended that you only use text in order to preserve the intended design. |
 | `footnotes` | `Slot<HTMLElement>` | Defines the elements, displayed in the footer of the of the component. |
 | `menu` | `Slot<HTMLElement>` | Defines the menu, displayed in the `ui5-li-notification`.<br><br>**Note:** Use this for implementing actions.<br><br>**Note:** Should be used instead `u5-notification-action`, which is deprecated as of version 2.0. |
@@ -9952,7 +9952,7 @@ shortcuts in order to perform a navigation:
 A `ui5-search` is an input with suggestions, used for user search.
 
 The `ui5-search` consists of several elements parts:
-- Scope - displays a select in the beggining of the component, used for filtering results by their scope.
+- Scope - displays a select in the beginning of the component, used for filtering results by their scope.
 - Input field - for user input value
 - Clear button - gives the possibility for deleting the entered value
 - Search button - a primary button for performing search, when the user has entered a search term
@@ -11008,7 +11008,7 @@ a constrained height in this mode so it owns its scrollbar.
 ##### Overview
 
 An entry posted on the timeline.
-It is intented to represent a group of `<ui5-timeline-item>`s.
+It is intended to represent a group of `<ui5-timeline-item>`s.
 
 **Note**: Please do not use empty groups in order to preserve the intended design.
 
@@ -11449,7 +11449,7 @@ If multiple items are marked as checked, the last checked item will take precede
 ##### Usage
 
 `ui5-user-menu-item-group` represents a collection of `ui5-user-menu-item` components that can have the same check mode.
-The items are addeed to the group's `items` slot.
+The items are added to the group's `items` slot.
 
 ##### ES6 Module Import
 
@@ -12480,7 +12480,7 @@ Furthermore, you can interact with `ui5-table` via the following keys.
 | `growing` | `` `${TableGrowingMode}` `` | `"None"` | Defines whether the table will have growing capability either by pressing a `More` button,<br>or via user scroll. In both cases `load-more` event is fired.<br><br>Available options:<br><br>`Button` - Shows a `More` button at the bottom of the table, pressing of which triggers the `load-more` event.<br><br>`Scroll` - The `load-more` event is triggered when the user scrolls to the bottom of the table;<br><br>`None` (default) - The growing is off.<br><br>**Restrictions:** `growing="Scroll"` is not supported for Internet Explorer,<br>and the component will fallback to `growing="Button"`. |
 | `growingButtonSubtext` | `string \| undefined` | `undefined` | Defines the subtext that will be displayed under the `growingButtonText`.<br><br>**Note:** This property takes effect if `growing` is set to `Button`. |
 | `growingButtonText` | `string \| undefined` | `undefined` | Defines the text that will be displayed inside the growing button at the bottom of the table,<br>meant for loading more rows upon press.<br><br>**Note:** If not specified a built-in text will be displayed.<br><br>**Note:** This property takes effect if `growing` is set to `Button`. |
-| `hideNoData` | `boolean` | `false` | Defines if the value of `noDataText` will be diplayed when there is no rows present in the table. |
+| `hideNoData` | `boolean` | `false` | Defines if the value of `noDataText` will be displayed when there is no rows present in the table. |
 | `mode` | `` `${TableMode}` `` | `"None"` | Defines the mode of the component. |
 | `noDataText` | `string \| undefined` | `undefined` | Defines the text that will be displayed when there is no data and `hideNoData` is not present. |
 | `stickyColumnHeader` | `boolean` | `false` | Determines whether the column headers remain fixed at the top of the page during<br>vertical scrolling as long as the Web Component is in the viewport.<br><br>**Restrictions:**<br><br>- Browsers that do not support this feature:<br><br>- Internet Explorer<br>- Microsoft Edge lower than version 41 (EdgeHTML 16)<br>- Mozilla Firefox lower than version 59<br><br>- Scrolling behavior:<br><br>- If the Web Component is placed in layout containers that have the `overflow: hidden`<br>or `overflow: auto` style definition, this can<br>prevent the sticky elements of the Web Component from becoming fixed at the top of the viewport. |

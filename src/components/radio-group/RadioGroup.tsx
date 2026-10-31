@@ -34,7 +34,7 @@ export interface RadioGroupProps<V extends string = string> {
   className?: string;
 }
 
-/** Choose exactly one option. Arrow keys move between options (native behaviour). */
+/** Choose exactly one option. Arrow keys move between options (native behavior). */
 function RadioGroupInner<V extends string = string>(
   {
     label, options, value, defaultValue = null, onChange, name, orientation = 'vertical',

@@ -11,7 +11,7 @@ export function renderWithTheme(ui: ReactElement, options?: RenderOptions) {
   return { user, ...result };
 }
 
-/** Runs axe on a container and returns the violations (colour contrast is checked in the browser suite). */
+/** Runs axe on a container and returns the violations (color contrast is checked in the browser suite). */
 export async function axeViolations(container: Element, { ignoreStructure = false } = {}) {
   // Page-structure rules only make sense for whole pages, not isolated fragments.
   const structure = ['landmark-banner-is-top-level', 'landmark-unique', 'heading-order', 'landmark-no-duplicate-main', 'landmark-main-is-top-level'];

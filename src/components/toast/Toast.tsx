@@ -47,7 +47,10 @@ const ICONS = { neutral: Info, information: Info, success: CheckCircle2, warning
 function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: string) => void }) {
   const tone = toast.tone ?? 'neutral';
   const duration = toast.duration ?? (tone === 'error' ? 0 : 5000);
-  const [paused, setPaused] = useState(false);
+  // Hover and keyboard focus pause independently, so moving the pointer away does not dismiss a toast that still has focus.
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const paused = hovered || focused;
   const remaining = useRef(duration);
   const started = useRef(Date.now());
 
@@ -65,10 +68,10 @@ function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: s
   return (
     <li
       className={cx(styles.toast, styles[tone])}
-      onPointerEnter={() => setPaused(true)}
-      onPointerLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
+      onPointerEnter={() => setHovered(true)}
+      onPointerLeave={() => setHovered(false)}
+      onFocus={() => setFocused(true)}
+      onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocused(false); }}
     >
       <span className={styles.icon} aria-hidden="true">
         <Icon />

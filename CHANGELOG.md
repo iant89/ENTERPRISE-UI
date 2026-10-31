@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Enterprise UI Studio
+
+- Added Enterprise UI Studio (`/studio`, milestones M0–M2), a browser IDE built into the docs (`docs-dist/studio/`) and opened from the docs navigation or "Open in Studio" on any example. MIT licensed; the library's license is unchanged.
+- Code editing: lazy-loaded Monaco with the library's TypeScript types, Prettier formatting (Shift+Alt+F) and a live sandboxed preview in all 7 themes.
+- Visual editing: palette generated from the API metadata (drag or Enter to insert), outline, canvas selection, Inspector (Properties, Events, States), move, duplicate and delete, and one undo/redo history for visual and code edits.
+- IndexedDB autosave and a single-file Download App.tsx. Single page only for now.
+
+### Library
+
+- Documented every component property and redesigned the API reference, with generated API metadata (`scripts/extract-api.mjs`) and a description check (`scripts/check-api-descriptions.mjs`).
 - Fixed: a polite screen-reader announcement no longer clears an earlier assertive one before its 7-second window, and pending announcements are cancelled on unmount.
 - Fixed: a toast with keyboard focus is no longer auto-dismissed when the pointer leaves it.
 - Fixed: Tooltip closes when `disabled` becomes true while it is open.

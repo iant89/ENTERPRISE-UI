@@ -24,7 +24,7 @@ All three were retargeted to `main` and merged in order on Oct 30, 2026:
 
 ## Next steps
 1. Check the M0–M2 scope against the plan, especially drag and drop, Inspector edits updating the code, and undo and redo.
-2. Then M3 (multi-file projects, ZIP import and export), M4 (testing panels), M5 (polish), per the plan.
+2. M3 (multi-file projects, templates, ZIP import and export) has not started yet; the Studio Tech Lead is writing its design. After M3: M4 (testing panels), M5 (polish), per the plan.
 
 ## Rules
-Nothing merges without the captain's explicit word. Don't force-push. Keep CI green.
+Nothing merges without Ian's explicit approval. Don't force-push. Keep CI green.

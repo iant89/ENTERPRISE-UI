@@ -4,7 +4,9 @@ import type { Project } from './model/project';
  * Project persistence in IndexedDB (docs/plans/studio-m3-design.md §2.3, ide-design.md §5.7).
  *
  * DB v2 has two stores: `projects` (key = `project.id`, value = `Project`) and `meta`
- * (key `lastOpened`). Upgrading from v1 wraps the single-page record `current` as a project.
+ * (key `lastOpened`). Upgrading from v1 wraps the single-page record `current` as a project and
+ * leaves `current` untouched in the same store (never read again) so it can be recovered by hand.
+ * Downgrading to an M2 build is not supported: it opens version 1 and fails on a v2 database.
  * Undo history is not persisted (decision T4).
  */
 export const DB_NAME = 'eui-studio';
@@ -35,9 +37,8 @@ function upgrade(request: IDBOpenDBRequest, oldVersion: number) {
     const get = projects.get(V1_KEY);
     get.onsuccess = () => {
       const old = get.result as Partial<SavedProject> | undefined;
-      if (old === undefined) return;
-      projects.delete(V1_KEY);
-      if (typeof old?.code !== 'string') return; // corrupt v1 record: drop it rather than fail the upgrade
+      // The v1 record stays where it is (manual recovery); only a valid one is migrated.
+      if (typeof old?.code !== 'string') return;
       const at = typeof old.updatedAt === 'number' ? old.updatedAt : Date.now();
       const project = newProject({ [ENTRY]: old.code }, 'My application', at);
       projects.put(project, project.id);
@@ -70,12 +71,24 @@ async function run<T>(store: string, mode: IDBTransactionMode, action: (store: I
 
 // ---------------------------------------------------------------- project list API
 
-export const getProject = (id: string) => run<Project | undefined>(PROJECTS, 'readonly', (s) => s.get(id));
-export const putProject = async (project: Project) => { await run(PROJECTS, 'readwrite', (s) => s.put(project, project.id)); };
+/** True for a v2 project record; filters out the retained v1 `current` record. */
+const isProject = (value: unknown): value is Project =>
+  !!value && typeof value === 'object' && typeof (value as Project).id === 'string' && (value as Project).id !== V1_KEY && typeof (value as Project).files === 'object';
+
+export const getProject = async (id: string): Promise<Project | undefined> => {
+  if (id === V1_KEY) return undefined;
+  const value = await run<unknown>(PROJECTS, 'readonly', (s) => s.get(id));
+  return isProject(value) ? value : undefined;
+};
+export const putProject = async (project: Project) => {
+  if (project.id === V1_KEY) throw new Error(`"${V1_KEY}" is reserved for the retained v1 record`);
+  await run(PROJECTS, 'readwrite', (s) => s.put(project, project.id));
+};
 
 export async function listProjects(): Promise<ProjectSummary[]> {
-  const all = await run<Project[]>(PROJECTS, 'readonly', (s) => s.getAll());
+  const all = await run<unknown[]>(PROJECTS, 'readonly', (s) => s.getAll());
   return all
+    .filter(isProject)
     .map(({ id, name, createdAt, updatedAt, files, template }) => ({ id, name, createdAt, updatedAt, fileCount: Object.keys(files).length, ...(template ? { template } : {}) }))
     .sort((a, b) => b.updatedAt - a.updatedAt);
 }

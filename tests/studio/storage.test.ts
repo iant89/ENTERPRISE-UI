@@ -49,8 +49,19 @@ function rawKeys(store: string) {
   });
 }
 
+function rawValue(store: string, key: IDBValidKey) {
+  return new Promise<unknown>((resolve) => {
+    const req = indexedDB.open(DB_NAME);
+    req.onsuccess = () => {
+      const db = req.result;
+      const r = db.transaction(store).objectStore(store).get(key);
+      r.onsuccess = () => { db.close(); resolve(r.result); };
+    };
+  });
+}
+
 describe('migration from v1', () => {
-  it('wraps the v1 `current` record as a project and deletes `current`', async () => {
+  it('wraps the v1 `current` record as a project and leaves `current` in place', async () => {
     await seedV1({ code: 'export default 1;', updatedAt: 1234 });
     const list = await listProjects();
     expect(list).toHaveLength(1);
@@ -60,7 +71,7 @@ describe('migration from v1', () => {
     expect(p.name).toBe('My application');
     expect(p.updatedAt).toBe(1234);
     expect(await getLastOpened()).toBe(p.id);
-    expect(await rawKeys('projects')).toEqual([p.id]);
+    expect((await rawKeys('projects')).sort()).toEqual([p.id, 'current'].sort());
     expect(DB_VERSION).toBe(2);
   });
   it('the old single-page API still returns the migrated code', async () => {
@@ -74,10 +85,27 @@ describe('migration from v1', () => {
     expect(await listProjects()).toEqual([]);
     expect(await loadProject()).toBeUndefined();
   });
-  it('ignores a corrupt v1 record instead of failing the upgrade', async () => {
+  it('ignores a corrupt v1 record instead of failing the upgrade, and keeps it', async () => {
     await seedV1({ nope: true });
     expect(await listProjects()).toEqual([]);
-    expect(await rawKeys('projects')).toEqual([]);
+    expect(await rawKeys('projects')).toEqual(['current']);
+  });
+  it('keeps the v1 record byte-for-byte for manual recovery, without ever reading it again', async () => {
+    const v1 = { code: 'export default function Page() { return null; }', updatedAt: 42 };
+    await seedV1(v1);
+    const [summary] = await listProjects();
+    await saveProject('changed');
+    await deleteProject(summary.id);
+    expect(await rawValue('projects', 'current')).toEqual(v1);
+    expect(await listProjects()).toEqual([]);
+    expect(await getProject('current')).toBeUndefined();
+    expect(await loadProject()).toBeUndefined();
+    await saveProject('fresh');
+    expect((await listProjects()).length).toBe(1);
+    expect(await rawValue('projects', 'current')).toEqual(v1);
+  });
+  it('never overwrites the retained record through putProject', async () => {
+    await expect(putProject({ ...createProject({}), id: 'current' })).rejects.toThrow(/reserved/);
   });
 });
 

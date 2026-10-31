@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Code2, SquareArrowOutUpRight } from 'lucide-react';
+import { Code2, PencilRuler, SquareArrowOutUpRight } from 'lucide-react';
 import { Button, cx } from '@enterprise-ui/react';
 import type { Example } from '../examples';
 import { CodeBlock } from './CodeBlock';
@@ -25,6 +25,16 @@ export function ExampleBlock({ example, headingLevel = 3 }: { example: Example; 
       <div className={styles.exampleActions}>
         <Button size="sm" variant="tertiary" icon={<Code2 />} aria-expanded={showCode} aria-controls={codeId} onClick={() => setShowCode(!showCode)}>
           {showCode ? 'Hide code' : 'Show code'}
+        </Button>
+        <Button
+          size="sm"
+          variant="tertiary"
+          icon={<PencilRuler />}
+          aria-describedby={`${codeId}-title`}
+          data-open-studio={example.id}
+          onClick={async () => { window.location.href = `studio/${(await playgroundHref(example.code)).replace('#/playground', '#')}`; }}
+        >
+          Open in Studio
         </Button>
         <Button
           size="sm"

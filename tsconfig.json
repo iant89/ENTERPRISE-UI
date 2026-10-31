@@ -22,5 +22,5 @@
       "@enterprise-ui/react": ["./src/index.ts"]
     }
   },
-  "include": ["src", "docs", "examples", "tests", "scripts", "*.ts"]
+  "include": ["src", "docs", "examples", "tests", "scripts", "studio", "*.ts"]
 }

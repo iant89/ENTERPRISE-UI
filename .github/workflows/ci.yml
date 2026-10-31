@@ -44,6 +44,8 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+      # The Studio is built with the docs by the e2e web server; keep its initial download within budget.
+      - run: npm run test:studio-size
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

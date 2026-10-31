@@ -58,7 +58,7 @@ describe('validateEntry', () => {
     expect(validateEntry('pages/Home.tsx', ctx)).toEqual({ path: 'src/components/pages/Home.tsx', error: null });
   });
   it('keeps new files under src/ except .md and .json at the root', () => {
-    expect(validateEntry('Root.tsx', { ...ctx, folder: '' }).error).toBe('New files go in src/. Only .md and .json files can sit at the root.');
+    expect(validateEntry('Root.tsx', { ...ctx, folder: '' }).error).toBe('Only .md and .json files can go at the root. Put other files in src/.');
     expect(validateEntry('notes.md', { ...ctx, folder: '' }).error).toBeNull();
   });
   it('enforces the 200-file and 10 MB limits on create', () => {
@@ -83,7 +83,7 @@ describe('targetFolder', () => {
     expect(targetFolder('dir:src/components')).toBe('src/components');
     expect(targetFolder('src/components/Header.tsx')).toBe('src/components');
     expect(targetFolder(null)).toBe('src');
-    expect(targetFolder('README.md')).toBe('src');
+    expect(targetFolder('README.md')).toBe('');
   });
 });
 
@@ -106,6 +106,10 @@ describe('copyName', () => {
     expect(copyName('src/Header.tsx', { 'src/Header.tsx': '' })).toBe('src/Header-copy.tsx');
     expect(copyName('src/Header.tsx', { 'src/Header.tsx': '', 'src/Header-copy.tsx': '' })).toBe('src/Header-copy-2.tsx');
     expect(copyName('src/Header-copy.tsx', { 'src/Header.tsx': '', 'src/Header-copy.tsx': '' })).toBe('src/Header-copy-2.tsx');
+    const three = { 'src/Header.tsx': '', 'src/Header-copy.tsx': '', 'src/Header-copy-2.tsx': '' };
+    expect(copyName('src/Header.tsx', three)).toBe('src/Header-copy-3.tsx');
+    expect(copyName('src/Header-copy-2.tsx', three)).toBe('src/Header-copy-3.tsx');
+    expect(copyName('src/Header-copy.tsx', three)).not.toContain('copy-copy');
   });
 });
 

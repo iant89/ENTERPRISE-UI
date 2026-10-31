@@ -1,6 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import {
-  ApplicationHeader, BusyIndicator, VisuallyHidden, Button, IconButton, MessageStrip, SegmentedButton, Select, ThemeProvider, THEMES, ToastProvider, useToast,
+  ApplicationHeader, BusyIndicator, VisuallyHidden, Button, IconButton, MessageStrip, SegmentedButton, Select, ThemeProvider, THEMES, ToastProvider, useAnnouncer, useToast,
   type Density, type ThemeName, type ThemePreference,
 } from '@enterprise-ui/react';
 import { cx } from '../../src/utilities/cx';
@@ -50,6 +50,7 @@ interface StudioAppProps { theme: ThemePreference; setTheme: (theme: ThemePrefer
 
 function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   const toast = useToast();
+  const announce = useAnnouncer();
   const [state, dispatch] = useReducer(reducer, undefined, () => createStore(starterProject()));
   const [collapsed, setCollapsed] = useState(loadCollapsed);
   useEffect(() => { try { localStorage.setItem(PANES_KEY, JSON.stringify(collapsed)); } catch { /* private mode */ } }, [collapsed]);
@@ -261,8 +262,11 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
               collapseToggle={paneToggle('files', 'Files')}
               onOpen={(path) => {
                 dispatch({ type: 'openFile', path });
-                // Until editor tabs (UX-10) land, a non-entry file is shown in the code editor.
-                if (path !== entry && view === 'design') setView('split');
+                // TODO(UX-10): remove this switch to Split once editor tabs ship; tabs show the opened file.
+                if (path !== entry && view === 'design') {
+                  setView('split');
+                  announce(`Switched to Split view to show ${path.slice(path.lastIndexOf('/') + 1)}.`);
+                }
               }}
             />
           </section>

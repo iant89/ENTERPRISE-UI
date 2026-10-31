@@ -15,12 +15,12 @@ const FILES = {
 };
 
 let latest: StoreState;
-function Harness({ onOpen = () => {}, errors }: { onOpen?: (p: string) => void; errors?: string[] }) {
-  const [state, dispatch] = useReducer(storeReducer, undefined, () => createStore(createProject(FILES)));
+function Harness({ onOpen = () => {}, errors, announce, files = FILES }: { onOpen?: (p: string) => void; errors?: string[]; announce?: (m: string) => void; files?: Record<string, string> }) {
+  const [state, dispatch] = useReducer(storeReducer, undefined, () => createStore(createProject(files)));
   latest = state;
   return (
     <ToastProvider>
-      <FileTree state={state} dispatch={dispatch} onOpen={(p) => { dispatch({ type: 'openFile', path: p }); onOpen(p); }} errorPaths={errors} />
+      <FileTree state={state} dispatch={dispatch} onOpen={(p) => { dispatch({ type: 'openFile', path: p }); onOpen(p); }} errorPaths={errors} announce={announce} />
     </ToastProvider>
   );
 }
@@ -33,9 +33,11 @@ describe('FileTree', () => {
   it('shows the pane title with the file count and the tree with markers in the accessible name', () => {
     setup({ errors: ['src/components/Footer.tsx'] });
     expect(screen.getByRole('heading', { name: /Files · 4/ })).toBeInTheDocument();
-    expect(item(/^App\.tsx ?, entry/)).toBeInTheDocument();
-    expect(item(/^Footer\.tsx ?, not used by the entry page, has an error/)).toBeInTheDocument();
-    expect(item(/^styles\.css ?, not used by the entry page/)).toBeInTheDocument();
+    // The name is the file name only; markers are the description (designer decision on #24).
+    expect(item(/^App\.tsx$/)).toHaveAccessibleDescription('Entry');
+    expect(item(/^Footer\.tsx$/)).toHaveAccessibleDescription('Not used by the entry page Has an error');
+    expect(item(/^styles\.css$/)).toHaveAccessibleDescription('Not used by the entry page');
+    expect(item(/^Header\.tsx$/)).not.toHaveAttribute('aria-describedby');
   });
 
   it('sorts folders first and pins the entry', () => {
@@ -208,6 +210,36 @@ describe('FileTree', () => {
     setup();
     act(() => { /* selection is controlled by activePath */ });
     expect(item(/^App\.tsx/)).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('offers "Create in src/" after a root-level create error', async () => {
+    const { user } = setup({ files: { ...FILES, 'README.md': '' } });
+    item(/^README\.md/).focus();
+    await user.keyboard('{Alt>}n{/Alt}{Enter}');
+    expect(screen.getByText(/^Only \.md and \.json files can go at the root\. Put other files in src\/\./)).toBeInTheDocument();
+    await user.click(screen.getByRole('link', { name: 'Create in src/' }));
+    expect(latest.project.files['src/Component.tsx']).toContain('function Component()');
+  });
+
+  it('announces why a drop is not allowed', async () => {
+    const announce = vi.fn();
+    setup({ announce });
+    const row = (re: RegExp) => item(re).firstElementChild as HTMLElement;
+    const data = { setData: vi.fn(), getData: vi.fn(), types: ['application/x-eui-studio-path'], dropEffect: 'move', effectAllowed: 'move' };
+    fireEvent.dragStart(row(/^src/), { dataTransfer: data });
+    fireEvent.dragOver(row(/^components/), { dataTransfer: data });
+    fireEvent.dragOver(row(/^components/), { dataTransfer: data });
+    expect(announce.mock.calls.filter(([m]) => m === "A folder can't move into itself.")).toHaveLength(1);
+  });
+
+  it('announces why Move to… is not allowed', async () => {
+    const announce = vi.fn();
+    const { user } = setup({ announce });
+    item(/^Header\.tsx/).focus();
+    await user.keyboard('{Shift>}{F10}{/Shift}');
+    await user.click(within(screen.getByRole('menu')).getByRole('menuitem', { name: /Move to/ }));
+    await user.type(within(screen.getByRole('dialog')).getByRole('textbox', { name: /New folder name/ }), 'a b');
+    await waitFor(() => expect(announce).toHaveBeenCalledWith('Use letters, numbers, dots, hyphens or underscores.'));
   });
 
   it('has no axe violations', async () => {

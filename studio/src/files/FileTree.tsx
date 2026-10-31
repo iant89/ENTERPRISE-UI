@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type Dispatch, type DragEvent as ReactDragEvent, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type ReactNode } from 'react';
 import {
-  AlertDialog, Badge, Button, Dialog, IconButton, Input, Menu, OverflowMenu, Skeleton, Tooltip, Tree, VisuallyHidden, useAnnouncer, useToast,
+  AlertDialog, Badge, Button, Dialog, IconButton, Input, Link, Menu, OverflowMenu, Skeleton, Tooltip, Tree, VisuallyHidden, useAnnouncer, useToast,
   type MenuEntry,
 } from '@enterprise-ui/react';
 import {
@@ -45,6 +45,8 @@ export interface FileTreeProps {
   /** Whether the pane body is collapsed. */
   collapsed?: boolean;
   bodyId?: string;
+  /** Override for announcements (defaults to `useAnnouncer`). */
+  announce?: (message: string) => void;
   /** Class for the `h2` (Studio's shared pane title style). */
   titleClassName?: string;
 }
@@ -70,11 +72,15 @@ interface MenuState { id: string | null; x: number; y: number }
 
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
-export function FileTree({ state, dispatch, onOpen, errorPaths, loading, titleId = 'files-title', collapseToggle, collapsed, bodyId = 'files-body', titleClassName }: FileTreeProps) {
+type DescribedNode = FileNode & { describedBy?: string };
+const markerId = (id: string, kind: string) => `ft-${id.replace(/[^A-Za-z0-9_-]/g, (c) => `_${c.charCodeAt(0).toString(16)}`)}-${kind}`;
+
+export function FileTree({ state, dispatch, onOpen, errorPaths, loading, titleId = 'files-title', collapseToggle, collapsed, bodyId = 'files-body', titleClassName, announce: announceProp }: FileTreeProps) {
   const { project, activePath } = state;
   const { files, entry } = project;
   const toast = useToast();
-  const announce = useAnnouncer();
+  const themeAnnounce = useAnnouncer();
+  const announce = announceProp ?? themeAnnounce;
   const bodyRef = useRef<HTMLDivElement>(null);
   const focusedId = useRef<string | null>(null);
   const keyActivation = useRef(false);
@@ -100,13 +106,13 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, loading, titleId
       const broken = errors.has(n.path);
       const trailing = (isEntry || unused || broken) ? (
         <span className={styles.marker}>
-          <VisuallyHidden>{[isEntry && 'entry', unused && 'not used by the entry page', broken && 'has an error'].filter(Boolean).map((m) => `, ${m}`).join('')}</VisuallyHidden>
-          {isEntry && <Badge tone="neutral" aria-hidden="true">Entry</Badge>}
-          {unused && <span title="Not used by the entry page" aria-hidden="true"><Unlink className={styles.unused} /></span>}
-          {broken && <CircleAlert className={styles.errorIcon} aria-hidden="true" />}
+          {isEntry && <Badge id={markerId(n.id, 'entry')} tone="neutral" aria-hidden="true">Entry</Badge>}
+          {unused && <span id={markerId(n.id, 'unused')} title="Not used by the entry page" aria-hidden="true"><Unlink className={styles.unused} /><VisuallyHidden>Not used by the entry page</VisuallyHidden></span>}
+          {broken && <span id={markerId(n.id, 'error')} aria-hidden="true"><CircleAlert className={styles.errorIcon} /><VisuallyHidden>Has an error</VisuallyHidden></span>}
         </span>
       ) : undefined;
-      return { ...n, icon: ICONS[fileKind(n.path)], trailing };
+      const describedBy = [isEntry && markerId(n.id, 'entry'), unused && markerId(n.id, 'unused'), broken && markerId(n.id, 'error')].filter(Boolean).join(' ');
+      return { ...n, icon: ICONS[fileKind(n.path)], trailing, describedBy };
     });
     let out = decorate(baseNodes);
     if (edit?.mode === 'create') out = insertPlaceholder(out, edit.folder);
@@ -136,10 +142,15 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, loading, titleId
     if (pendingFocus.current && rowEl(pendingFocus.current)) { const id = pendingFocus.current; pendingFocus.current = null; focusRow(id); }
   });
 
-  // Rows are rendered by the library Tree; make them draggable from here. Markers are named by
-  // visually hidden text in the trailing slot, so the name stays content-based (WCAG 2.5.3).
+  // Rows are rendered by the library Tree; from here, make them draggable and point
+  // aria-describedby at the markers. The accessible name stays the file name only (§4.9, designer on #24).
   useEffect(() => {
-    bodyRef.current?.querySelectorAll<HTMLElement>('[role="treeitem"] > div').forEach((row) => { row.draggable = !edit; });
+    bodyRef.current?.querySelectorAll<HTMLElement>('[role="treeitem"]').forEach((li) => {
+      const desc = (nodeById.get(li.dataset.treeId ?? '') as DescribedNode | undefined)?.describedBy;
+      if (desc) li.setAttribute('aria-describedby', desc); else li.removeAttribute('aria-describedby');
+      const row = li.firstElementChild as HTMLElement | null;
+      if (row) row.draggable = !edit;
+    });
   });
 
   // ------------------------------------------------------------ inline editor
@@ -273,6 +284,20 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, loading, titleId
     if (path === edit.self) { (pendingFocus.current = id); return; }
     move(id, path, 'Renamed');
   }, [announce, cancelEdit, ctxFor, dispatch, edit, move, onOpen]);
+
+  /** "Create in src/": retries a root-level create in src/ (designer on #24). */
+  const retryInSrc = () => {
+    if (!edit) return;
+    const next = { ...edit, folder: 'src' };
+    const result = validateEntry(next.value, ctxFor(next));
+    if (result.error || !result.path) { setEdit(next); setError(result.error); return; }
+    setEdit(next);
+    try { dispatch({ type: 'createFile', path: result.path, text: starterContent(result.path) }); } catch (e) { setError((e as Error).message); return; }
+    setEdit(null); setError(null);
+    announce(`Created ${basename(result.path)} in src.`);
+    onOpen(result.path);
+    pendingFocus.current = result.path;
+  };
 
   const deleteBlocked = useCallback((id: string): string | null => {
     if (isFolderId(id)) return Object.keys(files).some((p) => p === entry && p.startsWith(`${pathOf(id)}/`)) ? 'Set another entry file first.' : null;
@@ -426,7 +451,7 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, loading, titleId
 
   // ------------------------------------------------------------ drag and drop (§4.6)
 
-  const drag = useRef<{ id: string; over: HTMLElement | null; timer?: ReturnType<typeof setTimeout> } | null>(null);
+  const drag = useRef<{ id: string; over: HTMLElement | null; timer?: ReturnType<typeof setTimeout>; announced?: string } | null>(null);
 
   const dropTarget = (id: string, targetFolderPath: FilePath): { ok: boolean; reason?: string; to?: FilePath } => {
     const from = pathOf(id);
@@ -476,7 +501,10 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, loading, titleId
     if (row) {
       drag.current.over = row;
       row.dataset.drop = target.ok ? 'valid' : 'invalid';
-      if (!target.ok && target.reason) row.title = target.reason;
+      if (!target.ok && target.reason) {
+        row.title = target.reason;
+        if (drag.current.announced !== target.reason) { drag.current.announced = target.reason; announce(target.reason); }
+      }
       const fid = item!.dataset.treeId!;
       if (target.ok && !expanded.includes(fid) && !drag.current.timer) {
         drag.current.timer = setTimeout(() => setExpanded((prev) => (prev.includes(fid) ? prev : [...prev, fid])), HOVER_EXPAND_MS);
@@ -588,7 +616,14 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, loading, titleId
               onBlur={() => { if (edit) commitEdit(true); }}
             />
             {shownError
-              ? <span id={errorId} className={styles.error}>{shownError}</span>
+              ? (
+                <span id={errorId} className={styles.error}>
+                  {shownError}
+                  {shownError === MESSAGES.root && (
+                    <> <Link href="#" onMouseDown={(e) => e.preventDefault()} onClick={(e) => { e.preventDefault(); retryInSrc(); }}>Create in src/</Link></>
+                  )}
+                </span>
+              )
               : <span id={helperId} className={styles.helper}>{edit.helper}</span>}
           </div>
         )}
@@ -600,6 +635,7 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, loading, titleId
         <MoveDialog
           id={moveId}
           files={files}
+          announce={announce}
           onClose={() => { const id = moveId; setMoveId(null); (pendingFocus.current = id); }}
           onMove={(to) => { const id = moveId; setMoveId(null); move(id, to, 'Moved'); }}
         />
@@ -676,10 +712,10 @@ function ContextMenu({ x, y, items, label, onAction, onClose }: ContextMenuProps
   );
 }
 
-interface MoveDialogProps { id: string; files: Record<FilePath, string>; onClose: () => void; onMove: (to: FilePath) => void }
+interface MoveDialogProps { id: string; files: Record<FilePath, string>; onClose: () => void; onMove: (to: FilePath) => void; announce: (message: string) => void }
 
 /** Keyboard / single-pointer alternative to drag (WCAG 2.5.7, §4.6). */
-function MoveDialog({ id, files, onClose, onMove }: MoveDialogProps) {
+function MoveDialog({ id, files, onClose, onMove, announce }: MoveDialogProps) {
   const from = pathOf(id);
   const name = basename(from);
   const folderNodes = useMemo(() => {
@@ -696,6 +732,7 @@ function MoveDialog({ id, files, onClose, onMove }: MoveDialogProps) {
     return validateEntry(name, { files, folder, kind: isFolderId(id) ? 'folder' : 'file', mode: 'move', self: from });
   }, [files, folder, from, id, name, sub, target]);
   const canMove = !validation.error && !!validation.path;
+  useEffect(() => { if (validation.error) announce(validation.error); }, [announce, validation.error]);
   return (
     <Dialog
       open

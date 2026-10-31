@@ -56,7 +56,7 @@ export const MESSAGES = {
   escape: "Paths can't go outside the project.",
   ext: `Studio supports ${ALLOWED_EXTENSIONS.slice(0, -1).join(', ')} and ${ALLOWED_EXTENSIONS.at(-1)} files.`,
   noExt: 'Add a file extension, for example .tsx.',
-  root: 'New files go in src/. Only .md and .json files can sit at the root.',
+  root: 'Only .md and .json files can go at the root. Put other files in src/.',
   files: `Projects can have up to ${LIMITS.files} files.`,
   bytes: 'This project has reached 10 MB.',
   moveClash: 'A file with this name already exists there.',
@@ -129,11 +129,11 @@ export function validateEntry(input: string, ctx: ValidateContext): Validation {
 
 // ---------------------------------------------------------------- create
 
-/** Target folder for New file / New folder: the focused folder, a focused file's parent, or src (§4.3). */
+/** Target folder for New file / New folder: the focused folder, a focused file's parent (may be the root), or src (§4.3). */
 export function targetFolder(focusedId: string | null): FilePath {
   if (!focusedId) return 'src';
   if (isFolderId(focusedId)) return pathOf(focusedId);
-  return dirname(focusedId) || 'src';
+  return dirname(focusedId); // a root-level file targets the root ('' — only .md/.json are allowed there)
 }
 
 export const newFilePrefill = () => ({ value: 'Component.tsx', select: [0, 9] as [number, number] });

@@ -14,7 +14,7 @@ async function openStudio(page: Page, theme = 'light') {
     localStorage.setItem('eui-docs-theme', t);
   }, theme);
   await page.goto('/studio/');
-  await expect(files(page).getByRole('treeitem', { name: /^App\.tsx ?, entry/ })).toBeVisible();
+  await expect(files(page).getByRole('treeitem', { name: 'App.tsx', exact: true })).toHaveAccessibleDescription('Entry');
 }
 
 const files = (page: Page) => page.getByRole('tree', { name: 'Project files' });
@@ -149,3 +149,15 @@ for (const theme of THEMES) {
     expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(', ')}`)).toEqual([]);
   });
 }
+
+test('opening a non-entry file in Design view switches to Split and announces it', async ({ page }) => {
+  await openStudio(page);
+  await item(page, /^App\.tsx/).focus();
+  await page.keyboard.press('Alt+N');
+  await page.keyboard.type('Banner');
+  await page.keyboard.press('Enter');
+  await page.getByRole('group', { name: 'Editor view' }).getByRole('button', { name: 'Design', exact: true }).click();
+  await item(page, /^Banner\.tsx/).click();
+  await expect(page.getByRole('group', { name: 'Editor view' }).getByRole('button', { name: 'Split', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByText('Switched to Split view to show Banner.tsx.')).toBeAttached();
+});

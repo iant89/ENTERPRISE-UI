@@ -2,8 +2,9 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { compactRoadmap } from '../../scripts/compact-component-roadmap.mjs';
+import { readRoadmap } from '../../scripts/roadmap-parts.mjs';
 
-const roadmap = readFileSync('Component-Impl-Roadmap.md', 'utf8');
+const roadmap = readRoadmap();
 const requested = JSON.parse(readFileSync('scripts/ui5-requested-components.json', 'utf8'));
 const groups = { main: 'Core components', fiori: 'Advanced / Fiori components', compat: 'Compatibility components', ai: 'AI components' };
 const sections = ['Description and keyboard interaction', 'TypeScript properties', 'Slots', 'Events', 'Public methods', 'CSS parts', 'CSS custom states', 'Samples', 'Acceptance and possible tests'];

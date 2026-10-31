@@ -126,6 +126,9 @@ describe('FileTree', () => {
     await user.keyboard('{F2}TopBar{Enter}');
     expect((await screen.findAllByText("Renamed to TopBar.tsx. Couldn't check imports in 1 file:")).length).toBeGreaterThan(0);
     const link = screen.getByRole('link', { name: 'src/Broken.tsx' });
+    // The file is an EUI Link (an <a>), never a Button (#24 review).
+    expect(link.tagName).toBe('A');
+    expect(screen.queryByRole('button', { name: 'src/Broken.tsx' })).toBeNull();
     await user.click(link);
     expect(onOpen).toHaveBeenLastCalledWith('src/Broken.tsx');
     expect(screen.getAllByRole('button', { name: 'Undo' }).length).toBeGreaterThan(0);

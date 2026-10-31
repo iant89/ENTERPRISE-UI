@@ -124,6 +124,14 @@ describe('migration from v1', () => {
     await saveProject('changed');
     expect((await getV1Backup())!.value).toEqual(v1);
   });
+  it('migrates a multi-file v1 record written by the M3-04 build', async () => {
+    await seedV1({ code: 'e', files: { 'src/Main.tsx': 'e', 'src/y.ts': 'y' }, entry: 'src/Main.tsx', updatedAt: 9 });
+    const [summary] = await listProjects();
+    const p = (await getProject(summary.id))!;
+    expect(p.files).toEqual({ 'src/Main.tsx': 'e', 'src/y.ts': 'y' });
+    expect(p.entry).toBe('src/Main.tsx');
+    expect(p.updatedAt).toBe(9);
+  });
   it('backs up a corrupt v1 record too', async () => {
     await seedV1({ nope: true });
     expect((await getV1Backup())!.value).toEqual({ nope: true });
@@ -239,6 +247,20 @@ describe('single-page compatibility (autosave and Ctrl+S in Studio.tsx)', () => 
     expect(saved.files).toEqual({ 'src/App.tsx': 'edited', 'src/x.ts': 'x' });
     expect(saved.updatedAt).toBeGreaterThanOrEqual(p.updatedAt);
     expect((await loadProject())?.code).toBe('edited');
+  });
+  it('saveProject(project) from the M3-04 store replaces files and entry, keeping id and name', async () => {
+    const p = createProject({ 'src/App.tsx': 'a', 'src/old.ts': 'o' }, 'src/App.tsx', 'Mine');
+    await putProject(p);
+    await setLastOpened(p.id);
+    await saveProject(createProject({ 'src/Main.tsx': 'm', 'src/x.ts': 'x' }, 'src/Main.tsx', 'ignored'));
+    const saved = (await getProject(p.id))!;
+    expect(saved.files).toEqual({ 'src/Main.tsx': 'm', 'src/x.ts': 'x' });
+    expect(saved.entry).toBe('src/Main.tsx');
+    expect(saved.name).toBe('Mine');
+    const loaded = (await loadProject())!;
+    expect(loaded.code).toBe('m');
+    expect(loaded.files).toEqual(saved.files);
+    expect(loaded.entry).toBe('src/Main.tsx');
   });
   it('falls back to the newest project when lastOpened is stale', async () => {
     await putProject({ ...createProject({ 'src/App.tsx': 'new' }), updatedAt: 5 });

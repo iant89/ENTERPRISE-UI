@@ -308,3 +308,29 @@
     transition: none;
   }
 }
+
+/* M3 left nav: Files, Components and Outline panes (UX-4 §4.1). */
+.left > .pane { flex: 3 1 0; }
+.left > .filesPane { flex: 4 1 0; }
+.left > .pane.collapsed { flex: 0 0 auto; }
+
+.paneHead {
+  display: flex;
+  align-items: center;
+  gap: var(--eui-space-1);
+}
+
+.paneHead .paneTitle,
+.filesPane .paneTitle {
+  padding-inline-start: 0;
+}
+
+.paneBody {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-block-size: 0;
+  overflow: auto;
+}
+
+.paneBody[hidden] { display: none; }

@@ -40,8 +40,11 @@ export class StorageBlockedError extends Error {
 export interface V1Backup { value: unknown; migratedAt: number }
 const ENTRY = 'src/App.tsx';
 
-/** v1 shape, still returned by `loadProject` until the Studio store becomes project-wide (M3-04). */
-export interface SavedProject { code: string; updatedAt: number }
+/**
+ * v1 record shape, also what `loadProject` returns. `code` is the entry file; `files`/`entry` were
+ * added by M3-04 (#25) for multi-file projects and are absent on pure M2 records.
+ */
+export interface SavedProject { code: string; updatedAt: number; files?: Record<string, string>; entry?: string }
 export interface ProjectSummary { id: string; name: string; createdAt: number; updatedAt: number; fileCount: number; template?: string }
 
 const newId = () => globalThis.crypto.randomUUID();
@@ -63,9 +66,12 @@ function upgrade(request: IDBOpenDBRequest, oldVersion: number) {
       if (old === undefined) return;
       tx.objectStore(META).put({ value: old, migratedAt: Date.now() } satisfies V1Backup, V1_BACKUP);
       // The v1 record stays where it is (manual recovery); only a valid one is migrated.
-      if (typeof old?.code !== 'string') return;
+      const hasFiles = !!old.files && typeof old.files === 'object' && typeof old.entry === 'string';
+      if (typeof old?.code !== 'string' && !hasFiles) return;
       const at = typeof old.updatedAt === 'number' ? old.updatedAt : Date.now();
-      const project = newProject({ [ENTRY]: old.code }, 'My application', at);
+      const project = hasFiles
+        ? { ...newProject({ ...old.files! }, 'My application', at), entry: old.entry! }
+        : newProject({ [ENTRY]: old.code! }, 'My application', at);
       projects.put(project, project.id);
       tx.objectStore(META).put(project.id, LAST_OPENED);
     };
@@ -197,18 +203,27 @@ export async function getCurrentProject(): Promise<Project | undefined> {
 export async function loadProject(): Promise<SavedProject | undefined> {
   try {
     const p = await getCurrentProject();
-    return p ? { code: p.files[p.entry] ?? '', updatedAt: p.updatedAt } : undefined;
+    return p ? { code: p.files[p.entry] ?? '', updatedAt: p.updatedAt, files: p.files, entry: p.entry } : undefined;
   } catch {
     return undefined;
   }
 }
 
-/** Writes `code` into the current project's entry file (creating a project on first save). */
-export async function saveProject(code: string) {
+/**
+ * Saves into the current project (creating one on first save). A `Project` (the M3-04 store's
+ * project) replaces the files and entry; a string (M2 callers) replaces only the entry file.
+ * The stored project's id and name are kept: project identity belongs to storage v2.
+ */
+export async function saveProject(input: string | Project) {
   const current = await getCurrentProject();
-  const project = current
-    ? { ...current, files: { ...current.files, [current.entry]: code }, updatedAt: Date.now() }
-    : newProject({ [ENTRY]: code }, 'My application');
+  const files = typeof input === 'string' ? undefined : { ...input.files };
+  const project: Project = current
+    ? files
+      ? { ...current, files, entry: (input as Project).entry, updatedAt: Date.now() }
+      : { ...current, files: { ...current.files, [current.entry]: input as string }, updatedAt: Date.now() }
+    : files
+      ? { ...newProject(files, 'My application'), entry: (input as Project).entry }
+      : newProject({ [ENTRY]: input as string }, 'My application');
   await putProject(project);
   await setLastOpened(project.id);
 }

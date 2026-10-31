@@ -10,8 +10,8 @@
 - IndexedDB autosave and a single-file Download App.tsx. Single page only for now.
 
 ### Library
-- Documented every component property and redesigned the API reference, with generated API metadata (`scripts/extract-api.mjs`) and a description check (`scripts/check-api-descriptions.mjs`).
 
+- Documented every component property and redesigned the API reference, with generated API metadata (`scripts/extract-api.mjs`) and a description check (`scripts/check-api-descriptions.mjs`).
 - Fixed: a polite screen-reader announcement no longer clears an earlier assertive one before its 7-second window, and pending announcements are cancelled on unmount.
 - Fixed: a toast with keyboard focus is no longer auto-dismissed when the pointer leaves it.
 - Fixed: Tooltip closes when `disabled` becomes true while it is open.

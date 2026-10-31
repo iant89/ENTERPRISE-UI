@@ -148,7 +148,7 @@ interface ProjectHistory { past: Snapshot[]; present: Snapshot; future: Snapshot
 - Undo restores `activePath` to the file the step touched, so the user sees what changed (UX-8).
 - Inside Monaco, Ctrl+Z still uses Monaco's per-model undo (as today); the toolbar Undo/Redo and Ctrl+Z outside the editor use the project history. This is today's behaviour, extended.
 - Loading or importing a whole project resets history (`reset`), like `loadProject` today.
-- `history.ts` keeps its API shape (`commit`, `undo`, `redo`, `createHistory`), made generic over the snapshot type, so its existing tests keep their meaning.
+- `history.ts` is retired. It is replaced by the project-wide undo in `store.ts` (M3-04, #25); its undo tests move to the store tests.
 
 ## 7. ZIP export and import with fflate
 
@@ -206,6 +206,7 @@ Sizes: S ≈ 1–3 days, M ≈ 1 week. All tasks: typecheck, lint and unit tests
 | M3-04 | Project store + history | Reducer in `Studio.tsx` (or `model/store.ts`), project-wide snapshot history generalised from `history.ts` | M3-02 | Existing undo tests updated; new tests for cross-file undo restoring `activePath`, typing coalescing per file |
 | M3-05 | Multi-file preview loader | `render-project` message and module loader in `docs/src/playground-frame.tsx`; CSS/JSON; errors with path/line; compile cache | M3-02 | Unit tests: relative + index resolution, missing-module error text, cycle, CSS injection; docs Playground e2e unchanged |
 | M3-06 | Canvas per-file instrumentation | Prefixed `data-studio-id`, filter layout boxes, render non-entry active file, double-click to open component file | M3-04, M3-05 | Selection/drag-drop e2e still green; new e2e: edit `Header.tsx`, App canvas updates |
+| M3-19 | Inline text editing on canvas | In M3 scope at Ian's request. Static `JSXText` children only (text with `{expressions}` is not editable). Editing happens inside the preview frame with `contenteditable="plaintext-only"`; on Firefox before 136, normal `contenteditable` with formatting stripped. Double-click, or Enter/F2 on the selected node, starts editing. Blur or Enter saves; Escape cancels. Single-line. Empty text saves as an empty element. Escape `{` `}` `<` `>` as `{'{'}` `{'}'}` `&lt;` `&gt;`. Splice only the trimmed core of the text; leading or trailing spaces the user adds are written as `{' '}`. A save is one text splice and one undo step. A hash of the file text is taken when editing starts; if it no longer matches at save, the edit is dropped and a warning MessageStrip shows. The Inspector 'Text content' field saves on blur or Enter instead of every keystroke. Visuals per the Designer's M3-19 spec (`studio-m3-19-inline-text-spec.md`). Owner: FE Dev; tests: QA Engineer. Estimate 3–4 days. Branch from `main` after #26 merges (not from #25) | M3-04 (#25), M3-05, M3-06 | Unit tests for escaping, whitespace `{' '}`, empty text, hash mismatch drop; e2e: double-click edit, Enter/blur save, Escape cancel, single undo step; Firefox fallback covered |
 | M3-07 | Monaco multi-model | `CodeEditor` `path` prop, one model per file, dispose, view-state per tab, editor tabs | M3-04 | Go-to-definition and autocomplete across a relative import work in e2e; no model leak on delete |
 | M3-08 | File tree UI | Explorer pane (new/rename/delete/move, keyboard, context menu) using EUI `Tree`, per UX spec | M3-04, UX-4 | Keyboard-only create/rename/delete; axe clean in all 7 themes |
 | M3-09 | Project list UI | Open/rename/duplicate/delete projects, "New project" dialog shell | M3-03, UX-1, UX-6 | e2e: create two projects, switch, reload, both persist |
@@ -217,7 +218,7 @@ Sizes: S ≈ 1–3 days, M ≈ 1 week. All tasks: typecheck, lint and unit tests
 | M3-16 | CI job: build an exported ZIP | New job in `.github/workflows/ci.yml` (network allowed): produce a ZIP from a fixture project with the M3-12 code, unzip, `npm install`, `npm run build` | M3-11, M3-12 | Job runs on PRs and fails when the exported project does not install or build |
 | M3-15 | E2E + docs | `tests/e2e/studio.spec.ts` M3 flows, README and `ide-design.md` M3 status | all | CI check + e2e green |
 
-Suggested order: M3-02 → (M3-03, M3-04, M3-05, M3-11 in parallel) → M3-06, M3-07, M3-12 → M3-08, M3-09, M3-13, M3-14 → M3-10 → M3-16 → M3-15.
+Suggested order: M3-02 → (M3-03, M3-04, M3-05, M3-11 in parallel) → M3-06, M3-12 → M3-19 → M3-07 → M3-08, M3-09, M3-13, M3-14 → M3-10 → M3-16 → M3-15.
 
 ### Backlog (not M3 scope)
 

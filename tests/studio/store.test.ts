@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createStore, storeReducer } from '../../studio/src/model/store';
+import { createStore, HISTORY_LIMIT, storeReducer } from '../../studio/src/model/store';
 import { createProject } from '../../studio/src/model/project';
 
 const project = () => createProject({ 'src/App.tsx': "import H from './H';\nexport default function App() { return <H />; }\n", 'src/H.tsx': 'export default function H() { return null; }\n' });
@@ -103,5 +103,37 @@ describe('M3-04 acceptance', () => {
     let s = createStore(project());
     s = storeReducer(s, { type: 'editFile', path: 'src/App.tsx', text: 'x' });
     expect(s.past[0].project.files['src/H.tsx']).toBe(s.project.files['src/H.tsx']);
+  });
+});
+
+describe('M3-04 re-review', () => {
+  it('caps history at HISTORY_LIMIT (200) steps, dropping the oldest', () => {
+    expect(HISTORY_LIMIT).toBe(200);
+    let s = createStore(project());
+    for (let i = 0; i < HISTORY_LIMIT + 5; i++) s = storeReducer(s, { type: 'editFile', path: 'src/App.tsx', text: `v${i}`, source: 'visual' });
+    expect(s.past).toHaveLength(HISTORY_LIMIT);
+    expect(s.past[0].project.files['src/App.tsx']).toBe('v4');
+  });
+  it('treats the editor echo after an undo as a no-op, so redo still works', () => {
+    let s = createStore(project());
+    s = storeReducer(s, { type: 'editFile', path: 'src/App.tsx', text: 'typed', source: 'editor', now: 1000 });
+    s = storeReducer(s, { type: 'undo' });
+    // Monaco reports the restored value back through onChange.
+    const echoed = storeReducer(s, { type: 'editFile', path: 'src/App.tsx', text: s.project.files['src/App.tsx'], source: 'editor', now: 1100 });
+    expect(echoed).toBe(s);
+    expect(storeReducer(echoed, { type: 'redo' }).project.files['src/App.tsx']).toBe('typed');
+  });
+  it('a real edit after undo (e.g. Ctrl+Z inside Monaco) records a new step and clears redo', () => {
+    let s = createStore(project());
+    s = storeReducer(s, { type: 'editFile', path: 'src/App.tsx', text: 'a', source: 'visual' });
+    s = storeReducer(s, { type: 'undo' });
+    s = storeReducer(s, { type: 'editFile', path: 'src/App.tsx', text: 'monaco-undo', source: 'editor' });
+    expect(s.future).toHaveLength(0);
+  });
+  it('undoing a folder delete switches to a file in the restored folder', () => {
+    let s = createStore(createProject({ 'src/App.tsx': '', 'src/a/C.tsx': '', 'src/a/B.tsx': '' }));
+    s = storeReducer(s, { type: 'deleteFolder', path: 'src/a' });
+    const u = storeReducer(s, { type: 'undo' });
+    expect(u.activePath).toBe('src/a/B.tsx');
   });
 });

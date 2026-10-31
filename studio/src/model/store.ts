@@ -56,6 +56,9 @@ export function storeReducer(state: StoreState, action: StoreAction): StoreState
     case 'loadProject': return createStore(action.project);
     case 'openFile': return action.path in project.files && action.path !== state.activePath ? { ...state, activePath: action.path, lastEdit: undefined } : state;
     case 'editFile': {
+      // An unchanged text is a no-op. This makes the editor's onChange echo after undo/redo harmless,
+      // so redo survives. Note: Ctrl+Z *inside Monaco* uses Monaco's per-model undo; the resulting
+      // text change arrives here as a normal edit, so it records a new project step and clears redo (§6).
       const next = writeFile(project, action.path, action.text);
       if (next === project) return state;
       const now = action.now ?? Date.now();
@@ -77,7 +80,12 @@ export function storeReducer(state: StoreState, action: StoreAction): StoreState
       return record(state, next, active, `Rename ${action.from}/`, active, undefined, state.activePath);
     }
     case 'deleteFile': return record(state, deleteFile(project, action.path), state.activePath, `Delete ${action.path}`, state.activePath, undefined, action.path);
-    case 'deleteFolder': return record(state, deleteFolder(project, action.path), state.activePath, `Delete ${action.path}/`);
+    case 'deleteFolder': {
+      // Undo switches into the restored folder: the active file if it was inside, else its first file.
+      const inside = Object.keys(project.files).filter((p) => under(action.path, p)).sort();
+      const before = under(action.path, state.activePath) ? state.activePath : inside[0];
+      return record(state, deleteFolder(project, action.path), state.activePath, `Delete ${action.path}/`, state.activePath, undefined, before);
+    }
     case 'setEntry': {
       if (!(action.path in project.files) || project.entry === action.path) return state;
       return record(state, { ...project, entry: action.path, updatedAt: Date.now() }, action.path, 'Set entry', state.activePath);

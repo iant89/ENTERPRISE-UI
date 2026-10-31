@@ -5,6 +5,22 @@ Parent plan: [`ide-design.md`](./ide-design.md) §5.1, §5.5, §5.7 and mileston
 
 M3 scope from the plan: virtual file system (VFS), file tree, relative imports in the sandbox, pattern templates, ZIP export and import.
 
+## 0. Decisions
+
+Relayed by the Project Manager from Ian on 2026-10-31.
+
+| # | Decision |
+|---|---|
+| T1 | Keep the React reducer (`useReducer`); no Zustand |
+| T2 | No cross-file selection on the canvas; double-click opens the component's file instead |
+| T3 | Text files only in the VFS (no binary assets in M3) |
+| T4 | Undo history is not kept after a reload |
+| T5 | CI builds an exported ZIP: a new CI job (network access allowed) installs and builds it (task M3-16) |
+| T6 | An imported project's `package.json` is kept as-is; export never regenerates an existing one |
+| T7 | Keep text splicing in `model/jsx.ts` (no recast) |
+| Templates | M3-10 ships six pattern templates: List Report, Object Page, Wizard, Master-Detail, Dashboard, Object Editor |
+| New Project dialog | Templates are shown with icons only, no thumbnails |
+
 ## 1. Where M0–M2 leaves us (inspected on `main` @ `64fcbd0`)
 
 | Area | Today | M3 consequence |
@@ -17,7 +33,7 @@ M3 scope from the plan: virtual file system (VFS), file tree, relative imports i
 | Editor | `editor/CodeEditor.tsx` creates one Monaco model at `file:///src/App.tsx`; the library types come from `virtual:studio-types` (`build/studio-types.ts`) | One Monaco model per VFS file so the TS worker resolves relative imports |
 | Undo | One linear history of the page code, typing grouped in 1 s windows (`GROUP_MS`), limit 200 | Project-level history (see §6) |
 | Export | "Download App.tsx" only; `studio/template/` (package.json, README, LICENSE) is not bundled into the app yet | ZIP with fflate (not yet a dependency) |
-| Examples | `examples/<slug>/NN-name.tsx`, 172 imports of `@enterprise-ui/react`, plus `../data` (20 files), `./internal/InventoryViews`, `../apps/InventoryApp`. Pattern folders exist: `list-report`, `object-page`, `wizard`, `master-detail`, `dashboard`. `docs/src/examples.ts` loads them with `import.meta.glob` | Templates come from here, including the shared `examples/data.ts` |
+| Examples | `examples/<slug>/NN-name.tsx`, 172 imports of `@enterprise-ui/react`, plus `../data` (20 files), `./internal/InventoryViews`, `../apps/InventoryApp`. Pattern folders exist: `list-report`, `object-page`, `wizard`, `master-detail`, `dashboard`, `object-editor`. `docs/src/examples.ts` loads them with `import.meta.glob` | Templates come from here, including the shared `examples/data.ts` |
 | Open in Studio | `#?code=` decoded by `docs/src/playgroundLink.ts` (`z.`/`u.`/`s.` prefixes) | Keeps working: it creates a one-file project (`src/App.tsx`) |
 
 ## 2. Virtual file system and project store
@@ -26,7 +42,7 @@ M3 scope from the plan: virtual file system (VFS), file tree, relative imports i
 
 ```ts
 export type FilePath = string;              // normalised POSIX, no leading slash: 'src/App.tsx'
-export interface ProjectFile { path: FilePath; text: string }  // M3 is text-only (see Q-T3)
+export interface ProjectFile { path: FilePath; text: string }  // M3 is text-only (decision T3)
 export interface Project {
   id: string;                               // crypto.randomUUID()
   name: string;
@@ -65,7 +81,7 @@ Actions: `openFile`, `closeTab`, `editFile(path, text, source)`, `createFile`, `
 - Autosave stays debounced at 400 ms and writes the whole project (small; simplest). Ctrl+S keeps forcing a save.
 - Project list (open, rename, duplicate, delete) per plan §5.7. Delete asks for confirmation (UX-6).
 - Multi-tab: two tabs on the same project would overwrite each other. M3 uses a `BroadcastChannel('eui-studio')` notice and shows "This project is open in another tab" (UX-7); no merging.
-- Undo history is **not** persisted (Q-T4).
+- Undo history is **not** persisted (decision T4).
 
 ## 3. Relative imports in the sandboxed preview
 
@@ -95,7 +111,7 @@ The frame validates as today (theme and density allowlist, `event.source === win
 
 ### 3.3 Design mode across files
 
-Only the active file is instrumented. Ids are prefixed per file: `data-studio-id="src/pages/Home.tsx#0.1"`, and `Canvas` filters `layout` boxes to the active file's prefix. Elements rendered by other files (for example `<Header />` from `./Header`) appear as one box for the `<Header>` element in the active file; double-click on it opens `Header.tsx` (Q-T2, UX-3). If the active file is not reachable from `entry`, the canvas renders the active file itself as the entry when it default-exports a component (UX-2).
+Only the active file is instrumented. Ids are prefixed per file: `data-studio-id="src/pages/Home.tsx#0.1"`, and `Canvas` filters `layout` boxes to the active file's prefix. Elements rendered by other files (for example `<Header />` from `./Header`) appear as one box for the `<Header>` element in the active file; double-click on it opens `Header.tsx` (decision T2, UX-3). If the active file is not reachable from `entry`, the canvas renders the active file itself as the entry when it default-exports a component (UX-2).
 
 ### 3.4 Editor (Monaco)
 
@@ -140,8 +156,8 @@ Add `fflate` (MIT) as a devDependency. Load it with `import()` on first use so i
 
 ### Export (`studio/src/zip.ts`)
 
-- Template files: bundle `studio/template/**` with `import.meta.glob('../template/**', { query: '?raw', import: 'default', eager: false })`. The template currently has only `package.json`, `README.md`, `LICENSE`; M3 adds the missing runnable files: `index.html`, `vite.config.ts`, `tsconfig.json`, `src/main.tsx` (imports `@enterprise-ui/react` styles and renders `App` inside `ThemeProvider`), `.gitignore`. A CI check builds the template (Q-T5).
-- Output layout: `<project-name>/` + template files + `src/**` from the VFS + `studio.json`. VFS files win over template files of the same path except `package.json`, which is merged (Q-T6).
+- Template files: bundle `studio/template/**` with `import.meta.glob('../template/**', { query: '?raw', import: 'default', eager: false })`. The template currently has only `package.json`, `README.md`, `LICENSE`; M3 adds the missing runnable files: `index.html`, `vite.config.ts`, `tsconfig.json`, `src/main.tsx` (imports `@enterprise-ui/react` styles and renders `App` inside `ThemeProvider`), `.gitignore`. CI builds an exported ZIP (decision T5, task M3-16).
+- Output layout: `<project-name>/` + template files + `src/**` from the VFS + `studio.json`. VFS files win over template files of the same path. If the project already has a `package.json` (for example from an import) it is exported unchanged; the template `package.json` is used only when the project has none (decision T6).
 - `zipSync` with `{ level: 6 }`, `mtime` = project `updatedAt`, downloaded via a Blob URL (same as the current `download()`).
 
 ### Import
@@ -154,10 +170,11 @@ Add `fflate` (MIT) as a devDependency. Load it with `import()` on first use so i
 
 ## 8. Template loading from `examples/`
 
-- `studio/src/templates.ts` builds a catalog with `import.meta.glob('../../examples/{list-report,object-page,wizard,master-detail,dashboard}/*.tsx', { query: '?raw', import: 'default' })` (lazy, not eager, so templates don't grow the initial chunk), plus `examples/data.ts`.
+- `studio/src/templates.ts` builds a catalog with `import.meta.glob('../../examples/{list-report,object-page,wizard,master-detail,dashboard,object-editor}/*.tsx', { query: '?raw', import: 'default' })` (lazy, not eager, so templates don't grow the initial chunk), plus `examples/data.ts`.
 - Titles and descriptions: the examples export `title`/`description` metadata; read them by regex on the raw source (the same fields `docs/src/examples.ts` uses) to avoid eagerly importing modules. Strip the metadata exports with the same rules as `cleanSource`.
 - Turning an example into a project: example → `src/App.tsx`; rewrite `'../data'` to `'./data'` and add `src/data.ts` from `examples/data.ts` when referenced; `'./internal/…'` and `'../apps/…'` imports are not supported as templates in M3 (`phase2/inventory.tsx` is excluded).
-- "New project" dialog: Blank (`STARTER`) + pattern templates (UX-1). The palette's "Patterns" group can insert a template's JSX into the current page later (M5).
+- Six pattern templates, one per folder (default example in brackets): List Report (`list-report/01-basic.tsx`), Object Page (`object-page/01-basic.tsx`), Wizard (`wizard/01-basic.tsx`), Master-Detail (`master-detail/01-basic.tsx`), Dashboard (`dashboard/01-basic.tsx`, imports `../data`, so it gets `src/data.ts`), Object Editor (`object-editor/01-object-page.tsx`, which exists and uses the library's `ObjectEditor` from `src/patterns/object-editor/`; no new example needs writing).
+- "New project" dialog: Blank (`STARTER`) + the six templates, shown as **icons only, no thumbnails** (UX-1). The palette's "Patterns" group can insert a template's JSX into the current page later (M5).
 - Unit test: every template turns into a project that the new loader renders without errors (jsdom), and axe passes as `tests/unit/examples.test.tsx` does.
 
 ## 9. Risks
@@ -174,15 +191,9 @@ Add `fflate` (MIT) as a devDependency. Load it with `import()` on first use so i
 | Module cycles / ordering differ from Vite | Document CommonJS-style semantics; exported project uses real Vite |
 | Text-splice model (no recast) on renamed imports | Rename edits only import string literals by AST offsets; covered by tests |
 
-## 10. Open technical questions (for Ian / PM)
+## 10. Open technical questions
 
-- **Q-T1** Keep `useReducer`, or adopt Zustand now (plan said optional)? Recommendation: `useReducer`.
-- **Q-T2** Should nested project components be selectable inside the canvas (cross-file selection), or only "open file" on double-click? Recommendation: open-file only in M3.
-- **Q-T3** Binary assets (images) in the VFS? Recommendation: no in M3; text only.
-- **Q-T4** Persist undo history across reloads? Recommendation: no.
-- **Q-T5** Add a CI job that runs `npm install && npm run build` on an exported ZIP? It needs network for the published `@enterprise-ui/react`; alternative is a typecheck against the local `dist/`.
-- **Q-T6** On import, keep the project's own `package.json` (and show it in the VFS) or always regenerate it on export?
-- **Q-T7** Plan §5.3 named recast; M2 shipped text splicing. Confirm we keep splicing for M3.
+All seven questions from the first draft (Q-T1 to Q-T7) were decided on 2026-10-31; see section 0. No technical questions are open.
 
 ## 11. Task breakdown for the Studio Front-End Developer
 
@@ -198,18 +209,26 @@ Sizes: S ≈ 1–3 days, M ≈ 1 week. All tasks: typecheck, lint and unit tests
 | M3-07 | Monaco multi-model | `CodeEditor` `path` prop, one model per file, dispose, view-state per tab, editor tabs | M3-04 | Go-to-definition and autocomplete across a relative import work in e2e; no model leak on delete |
 | M3-08 | File tree UI | Explorer pane (new/rename/delete/move, keyboard, context menu) using EUI `Tree`, per UX spec | M3-04, UX-4 | Keyboard-only create/rename/delete; axe clean in all 7 themes |
 | M3-09 | Project list UI | Open/rename/duplicate/delete projects, "New project" dialog shell | M3-03, UX-1, UX-6 | e2e: create two projects, switch, reload, both persist |
-| M3-10 | Templates from examples | `templates.ts` (lazy glob), metadata parsing, `../data` rewrite, New-project dialog content | M3-09 | Unit test renders every template via the loader; axe passes |
-| M3-11 | Export template completion | Add `index.html`, `vite.config.ts`, `tsconfig.json`, `src/main.tsx`, `.gitignore` to `studio/template/` | – | Template typechecks in CI against local types (Q-T5 decides the full build) |
-| M3-12 | ZIP export | `zip.ts` with lazy fflate, layout, `studio.json`, `package.json` merge | M3-02, M3-11 | Unit test unzips the output and checks file list; e2e downloads a ZIP; size budget passes |
-| M3-13 | ZIP / folder import | `unzipSync` with filter, validation, limits, entry detection, new project; File System Access where supported | M3-02, M3-03, UX-5 | Unit tests: traversal paths, oversized, binary skipped, single top folder stripped; export→import round-trip equals |
+| M3-10 | Templates from examples | `templates.ts` (lazy glob) for six templates: list-report, object-page, wizard, master-detail, dashboard, object-editor (all exist in `examples/`); metadata parsing, `../data` rewrite, New-project dialog content with icons only (no thumbnails) | M3-09, UX-1 | Dialog lists Blank + exactly six templates, each with an icon and no thumbnail; unit test turns each of the six into a project and renders it via the loader with no errors; axe passes; Dashboard project includes `src/data.ts` |
+| M3-11 | Export template completion | Add `index.html`, `vite.config.ts`, `tsconfig.json`, `src/main.tsx`, `.gitignore` to `studio/template/`. Template files are defaults only: a file already in the project (including `package.json`) is never overwritten or regenerated | – | Template typechecks against local types; a project with its own `package.json` exports it byte-for-byte |
+| M3-12 | ZIP export | `zip.ts` with lazy fflate, layout, `studio.json`; template `package.json` only when the project has none, an existing one is exported unchanged | M3-02, M3-11 | Unit test unzips the output and checks the file list, including an unchanged imported `package.json`; e2e downloads a ZIP; size budget passes |
+| M3-13 | ZIP / folder import | `unzipSync` with filter, validation, limits, entry detection, new project; File System Access where supported. The imported `package.json` is kept unchanged | M3-02, M3-03, UX-5 | Unit tests: traversal paths, oversized, binary skipped, single top folder stripped; export→import round-trip equals; imported `package.json` is byte-identical |
 | M3-14 | Palette: project components | "From this project" group, `ensureDefaultImport` | M3-04 | Inserting `<Header />` adds `import Header from './Header'` once |
+| M3-16 | CI job: build an exported ZIP | New job in `.github/workflows/ci.yml` (network allowed): produce a ZIP from a fixture project with the M3-12 code, unzip, `npm install`, `npm run build` | M3-11, M3-12 | Job runs on PRs and fails when the exported project does not install or build |
 | M3-15 | E2E + docs | `tests/e2e/studio.spec.ts` M3 flows, README and `ide-design.md` M3 status | all | CI check + e2e green |
 
-Suggested order: M3-02 → (M3-03, M3-04, M3-05, M3-11 in parallel) → M3-06, M3-07, M3-12 → M3-08, M3-09, M3-13, M3-14 → M3-10 → M3-15.
+Suggested order: M3-02 → (M3-03, M3-04, M3-05, M3-11 in parallel) → M3-06, M3-07, M3-12 → M3-08, M3-09, M3-13, M3-14 → M3-10 → M3-16 → M3-15.
+
+### Backlog (not M3 scope)
+
+| # | Task | Scope | Acceptance criteria |
+|---|---|---|---|
+| M3-17 | `npm test` on a fresh clone | `npm test` (`vitest run`) fails when `docs/generated/api.json` is missing (Studio and docs code import it). Add `"pretest": "npm run docs:api"` (`docs:api` = `node scripts/extract-api.mjs`), as `dev`, `typecheck` and `build:docs` already do | On a fresh clone without `docs/generated/`, `npm ci && npm test` passes |
+| M3-18 | Studio e2e on Firefox and WebKit | `tests/e2e/studio.spec.ts` runs only via `playwright.config.ts` (projects `desktop` = Desktop Chrome, `mobile` = Pixel 7; CI `e2e` job installs Chromium only). `playwright.phase3.config.ts` has `firefox` and `webkit` projects and the `phase3-browser` job installs them. Run the Studio spec there (or add Firefox/WebKit projects scoped to it) and fix browser-specific failures (e.g. HTML5 drag and drop) | CI runs the Studio spec on Chromium, Firefox and WebKit, all green |
 
 ## 12. Items that need UX/UI Designer specs
 
-- **UX-1** "New project" dialog: blank vs pattern templates; thumbnails or text cards; where it lives (header button, project list).
+- **UX-1** "New project" dialog: blank plus six pattern templates, icons only (no thumbnails, decided); spec the icon per template, labels, layout and where the dialog opens from (header button, project list).
 - **UX-2** Canvas when the active file is not a page (data/utils) or not reachable from the entry: message, preview the entry, or render the file alone?
 - **UX-3** How a component from another project file looks on the canvas (one locked box? badge?) and how to open it.
 - **UX-4** File tree: position in the left `nav` (tab beside Components/Outline, or its own pane), new file/folder flows, inline rename, validation messages, empty folders.

@@ -4,7 +4,13 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import {
   DB_NAME,
   DB_VERSION,
+  StorageBlockedError,
   announceOpen,
+  copyName,
+  getV1Backup,
+  openDatabase,
+  openProjectChannel,
+  storageOptions,
   deleteProject,
   duplicateProject,
   getLastOpened,
@@ -21,6 +27,11 @@ import { createProject } from '../../studio/src/model/project';
 beforeEach(() => {
   globalThis.indexedDB = new IDBFactory();
 });
+
+async function seedV1Raw(value: unknown) {
+  globalThis.indexedDB = new IDBFactory();
+  await seedV1(value);
+}
 
 /** Writes a record exactly like the M2 (v1) storage.ts did. */
 function seedV1(value: unknown) {
@@ -104,8 +115,74 @@ describe('migration from v1', () => {
     expect((await listProjects()).length).toBe(1);
     expect(await rawValue('projects', 'current')).toEqual(v1);
   });
+  it('keeps the raw v1 value in meta.v1Backup', async () => {
+    const v1 = { code: 'x', updatedAt: 7 };
+    await seedV1(v1);
+    const backup = (await getV1Backup())!;
+    expect(backup.value).toEqual(v1);
+    expect(typeof backup.migratedAt).toBe('number');
+    await saveProject('changed');
+    expect((await getV1Backup())!.value).toEqual(v1);
+  });
+  it('backs up a corrupt v1 record too', async () => {
+    await seedV1({ nope: true });
+    expect((await getV1Backup())!.value).toEqual({ nope: true });
+    await seedV1Raw('just a string');
+    expect((await getV1Backup())!.value).toBe('just a string');
+  });
+  it('writes no backup when there was nothing to migrate', async () => {
+    await seedV1(undefined);
+    expect(await getV1Backup()).toBeUndefined();
+  });
   it('never overwrites the retained record through putProject', async () => {
     await expect(putProject({ ...createProject({}), id: 'current' })).rejects.toThrow(/reserved/);
+  });
+});
+
+describe('blocked upgrades and versionchange', () => {
+  it('rejects with StorageBlockedError when an old tab holds the v1 database open', async () => {
+    await seedV1(undefined);
+    const old = await new Promise<IDBDatabase>((resolve) => { const r = indexedDB.open(DB_NAME, 1); r.onsuccess = () => resolve(r.result); });
+    const prev = storageOptions.blockedTimeoutMs;
+    storageOptions.blockedTimeoutMs = 50;
+    try {
+      const err = await listProjects().catch((e: unknown) => e);
+      expect(err).toBeInstanceOf(StorageBlockedError);
+      expect((err as StorageBlockedError).name).toBe('StorageBlockedError');
+    } finally {
+      storageOptions.blockedTimeoutMs = prev;
+      old.close();
+    }
+    // once the old tab is gone the upgrade goes through
+    expect(await listProjects()).toEqual([]);
+  });
+  it('closes its own connection on versionchange so it never blocks a later upgrade', async () => {
+    const db = await openDatabase();
+    let blocked = false;
+    await new Promise<void>((resolve, reject) => {
+      const r = indexedDB.open(DB_NAME, DB_VERSION + 1);
+      r.onblocked = () => { blocked = true; };
+      r.onsuccess = () => { r.result.close(); resolve(); };
+      r.onerror = () => reject(r.error);
+    });
+    expect(blocked).toBe(false);
+    expect(() => db.transaction('projects')).toThrow();
+  });
+});
+
+describe('copyName (UX-6 §6.4)', () => {
+  it('appends (copy), then the first free number', () => {
+    expect(copyName('Sales', ['Sales'])).toBe('Sales (copy)');
+    expect(copyName('Sales', ['Sales', 'Sales (copy)'])).toBe('Sales (copy 2)');
+    expect(copyName('Sales', ['Sales', 'Sales (copy)', 'Sales (copy 2)', 'Sales (copy 4)'])).toBe('Sales (copy 3)');
+  });
+  it('never stacks the suffix when copying a copy', () => {
+    expect(copyName('Sales (copy)', ['Sales', 'Sales (copy)'])).toBe('Sales (copy 2)');
+    expect(copyName('Sales (copy 3)', ['Sales (copy 3)'])).toBe('Sales (copy)');
+    expect(copyName('Sales (Copy 2)', ['Sales (copy)', 'Sales (copy 2)'])).toBe('Sales (copy 3)');
+  });
+  it('compares case-insensitively and trimmed', () => {
+    expect(copyName('  Sales  ', ['sales', ' SALES (COPY) '])).toBe('Sales (copy 2)');
   });
 });
 
@@ -133,8 +210,10 @@ describe('project list API', () => {
     expect(copy.id).not.toBe(a.id);
     expect(copy.name).toBe('Sales (copy)');
     expect(copy.files).toEqual(a.files);
+    expect((await duplicateProject(a.id)).name).toBe('Sales (copy 2)');
+    expect((await duplicateProject(copy.id)).name).toBe('Sales (copy 3)');
     expect((await duplicateProject(a.id, 'Other')).name).toBe('Other');
-    expect(await listProjects()).toHaveLength(3);
+    expect(await listProjects()).toHaveLength(5);
     await expect(renameProject('missing', 'x')).rejects.toThrow(/not found/);
     await expect(duplicateProject('missing')).rejects.toThrow(/not found/);
     await expect(renameProject(a.id, '   ')).rejects.toThrow(/name/);
@@ -194,7 +273,40 @@ describe('announceOpen (BroadcastChannel notice)', () => {
     a(); b(); c();
     expect(Bus.channels.every((x) => x.closed)).toBe(true);
   });
+  it('take-over, saved and left messages', () => {
+    Bus.channels = [];
+    const log: string[] = [];
+    const a = openProjectChannel('p1', { onConflict: () => log.push('a:conflict'), onTakeOver: () => log.push('a:takeover'), onLeft: () => log.push('a:left') }, factory);
+    const b = openProjectChannel('p1', { onConflict: () => log.push('b:conflict'), onTakeOver: () => log.push('b:takeover'), onLeft: () => log.push('b:left') }, factory);
+    const other = openProjectChannel('p2', { onConflict: () => log.push('x'), onTakeOver: () => log.push('x'), onLeft: () => log.push('x') }, factory);
+    log.length = 0;
+    b.announceSaved();
+    expect(log).toEqual(['a:conflict']);
+    log.length = 0;
+    b.takeOver();
+    expect(log).toEqual(['a:takeover']);
+    log.length = 0;
+    b.close();
+    expect(log).toEqual(['a:left']);
+    b.close();
+    expect(log).toEqual(['a:left']);
+    a.close(); other.close();
+    expect(log).toEqual(['a:left']);
+  });
+  it('messages carry { type, projectId, tabId }', () => {
+    Bus.channels = [];
+    const seen: unknown[] = [];
+    const spy = factory('eui-studio') as unknown as Bus;
+    spy.onmessage = (e) => seen.push(e.data);
+    const ch = openProjectChannel('p9', {}, factory);
+    ch.takeOver();
+    ch.close();
+    expect(seen.map((m) => (m as { type: string }).type)).toEqual(['open', 'take-over', 'left']);
+    for (const m of seen) expect(m).toEqual({ type: expect.any(String), projectId: 'p9', tabId: expect.any(String) });
+  });
   it('is a no-op where BroadcastChannel is missing', () => {
+    const ch = openProjectChannel('p', {}, () => undefined);
+    expect(() => { ch.announceSaved(); ch.takeOver(); ch.close(); }).not.toThrow();
     expect(() => announceOpen('p', () => {}, () => undefined)()).not.toThrow();
   });
 });

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Studio: projects are now stored in IndexedDB `eui-studio` version 2 (stores `projects` and `meta`). The M2 single-page record migrates to a project named "My application". **Downgrading the Studio after M3 isn't supported:** an M2 build can't open a v2 database, so it shows its starter page and can't save. The v1 record is kept in `meta.v1Backup` and in `projects/current`, so it can be recovered manually (see `studio/README.md`).
 - Fixed: a polite screen-reader announcement no longer clears an earlier assertive one before its 7-second window, and pending announcements are cancelled on unmount.
 - Fixed: a toast with keyboard focus is no longer auto-dismissed when the pointer leaves it.
 - Fixed: Tooltip closes when `disabled` becomes true while it is open.

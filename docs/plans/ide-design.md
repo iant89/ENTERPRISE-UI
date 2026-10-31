@@ -174,6 +174,7 @@ All are permissive and compatible with publishing. They are devDependencies or S
 | axe-core (already present via @axe-core/playwright) | A11y panel | MPL-2.0 (file-level copyleft; unmodified use is fine) |
 | fflate | ZIP export | MIT |
 | idb-keyval (optional) | IndexedDB | Apache-2.0 |
+| fake-indexeddb (tests only) | IndexedDB in unit tests (storage v2 migration) | Apache-2.0 |
 | zustand (optional) | State store | MIT |
 
 Third-party notices are added to the Studio's "About" dialog and its build output. Nothing goes into `vendor/`, and existing license files are untouched.

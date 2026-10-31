@@ -4,9 +4,19 @@ import type { Project } from './model/project';
  * Project persistence in IndexedDB (docs/plans/studio-m3-design.md §2.3, ide-design.md §5.7).
  *
  * DB v2 has two stores: `projects` (key = `project.id`, value = `Project`) and `meta`
- * (key `lastOpened`). Upgrading from v1 wraps the single-page record `current` as a project and
- * leaves `current` untouched in the same store (never read again) so it can be recovered by hand.
- * Downgrading to an M2 build is not supported: it opens version 1 and fails on a v2 database.
+ * (keys `lastOpened`, `v1Backup`). Upgrading from v1 wraps the single-page record `current` as a
+ * project, copies the raw v1 value (even a corrupt one) to `meta.v1Backup` as `{ value, migratedAt }`,
+ * and leaves `current` untouched in the `projects` store (never read again).
+ *
+ * Downgrading the Studio after M3 isn't supported: an M2 build opens version 1, gets a `VersionError`
+ * on this v2 database, shows its starter page and cannot save. The v1 record is kept in
+ * `meta.v1Backup` (and in `projects/current`) for manual recovery; see studio/README.md.
+ *
+ * Every connection closes itself on `versionchange`, so this build never blocks a later upgrade. An
+ * upgrade blocked by an older tab rejects with `StorageBlockedError` after `blockedTimeoutMs`.
+ *
+ * Each call opens its own connection; multi-step helpers (`deleteProject`, `saveProject`) use
+ * separate transactions and are not atomic. That is acceptable for M3.
  * Undo history is not persisted (decision T4).
  */
 export const DB_NAME = 'eui-studio';
@@ -15,6 +25,19 @@ const PROJECTS = 'projects';
 const META = 'meta';
 const V1_KEY = 'current';
 const LAST_OPENED = 'lastOpened';
+const V1_BACKUP = 'v1Backup';
+
+export const storageOptions = { blockedTimeoutMs: 3000 };
+
+/** The database upgrade is blocked by another tab that still has an older version open. */
+export class StorageBlockedError extends Error {
+  constructor(message = 'Studio storage is blocked by another tab running an older version. Close other Studio tabs and reload.') {
+    super(message);
+    this.name = 'StorageBlockedError';
+  }
+}
+
+export interface V1Backup { value: unknown; migratedAt: number }
 const ENTRY = 'src/App.tsx';
 
 /** v1 shape, still returned by `loadProject` until the Studio store becomes project-wide (M3-04). */
@@ -37,6 +60,8 @@ function upgrade(request: IDBOpenDBRequest, oldVersion: number) {
     const get = projects.get(V1_KEY);
     get.onsuccess = () => {
       const old = get.result as Partial<SavedProject> | undefined;
+      if (old === undefined) return;
+      tx.objectStore(META).put({ value: old, migratedAt: Date.now() } satisfies V1Backup, V1_BACKUP);
       // The v1 record stays where it is (manual recovery); only a valid one is migrated.
       if (typeof old?.code !== 'string') return;
       const at = typeof old.updatedAt === 'number' ? old.updatedAt : Date.now();
@@ -47,14 +72,31 @@ function upgrade(request: IDBOpenDBRequest, oldVersion: number) {
   }
 }
 
-function open(): Promise<IDBDatabase> {
+/** Opens the v2 database. Exported for tests and for callers that hold a connection. */
+export function openDatabase(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let settled = false;
     request.onupgradeneeded = (event) => upgrade(request, event.oldVersion);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
+    request.onblocked = () => {
+      timer ??= setTimeout(() => { settled = true; reject(new StorageBlockedError()); }, storageOptions.blockedTimeoutMs);
+    };
+    request.onsuccess = () => {
+      clearTimeout(timer);
+      const db = request.result;
+      db.onversionchange = () => db.close();
+      if (settled) { db.close(); return; }
+      settled = true;
+      resolve(db);
+    };
+    request.onerror = () => {
+      clearTimeout(timer);
+      if (!settled) { settled = true; reject(request.error); }
+    };
   });
 }
+const open = openDatabase;
 
 async function run<T>(store: string, mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   const db = await open();
@@ -112,14 +154,31 @@ export async function renameProject(id: string, name: string): Promise<Project> 
   return next;
 }
 
+const COPY_SUFFIX = /\s*\((?:copy)(?:\s+\d+)?\)$/i;
+
+/**
+ * UX-6 §6.4: "<name> (copy)", then "(copy 2)", "(copy 3)" with the first free number. A copy of a
+ * copy does not stack the suffix, and names are compared case-insensitively and trimmed.
+ */
+export function copyName(name: string, existing: Iterable<string>): string {
+  const taken = new Set([...existing].map((n) => n.trim().toLowerCase()));
+  const stem = name.trim().replace(COPY_SUFFIX, '').trim();
+  for (let i = 1; ; i++) {
+    const candidate = i === 1 ? `${stem} (copy)` : `${stem} (copy ${i})`;
+    if (!taken.has(candidate.toLowerCase())) return candidate;
+  }
+}
+
 export async function duplicateProject(id: string, name?: string): Promise<Project> {
   const source = await mustGet(id);
   const now = Date.now();
-  const copy: Project = { ...source, files: { ...source.files }, id: newId(), name: name?.trim() || `${source.name} (copy)`, createdAt: now, updatedAt: now };
+  const finalName = name?.trim() || copyName(source.name, (await listProjects()).map((p) => p.name));
+  const copy: Project = { ...source, files: { ...source.files }, id: newId(), name: finalName, createdAt: now, updatedAt: now };
   await putProject(copy);
   return copy;
 }
 
+export const getV1Backup = () => run<V1Backup | undefined>(META, 'readonly', (s) => s.get(V1_BACKUP));
 export const getLastOpened = () => run<string | undefined>(META, 'readonly', (s) => s.get(LAST_OPENED));
 export const setLastOpened = async (id: string) => { await run(META, 'readwrite', (s) => s.put(id, LAST_OPENED)); };
 
@@ -156,26 +215,64 @@ export async function saveProject(code: string) {
 
 // ---------------------------------------------------------------- multi-tab notice (UX-7)
 
-type Message = { type: 'open' | 'here'; projectId: string; tab: string };
+/** The `BroadcastChannel('eui-studio')` protocol (shape signed off for M3-03). */
+export type ChannelMessage = { type: 'open' | 'here' | 'saved' | 'take-over' | 'left'; projectId: string; tabId: string };
 
-/**
- * Announces that this tab opened `projectId`. `onConflict` runs in every tab that has the same
- * project open (UX-7: "This project is open in another tab"). Returns a cleanup function.
- */
+export interface ChannelHandlers {
+  /** Another tab opened or saved the same project. Fires on every message: callers announce once (UX-7). */
+  onConflict?: () => void;
+  /** Another tab pressed "Use this tab": this tab should go read-only. */
+  onTakeOver?: () => void;
+  /** Another tab with the same project closed: the strip can clear. */
+  onLeft?: () => void;
+}
+
+export interface ProjectChannel {
+  readonly tabId: string;
+  /** Call after each save so other tabs see the conflict. */
+  announceSaved(): void;
+  /** "Use this tab": other tabs on the project go read-only. */
+  takeOver(): void;
+  /** Posts `left` and closes the channel. Safe to call twice. */
+  close(): void;
+}
+
+const defaultFactory = (name: string) => (typeof BroadcastChannel === 'undefined' ? undefined : new BroadcastChannel(name));
+
+export function openProjectChannel(
+  projectId: string,
+  handlers: ChannelHandlers,
+  channelFactory: (name: string) => BroadcastChannel | undefined = defaultFactory,
+): ProjectChannel {
+  const tabId = newId();
+  const channel = channelFactory('eui-studio');
+  let closed = !channel;
+  const post = (type: ChannelMessage['type']) => { if (!closed) channel!.postMessage({ type, projectId, tabId } satisfies ChannelMessage); };
+  if (channel) {
+    channel.onmessage = (event: MessageEvent<ChannelMessage>) => {
+      const msg = event.data;
+      if (!msg || msg.tabId === tabId || msg.projectId !== projectId) return;
+      if (msg.type === 'open') post('here');
+      if (msg.type === 'open' || msg.type === 'here' || msg.type === 'saved') handlers.onConflict?.();
+      else if (msg.type === 'take-over') handlers.onTakeOver?.();
+      else if (msg.type === 'left') handlers.onLeft?.();
+    };
+    post('open');
+  }
+  return {
+    tabId,
+    announceSaved: () => post('saved'),
+    takeOver: () => post('take-over'),
+    close: () => { if (closed) return; post('left'); closed = true; channel!.close(); },
+  };
+}
+
+/** Shorthand: announces `projectId` and calls `onConflict` (see `openProjectChannel`). Returns cleanup. */
 export function announceOpen(
   projectId: string,
   onConflict: () => void,
-  channelFactory: (name: string) => BroadcastChannel | undefined = (name) => (typeof BroadcastChannel === 'undefined' ? undefined : new BroadcastChannel(name)),
+  channelFactory: (name: string) => BroadcastChannel | undefined = defaultFactory,
 ): () => void {
-  const channel = channelFactory('eui-studio');
-  if (!channel) return () => {};
-  const tab = newId();
-  channel.onmessage = (event: MessageEvent<Message>) => {
-    const msg = event.data;
-    if (!msg || msg.tab === tab || msg.projectId !== projectId) return;
-    if (msg.type === 'open') channel.postMessage({ type: 'here', projectId, tab } satisfies Message);
-    onConflict();
-  };
-  channel.postMessage({ type: 'open', projectId, tab } satisfies Message);
-  return () => channel.close();
+  const ch = openProjectChannel(projectId, { onConflict }, channelFactory);
+  return ch.close;
 }

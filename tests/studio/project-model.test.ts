@@ -14,6 +14,8 @@ import {
   relativeSpecifier,
   renameFile,
   renameFolder,
+  renameFileWithReport,
+  renameFolderWithReport,
   resolveImport,
   resolveRelative,
   revertCommand,
@@ -316,5 +318,91 @@ describe('commands ({ do, undo })', () => {
     const cmd = writeFile(p, 'src/H.tsx', 'h', { command: true });
     expect(cmd.touched).toEqual([]);
     expect(applyCommand(p, cmd).files).toEqual(p.files);
+  });
+});
+
+describe('review fixes (PR #23)', () => {
+  it('finds and rewrites typeof import() and import = require()', () => {
+    const text = `type A = typeof import('./ui/a');\ntype B = import('./ui/a').Props;\nimport z = require('./ui/a');\n`;
+    expect(findImportSpecifiers(text, 'src/x.ts')!.map((s) => s.value)).toEqual(['./ui/a', './ui/a', './ui/a']);
+    const p = createProject({ 'src/x.ts': text, 'src/ui/a.tsx': '' }, 'src/x.ts');
+    expect(renameFile(p, 'src/ui/a.tsx', 'src/ui/b.tsx').files['src/x.ts']).toBe(text.replaceAll('./ui/a', './ui/b'));
+  });
+  it('reports importers that could not be parsed', () => {
+    const p = createProject({ 'src/App.tsx': `import a from './ui/a';`, 'src/Bad.tsx': `import a from './ui/a'; <<<`, 'src/ui/a.tsx': '', 'src/n.css': '' }, 'src/App.tsx');
+    const r = renameFileWithReport(p, 'src/ui/a.tsx', 'src/ui/b.tsx');
+    expect(r.skipped).toEqual(['src/Bad.tsx']);
+    expect(r.project.files['src/Bad.tsx']).toBe(p.files['src/Bad.tsx']);
+    expect(r.project.files['src/App.tsx']).toBe(`import a from './ui/b';`);
+    expect(renameFile(p, 'src/ui/a.tsx', 'src/ui/b.tsx', { command: true }).skipped).toEqual(['src/Bad.tsx']);
+    expect(renameFolderWithReport(p, 'src/ui', 'src/w').skipped).toEqual(['src/Bad.tsx']);
+    expect(renameFileWithReport(p, 'src/n.css', 'src/m.css').skipped).toEqual(['src/Bad.tsx']);
+    expect(createFile(p, 'src/q.ts', '', { command: true }).skipped).toEqual([]);
+  });
+  it('keeps . and ./ when they still resolve to the same target', () => {
+    const p = createProject({ 'src/ui/index.tsx': `import j from './';\nexport default 1;`, 'src/ui/a.tsx': `import i from '.';\nimport k from './';\n` }, 'src/ui/index.tsx');
+    expect(renameFile(p, 'src/ui/a.tsx', 'src/ui/b.tsx').files['src/ui/b.tsx']).toBe(p.files['src/ui/a.tsx']);
+    const moved = renameFolder(p, 'src/ui', 'src/widgets');
+    expect(moved.files['src/widgets/a.tsx']).toBe(p.files['src/ui/a.tsx']);
+    expect(moved.files['src/widgets/index.tsx']).toBe(p.files['src/ui/index.tsx']);
+  });
+  it('relativeSpecifier returns . for the own folder and .. for ancestors', () => {
+    expect(relativeSpecifier('src/ui/a.tsx', 'src/ui')).toBe('.');
+    expect(relativeSpecifier('src/ui/a.tsx', 'src')).toBe('..');
+    expect(relativeSpecifier('src/ui/a.tsx', '')).toBe('../..');
+    expect(relativeSpecifier('a.tsx', '')).toBe('.');
+  });
+  it('. and .. can land on the project root', () => {
+    expect(resolveRelative('a.tsx', '.')).toBe('');
+    expect(resolveRelative('src/x.tsx', '..')).toBe('');
+    expect(resolveRelative('src/x.tsx', '../')).toBe('');
+    expect(resolveImport({ 'index.tsx': '' }, 'a.tsx', '.')).toBe('index.tsx');
+    expect(resolveImport({ 'index.tsx': '' }, 'src/x.tsx', '..')).toBe('index.tsx');
+    expect(resolveImport({ 'a.tsx': '' }, 'src/x.tsx', '..')).toBeNull();
+    expect(code(() => resolveRelative('src/x.tsx', '../..'))).toBe('escapes-root');
+  });
+  it('rewrites a root index import when the root index moves', () => {
+    const p = createProject({ 'src/x.tsx': `import r from '..';`, 'index.tsx': '' }, 'src/x.tsx');
+    expect(renameFile(p, 'index.tsx', 'main.tsx').files['src/x.tsx']).toBe(`import r from '../main';`);
+  });
+  it('rejects dot-only segments', () => {
+    expect(code(() => validatePath('src/...tsx'))).toBe('invalid-extension');
+    expect(code(() => validatePath('.../x.ts'))).toBe('invalid-segment');
+  });
+  it('renames a folder by case only', () => {
+    const p = createProject({ 'src/App.tsx': `import A from './ui/a';`, 'src/ui/a.tsx': '' }, 'src/App.tsx');
+    const next = renameFolder(p, 'src/ui', 'src/UI');
+    expect(files(next)).toEqual(['src/App.tsx', 'src/UI/a.tsx']);
+    expect(next.files['src/App.tsx']).toBe(`import A from './UI/a';`);
+  });
+  it('undoing a folder rename restores every importer and the entry', () => {
+    const p = createProject({
+      'src/App.tsx': `import A from './ui/a';\nimport B from './ui/b';`,
+      'src/pages/P.tsx': `import A from '../ui/a';`,
+      'src/ui/a.tsx': `import { d } from '../data';`,
+      'src/ui/b.tsx': '',
+      'src/data.ts': '',
+    }, 'src/App.tsx');
+    const cmd = renameFolder(p, 'src', 'app', { command: true });
+    const after = applyCommand(p, cmd);
+    expect(after.entry).toBe('app/App.tsx');
+    const back = revertCommand(after, cmd);
+    expect(back.files).toEqual(p.files);
+    expect(back.entry).toBe('src/App.tsx');
+    const inner = renameFolder(p, 'src/ui', 'src/lib/ui', { command: true });
+    const after2 = applyCommand(p, inner);
+    expect(after2.files['src/pages/P.tsx']).toBe(`import A from '../lib/ui/a';`);
+    expect(revertCommand(after2, inner).files).toEqual(p.files);
+  });
+  it('accepts exactly 1 MB per file and 10 MB per project', () => {
+    const mb = 'a'.repeat(LIMITS.fileBytes);
+    expect(createFile(createProject({}), 'a.ts', mb).files['a.ts'].length).toBe(LIMITS.fileBytes);
+    expect(code(() => createFile(createProject({}), 'a.ts', mb + 'a'))).toBe('file-too-large');
+    expect(code(() => createFile(createProject({}), 'a.ts', 'é'.repeat(LIMITS.fileBytes / 2 + 1)))).toBe('file-too-large');
+    const nine: Record<string, string> = {};
+    for (let i = 0; i < 9; i++) nine[`f${i}.ts`] = mb;
+    expect(Object.keys(createFile(createProject(nine), 'last.ts', mb).files)).toHaveLength(10);
+    expect(code(() => createFile(createProject({ ...nine, 'last.ts': mb }), 'x.ts', 'a'))).toBe('project-too-large');
+    expect(code(() => writeFile(createProject({ ...nine, 'last.ts': mb }), 'last.ts', mb + 'a'))).toBe('file-too-large');
   });
 });

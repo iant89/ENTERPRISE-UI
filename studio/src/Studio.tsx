@@ -1,9 +1,10 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import {
-  ApplicationHeader, BusyIndicator, VisuallyHidden, Button, IconButton, MessageStrip, SegmentedButton, Select, ThemeProvider, THEMES, ToastProvider, useToast,
+  ApplicationHeader, BusyIndicator, VisuallyHidden, Button, IconButton, MessageStrip, SegmentedButton, Select, ThemeProvider, THEMES, ToastProvider, useAnnouncer, useToast,
   type Density, type ThemeName, type ThemePreference,
 } from '@enterprise-ui/react';
-import { BookOpen, Download, FilePlus2, Redo2, Sparkles, Undo2 } from 'lucide-react';
+import { cx } from '../../src/utilities/cx';
+import { BookOpen, ChevronDown, ChevronRight, Download, FilePlus2, Redo2, Sparkles, Undo2 } from 'lucide-react';
 import { useDocsSettings } from '../../docs/src/settings';
 import { decodePlaygroundCode, playgroundCodeParam } from '../../docs/src/playgroundLink';
 import { Canvas, type DropTarget } from './Canvas';
@@ -11,7 +12,9 @@ import { Palette } from './Palette';
 import { Outline } from './Outline';
 import { Inspector } from './Inspector';
 import type { CodeEditorHandle } from './editor/CodeEditor';
-import { commit, createHistory, redo, undo, type History } from './model/history';
+import { createStore, storeReducer, type StoreAction, type StoreState } from './model/store';
+import { createProject } from './model/project';
+import { FileTree } from './files/FileTree';
 import {
   componentNames, duplicateNode, ensureImports, findNode, insertElement, instrument, moveNode, parentId, parseDocument, removeNode, setAttribute, setText,
   type AttrInput, type StudioNode,
@@ -24,20 +27,19 @@ import styles from './Studio.module.css';
 const CodeEditor = lazy(() => import('./editor/CodeEditor').then((m) => ({ default: m.CodeEditor })));
 
 type View = 'design' | 'split' | 'code';
-type Action =
-  | { type: 'commit'; code: string; source?: 'visual' | 'editor' | 'load' }
-  | { type: 'reset'; code: string }
-  | { type: 'undo' }
-  | { type: 'redo' };
 
-function reducer(state: History, action: Action): History {
-  switch (action.type) {
-    case 'commit': return commit(state, action.code, action.source);
-    case 'reset': return createHistory(action.code);
-    case 'undo': return undo(state);
-    case 'redo': return redo(state);
-  }
+/** Store errors (invalid paths etc.) are validated in the UI first; a throw here keeps the state. */
+function reducer(state: StoreState, action: StoreAction): StoreState {
+  try { return storeReducer(state, action); } catch { return state; }
 }
+
+const starterProject = (code = STARTER) => createProject({ 'src/App.tsx': code }, 'src/App.tsx', 'My application');
+
+type PaneId = 'files' | 'components' | 'outline';
+const PANES_KEY = 'eui-studio-panes';
+const loadCollapsed = (): Record<PaneId, boolean> => {
+  try { return { files: false, components: false, outline: false, ...JSON.parse(localStorage.getItem(PANES_KEY) ?? '{}') }; } catch { return { files: false, components: false, outline: false }; }
+};
 
 const resolveTheme = (theme: ThemePreference): ThemeName =>
   theme === 'system' ? (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme;
@@ -48,7 +50,10 @@ interface StudioAppProps { theme: ThemePreference; setTheme: (theme: ThemePrefer
 
 function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   const toast = useToast();
-  const [state, dispatch] = useReducer(reducer, undefined, () => createHistory(STARTER));
+  const announce = useAnnouncer();
+  const [state, dispatch] = useReducer(reducer, undefined, () => createStore(starterProject()));
+  const [collapsed, setCollapsed] = useState(loadCollapsed);
+  useEffect(() => { try { localStorage.setItem(PANES_KEY, JSON.stringify(collapsed)); } catch { /* private mode */ } }, [collapsed]);
   const [loaded, setLoaded] = useState(false);
   const [saved, setSaved] = useState(true);
   const [view, setView] = useState<View>('design');
@@ -56,7 +61,11 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   const [preview, setPreview] = useState<{ error: string | null; ready: boolean }>({ error: null, ready: false });
   const editorHandle = useRef<CodeEditorHandle | null>(null);
   const pendingLine = useRef<number | null>(null);
-  const code = state.present;
+  const { project, activePath } = state;
+  const entry = project.entry;
+  const code = project.files[entry] ?? '';
+  const activeCode = project.files[activePath] ?? '';
+  const commitEntry = useCallback((next: string, source: 'visual' | 'editor' = 'visual') => dispatch({ type: 'editFile', path: entry, text: next, source }), [entry]);
   const doc = useMemo(() => parseDocument(code), [code]);
   // Keep the last good tree while the code is mid-edit, so the canvas does not go blank.
   const lastGood = useRef(doc);
@@ -80,10 +89,12 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
       const savedProject = fromLink ? undefined : await loadProject();
       if (!active) return;
       if (fromLink) {
-        dispatch({ type: 'reset', code: fromLink });
+        dispatch({ type: 'loadProject', project: starterProject(fromLink) });
         history.replaceState(null, '', window.location.pathname + window.location.search);
         toast.show({ title: 'Example opened in Studio', tone: 'success' });
-      } else if (savedProject?.code) dispatch({ type: 'reset', code: savedProject.code });
+      } else if (savedProject?.files && savedProject.entry && savedProject.entry in savedProject.files) {
+        dispatch({ type: 'loadProject', project: createProject(savedProject.files, savedProject.entry, 'My application') });
+      } else if (savedProject?.code) dispatch({ type: 'loadProject', project: starterProject(savedProject.code) });
       setLoaded(true);
     })();
     return () => { active = false; };
@@ -94,16 +105,16 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   useEffect(() => {
     if (!loaded) return;
     setSaved(false);
-    const timer = setTimeout(() => { void saveProject(code).then(() => setSaved(true)); }, 400);
+    const timer = setTimeout(() => { void saveProject(project).then(() => setSaved(true)); }, 400);
     return () => clearTimeout(timer);
-  }, [code, loaded]);
+  }, [project, loaded]);
 
   useEffect(() => { if (selectedId && !findNode(root, selectedId)) setSelectedId(null); }, [root, selectedId]);
 
   const apply = useCallback((next: string, select?: string | null) => {
-    if (next !== code) dispatch({ type: 'commit', code: next });
+    if (next !== code) commitEntry(next);
     if (select !== undefined) setSelectedId(select);
-  }, [code]);
+  }, [code, commitEntry]);
 
   const insertAt = useCallback((name: string, target: { parentId: string; index: number }) => {
     const snippet = defaultSnippet(name);
@@ -168,7 +179,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
       const inField = /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName) || target.isContentEditable;
       const mod = event.ctrlKey || event.metaKey;
       const key = event.key.toLowerCase();
-      if (mod && key === 's') { event.preventDefault(); void saveProject(code).then(() => { setSaved(true); toast.show({ title: 'Saved', tone: 'success' }); }); return; }
+      if (mod && key === 's') { event.preventDefault(); void saveProject(project).then(() => { setSaved(true); toast.show({ title: 'Saved', tone: 'success' }); }); return; }
       if (event.shiftKey && event.altKey && key === 'f') { event.preventDefault(); void format(); return; }
       if (inEditor || inField) return;
       if (mod && key === 'z') { event.preventDefault(); dispatch({ type: event.shiftKey ? 'redo' : 'undo' }); }
@@ -178,12 +189,24 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [code, format, onAction, selected, toast]);
+  }, [project, format, onAction, selected, toast]);
 
   const onDropNode = (id: string, target: DropTarget) => {
     const moved = moveNode(code, id, target.parentId, target.index);
     apply(moved.code, moved.id);
   };
+
+  const paneToggle = (pane: PaneId, title: string) => (
+    <IconButton
+      size="sm"
+      variant="tertiary"
+      icon={collapsed[pane] ? <ChevronRight /> : <ChevronDown />}
+      label={`${collapsed[pane] ? 'Expand' : 'Collapse'} ${title}`}
+      aria-expanded={!collapsed[pane]}
+      aria-controls={`${pane}-body`}
+      onClick={() => setCollapsed((c) => ({ ...c, [pane]: !c[pane] }))}
+    />
+  );
 
   const siblings = selected && parentId(selected.id) ? findNode(root, parentId(selected.id)!)?.children.length ?? 0 : 0;
   const showDesign = view !== 'code';
@@ -199,7 +222,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
             <IconButton size="sm" variant="tertiary" icon={<Undo2 />} label="Undo" disabled={!state.past.length} onClick={() => dispatch({ type: 'undo' })} />
             <IconButton size="sm" variant="tertiary" icon={<Redo2 />} label="Redo" disabled={!state.future.length} onClick={() => dispatch({ type: 'redo' })} />
             <IconButton size="sm" variant="tertiary" icon={<Sparkles />} label="Format code" onClick={() => void format()} />
-            <IconButton size="sm" variant="tertiary" icon={<FilePlus2 />} label="New page" onClick={() => { dispatch({ type: 'commit', code: STARTER }); setSelectedId(null); }} />
+            <IconButton size="sm" variant="tertiary" icon={<FilePlus2 />} label="New page" onClick={() => { commitEntry(STARTER); setSelectedId(null); }} />
             <IconButton size="sm" variant="tertiary" icon={<Download />} label="Download App.tsx" onClick={download} />
             <Select
               size="sm"
@@ -228,14 +251,32 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         </span>
       </section>
       <div className={styles.workspace}>
-        <nav className={styles.left} aria-label="Components and outline">
-          <section className={styles.pane} aria-labelledby="palette-title">
-            <h2 id="palette-title" className={styles.paneTitle}>Components</h2>
-            <Palette onInsert={insertAtSelection} />
+        <nav className={styles.left} aria-label="Files, components and outline">
+          <section className={cx(styles.pane, styles.filesPane, collapsed.files && styles.collapsed)} aria-labelledby="files-title">
+            <FileTree
+              state={state}
+              dispatch={dispatch}
+              loading={!loaded}
+              titleClassName={styles.paneTitle}
+              collapsed={collapsed.files}
+              collapseToggle={paneToggle('files', 'Files')}
+              onOpen={(path) => {
+                dispatch({ type: 'openFile', path });
+                // TODO(UX-10): remove this switch to Split once editor tabs ship; tabs show the opened file.
+                if (path !== entry && view === 'design') {
+                  setView('split');
+                  announce(`Switched to Split view to show ${path.slice(path.lastIndexOf('/') + 1)}.`);
+                }
+              }}
+            />
           </section>
-          <section className={styles.pane} aria-labelledby="outline-title" data-studio-outline>
-            <h2 id="outline-title" className={styles.paneTitle}>Outline</h2>
-            <div className={styles.outline}><Outline root={root} selectedId={selectedId} onSelect={setSelectedId} /></div>
+          <section className={cx(styles.pane, collapsed.components && styles.collapsed)} aria-labelledby="palette-title">
+            <div className={styles.paneHead}>{paneToggle('components', 'Components')}<h2 id="palette-title" className={styles.paneTitle}>Components</h2></div>
+            <div id="components-body" className={styles.paneBody} hidden={collapsed.components}><Palette onInsert={insertAtSelection} /></div>
+          </section>
+          <section className={cx(styles.pane, collapsed.outline && styles.collapsed)} aria-labelledby="outline-title" data-studio-outline>
+            <div className={styles.paneHead}>{paneToggle('outline', 'Outline')}<h2 id="outline-title" className={styles.paneTitle}>Outline</h2></div>
+            <div id="outline-body" className={cx(styles.paneBody, styles.outline)} hidden={collapsed.outline}><Outline root={root} selectedId={selectedId} onSelect={setSelectedId} /></div>
           </section>
         </nav>
         <main className={styles.center} aria-label="Page">
@@ -263,9 +304,9 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
               <section className={styles.codePane} aria-label="Code editor">
                 <Suspense fallback={<BusyIndicator active text="Loading code editor" />}>
                   <CodeEditor
-                    value={code}
+                    value={activeCode}
                     theme={resolved}
-                    onChange={(next) => dispatch({ type: 'commit', code: next, source: 'editor' })}
+                    onChange={(next) => dispatch({ type: 'editFile', path: activePath, text: next, source: 'editor' })}
                     onReady={(handle) => {
                       editorHandle.current = handle;
                       if (pendingLine.current) { handle.revealLine(pendingLine.current); pendingLine.current = null; }
@@ -283,8 +324,8 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
             isRoot={!!selected && !parentId(selected.id)}
             canMoveUp={!!selected && indexOf(selected.id) > 0}
             canMoveDown={!!selected && indexOf(selected.id) < siblings - 1}
-            onSetAttribute={(name: string, value: AttrInput) => selected && dispatch({ type: 'commit', code: setAttribute(code, selected.id, name, value), source: typeof value === 'string' ? 'editor' : 'visual' })}
-            onSetText={(text) => selected && dispatch({ type: 'commit', code: setText(code, selected.id, text), source: 'editor' })}
+            onSetAttribute={(name: string, value: AttrInput) => selected && commitEntry(setAttribute(code, selected.id, name, value), typeof value === 'string' ? 'editor' : 'visual')}
+            onSetText={(text) => selected && commitEntry(setText(code, selected.id, text), 'editor')}
             onAction={onAction}
           />
         </aside>

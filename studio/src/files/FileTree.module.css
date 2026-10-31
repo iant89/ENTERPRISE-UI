@@ -1,0 +1,138 @@
+.pane {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+  flex: 1;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--eui-space-1);
+  padding-inline-end: var(--eui-space-2);
+}
+
+.count {
+  color: var(--eui-color-text-secondary);
+  font-weight: var(--eui-font-weight-normal);
+  text-transform: none;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  margin-inline-start: auto;
+}
+
+.actions button {
+  min-inline-size: var(--eui-touch-target-min);
+  min-block-size: var(--eui-touch-target-min);
+}
+
+.body {
+  position: relative;
+  flex: 1;
+  min-block-size: 0;
+  overflow: auto;
+  padding-block-end: var(--eui-space-4);
+}
+
+/* Rows: tokens per UX-4 §4.1. Indent and focus are adjusted from Studio, the library stays untouched. */
+.body [role='treeitem'] > div {
+  min-block-size: var(--eui-row-height);
+  padding-inline-start: calc(var(--eui-space-2) + (var(--_level, 1) - 1) * var(--eui-space-4));
+}
+
+.body [role='treeitem'] > div:hover {
+  background: var(--eui-color-surface-hover);
+}
+
+.body [role='treeitem'][aria-selected='true'] > div {
+  background: var(--eui-color-surface-selected);
+  color: var(--eui-color-selected-text);
+}
+
+.body [role='treeitem']:focus-visible {
+  outline: var(--eui-focus-width) var(--eui-focus-style) var(--eui-color-focus);
+  outline-offset: calc(-1 * var(--eui-focus-width));
+}
+
+.body [role='treeitem'] > div[data-drop='valid'] {
+  outline: var(--eui-border-width-thick) solid var(--eui-color-primary);
+  outline-offset: calc(-1 * var(--eui-border-width-thick));
+  background: var(--eui-color-primary-subtle);
+}
+
+.body [role='treeitem'] > div[data-drop='invalid'] {
+  cursor: no-drop;
+}
+
+.body[data-drop='valid'] {
+  background: var(--eui-color-primary-subtle);
+}
+
+.body [data-tree-id='__new__'] > div {
+  visibility: hidden;
+}
+
+.editor {
+  position: absolute;
+  inset-inline: var(--eui-space-2);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-1);
+  padding: var(--eui-space-1);
+  background: var(--eui-color-surface);
+  border-radius: var(--eui-radius-sm, 0);
+  box-shadow: var(--eui-shadow-sm, none);
+}
+
+.helper {
+  font-size: var(--eui-font-size-xs);
+  color: var(--eui-color-text-secondary);
+}
+
+.error {
+  font-size: var(--eui-font-size-xs);
+  color: var(--eui-color-error-text);
+}
+
+.marker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--eui-space-1);
+}
+
+.unused {
+  color: var(--eui-color-text-secondary);
+  inline-size: var(--eui-icon-size-sm);
+  block-size: var(--eui-icon-size-sm);
+}
+
+.errorIcon {
+  color: var(--eui-color-error-text);
+  inline-size: var(--eui-icon-size-sm);
+  block-size: var(--eui-icon-size-sm);
+}
+
+.contextMenu {
+  position: fixed;
+  z-index: 1000;
+  min-inline-size: 12rem;
+}
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-2) var(--eui-space-3);
+}
+
+.moveBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-3);
+  max-block-size: 50vh;
+  overflow: auto;
+}

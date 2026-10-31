@@ -3,10 +3,15 @@ import { createFile, deleteFile, deleteFolder, renameFile, renameFolder, writeFi
 /**
  * Minimal M3-04 slice: the project-wide store with snapshot undo, as far as the file tree (UX-4)
  * needs it. Each step stores the project before and after plus the path it touched, so undo can
- * restore `activePath` to that file (UX-8). Tabs (UX-10) build on `openFile`/`activePath` later.
+ * switch `activePath` to that file (UX-8). History lives only in memory; it is never
+ * persisted, so nothing survives a reload (decision T4). Tabs (UX-10) build on `openFile`/`activePath` later.
  */
 
-export interface Step { project: Project; activePath: FilePath; label: string }
+/**
+ * One history step. `project`/`activePath` are the state on the other side of the step;
+ * `before`/`after` are the file the step touched on each side, so undo and redo can switch to it (§6, UX-8).
+ */
+export interface Step { project: Project; activePath: FilePath; label: string; before?: FilePath; after?: FilePath }
 
 export interface StoreState {
   project: Project;
@@ -36,9 +41,9 @@ export const createStore = (project: Project): StoreState => ({ project, activeP
 
 const fix = (project: Project, path: FilePath) => (path in project.files ? path : project.entry);
 
-function record(state: StoreState, project: Project, touched: FilePath, label: string, activePath = touched, lastEdit?: StoreState['lastEdit']): StoreState {
+function record(state: StoreState, project: Project, touched: FilePath, label: string, activePath = touched, lastEdit?: StoreState['lastEdit'], before: FilePath = touched): StoreState {
   if (project === state.project) return state;
-  const past = [...state.past, { project: state.project, activePath: state.activePath, label }].slice(-HISTORY_LIMIT);
+  const past = [...state.past, { project: state.project, activePath: state.activePath, label, before, after: touched }].slice(-HISTORY_LIMIT);
   return { project, activePath: fix(project, activePath), past, future: [], lastEdit };
 }
 
@@ -64,14 +69,14 @@ export function storeReducer(state: StoreState, action: StoreAction): StoreState
     case 'renameFile': {
       const next = renameFile(project, action.from, action.to);
       const active = state.activePath === action.from ? action.to : state.activePath;
-      return record(state, next, action.to, `Rename ${action.from}`, active);
+      return record(state, next, action.to, `Rename ${action.from}`, active, undefined, action.from);
     }
     case 'renameFolder': {
       const next = renameFolder(project, action.from, action.to);
       const active = under(action.from, state.activePath) ? action.to + state.activePath.slice(action.from.length) : state.activePath;
-      return record(state, next, active, `Rename ${action.from}/`, active);
+      return record(state, next, active, `Rename ${action.from}/`, active, undefined, state.activePath);
     }
-    case 'deleteFile': return record(state, deleteFile(project, action.path), state.activePath, `Delete ${action.path}`);
+    case 'deleteFile': return record(state, deleteFile(project, action.path), state.activePath, `Delete ${action.path}`, state.activePath, undefined, action.path);
     case 'deleteFolder': return record(state, deleteFolder(project, action.path), state.activePath, `Delete ${action.path}/`);
     case 'setEntry': {
       if (!(action.path in project.files) || project.entry === action.path) return state;
@@ -80,12 +85,14 @@ export function storeReducer(state: StoreState, action: StoreAction): StoreState
     case 'undo': {
       const step = state.past.at(-1);
       if (!step) return state;
-      return { project: step.project, activePath: fix(step.project, step.activePath), past: state.past.slice(0, -1), future: [{ project, activePath: state.activePath, label: step.label }, ...state.future] };
+      const to = step.before && step.before in step.project.files ? step.before : fix(step.project, step.activePath);
+      return { project: step.project, activePath: to, past: state.past.slice(0, -1), future: [{ ...step, project, activePath: state.activePath }, ...state.future] };
     }
     case 'redo': {
       const step = state.future[0];
       if (!step) return state;
-      return { project: step.project, activePath: fix(step.project, step.activePath), past: [...state.past, { project, activePath: state.activePath, label: step.label }], future: state.future.slice(1) };
+      const to = step.after && step.after in step.project.files ? step.after : fix(step.project, step.activePath);
+      return { project: step.project, activePath: to, past: [...state.past, { ...step, project, activePath: state.activePath }], future: state.future.slice(1) };
     }
   }
 }

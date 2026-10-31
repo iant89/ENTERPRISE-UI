@@ -57,11 +57,11 @@ const SEGMENT = /^[A-Za-z0-9._-]+$/;
 function checkSegments(path: string): FilePath {
   if (path.replace(/\\/g, '/').split('/').includes('..')) fail('escapes-root', `"${path}" must not contain ".."`);
   const norm = normalize(path);
-  for (const seg of norm.split('/')) if (!SEGMENT.test(seg)) fail('invalid-segment', `"${seg}" may only use letters, digits, ".", "_" and "-"`);
+  for (const seg of norm.split('/')) if (!SEGMENT.test(seg) || /^\.+$/.test(seg)) fail('invalid-segment', `"${seg}" may only use letters, digits, ".", "_" and "-"`);
   return norm;
 }
 
-export const extname = (path: string) => { const base = basename(path); const i = base.lastIndexOf('.'); return i > 0 ? base.slice(i) : ''; };
+export const extname = (path: string) => { const base = basename(path); const i = base.lastIndexOf('.'); return i > 0 && !/^\.+$/.test(base.slice(0, i)) ? base.slice(i) : ''; };
 export const basename = (path: string) => path.slice(path.lastIndexOf('/') + 1);
 export const dirname = (path: string) => { const i = path.lastIndexOf('/'); return i < 0 ? '' : path.slice(0, i); };
 const stripExt = (path: string) => { const ext = extname(path); return ext ? path.slice(0, -ext.length) : path; };
@@ -78,11 +78,21 @@ export const validateFolder = (path: string): FilePath => checkSegments(path);
 
 const isRelative = (spec: string) => spec === '.' || spec === '..' || spec.startsWith('./') || spec.startsWith('../');
 
-/** Joins a relative specifier onto the importing file's folder. Bare specifiers give `null`. */
+/**
+ * Joins a relative specifier onto the importing file's folder. Bare specifiers give `null`;
+ * a specifier that lands on the project root (`.` from a root file, `..` from `src/x.tsx`) gives `''`.
+ */
 export function resolveRelative(from: FilePath, spec: string): FilePath | null {
   if (!isRelative(spec)) return null;
-  return normalize(`${dirname(from)}/${spec}`);
+  try {
+    return normalize(`${dirname(from)}/${spec}`);
+  } catch (err) {
+    if (err instanceof ProjectError && err.code === 'empty') return '';
+    throw err;
+  }
 }
+
+const join = (dir: FilePath, name: string) => (dir ? `${dir}/${name}` : name);
 
 const IMPLICIT_EXT = ['.tsx', '.ts', '.jsx', '.js', '.json'];
 const INDEX_EXT = ['.tsx', '.ts', '.jsx', '.js'];
@@ -92,20 +102,24 @@ export function resolveImport(files: Record<FilePath, string>, from: FilePath, s
   let base: FilePath | null;
   try { base = resolveRelative(from, spec); } catch { return null; }
   if (base === null) return null;
-  if (base in files) return base;
-  for (const ext of IMPLICIT_EXT) if (base + ext in files) return base + ext;
-  for (const ext of INDEX_EXT) if (`${base}/index${ext}` in files) return `${base}/index${ext}`;
+  if (base && base in files) return base;
+  if (base) for (const ext of IMPLICIT_EXT) if (base + ext in files) return base + ext;
+  for (const ext of INDEX_EXT) if (join(base, `index${ext}`) in files) return join(base, `index${ext}`);
   return null;
 }
 
-/** The shortest relative specifier from a file to a target path (`./x`, `../x`). */
+/**
+ * The shortest relative specifier from a file to a target path (`./x`, `../x`). A target that is
+ * the file's own folder gives `.`, an ancestor folder gives `..`, `../..`, and `''` is the root.
+ */
 export function relativeSpecifier(from: FilePath, to: FilePath): string {
   const a = dirname(from) ? dirname(from).split('/') : [];
-  const b = to.split('/');
+  const b = to ? to.split('/') : [];
   let i = 0;
-  while (i < a.length && i < b.length - 1 && a[i] === b[i]) i++;
+  while (i < a.length && i < b.length && a[i] === b[i]) i++;
   const up = a.length - i;
   const rest = b.slice(i).join('/');
+  if (!rest) return up ? Array(up).fill('..').join('/') : '.';
   return up ? `${'../'.repeat(up)}${rest}` : `./${rest}`;
 }
 
@@ -137,6 +151,14 @@ export function findImportSpecifiers(text: string, path: FilePath): ImportSpecif
       if (callee.type === 'Import' || (callee.type === 'Identifier' && callee.name === 'require')) add((n.arguments as never[])[0]);
     }
     if (n.type === 'ImportExpression') add(n.source as never);
+    // `typeof import('./x')` / `import('./x').T`: Babel 8 uses `source`; older shapes use `argument` (maybe a TSLiteralType).
+    if (n.type === 'TSImportType') {
+      const arg = (n.source ?? n.argument) as { type: string; literal?: unknown } | undefined;
+      add((arg?.type === 'TSLiteralType' ? arg.literal : arg) as never);
+    }
+    // `import z = require('./x')`
+    if (n.type === 'TSExternalModuleReference') add(n.expression as never);
+    // Template literals (`import(\`./x\`)`) are intentionally not treated as specifiers.
     for (const key of Object.keys(n)) {
       if (key === 'loc' || key === 'leadingComments' || key === 'trailingComments' || key === 'innerComments' || key === 'extra') continue;
       walk(n[key]);
@@ -150,29 +172,34 @@ export function findImportSpecifiers(text: string, path: FilePath): ImportSpecif
  * Applies a move map (old path -> new path) to the VFS and rewrites every relative specifier
  * whose importer or target moved, keeping the specifier's style (extension, `index`) and quotes.
  */
-function moveFiles(files: Record<FilePath, string>, moves: Map<FilePath, FilePath>): Record<FilePath, string> {
+function moveFiles(files: Record<FilePath, string>, moves: Map<FilePath, FilePath>): { files: Record<FilePath, string>; skipped: FilePath[] } {
   const next: Record<FilePath, string> = {};
+  const skipped: FilePath[] = [];
+  const movedKeys: Record<FilePath, string> = {};
+  for (const p of Object.keys(files)) movedKeys[moves.get(p) ?? p] = '';
   for (const [oldPath, text] of Object.entries(files)) {
     const importer = moves.get(oldPath) ?? oldPath;
     const specs = findImportSpecifiers(text, oldPath);
     let out = text;
+    if (!specs) skipped.push(importer);
     if (specs) {
       for (const s of [...specs].reverse()) {
         const target = resolveImport(files, oldPath, s.value);
         if (!target) continue;
         const newTarget = moves.get(target) ?? target;
         if (newTarget === target && importer === oldPath) continue;
+        if (resolveImport(movedKeys, importer, s.value) === newTarget) continue; // still resolves: keep it
         const base = resolveRelative(oldPath, s.value)!;
         let spec: string;
         if (base === target) spec = relativeSpecifier(importer, newTarget);
-        else if (target.startsWith(`${base}/index.`) && basename(newTarget) === basename(target)) spec = relativeSpecifier(importer, dirname(newTarget));
+        else if (target.startsWith(join(base, 'index.')) && basename(newTarget) === basename(target)) spec = relativeSpecifier(importer, dirname(newTarget));
         else spec = relativeSpecifier(importer, stripExt(newTarget));
         if (spec !== s.value) out = out.slice(0, s.start + 1) + spec + out.slice(s.end - 1);
       }
     }
     next[importer] = out;
   }
-  return next;
+  return { files: next, skipped: skipped.sort() };
 }
 
 // ---------------------------------------------------------------- commands
@@ -181,6 +208,8 @@ function moveFiles(files: Record<FilePath, string>, moves: Map<FilePath, FilePat
 export interface ProjectCommand {
   label: string;
   touched: FilePath[];
+  /** Importers that did not parse, so their specifiers could not be updated (rename only). */
+  skipped: FilePath[];
   do: (project: Project) => Project;
   undo: (project: Project) => Project;
 }
@@ -188,22 +217,25 @@ export interface ProjectCommand {
 export const applyCommand = (project: Project, command: ProjectCommand) => command.do(project);
 export const revertCommand = (project: Project, command: ProjectCommand) => command.undo(project);
 
-function toCommand(label: string, before: Project, after: Project): ProjectCommand {
+function toCommand(label: string, before: Project, after: Project, skipped: FilePath[] = []): ProjectCommand {
   const touched = [...new Set([...Object.keys(before.files), ...Object.keys(after.files)])].filter((p) => before.files[p] !== after.files[p]);
   const patch = (from: Project, to: Project) => (project: Project): Project => {
     const files = { ...project.files };
     for (const p of touched) { if (p in to.files) files[p] = to.files[p]; else delete files[p]; }
     return { ...project, files, entry: project.entry === from.entry ? to.entry : project.entry, updatedAt: Date.now() };
   };
-  return { label, touched, do: patch(before, after), undo: patch(after, before) };
+  return { label, touched, skipped, do: patch(before, after), undo: patch(after, before) };
 }
 
 export interface CommandOption { command: true }
 type Result<O> = O extends CommandOption ? ProjectCommand : Project;
 
-function finish<O extends CommandOption | undefined>(label: string, before: Project, after: Project, opts?: O): Result<O> {
-  return (opts?.command ? toCommand(label, before, after) : after) as Result<O>;
+function finish<O extends CommandOption | undefined>(label: string, before: Project, after: Project, opts?: O, skipped: FilePath[] = []): Result<O> {
+  return (opts?.command ? toCommand(label, before, after, skipped) : after) as Result<O>;
 }
+
+/** A rename result with the importers whose specifiers could not be rewritten because they do not parse. */
+export interface RenameReport { project: Project; skipped: FilePath[] }
 
 // ---------------------------------------------------------------- operations
 
@@ -283,34 +315,54 @@ export function deleteFolder<O extends CommandOption | undefined = undefined>(pr
   return finish(`Delete ${dir}/`, project, { ...project, files, updatedAt: Date.now() }, opts);
 }
 
-function applyMoves(project: Project, moves: Map<FilePath, FilePath>): Project {
+function applyMoves(project: Project, moves: Map<FilePath, FilePath>): RenameReport {
   const rest = Object.keys(project.files).filter((p) => !moves.has(p));
   for (const to of moves.values()) checkFree(rest, to);
-  return { ...project, files: moveFiles(project.files, moves), entry: moves.get(project.entry) ?? project.entry, updatedAt: Date.now() };
+  const { files, skipped } = moveFiles(project.files, moves);
+  return { project: { ...project, files, entry: moves.get(project.entry) ?? project.entry, updatedAt: Date.now() }, skipped };
+}
+
+function planFileRename(project: Project, from: string, to: string): [string, RenameReport] {
+  const a = normalize(from);
+  if (!(a in project.files)) fail('not-found', `"${a}" does not exist`);
+  const b = validatePath(to);
+  if (a === b) return [`Rename ${a}`, { project, skipped: [] }];
+  return [`Rename ${a} to ${b}`, applyMoves(project, new Map([[a, b]]))];
 }
 
 /** Renames or moves a file and rewrites relative imports that point at it (and its own). */
 export function renameFile<O extends CommandOption | undefined = undefined>(project: Project, from: string, to: string, opts?: O): Result<O> {
-  const a = normalize(from);
-  if (!(a in project.files)) fail('not-found', `"${a}" does not exist`);
-  const b = validatePath(to);
-  if (a === b) return finish(`Rename ${a}`, project, project, opts);
-  return finish(`Rename ${a} to ${b}`, project, applyMoves(project, new Map([[a, b]])), opts);
+  const [label, r] = planFileRename(project, from, to);
+  return finish(label, project, r.project, opts, r.skipped);
+}
+
+/** `renameFile` that also reports importers it could not update (they failed to parse). */
+export function renameFileWithReport(project: Project, from: string, to: string): RenameReport {
+  return planFileRename(project, from, to)[1];
 }
 
 /** Renames or moves a folder with everything in it, rewriting imports inside and outside. */
 export function renameFolder<O extends CommandOption | undefined = undefined>(project: Project, from: string, to: string, opts?: O): Result<O> {
+  const [label, r] = planFolderRename(project, from, to);
+  return finish(label, project, r.project, opts, r.skipped);
+}
+
+/** `renameFolder` that also reports importers it could not update (they failed to parse). */
+export function renameFolderWithReport(project: Project, from: string, to: string): RenameReport {
+  return planFolderRename(project, from, to)[1];
+}
+
+function planFolderRename(project: Project, from: string, to: string): [string, RenameReport] {
   const a = normalize(from);
   const members = Object.keys(project.files).filter(inFolder(a));
   if (!members.length) fail('not-found', `Folder "${a}" does not exist`);
   const b = validateFolder(to);
-  if (a === b) return finish(`Rename ${a}/`, project, project, opts);
+  if (a === b) return [`Rename ${a}/`, { project, skipped: [] }];
   if (b.startsWith(`${a}/`)) fail('into-itself', 'A folder cannot move into itself');
   const rest = Object.keys(project.files).filter((p) => !inFolder(a)(p));
   if (rest.some(inFolder(b))) fail('exists', `Folder "${b}" already exists`);
-  for (const m of members) if (!(ALLOWED_EXTENSIONS as readonly string[]).includes(extname(m))) fail('invalid-extension', `"${m}" has an unsupported type`);
   const moves = new Map(members.map((m) => [m, b + m.slice(a.length)] as const));
-  return finish(`Rename ${a}/ to ${b}/`, project, applyMoves(project, moves), opts);
+  return [`Rename ${a}/ to ${b}/`, applyMoves(project, moves)];
 }
 
 // ---------------------------------------------------------------- tree

@@ -69,3 +69,39 @@ describe('project store (M3-04 slice)', () => {
     expect(s.activePath).toBe('src/App.tsx');
   });
 });
+
+describe('M3-04 acceptance', () => {
+  it('undo switches to the file the step changed, even if another file is active', () => {
+    let s = createStore(project());
+    s = storeReducer(s, { type: 'editFile', path: 'src/H.tsx', text: 'changed', source: 'visual' });
+    s = storeReducer(s, { type: 'openFile', path: 'src/App.tsx' });
+    const u = storeReducer(s, { type: 'undo' });
+    expect(u.project.files['src/H.tsx']).not.toBe('changed');
+    expect(u.activePath).toBe('src/H.tsx');
+    const r = storeReducer({ ...u, activePath: 'src/App.tsx' }, { type: 'redo' });
+    expect(r.activePath).toBe('src/H.tsx');
+  });
+  it('a rename with import rewrites in other files is one undo step', () => {
+    let s = createStore(project());
+    s = storeReducer(s, { type: 'renameFile', from: 'src/H.tsx', to: 'src/Header.tsx' });
+    expect(s.past).toHaveLength(1);
+    const u = storeReducer(s, { type: 'undo' });
+    expect(u.project.files).toEqual(project().files);
+    expect(u.past).toHaveLength(0);
+  });
+  it('the persisted project carries no history, so none survives a reload', () => {
+    let s = createStore(project());
+    s = storeReducer(s, { type: 'createFile', path: 'src/X.ts', text: '' });
+    const saved = JSON.parse(JSON.stringify(s.project));
+    expect(Object.keys(saved)).not.toEqual(expect.arrayContaining(['past']));
+    expect(JSON.stringify(saved)).not.toContain('"past"');
+    const reloaded = storeReducer(createStore(saved), { type: 'undo' });
+    expect(reloaded.past).toHaveLength(0);
+    expect(reloaded.project.files['src/X.ts']).toBe('');
+  });
+  it('shares unchanged file strings between snapshots', () => {
+    let s = createStore(project());
+    s = storeReducer(s, { type: 'editFile', path: 'src/App.tsx', text: 'x' });
+    expect(s.past[0].project.files['src/H.tsx']).toBe(s.project.files['src/H.tsx']);
+  });
+});

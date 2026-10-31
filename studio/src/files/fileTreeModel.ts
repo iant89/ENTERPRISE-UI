@@ -1,5 +1,5 @@
 import type { TreeNode as UiTreeNode } from '@enterprise-ui/react';
-import { ALLOWED_EXTENSIONS, LIMITS, basename, dirname, extname, findImportSpecifiers, listTree, resolveImport, type FilePath, type TreeNode } from '../model/project';
+import { ALLOWED_EXTENSIONS, LIMITS, basename, renameFileWithReport, renameFolderWithReport, type Project, dirname, extname, findImportSpecifiers, listTree, resolveImport, type FilePath, type TreeNode } from '../model/project';
 
 /**
  * Pure helpers for the Files pane (UX-4 / M3-08): tree nodes, validation copy, focus rules and
@@ -177,12 +177,24 @@ export function rewrittenFiles(before: Record<FilePath, string>, after: Record<F
   return out;
 }
 
-/** Files that don't parse but mention a moved file's name, so their imports may be stale (§4.5). */
-export function unrewritable(files: Record<FilePath, string>, moved: FilePath[]): FilePath[] {
-  const stems = moved.map((m) => basename(m).replace(/\.[^.]+$/, ''));
-  return Object.keys(files).filter((p) => !moved.includes(p) && findImportSpecifiers(files[p], p) === null
-    && stems.some((s) => new RegExp(`['"][^'"]*\\b${s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}['"]`).test(files[p])));
+/**
+ * What a rename/move of a tree item (file path or `dir:` folder id) will do, from the M3-02
+ * `renameFileWithReport` / `renameFolderWithReport`: files whose imports were rewritten, and the
+ * `skipped` files the store couldn't check because they don't parse (§4.5).
+ */
+export function moveReport(project: Project, id: string, to: FilePath): { rewritten: FilePath[]; skipped: FilePath[] } {
+  const from = pathOf(id);
+  const folder = isFolderId(id);
+  const report = folder ? renameFolderWithReport(project, from, to) : renameFileWithReport(project, from, to);
+  const moved = Object.keys(project.files).filter((p) => (folder ? p.startsWith(`${from}/`) : p === from));
+  const moves = new Map(moved.map((p) => [p, folder ? to + p.slice(from.length) : to] as const));
+  const targets = new Set(moves.values());
+  return { rewritten: rewrittenFiles(project.files, report.project.files, moves).filter((p) => !targets.has(p)), skipped: report.skipped };
 }
+
+/** Toast title for skipped files: "Renamed to X. Couldn't check imports in 2 files:". */
+export const skippedMessage = (head: string, skipped: FilePath[]) =>
+  `${head} Couldn't check imports in ${skipped.length} ${skipped.length === 1 ? 'file' : 'files'}:`;
 
 /** Files with a relative import that resolves to `target`. */
 export function importersOf(files: Record<FilePath, string>, target: FilePath): FilePath[] {

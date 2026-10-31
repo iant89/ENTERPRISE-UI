@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildTreeNodes, copyName, deleteFocusTarget, fileKind, folderId, importersOf, newFilePrefill, newFolderPrefill, removedFolders, rewrittenFiles,
-  starterContent, targetFolder, unrewritable, validateEntry,
+  moveReport, skippedMessage, starterContent, targetFolder, validateEntry,
 } from '../../studio/src/files/fileTreeModel';
 import { renameFile } from '../../studio/src/model/project';
 
@@ -118,9 +118,20 @@ describe('import bookkeeping', () => {
     const after = renameFile({ id: '1', name: 'p', files, entry: 'src/App.tsx', createdAt: 0, updatedAt: 0 }, 'src/components/Header.tsx', 'src/Header.tsx');
     expect(rewrittenFiles(files, after.files, new Map([['src/components/Header.tsx', 'src/Header.tsx']]))).toEqual(['src/App.tsx']);
   });
-  it('lists unparseable files that mention the old name as not updated', () => {
-    const broken = { ...files, 'src/Broken.tsx': "import Header from './components/Header'\nexport default (" };
-    expect(unrewritable(broken, ['src/components/Header.tsx'])).toEqual(['src/Broken.tsx']);
+  it('reports files the store could not check, from renameFileWithReport / renameFolderWithReport', () => {
+    const broken = { ...files, 'src/Broken.tsx': 'export default (', 'src/Other.tsx': 'not ( valid' };
+    const p = { id: '1', name: 'p', files: broken, entry: 'src/App.tsx', createdAt: 0, updatedAt: 0 };
+    const file = moveReport(p, 'src/components/Header.tsx', 'src/Header.tsx');
+    expect(file.skipped).toEqual(['src/Broken.tsx', 'src/Other.tsx']);
+    expect(file.rewritten).toEqual(['src/App.tsx']);
+    const folder = moveReport(p, 'dir:src/components', 'src/parts');
+    expect(folder.skipped).toEqual(['src/Broken.tsx', 'src/Other.tsx']);
+    expect(folder.rewritten).toEqual(['src/App.tsx']);
+    expect(moveReport({ ...p, files }, 'src/components/Header.tsx', 'src/Header.tsx').skipped).toEqual([]);
+  });
+  it('words the skipped list as "couldn\'t check", with "and N more" past 3', () => {
+    expect(skippedMessage('Renamed to Header.tsx.', ['src/a.ts'])).toBe("Renamed to Header.tsx. Couldn't check imports in 1 file:");
+    expect(skippedMessage('Renamed to Header.tsx.', ['a', 'b', 'c', 'd', 'e'])).toBe("Renamed to Header.tsx. Couldn't check imports in 5 files:");
   });
   it('finds importers of a file', () => {
     expect(importersOf(files, 'src/components/Header.tsx')).toEqual(['src/App.tsx']);

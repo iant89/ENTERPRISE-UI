@@ -11,7 +11,7 @@ import { basename, dirname, extname, type FilePath } from '../model/project';
 import { storeReducer, type StoreAction, type StoreState } from '../model/store';
 import {
   buildTreeNodes, copyName, deleteFocusTarget, fileKind, folderId, importersOf, isFolderId, MESSAGES, newFilePrefill, newFolderPrefill, pathOf, reachableFrom,
-  removedFolders, rewrittenFiles, starterContent, targetFolder, unrewritable, validateEntry, walk, type FileIconName, type FileNode, type ValidateContext,
+  moveReport, removedFolders, skippedMessage, starterContent, targetFolder, validateEntry, walk, type FileIconName, type FileNode, type ValidateContext,
 } from './fileTreeModel';
 import styles from './FileTree.module.css';
 
@@ -220,33 +220,32 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, loading, titleId
   const move = useCallback((id: string, to: FilePath, verb: 'Renamed' | 'Moved') => {
     const from = pathOf(id);
     const folder = isFolderId(id);
-    const movedPaths = Object.keys(files).filter((p) => (folder ? p.startsWith(`${from}/`) : p === from));
-    const moves = new Map(movedPaths.map((p) => [p, folder ? to + p.slice(from.length) : to] as const));
     let next: StoreState;
+    let report: ReturnType<typeof moveReport>;
     try {
+      report = moveReport(project, id, to);
       next = reduceOnce(state, folder ? { type: 'renameFolder', from, to } : { type: 'renameFile', from, to });
     } catch (e) {
       toast.show({ title: e instanceof Error ? e.message : String(e), tone: 'error' });
       return false;
     }
     dispatch(folder ? { type: 'renameFolder', from, to } : { type: 'renameFile', from, to });
-    const rewritten = rewrittenFiles(files, next.project.files, moves).filter((p) => !moves.has(p) && ![...moves.values()].includes(p));
-    const stale = unrewritable(files, movedPaths);
+    const { rewritten, skipped: stale } = report;
     const name = basename(to);
     const head = verb === 'Moved' ? `Moved ${name} to ${dirname(to) || 'the project root'}.` : `Renamed to ${name}.`;
     if (stale.length) {
       const shown = stale.slice(0, 3);
       toast.show({
-        title: `${head} Imports in ${plural(stale.length, 'file')} couldn't be updated:`,
+        title: skippedMessage(head, stale),
         description: (
           <span>
-            {shown.map((p, i) => <span key={p}>{i ? ', ' : ''}<Button size="sm" variant="tertiary" onClick={() => onOpen(p)}>{p}</Button></span>)}
+            {shown.map((p, i) => <span key={p}>{i ? ', ' : ''}<Link href="#" onClick={(e) => { e.preventDefault(); onOpen(p); }}>{p}</Link></span>)}
             {stale.length > 3 ? ` and ${stale.length - 3} more` : ''}
           </span>
         ),
         tone: 'warning', duration: 0, action: undoAction,
       });
-      announce(`${head} Imports in ${plural(stale.length, 'file')} couldn't be updated: ${stale.join(', ')}.`);
+      announce(`${skippedMessage(head, stale)} ${stale.join(', ')}.`);
     } else if (rewritten.length) {
       toast.show({ title: `${head} Updated imports in ${plural(rewritten.length, 'file')}.`, tone: 'success', action: undoAction });
     } else {
@@ -256,7 +255,7 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, loading, titleId
     announceRemovedFolders(files, next.project.files);
     pendingFocus.current = folder ? folderId(to) : to;
     return true;
-  }, [announce, announceRemovedFolders, dispatch, files, onOpen, state, toast, undoAction]);
+  }, [announce, announceRemovedFolders, dispatch, files, onOpen, project, state, toast, undoAction]);
 
   const commitEdit = useCallback((fromBlur = false) => {
     if (!edit) return;

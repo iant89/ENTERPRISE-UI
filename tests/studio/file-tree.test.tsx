@@ -119,6 +119,18 @@ describe('FileTree', () => {
     expect(latest.project.files['src/App.tsx']).toContain("'./components/Header'");
   });
 
+  it('lists files it couldn\'t check after a rename as links that open them', async () => {
+    const onOpen = vi.fn();
+    const { user } = setup({ onOpen, files: { ...FILES, 'src/Broken.tsx': 'export default (' } });
+    item(/^Header\.tsx/).focus();
+    await user.keyboard('{F2}TopBar{Enter}');
+    expect((await screen.findAllByText("Renamed to TopBar.tsx. Couldn't check imports in 1 file:")).length).toBeGreaterThan(0);
+    const link = screen.getByRole('link', { name: 'src/Broken.tsx' });
+    await user.click(link);
+    expect(onOpen).toHaveBeenLastCalledWith('src/Broken.tsx');
+    expect(screen.getAllByRole('button', { name: 'Undo' }).length).toBeGreaterThan(0);
+  });
+
   it('deletes a file with an Undo toast and moves focus to the next sibling', async () => {
     const { user } = setup();
     item(/^Footer\.tsx/).focus();

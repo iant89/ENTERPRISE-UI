@@ -293,6 +293,42 @@ describe('announceOpen (BroadcastChannel notice)', () => {
     a.close(); other.close();
     expect(log).toEqual(['a:left']);
   });
+  it('counts peers by tabId: onLeft fires only when the last other tab closes', () => {
+    Bus.channels = [];
+    const counts: number[] = [];
+    let left = 0;
+    const a = openProjectChannel('p1', { onPeersChange: (n) => counts.push(n), onLeft: () => { left++; } }, factory);
+    const b = openProjectChannel('p1', {}, factory);
+    const c = openProjectChannel('p1', {}, factory);
+    expect(a.peerCount()).toBe(2);
+    expect(b.peerCount()).toBe(2);
+    b.announceSaved(); // repeat messages from a known peer do not change the count
+    expect(a.peerCount()).toBe(2);
+    b.close();
+    expect(a.peerCount()).toBe(1);
+    expect(c.peerCount()).toBe(1);
+    expect(left).toBe(0);
+    c.close();
+    expect(a.peerCount()).toBe(0);
+    expect(left).toBe(1);
+    expect(counts).toEqual([1, 2, 1, 0]);
+    a.close();
+  });
+  it('closes itself on pagehide and stops listening afterwards', () => {
+    Bus.channels = [];
+    const page = new EventTarget();
+    let left = 0;
+    const a = openProjectChannel('p1', { onLeft: () => { left++; } }, factory);
+    const b = openProjectChannel('p1', {}, factory, page);
+    expect(a.peerCount()).toBe(1);
+    page.dispatchEvent(new Event('pagehide'));
+    expect(left).toBe(1);
+    expect(a.peerCount()).toBe(0);
+    page.dispatchEvent(new Event('pagehide'));
+    b.close();
+    expect(left).toBe(1);
+    a.close();
+  });
   it('messages carry { type, projectId, tabId }', () => {
     Bus.channels = [];
     const seen: unknown[] = [];

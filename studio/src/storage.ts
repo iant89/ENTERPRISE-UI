@@ -223,8 +223,10 @@ export interface ChannelHandlers {
   onConflict?: () => void;
   /** Another tab pressed "Use this tab": this tab should go read-only. */
   onTakeOver?: () => void;
-  /** Another tab with the same project closed: the strip can clear. */
+  /** The last other tab with the same project closed (peers are counted by `tabId`): the strip can clear. */
   onLeft?: () => void;
+  /** The number of other tabs with this project open changed. */
+  onPeersChange?: (count: number) => void;
 }
 
 export interface ProjectChannel {
@@ -233,18 +235,34 @@ export interface ProjectChannel {
   announceSaved(): void;
   /** "Use this tab": other tabs on the project go read-only. */
   takeOver(): void;
-  /** Posts `left` and closes the channel. Safe to call twice. */
+  /** Other tabs that currently have this project open. */
+  peerCount(): number;
+  /** Posts `left` and closes the channel. Safe to call twice. Also runs on `pagehide`. */
   close(): void;
 }
 
 const defaultFactory = (name: string) => (typeof BroadcastChannel === 'undefined' ? undefined : new BroadcastChannel(name));
 
+/**
+ * Joins the project's tab channel. The channel closes itself on the page's `pagehide` event
+ * (`page`, default `window`), which also covers bfcache. Callers should still call `close()`
+ * when they switch to another project or unmount.
+ */
 export function openProjectChannel(
   projectId: string,
   handlers: ChannelHandlers,
   channelFactory: (name: string) => BroadcastChannel | undefined = defaultFactory,
+  page: EventTarget | undefined = typeof window === 'undefined' ? undefined : window,
 ): ProjectChannel {
   const tabId = newId();
+  const peers = new Set<string>();
+  const setPeer = (id: string, present: boolean) => {
+    const had = peers.has(id);
+    if (present === had) return;
+    if (present) peers.add(id); else peers.delete(id);
+    handlers.onPeersChange?.(peers.size);
+    if (!present && peers.size === 0) handlers.onLeft?.();
+  };
   const channel = channelFactory('eui-studio');
   let closed = !channel;
   const post = (type: ChannelMessage['type']) => { if (!closed) channel!.postMessage({ type, projectId, tabId } satisfies ChannelMessage); };
@@ -252,18 +270,28 @@ export function openProjectChannel(
     channel.onmessage = (event: MessageEvent<ChannelMessage>) => {
       const msg = event.data;
       if (!msg || msg.tabId === tabId || msg.projectId !== projectId) return;
+      if (msg.type === 'left') { setPeer(msg.tabId, false); return; }
+      setPeer(msg.tabId, true);
       if (msg.type === 'open') post('here');
-      if (msg.type === 'open' || msg.type === 'here' || msg.type === 'saved') handlers.onConflict?.();
-      else if (msg.type === 'take-over') handlers.onTakeOver?.();
-      else if (msg.type === 'left') handlers.onLeft?.();
+      if (msg.type === 'take-over') handlers.onTakeOver?.();
+      else handlers.onConflict?.();
     };
     post('open');
   }
+  const close = () => {
+    page?.removeEventListener('pagehide', close);
+    if (closed) return;
+    post('left');
+    closed = true;
+    channel!.close();
+  };
+  if (channel) page?.addEventListener('pagehide', close);
   return {
     tabId,
     announceSaved: () => post('saved'),
     takeOver: () => post('take-over'),
-    close: () => { if (closed) return; post('left'); closed = true; channel!.close(); },
+    peerCount: () => peers.size,
+    close,
   };
 }
 

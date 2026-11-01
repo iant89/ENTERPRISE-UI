@@ -8,6 +8,8 @@
 - Code editing: lazy-loaded Monaco with the library's TypeScript types, Prettier formatting (Shift+Alt+F) and a live sandboxed preview in all 7 themes.
 - Visual editing: palette generated from the API metadata (drag or Enter to insert), outline, canvas selection, Inspector (Properties, Events, States), move, duplicate and delete, and one undo/redo history for visual and code edits.
 - IndexedDB autosave and a single-file Download App.tsx. Single page only for now.
+- Studio: projects are now stored in IndexedDB `eui-studio` version 2 (stores `projects` and `meta`). The M2 single-page record migrates to a project named "My application". **Downgrading the Studio after M3 isn't supported:** an M2 build can't open a v2 database, so it shows its starter page and can't save. The v1 record is kept in `meta.v1Backup` and in `projects/current`, so it can be recovered manually (see `studio/README.md`).
+- Studio: if browser storage can't be read or opened, autosave and Ctrl+S stop and a notice is shown, so a saved project is never overwritten. "Open in Studio" examples open as a separate new project that is saved only after an edit.
 
 ### Library
 

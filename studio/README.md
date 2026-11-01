@@ -64,6 +64,17 @@ opening it fails (`VersionError`): the Studio shows its default page and cannot 
 
 Deleting the `eui-studio` database removes all saved projects and both copies of the M2 page.
 
+### When saving is unavailable, and examples from the docs
+
+- If browser storage can't be opened (another tab still runs an older Studio version, private mode,
+  or a read error), the Studio shows "Couldn't save to browser storage" and **stops autosave and
+  Ctrl+S**, so the saved project is never overwritten. Download App.tsx to keep your work, then
+  reload.
+- If the upgrade had to change anything (unreadable files left out, a missing entry file restored or
+  replaced), a dismissible warning explains what changed. The original record is kept in `meta.v1Backup`.
+- **Open in Studio** from the docs opens the example as a separate, new project ("Example from the
+  docs"). It isn't saved until you edit it, and it never replaces your saved project.
+
 ## Known limits
 
 - Single page only. Multi-file projects, templates and ZIP export/import are planned for M3; test

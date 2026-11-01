@@ -13,14 +13,15 @@ import { Outline } from './Outline';
 import { Inspector } from './Inspector';
 import type { CodeEditorHandle } from './editor/CodeEditor';
 import { createStore, storeReducer, type StoreAction, type StoreState } from './model/store';
-import { createProject } from './model/project';
+import { createProject, type Project } from './model/project';
 import { FileTree } from './files/FileTree';
 import {
   componentNames, duplicateNode, ensureImports, findNode, insertElement, instrument, moveNode, parentId, parseDocument, removeNode, setAttribute, setText,
   type AttrInput, type StudioNode,
 } from './model/jsx';
 import { acceptsChildren, defaultSnippet } from './model/catalog';
-import { loadProject, saveProject } from './storage';
+import { loadProject, StorageBlockedError } from './storage';
+import { defaultPersistenceDeps, useProjectPersistence } from './persistence';
 import { STARTER } from './template';
 import styles from './Studio.module.css';
 
@@ -33,7 +34,7 @@ function reducer(state: StoreState, action: StoreAction): StoreState {
   try { return storeReducer(state, action); } catch { return state; }
 }
 
-const starterProject = (code = STARTER) => createProject({ 'src/App.tsx': code }, 'src/App.tsx', 'My application');
+const starterProject = (code = STARTER, name = 'My application') => createProject({ 'src/App.tsx': code }, 'src/App.tsx', name);
 
 type PaneId = 'files' | 'components' | 'outline';
 const PANES_KEY = 'eui-studio-panes';
@@ -54,8 +55,6 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   const [state, dispatch] = useReducer(reducer, undefined, () => createStore(starterProject()));
   const [collapsed, setCollapsed] = useState(loadCollapsed);
   useEffect(() => { try { localStorage.setItem(PANES_KEY, JSON.stringify(collapsed)); } catch { /* private mode */ } }, [collapsed]);
-  const [loaded, setLoaded] = useState(false);
-  const [saved, setSaved] = useState(true);
   const [view, setView] = useState<View>('design');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [preview, setPreview] = useState<{ error: string | null; ready: boolean }>({ error: null, ready: false });
@@ -80,34 +79,30 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   const selected = findNode(root, selectedId ?? '');
   const resolved = resolveTheme(theme);
 
-  // Load: a page opened from the docs (#?code=…) wins over the saved project.
-  useEffect(() => {
-    let active = true;
-    void (async () => {
-      const param = playgroundCodeParam();
-      const fromLink = param ? await decodePlaygroundCode(param) : null;
-      const savedProject = fromLink ? undefined : await loadProject();
-      if (!active) return;
-      if (fromLink) {
-        dispatch({ type: 'loadProject', project: starterProject(fromLink) });
-        history.replaceState(null, '', window.location.pathname + window.location.search);
-        toast.show({ title: 'Example opened in Studio', tone: 'success' });
-      } else if (savedProject?.files && savedProject.entry && savedProject.entry in savedProject.files) {
-        dispatch({ type: 'loadProject', project: createProject(savedProject.files, savedProject.entry, 'My application') });
-      } else if (savedProject?.code) dispatch({ type: 'loadProject', project: starterProject(savedProject.code) });
-      setLoaded(true);
-    })();
-    return () => { active = false; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once on start.
+  // Load. A page opened from the docs (#?code=…) opens as a separate, new project: it has its own
+  // id, is not saved until the user edits it, and never replaces the stored project.
+  const persistenceDeps = useMemo(() => defaultPersistenceDeps(async () => {
+    const param = playgroundCodeParam();
+    const fromLink = param ? await decodePlaygroundCode(param) : null;
+    if (fromLink) {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      toast.show({ title: 'Example opened in Studio', description: 'It opens as a new project and is saved once you edit it.', tone: 'success' });
+      return starterProject(fromLink, 'Example from the docs');
+    }
+    const stored = await loadProject();
+    if (!stored) return undefined;
+    // Hydrate with the stored id, name and timestamps (no `code`, which is only a v1 convenience).
+    const { code: _code, ...project } = stored;
+    return project;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- created once on start.
+  }), []);
+  const onStart = useCallback((loadedProject: Project | undefined) => {
+    if (loadedProject) dispatch({ type: 'loadProject', project: loadedProject });
   }, []);
-
-  // Autosave to IndexedDB.
-  useEffect(() => {
-    if (!loaded) return;
-    setSaved(false);
-    const timer = setTimeout(() => { void saveProject(project).then(() => setSaved(true)); }, 400);
-    return () => clearTimeout(timer);
-  }, [project, loaded]);
+  const persistence = useProjectPersistence(project, onStart, persistenceDeps);
+  const loaded = persistence.status !== 'loading';
+  const storageDown = persistence.status === 'unavailable';
+  const saved = persistence.saved;
 
   useEffect(() => { if (selectedId && !findNode(root, selectedId)) setSelectedId(null); }, [root, selectedId]);
 
@@ -179,7 +174,13 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
       const inField = /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName) || target.isContentEditable;
       const mod = event.ctrlKey || event.metaKey;
       const key = event.key.toLowerCase();
-      if (mod && key === 's') { event.preventDefault(); void saveProject(project).then(() => { setSaved(true); toast.show({ title: 'Saved', tone: 'success' }); }); return; }
+      if (mod && key === 's') {
+        event.preventDefault();
+        void persistence.saveNow().then((ok) => toast.show(ok
+          ? { title: 'Saved', tone: 'success' }
+          : { title: "Couldn't save", description: 'Browser storage is unavailable. Download App.tsx to keep your work.', tone: 'error' }));
+        return;
+      }
       if (event.shiftKey && event.altKey && key === 'f') { event.preventDefault(); void format(); return; }
       if (inEditor || inField) return;
       if (mod && key === 'z') { event.preventDefault(); dispatch({ type: event.shiftKey ? 'redo' : 'undo' }); }
@@ -189,7 +190,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [project, format, onAction, selected, toast]);
+  }, [persistence, format, onAction, selected, toast]);
 
   const onDropNode = (id: string, target: DropTarget) => {
     const moved = moveNode(code, id, target.parentId, target.index);
@@ -247,7 +248,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
           items={[{ value: 'design', label: 'Design' }, { value: 'split', label: 'Split' }, { value: 'code', label: 'Code' }]}
         />
         <span className={styles.status} role="status" aria-live="polite">
-          {doc.error ? 'Code has errors' : preview.error ? 'Preview error' : saved ? 'Saved in this browser' : 'Saving…'}
+          {doc.error ? 'Code has errors' : preview.error ? 'Preview error' : storageDown ? 'Not saved' : !loaded ? 'Loading…' : saved ? 'Saved in this browser' : 'Saving…'}
         </span>
       </section>
       <div className={styles.workspace}>
@@ -280,6 +281,23 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
           </section>
         </nav>
         <main className={styles.center} aria-label="Page">
+          {storageDown && (
+            <MessageStrip
+              tone="error"
+              className={styles.strip}
+              title="Couldn't save to browser storage"
+              actions={<Button size="sm" onClick={download}>Download App.tsx</Button>}
+            >
+              {persistence.error instanceof StorageBlockedError
+                ? 'Another Studio tab is using an older version. Close other Studio tabs and reload. Your saved project was not changed; changes made here are not saved.'
+                : 'Your saved project was not changed, but changes made here are not saved. Download App.tsx to keep your work, then reload.'}
+            </MessageStrip>
+          )}
+          {persistence.notice && (
+            <MessageStrip tone="warning" className={styles.strip} title="Your project was upgraded with changes" dismissible onDismiss={() => { void persistence.dismissNotice(); }}>
+              {persistence.notice.message}
+            </MessageStrip>
+          )}
           {(doc.error || preview.error) && (
             <MessageStrip tone={doc.error ? 'warning' : 'error'} className={styles.strip} title={doc.error ? 'The page cannot be edited visually' : 'Preview error'}>
               {doc.error ?? preview.error}

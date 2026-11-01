@@ -88,13 +88,13 @@ test.describe('file tree QA gaps', () => {
     await app.focus();
     await page.keyboard.press('Shift+F10');
     await expect(page.getByRole('menu')).toBeVisible();
-    let r = await new AxeBuilder({ page }).include('[role="tree"]').include('[role="menu"]').analyze();
+    let r = await new AxeBuilder({ page: page as never }).include('[role="tree"]').include('[role="menu"]').analyze();
     expect(r.violations.map((v) => v.id)).toEqual([]);
     await page.keyboard.press('Escape');
     await app.focus();
     await page.keyboard.press('F2');
     await expect(page.getByRole('textbox').first()).toBeFocused();
-    r = await new AxeBuilder({ page }).include('[role="tree"]').analyze();
+    r = await new AxeBuilder({ page: page as never }).include('[role="tree"]').analyze();
     expect(r.violations.map((v) => v.id)).toEqual([]);
   });
 });

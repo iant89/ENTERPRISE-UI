@@ -137,3 +137,11 @@ describe('M3-04 re-review', () => {
     expect(u.activePath).toBe('src/a/B.tsx');
   });
 });
+
+describe('inherited keys (review #26 round 4)', () => {
+  it('openFile / setEntry ignore toString and constructor', () => {
+    const s = createStore(createProject({ 'src/App.tsx': 'a', 'src/H.tsx': 'h' }, 'src/App.tsx'));
+    expect(storeReducer(s, { type: 'openFile', path: 'toString' })).toBe(s);
+    expect(storeReducer(s, { type: 'openFile', path: 'constructor' })).toBe(s);
+  });
+});

@@ -498,3 +498,65 @@ describe('review #26 round 3: load/save safety and migration validation', () => 
     expect(await getProject(p.id)).toEqual(p);
   });
 });
+
+describe('review #26 round 4', () => {
+  it('saving a docs example with { remember: false } never takes over lastOpened; reload returns the original', async () => {
+    const mine = createProject({ 'src/App.tsx': 'MY WORK' }, 'src/App.tsx', 'My application');
+    await saveProject(mine);
+    const example = createProject({ 'src/App.tsx': 'example' }, 'src/App.tsx', 'Example from the docs');
+    await saveProject({ ...example, files: { 'src/App.tsx': 'example edited' } }, { remember: false });
+    expect((await getProject(example.id))!.files['src/App.tsx']).toBe('example edited');
+    expect(await getLastOpened()).toBe(mine.id);
+    // "reload"
+    const loaded = (await loadProject())!;
+    expect(loaded.id).toBe(mine.id);
+    expect(loaded.code).toBe('MY WORK');
+  });
+  it('with no lastOpened yet, an example save still does not become lastOpened', async () => {
+    const example = createProject({ 'src/App.tsx': 'e' }, 'src/App.tsx', 'Example from the docs');
+    await saveProject(example, { remember: false });
+    expect(await getLastOpened()).toBeUndefined();
+  });
+  it('inherited keys never count as files (toString, constructor)', async () => {
+    const p = createProject({ 'src/App.tsx': 'a' }, 'src/App.tsx', 'P');
+    await expect(saveProject({ ...p, entry: 'toString' })).rejects.toThrow(/entry/);
+    await expect(saveProject({ ...p, entry: 'constructor' })).rejects.toThrow(/entry/);
+    await seedV1({ code: 'c', files: { 'src/Page.tsx': 'p' }, entry: 'toString' });
+    const m = (await getProject((await listProjects())[0].id))!;
+    expect(m.entry).not.toBe('toString');
+    expect(Object.hasOwn(m.files, m.entry)).toBe(true);
+  });
+  it('a __proto__ file key in a v1 record is kept as a plain own key, never as a prototype', async () => {
+    const files: Record<string, string> = { 'src/App.tsx': 'a' };
+    Object.defineProperty(files, '__proto__', { value: 'evil', enumerable: true, configurable: true, writable: true });
+    await seedV1({ files, entry: 'src/App.tsx' });
+    const m = (await getProject((await listProjects())[0].id))!;
+    expect(Object.getPrototypeOf(m.files)).toBe(Object.prototype);
+    expect(Object.hasOwn(m.files, '__proto__')).toBe(true);
+    expect(Object.hasOwn(m.files, 'src/App.tsx')).toBe(true);
+  });
+  it('the notice says when v1 code survives only in v1Backup', async () => {
+    await seedV1({ code: 'OLD CODE', files: { 'src/App.tsx': 'different' }, entry: 'bad entry!' });
+    const m = (await getProject((await listProjects())[0].id))!;
+    expect(m.files['src/App.tsx']).toBe('different');
+    expect((await getMigrationNotice())!.message).toMatch(/only in browser storage \(meta\.v1Backup\)/);
+  });
+  it('no note about code when it matches the entry file', async () => {
+    await seedV1({ code: 'same', files: { 'src/App.tsx': 'same' }, entry: 'src/App.tsx' });
+    expect(await getMigrationNotice()).toBeUndefined();
+  });
+  it('a stored project with no .tsx file still opens (first file as entry), so Studio is not stuck', async () => {
+    const p = { ...createProject({ 'src/data.ts': 'd', 'README.md': 'r' }, 'src/App.tsx', 'Data only') };
+    await putProject(p);
+    const loaded = (await loadProject())!;
+    expect(loaded.entry).toBe('README.md');
+    expect(loaded.files).toEqual(p.files);
+  });
+  it('a stored project with no files at all loads as "nothing saved" and is never overwritten', async () => {
+    const empty = { ...createProject({}, 'src/App.tsx', 'Empty') };
+    await putProject(empty);
+    expect(await loadProject()).toBeUndefined();
+    await saveProject(createProject({ 'src/App.tsx': 'starter' }));
+    expect(await getProject(empty.id)).toEqual(empty);
+  });
+});

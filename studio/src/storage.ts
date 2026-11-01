@@ -66,11 +66,21 @@ export class StorageUnavailableError extends Error {
 const MIGRATION_NOTICE = 'migrationNotice';
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 
-/** Entry fallback order: the given entry, `src/App.tsx`, then the first `.tsx` file (sorted). */
+const has = (files: object, path: unknown): path is string => typeof path === 'string' && Object.hasOwn(files, path);
+/** Adds an own data property, so a key such as `__proto__` is a file, never a prototype change. */
+const setFile = (files: Record<string, string>, path: string, text: string) => {
+  Object.defineProperty(files, path, { value: text, enumerable: true, configurable: true, writable: true });
+};
+
+/**
+ * Entry fallback order: the given entry, `src/App.tsx`, the first `.tsx` file, then the first file
+ * of any type (so a project without a page still opens and can be fixed in code). Sorted for stability.
+ */
 function pickEntry(files: Record<string, string>, wanted: unknown): string | undefined {
-  if (typeof wanted === 'string' && wanted in files) return wanted;
-  if (ENTRY in files) return ENTRY;
-  return Object.keys(files).filter((p) => p.endsWith('.tsx')).sort()[0];
+  if (has(files, wanted)) return wanted;
+  if (has(files, ENTRY)) return ENTRY;
+  const paths = Object.keys(files).sort();
+  return paths.find((p) => p.endsWith('.tsx')) ?? paths[0];
 }
 
 /**
@@ -84,7 +94,7 @@ export function migrateV1(old: unknown): { files: Record<string, string>; entry:
   const skipped: string[] = [];
   if (isRecord(old.files)) {
     for (const [path, text] of Object.entries(old.files)) {
-      if (typeof text === 'string') files[path] = text; else skipped.push(path);
+      if (typeof text === 'string') setFile(files, path, text); else skipped.push(path);
     }
   }
   const notes: string[] = [];
@@ -93,16 +103,21 @@ export function migrateV1(old: unknown): { files: Record<string, string>; entry:
   // page text is never lost); `src/App.tsx`; `code` as `src/App.tsx`; the first `.tsx` file.
   const code = typeof old.code === 'string' ? old.code : undefined;
   let entry: string | undefined;
-  if (typeof old.entry === 'string' && old.entry in files) entry = old.entry;
+  let codePlaced = false;
+  if (has(files, old.entry)) entry = old.entry;
   else if (typeof old.entry === 'string' && code !== undefined && /^[A-Za-z0-9._/-]+\.(tsx|jsx|ts|js)$/.test(old.entry) && !old.entry.split('/').includes('..')) {
-    files[old.entry] = code;
+    setFile(files, old.entry, code);
     entry = old.entry;
-  } else if (ENTRY in files) entry = ENTRY;
-  else if (code !== undefined) { files[ENTRY] = code; entry = ENTRY; }
+    codePlaced = true;
+  } else if (has(files, ENTRY)) entry = ENTRY;
+  else if (code !== undefined) { setFile(files, ENTRY, code); entry = ENTRY; codePlaced = true; }
   else entry = pickEntry(files, undefined);
   if (!entry) return { notice: `Your saved project from the previous Studio version couldn't be opened. ${notes.join(' ')} A copy is kept in browser storage (meta.v1Backup).`.replace(/\s+/g, ' '), skipped };
   const hadFiles = isRecord(old.files);
-  if (isRecord(old.files) && typeof old.entry === 'string' && !(old.entry in old.files)) {
+  if (code !== undefined && !codePlaced && !Object.values(files).includes(code)) {
+    notes.push('The saved page text (`code`) did not match any file and survives only in browser storage (meta.v1Backup).');
+  }
+  if (isRecord(old.files) && typeof old.entry === 'string' && !has(old.files, old.entry)) {
     notes.push(old.entry === entry ? `The entry file ${old.entry} was missing from the files and was restored from the saved page.` : `The entry file ${old.entry} was missing, so ${entry} is used instead.`);
   } else if (hadFiles && old.entry !== entry) notes.push(`No entry file was recorded, so ${entry} is used.`);
   const notice = notes.length ? `Your project was upgraded with changes. ${notes.join(' ')} The original is kept in browser storage (meta.v1Backup).` : undefined;
@@ -280,7 +295,9 @@ export async function loadProject(): Promise<LoadedProject | undefined> {
   }
   if (!p) return undefined;
   const entry = pickEntry(p.files, p.entry);
-  if (!entry) throw new StorageUnavailableError('The saved project has no page to open.');
+  // A project without any file has nothing to show; Studio starts fresh and saves under a new id,
+  // so the empty record is never overwritten.
+  if (!entry) return undefined;
   return { ...p, entry, code: p.files[entry] };
 }
 
@@ -290,7 +307,13 @@ export async function loadProject(): Promise<LoadedProject | undefined> {
  * A string (M2 callers) replaces only the current project's entry file.
  * Limits (200 files, 1 MB, 10 MB) are enforced by the store and import (M3-13), not here.
  */
-export async function saveProject(input: string | Project): Promise<void> {
+export interface SaveOptions {
+  /** Make this project `lastOpened` (default). Docs examples pass `false` so they never hide the user's project. */
+  remember?: boolean;
+}
+
+export async function saveProject(input: string | Project, options: SaveOptions = {}): Promise<void> {
+  const remember = options.remember ?? true;
   if (typeof input === 'string') {
     const current = await getCurrentProject();
     const project = current
@@ -300,13 +323,13 @@ export async function saveProject(input: string | Project): Promise<void> {
     await setLastOpened(project.id);
     return;
   }
-  if (!(input.entry in input.files)) throw new Error(`Can't save: the entry file ${input.entry} is not in the project.`);
+  if (!has(input.files, input.entry)) throw new Error(`Can't save: the entry file ${input.entry} is not in the project.`);
   const stored = await getProject(input.id);
   const project: Project = stored
     ? { ...stored, files: { ...input.files }, entry: input.entry, updatedAt: Date.now() }
     : { ...input, files: { ...input.files }, updatedAt: Date.now() };
   await putProject(project);
-  await setLastOpened(project.id);
+  if (remember) await setLastOpened(project.id);
 }
 
 // ---------------------------------------------------------------- multi-tab notice (UX-7)

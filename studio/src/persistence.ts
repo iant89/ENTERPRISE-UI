@@ -82,17 +82,22 @@ export function useProjectPersistence(project: Project, onStart: (project: Proje
   }, [project, status, save]);
 
   const saveNow = useCallback(() => save(latest.current.project), [save]);
+  /** Ctrl+S: distinguishes "still loading" (nothing to report as a failure) from a storage problem. */
+  const saveNowResult = useCallback(async (): Promise<'loading' | 'saved' | 'unavailable'> => {
+    if (statusRef.current === 'loading') return 'loading';
+    return (await save(latest.current.project)) ? 'saved' : 'unavailable';
+  }, [save]);
   const dismissNotice = useCallback(async () => {
     setNotice(undefined);
     try { await latest.current.deps.clearNotice(); } catch { /* shown again next time */ }
   }, []);
 
-  return { status, error, saved, notice, saveNow, dismissNotice };
+  return { status, error, saved, notice, saveNow, saveNowResult, dismissNotice };
 }
 
-export const defaultPersistenceDeps = (start: PersistenceDeps['start']): PersistenceDeps => ({
+export const defaultPersistenceDeps = (start: PersistenceDeps['start'], save: PersistenceDeps['save'] = (p) => saveProject(p)): PersistenceDeps => ({
   start,
-  save: saveProject,
+  save,
   getNotice: getMigrationNotice,
   clearNotice: clearMigrationNotice,
 });

@@ -113,4 +113,24 @@ describe('useProjectPersistence', () => {
     expect(result.current.notice).toBeUndefined();
     expect(d.clearNotice).toHaveBeenCalled();
   });
+  it('saveNowResult while loading reports "loading", not a storage failure', async () => {
+    const d = deps({ start: vi.fn(() => new Promise<Project>(() => {})) });
+    const { result } = setup(d);
+    let r: unknown;
+    await act(async () => { r = await result.current.saveNowResult(); });
+    expect(r).toBe('loading');
+    expect(result.current.status).toBe('loading');
+    expect(d.save).not.toHaveBeenCalled();
+  });
+  it('saveNowResult reports saved / unavailable', async () => {
+    const d = deps();
+    const { result } = setup(d);
+    await flush();
+    let r: unknown;
+    await act(async () => { r = await result.current.saveNowResult(); });
+    expect(r).toBe('saved');
+    (d.save as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('x'));
+    await act(async () => { r = await result.current.saveNowResult(); });
+    expect(r).toBe('unavailable');
+  });
 });

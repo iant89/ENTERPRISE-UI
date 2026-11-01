@@ -39,7 +39,8 @@ const GROUP_MS = 1000;
 
 export const createStore = (project: Project): StoreState => ({ project, activePath: project.entry, past: [], future: [] });
 
-const fix = (project: Project, path: FilePath) => (path in project.files ? path : project.entry);
+const has = (project: Project, path: FilePath) => Object.hasOwn(project.files, path);
+const fix = (project: Project, path: FilePath) => (has(project, path) ? path : project.entry);
 
 function record(state: StoreState, project: Project, touched: FilePath, label: string, activePath = touched, lastEdit?: StoreState['lastEdit'], before: FilePath = touched): StoreState {
   if (project === state.project) return state;
@@ -54,7 +55,7 @@ export function storeReducer(state: StoreState, action: StoreAction): StoreState
   const { project } = state;
   switch (action.type) {
     case 'loadProject': return createStore(action.project);
-    case 'openFile': return action.path in project.files && action.path !== state.activePath ? { ...state, activePath: action.path, lastEdit: undefined } : state;
+    case 'openFile': return has(project, action.path) && action.path !== state.activePath ? { ...state, activePath: action.path, lastEdit: undefined } : state;
     case 'editFile': {
       // An unchanged text is a no-op. This makes the editor's onChange echo after undo/redo harmless,
       // so redo survives. Note: Ctrl+Z *inside Monaco* uses Monaco's per-model undo; the resulting
@@ -87,7 +88,7 @@ export function storeReducer(state: StoreState, action: StoreAction): StoreState
       return record(state, deleteFolder(project, action.path), state.activePath, `Delete ${action.path}/`, state.activePath, undefined, before);
     }
     case 'setEntry': {
-      if (!(action.path in project.files) || project.entry === action.path) return state;
+      if (!has(project, action.path) || project.entry === action.path) return state;
       return record(state, { ...project, entry: action.path, updatedAt: Date.now() }, action.path, 'Set entry', state.activePath);
     }
     case 'undo': {

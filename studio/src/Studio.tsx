@@ -20,7 +20,7 @@ import {
   type AttrInput, type StudioNode,
 } from './model/jsx';
 import { acceptsChildren, defaultSnippet } from './model/catalog';
-import { loadProject, StorageBlockedError } from './storage';
+import { loadProject, saveProject, StorageBlockedError } from './storage';
 import { defaultPersistenceDeps, useProjectPersistence } from './persistence';
 import { STARTER } from './template';
 import styles from './Studio.module.css';
@@ -81,21 +81,28 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
 
   // Load. A page opened from the docs (#?code=…) opens as a separate, new project: it has its own
   // id, is not saved until the user edits it, and never replaces the stored project.
+  // Saving it never makes it `lastOpened`, so a reload returns to the user's own project.
+  const exampleId = useRef<string | null>(null);
+  const [isExample, setIsExample] = useState(false);
   const persistenceDeps = useMemo(() => defaultPersistenceDeps(async () => {
     const param = playgroundCodeParam();
     const fromLink = param ? await decodePlaygroundCode(param) : null;
     if (fromLink) {
       history.replaceState(null, '', window.location.pathname + window.location.search);
-      toast.show({ title: 'Example opened in Studio', description: 'It opens as a new project and is saved once you edit it.', tone: 'success' });
-      return starterProject(fromLink, 'Example from the docs');
+      const example = starterProject(fromLink, 'Example from the docs');
+      exampleId.current = example.id;
+      setIsExample(true);
+      toast.show({ title: 'Example opened in Studio', description: 'It opens as a separate project. Reloading brings back your own project.', tone: 'success' });
+      return example;
     }
     const stored = await loadProject();
     if (!stored) return undefined;
     // Hydrate with the stored id, name and timestamps (no `code`, which is only a v1 convenience).
     const { code: _code, ...project } = stored;
     return project;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- created once on start.
-  }), []);
+  }, (p) => saveProject(p, { remember: p.id !== exampleId.current })),
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- created once on start (toast is stable).
+  []);
   const onStart = useCallback((loadedProject: Project | undefined) => {
     if (loadedProject) dispatch({ type: 'loadProject', project: loadedProject });
   }, []);
@@ -103,6 +110,23 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   const loaded = persistence.status !== 'loading';
   const storageDown = persistence.status === 'unavailable';
   const saved = persistence.saved;
+  // TODO(UX-7, M3-04/M3-09): open `openProjectChannel` only after load resolves, keyed by the loaded
+  // `project.id` (never the starter's random id), and re-key it when the id changes (docs example).
+
+  /** Leaves the docs example and reopens the project saved as `lastOpened`. */
+  const backToMyProject = useCallback(async () => {
+    try {
+      const stored = await loadProject();
+      if (!stored) { toast.show({ title: 'No saved project yet', description: 'Edit this example to keep it, or start from it.', tone: 'neutral' }); return; }
+      const { code: _code, ...mine } = stored;
+      exampleId.current = null;
+      setIsExample(false);
+      dispatch({ type: 'loadProject', project: mine });
+      announce(`Project ${mine.name} opened.`);
+    } catch {
+      toast.show({ title: "Couldn't open your project", description: 'Browser storage is unavailable. Reload to try again.', tone: 'error' });
+    }
+  }, [announce, toast]);
 
   useEffect(() => { if (selectedId && !findNode(root, selectedId)) setSelectedId(null); }, [root, selectedId]);
 
@@ -159,6 +183,15 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     }
   }, [apply, code, toast]);
 
+  /** Whole-project download while storage is down: one JSON file (`{ name, entry, files }`) until ZIP export (M3-12). */
+  const downloadProject = () => {
+    const data = JSON.stringify({ name: project.name, entry: project.entry, files: project.files }, null, 2);
+    const url = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
+    const safe = project.name.replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '') || 'project';
+    const link = Object.assign(document.createElement('a'), { href: url, download: `${safe}.studio.json` });
+    link.click();
+    URL.revokeObjectURL(url);
+  };
   const download = () => {
     const url = URL.createObjectURL(new Blob([code], { type: 'text/typescript' }));
     const link = Object.assign(document.createElement('a'), { href: url, download: 'App.tsx' });
@@ -176,9 +209,11 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
       const key = event.key.toLowerCase();
       if (mod && key === 's') {
         event.preventDefault();
-        void persistence.saveNow().then((ok) => toast.show(ok
-          ? { title: 'Saved', tone: 'success' }
-          : { title: "Couldn't save", description: 'Browser storage is unavailable. Download App.tsx to keep your work.', tone: 'error' }));
+        void persistence.saveNowResult().then((r) => {
+          if (r === 'saved') toast.show({ title: 'Saved', tone: 'success' });
+          else if (r === 'loading') announce('Still loading the project. Nothing to save yet.');
+          else toast.show({ title: "Couldn't save", description: 'Browser storage is unavailable. Download the project files to keep your work.', tone: 'error' });
+        });
         return;
       }
       if (event.shiftKey && event.altKey && key === 'f') { event.preventDefault(); void format(); return; }
@@ -190,7 +225,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [persistence, format, onAction, selected, toast]);
+  }, [persistence, format, onAction, selected, toast, announce]);
 
   const onDropNode = (id: string, target: DropTarget) => {
     const moved = moveNode(code, id, target.parentId, target.index);
@@ -286,11 +321,21 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
               tone="error"
               className={styles.strip}
               title="Couldn't save to browser storage"
-              actions={<Button size="sm" onClick={download}>Download App.tsx</Button>}
+              actions={<Button size="sm" onClick={downloadProject}>Download project files</Button>}
             >
               {persistence.error instanceof StorageBlockedError
                 ? 'Another Studio tab is using an older version. Close other Studio tabs and reload. Your saved project was not changed; changes made here are not saved.'
-                : 'Your saved project was not changed, but changes made here are not saved. Download App.tsx to keep your work, then reload.'}
+                : 'Your saved project was not changed, but changes made here are not saved. Download the project files (one JSON file with every file; ZIP export comes later) to keep your work, then reload.'}
+            </MessageStrip>
+          )}
+          {isExample && (
+            <MessageStrip
+              tone="information"
+              className={styles.strip}
+              title="Example from the docs"
+              actions={<Button size="sm" onClick={() => { void backToMyProject(); }}>Back to my project</Button>}
+            >
+              This example is a separate project. It's saved once you edit it, but reloading the Studio opens your own project again.
             </MessageStrip>
           )}
           {persistence.notice && (

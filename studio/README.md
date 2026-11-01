@@ -73,7 +73,11 @@ Deleting the `eui-studio` database removes all saved projects and both copies of
 - If the upgrade had to change anything (unreadable files left out, a missing entry file restored or
   replaced), a dismissible warning explains what changed. The original record is kept in `meta.v1Backup`.
 - **Open in Studio** from the docs opens the example as a separate, new project ("Example from the
-  docs"). It isn't saved until you edit it, and it never replaces your saved project.
+  docs"). It isn't saved until you edit it, never replaces your saved project, and never becomes
+  the project that opens next time: reloading brings back your own project, and **Back to my
+  project** in the example strip switches without a reload.
+- While storage is down, **Download project files** saves every file as one `<name>.studio.json`
+  (`{ name, entry, files }`). ZIP export comes with M3-12.
 
 ## Known limits
 

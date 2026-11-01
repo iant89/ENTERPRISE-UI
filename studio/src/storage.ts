@@ -41,10 +41,73 @@ export interface V1Backup { value: unknown; migratedAt: number }
 const ENTRY = 'src/App.tsx';
 
 /**
- * v1 record shape, also what `loadProject` returns. `code` is the entry file; `files`/`entry` were
- * added by M3-04 (#25) for multi-file projects and are absent on pure M2 records.
+ * The v1 `current` record. M2 wrote `{ code, updatedAt }`; the M3-04 build (#25) also wrote
+ * `files`/`entry`. Treated as untrusted input by the migration.
  */
-export interface SavedProject { code: string; updatedAt: number; files?: Record<string, string>; entry?: string }
+export interface V1Record { code?: unknown; updatedAt?: unknown; files?: unknown; entry?: unknown }
+
+/** What `loadProject` returns: the stored project (id, name and timestamps included) plus its entry text. */
+export type LoadedProject = Project & { code: string };
+
+/** @deprecated M2 name kept for callers; use `LoadedProject`. */
+export type SavedProject = LoadedProject;
+
+/** Shown once after a migration that could not carry everything over (kept in `meta.migrationNotice`). */
+export interface MigrationNotice { message: string; skipped: string[]; at: number }
+
+/** Browser storage could not be opened or read (private mode, quota, corrupt data, …). */
+export class StorageUnavailableError extends Error {
+  constructor(message = "Couldn't open browser storage.", options?: { cause?: unknown }) {
+    super(message, options);
+    this.name = 'StorageUnavailableError';
+  }
+}
+
+const MIGRATION_NOTICE = 'migrationNotice';
+const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
+
+/** Entry fallback order: the given entry, `src/App.tsx`, then the first `.tsx` file (sorted). */
+function pickEntry(files: Record<string, string>, wanted: unknown): string | undefined {
+  if (typeof wanted === 'string' && wanted in files) return wanted;
+  if (ENTRY in files) return ENTRY;
+  return Object.keys(files).filter((p) => p.endsWith('.tsx')).sort()[0];
+}
+
+/**
+ * Turns a v1 record into project contents, never dropping anything silently: every file that
+ * can't be carried over and every entry change is described in `notice` (the backup keeps all).
+ */
+export function migrateV1(old: unknown): { files: Record<string, string>; entry: string; updatedAt?: number; notice?: string; skipped: string[] } | { notice: string; skipped: string[] } {
+  if (!isRecord(old)) return { notice: "Your saved page from the previous Studio version couldn't be read. A copy is kept in browser storage (meta.v1Backup).", skipped: [] };
+  const updatedAt = typeof old.updatedAt === 'number' ? old.updatedAt : undefined;
+  const files: Record<string, string> = {};
+  const skipped: string[] = [];
+  if (isRecord(old.files)) {
+    for (const [path, text] of Object.entries(old.files)) {
+      if (typeof text === 'string') files[path] = text; else skipped.push(path);
+    }
+  }
+  const notes: string[] = [];
+  if (skipped.length) notes.push(`${skipped.length} file(s) had unreadable contents and were left out: ${skipped.join(', ')}.`);
+  // Order: a valid recorded entry; a recorded entry missing from files gets `code` back (so the
+  // page text is never lost); `src/App.tsx`; `code` as `src/App.tsx`; the first `.tsx` file.
+  const code = typeof old.code === 'string' ? old.code : undefined;
+  let entry: string | undefined;
+  if (typeof old.entry === 'string' && old.entry in files) entry = old.entry;
+  else if (typeof old.entry === 'string' && code !== undefined && /^[A-Za-z0-9._/-]+\.(tsx|jsx|ts|js)$/.test(old.entry) && !old.entry.split('/').includes('..')) {
+    files[old.entry] = code;
+    entry = old.entry;
+  } else if (ENTRY in files) entry = ENTRY;
+  else if (code !== undefined) { files[ENTRY] = code; entry = ENTRY; }
+  else entry = pickEntry(files, undefined);
+  if (!entry) return { notice: `Your saved project from the previous Studio version couldn't be opened. ${notes.join(' ')} A copy is kept in browser storage (meta.v1Backup).`.replace(/\s+/g, ' '), skipped };
+  const hadFiles = isRecord(old.files);
+  if (isRecord(old.files) && typeof old.entry === 'string' && !(old.entry in old.files)) {
+    notes.push(old.entry === entry ? `The entry file ${old.entry} was missing from the files and was restored from the saved page.` : `The entry file ${old.entry} was missing, so ${entry} is used instead.`);
+  } else if (hadFiles && old.entry !== entry) notes.push(`No entry file was recorded, so ${entry} is used.`);
+  const notice = notes.length ? `Your project was upgraded with changes. ${notes.join(' ')} The original is kept in browser storage (meta.v1Backup).` : undefined;
+  return { files, entry, updatedAt, notice, skipped };
+}
 export interface ProjectSummary { id: string; name: string; createdAt: number; updatedAt: number; fileCount: number; template?: string }
 
 const newId = () => globalThis.crypto.randomUUID();
@@ -62,18 +125,18 @@ function upgrade(request: IDBOpenDBRequest, oldVersion: number) {
     const projects = tx.objectStore(PROJECTS);
     const get = projects.get(V1_KEY);
     get.onsuccess = () => {
-      const old = get.result as Partial<SavedProject> | undefined;
+      const old: unknown = get.result;
       if (old === undefined) return;
-      tx.objectStore(META).put({ value: old, migratedAt: Date.now() } satisfies V1Backup, V1_BACKUP);
-      // The v1 record stays where it is (manual recovery); only a valid one is migrated.
-      const hasFiles = !!old.files && typeof old.files === 'object' && typeof old.entry === 'string';
-      if (typeof old?.code !== 'string' && !hasFiles) return;
-      const at = typeof old.updatedAt === 'number' ? old.updatedAt : Date.now();
-      const project = hasFiles
-        ? { ...newProject({ ...old.files! }, 'My application', at), entry: old.entry! }
-        : newProject({ [ENTRY]: old.code! }, 'My application', at);
+      const meta = tx.objectStore(META);
+      meta.put({ value: old, migratedAt: Date.now() } satisfies V1Backup, V1_BACKUP);
+      // The v1 record stays where it is (manual recovery). Null, non-objects and unusable records
+      // are not migrated; anything left out is reported through `meta.migrationNotice`.
+      const result = migrateV1(old);
+      if (result.notice) meta.put({ message: result.notice, skipped: result.skipped, at: Date.now() } satisfies MigrationNotice, MIGRATION_NOTICE);
+      if (!('files' in result)) return;
+      const project = { ...newProject(result.files, 'My application', result.updatedAt), entry: result.entry };
       projects.put(project, project.id);
-      tx.objectStore(META).put(project.id, LAST_OPENED);
+      meta.put(project.id, LAST_OPENED);
     };
   }
 }
@@ -121,7 +184,7 @@ async function run<T>(store: string, mode: IDBTransactionMode, action: (store: I
 
 /** True for a v2 project record; filters out the retained v1 `current` record. */
 const isProject = (value: unknown): value is Project =>
-  !!value && typeof value === 'object' && typeof (value as Project).id === 'string' && (value as Project).id !== V1_KEY && typeof (value as Project).files === 'object';
+  isRecord(value) && typeof value.id === 'string' && value.id !== V1_KEY && isRecord(value.files) && typeof value.entry === 'string';
 
 export const getProject = async (id: string): Promise<Project | undefined> => {
   if (id === V1_KEY) return undefined;
@@ -184,6 +247,8 @@ export async function duplicateProject(id: string, name?: string): Promise<Proje
   return copy;
 }
 
+export const getMigrationNotice = () => run<MigrationNotice | undefined>(META, 'readonly', (s) => s.get(MIGRATION_NOTICE));
+export const clearMigrationNotice = async () => { await run(META, 'readwrite', (s) => s.delete(MIGRATION_NOTICE)); };
 export const getV1Backup = () => run<V1Backup | undefined>(META, 'readonly', (s) => s.get(V1_BACKUP));
 export const getLastOpened = () => run<string | undefined>(META, 'readonly', (s) => s.get(LAST_OPENED));
 export const setLastOpened = async (id: string) => { await run(META, 'readwrite', (s) => s.put(id, LAST_OPENED)); };
@@ -197,33 +262,49 @@ export async function getCurrentProject(): Promise<Project | undefined> {
   return newest ? getProject(newest.id) : undefined;
 }
 
-// ---------------------------------------------------------------- single-page API (M2 callers)
+// ---------------------------------------------------------------- Studio load / save
 
-/** The current project's entry file, in the v1 shape `Studio.tsx` uses today. */
-export async function loadProject(): Promise<SavedProject | undefined> {
+/**
+ * The project Studio opens on start, or `undefined` when nothing is stored yet. A stored entry that
+ * is missing from `files` is repaired with the migration's fallback order; no file is dropped.
+ * Throws `StorageBlockedError` or `StorageUnavailableError`: callers must not autosave after a throw,
+ * or they would overwrite the stored project with whatever is on screen.
+ */
+export async function loadProject(): Promise<LoadedProject | undefined> {
+  let p: Project | undefined;
   try {
-    const p = await getCurrentProject();
-    return p ? { code: p.files[p.entry] ?? '', updatedAt: p.updatedAt, files: p.files, entry: p.entry } : undefined;
-  } catch {
-    return undefined;
+    p = await getCurrentProject();
+  } catch (err) {
+    if (err instanceof StorageBlockedError || err instanceof StorageUnavailableError) throw err;
+    throw new StorageUnavailableError(undefined, { cause: err });
   }
+  if (!p) return undefined;
+  const entry = pickEntry(p.files, p.entry);
+  if (!entry) throw new StorageUnavailableError('The saved project has no page to open.');
+  return { ...p, entry, code: p.files[entry] };
 }
 
 /**
- * Saves into the current project (creating one on first save). A `Project` (the M3-04 store's
- * project) replaces the files and entry; a string (M2 callers) replaces only the entry file.
- * The stored project's id and name are kept: project identity belongs to storage v2.
+ * Saves Studio's project under its own `id` (creating it when it isn't stored yet) and makes it
+ * `lastOpened`. The stored name and `createdAt` win: renames go through `renameProject`.
+ * A string (M2 callers) replaces only the current project's entry file.
+ * Limits (200 files, 1 MB, 10 MB) are enforced by the store and import (M3-13), not here.
  */
-export async function saveProject(input: string | Project) {
-  const current = await getCurrentProject();
-  const files = typeof input === 'string' ? undefined : { ...input.files };
-  const project: Project = current
-    ? files
-      ? { ...current, files, entry: (input as Project).entry, updatedAt: Date.now() }
-      : { ...current, files: { ...current.files, [current.entry]: input as string }, updatedAt: Date.now() }
-    : files
-      ? { ...newProject(files, 'My application'), entry: (input as Project).entry }
-      : newProject({ [ENTRY]: input as string }, 'My application');
+export async function saveProject(input: string | Project): Promise<void> {
+  if (typeof input === 'string') {
+    const current = await getCurrentProject();
+    const project = current
+      ? { ...current, files: { ...current.files, [current.entry]: input }, updatedAt: Date.now() }
+      : newProject({ [ENTRY]: input }, 'My application');
+    await putProject(project);
+    await setLastOpened(project.id);
+    return;
+  }
+  if (!(input.entry in input.files)) throw new Error(`Can't save: the entry file ${input.entry} is not in the project.`);
+  const stored = await getProject(input.id);
+  const project: Project = stored
+    ? { ...stored, files: { ...input.files }, entry: input.entry, updatedAt: Date.now() }
+    : { ...input, files: { ...input.files }, updatedAt: Date.now() };
   await putProject(project);
   await setLastOpened(project.id);
 }
@@ -280,7 +361,7 @@ export function openProjectChannel(
   };
   const channel = channelFactory('eui-studio');
   let closed = !channel;
-  const post = (type: ChannelMessage['type']) => { if (!closed) channel!.postMessage({ type, projectId, tabId } satisfies ChannelMessage); };
+  const post = (type: ChannelMessage['type']) => { if (!closed) channel?.postMessage({ type, projectId, tabId } satisfies ChannelMessage); };
   if (channel) {
     channel.onmessage = (event: MessageEvent<ChannelMessage>) => {
       const msg = event.data;
@@ -298,7 +379,7 @@ export function openProjectChannel(
     if (closed) return;
     post('left');
     closed = true;
-    channel!.close();
+    channel?.close();
   };
   if (channel) page?.addEventListener('pagehide', close);
   return {

@@ -5,6 +5,9 @@ import {
   DB_NAME,
   DB_VERSION,
   StorageBlockedError,
+  StorageUnavailableError,
+  clearMigrationNotice,
+  getMigrationNotice,
   announceOpen,
   copyName,
   getV1Backup,
@@ -248,11 +251,11 @@ describe('single-page compatibility (autosave and Ctrl+S in Studio.tsx)', () => 
     expect(saved.updatedAt).toBeGreaterThanOrEqual(p.updatedAt);
     expect((await loadProject())?.code).toBe('edited');
   });
-  it('saveProject(project) from the M3-04 store replaces files and entry, keeping id and name', async () => {
+  it('saveProject(project) from the M3-04 store replaces files and entry of that id, keeping the stored name', async () => {
     const p = createProject({ 'src/App.tsx': 'a', 'src/old.ts': 'o' }, 'src/App.tsx', 'Mine');
     await putProject(p);
     await setLastOpened(p.id);
-    await saveProject(createProject({ 'src/Main.tsx': 'm', 'src/x.ts': 'x' }, 'src/Main.tsx', 'ignored'));
+    await saveProject({ ...p, name: 'ignored', files: { 'src/Main.tsx': 'm', 'src/x.ts': 'x' }, entry: 'src/Main.tsx' });
     const saved = (await getProject(p.id))!;
     expect(saved.files).toEqual({ 'src/Main.tsx': 'm', 'src/x.ts': 'x' });
     expect(saved.entry).toBe('src/Main.tsx');
@@ -366,5 +369,132 @@ describe('announceOpen (BroadcastChannel notice)', () => {
     const ch = openProjectChannel('p', {}, () => undefined);
     expect(() => { ch.announceSaved(); ch.takeOver(); ch.close(); }).not.toThrow();
     expect(() => announceOpen('p', () => {}, () => undefined)()).not.toThrow();
+  });
+});
+
+describe('review #26 round 3: load/save safety and migration validation', () => {
+  const hold = () => new Promise<IDBDatabase>((resolve) => { const r = indexedDB.open(DB_NAME, 1); r.onsuccess = () => resolve(r.result); });
+
+  it('a null v1 record is backed up and the database still opens', async () => {
+    await seedV1(null);
+    expect(await listProjects()).toEqual([]);
+    expect(await getV1Backup()).toEqual({ value: null, migratedAt: expect.any(Number) });
+    expect((await getMigrationNotice())?.message).toMatch(/couldn.t be read/i);
+  });
+  it('non-object v1 records (number, array) are backed up, not migrated, and noticed', async () => {
+    await seedV1Raw(42);
+    expect(await listProjects()).toEqual([]);
+    expect((await getV1Backup())!.value).toBe(42);
+    await seedV1Raw(['a']);
+    expect(await listProjects()).toEqual([]);
+    expect(await getMigrationNotice()).toBeDefined();
+  });
+  it('a clean migration leaves no notice', async () => {
+    await seedV1({ code: 'x', updatedAt: 1 });
+    expect(await getMigrationNotice()).toBeUndefined();
+  });
+  it('multi-file record whose entry is missing from files gets it back from `code`, with a notice', async () => {
+    await seedV1({ code: 'c', files: { 'src/App.tsx': 'a', 'src/y.ts': 'y' }, entry: 'src/Gone.tsx', updatedAt: 3 });
+    const p = (await getProject((await listProjects())[0].id))!;
+    expect(p.files).toEqual({ 'src/App.tsx': 'a', 'src/y.ts': 'y', 'src/Gone.tsx': 'c' });
+    expect(p.entry).toBe('src/Gone.tsx');
+    const notice = (await getMigrationNotice())!;
+    expect(notice.message).toMatch(/src\/Gone\.tsx/);
+    await clearMigrationNotice();
+    expect(await getMigrationNotice()).toBeUndefined();
+  });
+  it('without `code`, a missing entry falls back to src/App.tsx', async () => {
+    await seedV1({ files: { 'src/App.tsx': 'a', 'src/y.ts': 'y' }, entry: 'src/Gone.tsx' });
+    const p = (await getProject((await listProjects())[0].id))!;
+    expect(p.files).toEqual({ 'src/App.tsx': 'a', 'src/y.ts': 'y' });
+    expect(p.entry).toBe('src/App.tsx');
+    expect((await getMigrationNotice())!.message).toMatch(/src\/Gone\.tsx was missing, so src\/App\.tsx/);
+  });
+  it('falls back to the first .tsx file, then to `code`, never dropping files', async () => {
+    await seedV1({ files: { 'src/b.ts': 'b', 'src/Page.tsx': 'p' }, updatedAt: 3 });
+    let p = (await getProject((await listProjects())[0].id))!;
+    expect(p.entry).toBe('src/Page.tsx');
+    expect(Object.keys(p.files).sort()).toEqual(['src/Page.tsx', 'src/b.ts']);
+    await seedV1Raw({ code: 'c', files: { 'src/b.ts': 'b' }, updatedAt: 3 });
+    p = (await getProject((await listProjects())[0].id))!;
+    expect(p.files).toEqual({ 'src/b.ts': 'b', 'src/App.tsx': 'c' });
+    expect(p.entry).toBe('src/App.tsx');
+    expect(await getMigrationNotice()).toBeDefined();
+  });
+  it('non-string file contents are left out of the project, listed in the notice and kept in the backup', async () => {
+    const v1 = { files: { 'src/App.tsx': 'a', 'src/bad.ts': 7, 'src/n.ts': null }, entry: 'src/App.tsx', updatedAt: 3 };
+    await seedV1(v1);
+    const p = (await getProject((await listProjects())[0].id))!;
+    expect(p.files).toEqual({ 'src/App.tsx': 'a' });
+    const notice = (await getMigrationNotice())!;
+    expect(notice.skipped).toEqual(['src/bad.ts', 'src/n.ts']);
+    expect((await getV1Backup())!.value).toEqual(v1);
+  });
+  it('a record with files but nothing usable is not migrated, with a notice', async () => {
+    await seedV1({ files: { 'src/a.ts': 1 }, entry: 'src/a.ts' });
+    expect(await listProjects()).toEqual([]);
+    expect(await getMigrationNotice()).toBeDefined();
+  });
+
+  it('loadProject rethrows StorageBlockedError instead of returning undefined', async () => {
+    await seedV1({ code: 'keep me', updatedAt: 1 });
+    const old = await hold();
+    const prev = storageOptions.blockedTimeoutMs;
+    storageOptions.blockedTimeoutMs = 30;
+    try {
+      await expect(loadProject()).rejects.toBeInstanceOf(StorageBlockedError);
+    } finally {
+      storageOptions.blockedTimeoutMs = prev;
+      old.close();
+    }
+    expect((await loadProject())!.code).toBe('keep me');
+  });
+  it('loadProject wraps other failures in StorageUnavailableError', async () => {
+    const real = globalThis.indexedDB;
+    globalThis.indexedDB = { open: () => { throw new Error('denied'); } } as unknown as IDBFactory;
+    try {
+      await expect(loadProject()).rejects.toBeInstanceOf(StorageUnavailableError);
+    } finally {
+      globalThis.indexedDB = real;
+    }
+  });
+  it('loadProject returns the stored id, name and timestamps', async () => {
+    const p = { ...createProject({ 'src/App.tsx': 'a', 'src/x.ts': 'x' }, 'src/App.tsx', 'Orders'), createdAt: 5, updatedAt: 6 };
+    await putProject(p);
+    await setLastOpened(p.id);
+    expect(await loadProject()).toEqual({ ...p, code: 'a' });
+  });
+  it('loadProject repairs a stored entry that is missing from files without dropping files', async () => {
+    const p = { ...createProject({ 'src/App.tsx': 'a', 'src/x.ts': 'x' }, 'src/Missing.tsx') };
+    await putProject(p);
+    const loaded = (await loadProject())!;
+    expect(loaded.entry).toBe('src/App.tsx');
+    expect(loaded.files).toEqual(p.files);
+  });
+
+  it('saveProject(project) writes to project.id, not to lastOpened', async () => {
+    const a = createProject({ 'src/App.tsx': 'a' }, 'src/App.tsx', 'A');
+    const b = createProject({ 'src/App.tsx': 'b' }, 'src/App.tsx', 'B');
+    await putProject(a);
+    await putProject(b);
+    await setLastOpened(a.id);
+    await saveProject({ ...b, files: { 'src/App.tsx': 'b2' } });
+    expect((await getProject(a.id))!.files['src/App.tsx']).toBe('a');
+    expect((await getProject(b.id))!.files['src/App.tsx']).toBe('b2');
+    expect(await getLastOpened()).toBe(b.id);
+  });
+  it('saveProject(project) creates the project under its own id when it is not stored yet', async () => {
+    const p = createProject({ 'src/App.tsx': 'n' }, 'src/App.tsx', 'New one');
+    await saveProject(p);
+    const stored = (await getProject(p.id))!;
+    expect(stored.name).toBe('New one');
+    expect(stored.files).toEqual(p.files);
+    expect(await getLastOpened()).toBe(p.id);
+  });
+  it('saveProject(project) rejects an entry that is not in files and writes nothing', async () => {
+    const p = createProject({ 'src/App.tsx': 'a' }, 'src/App.tsx', 'A');
+    await putProject(p);
+    await expect(saveProject({ ...p, entry: 'src/Nope.tsx' })).rejects.toThrow(/entry/i);
+    expect(await getProject(p.id)).toEqual(p);
   });
 });

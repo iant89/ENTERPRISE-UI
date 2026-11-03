@@ -156,6 +156,13 @@ export const docs: ComponentDoc[] = [
     related: ['list', 'process-flow'],
   },
   {
+    slug: 'tour', name: 'Tour', category: 'Patterns', components: ['Tour', 'Coachmark'],
+    summary: 'Guided onboarding: cards anchored to page elements with an optional spotlight, and single-tip coachmarks.',
+    keyboard: [k('Tab', 'Moves between the card buttons and the rest of the page'), k('Escape', 'Ends the tour')],
+    a11y: ['Each card is a non-modal `dialog` named by its title and described by its content; the page stays usable.', 'Focus moves to the card on every step and returns to where it was when the tour ends.', 'A step whose target is missing is shown centered instead of failing.', 'Persist completion in `onClose`; never start a tour on every visit.'],
+    related: ['popover', 'wizard'],
+  },
+  {
     slug: 'process-flow', name: 'ProcessFlow', category: 'Patterns', components: ['ProcessFlow'],
     summary: 'The documents of a business process across its stages, such as order → delivery → invoice → payment.',
     a11y: ['An ordered list of stages; each stage title includes its status as text.', 'Every document has visible status text with an icon; color is supplementary.', 'Selectable documents are native buttons; the selected one has `aria-current`.'],

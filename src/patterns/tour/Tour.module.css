@@ -1,0 +1,60 @@
+/* A transparent box over the target whose huge shadow dims the rest of the page. */
+.spotlight {
+  position: fixed;
+  z-index: var(--eui-z-popover);
+  border-radius: var(--eui-radius-md);
+  box-shadow: 0 0 0 200vmax var(--eui-color-overlay);
+  pointer-events: none;
+  transition: top var(--eui-duration-fast), left var(--eui-duration-fast), width var(--eui-duration-fast), height var(--eui-duration-fast);
+}
+.dimOnly { inset: 0; border-radius: 0; box-shadow: none; background: var(--eui-color-overlay); }
+@media (prefers-reduced-motion: reduce) { .spotlight { transition: none; } }
+@media (forced-colors: active) { .spotlight:not(.dimOnly) { outline: 3px solid Highlight; } }
+
+.card {
+  z-index: var(--eui-z-popover);
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-3);
+  width: min(22rem, calc(100vw - 16px));
+  max-height: calc(100vh - 16px);
+  overflow: auto;
+  padding: var(--eui-space-4);
+  color: var(--eui-color-text);
+  background: var(--eui-color-surface);
+  border: var(--eui-border-width) solid var(--eui-color-border);
+  border-radius: var(--eui-radius-lg);
+  box-shadow: var(--eui-shadow-level-2);
+  outline: none;
+}
+.card:focus-visible { outline: var(--eui-focus-width) solid var(--eui-color-focus); outline-offset: 2px; }
+.centered { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+.header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--eui-space-2); }
+.title { margin: 0; font-size: var(--eui-font-size-lg); font-weight: var(--eui-font-weight-semibold); }
+.close {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin: calc(-1 * var(--eui-space-1));
+  padding: 0;
+  color: var(--eui-color-text-secondary);
+  background: none;
+  border: 0;
+  border-radius: var(--eui-radius-sm);
+  cursor: pointer;
+}
+.close:hover { background: var(--eui-color-surface-hover); color: var(--eui-color-text); }
+.close:focus-visible { outline: var(--eui-focus-width) solid var(--eui-color-focus); }
+.close svg { width: 1rem; height: 1rem; }
+
+.content { color: var(--eui-color-text); }
+.content > :first-child { margin-top: 0; }
+.content > :last-child { margin-bottom: 0; }
+
+.footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--eui-space-2); }
+.progress { color: var(--eui-color-text-secondary); font-size: var(--eui-font-size-sm); font-variant-numeric: tabular-nums; }
+.actions { display: flex; flex-wrap: wrap; gap: var(--eui-space-2); margin-inline-start: auto; }

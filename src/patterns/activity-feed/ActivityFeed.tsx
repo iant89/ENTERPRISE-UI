@@ -12,6 +12,12 @@ export interface ActivityEvent {
   group?: string;
 }
 export interface ActivityFeedProps {
+  /**
+   * Heading shown above the feed. Pass `null` to hide it, for example when the
+   * feed sits in a section that already has its own heading.
+   * @default 'Activity'
+   */
+  title?: ReactNode;
   /** Events to display, newest first. */
   events: ActivityEvent[];
   /** Shows a busy state while events load. */
@@ -35,7 +41,7 @@ export interface ActivityFeedProps {
 }
 
 /** Displays activity supplied by the host, newest first. Filtering and pagination are host-managed. */
-export function ActivityFeed({ events, loading, error, hasMore, onLoadMore, types, typeFilter = '', onTypeFilterChange, locale, timeZone }: ActivityFeedProps) {
+export function ActivityFeed({ title = 'Activity', events, loading, error, hasMore, onLoadMore, types, typeFilter = '', onTypeFilterChange, locale, timeZone }: ActivityFeedProps) {
   const sorted = [...events].sort((a, b) => (Date.parse(b.timestamp) || 0) - (Date.parse(a.timestamp) || 0));
   // Group adjacent related events only, preserving overall chronology.
   const groups: ActivityEvent[][] = [];
@@ -49,8 +55,9 @@ export function ActivityFeed({ events, loading, error, hasMore, onLoadMore, type
     const formatted = Number.isNaN(parsed.getTime()) ? event.timestamp : new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short', timeZone }).format(parsed);
     return <><div><strong>{event.actor}</strong> · <time dateTime={event.timestamp}>{formatted}</time></div><div>{event.description}</div></>;
   };
-  return <section aria-label="Activity" className={styles.root}>
-    <h2>Activity</h2>
+  const label = typeof title === 'string' ? title : 'Activity';
+  return <section aria-label={label} className={styles.root}>
+    {title != null && title !== false && <h2>{title}</h2>}
     {types && onTypeFilterChange && <label>Event type <select value={typeFilter} onChange={(event) => onTypeFilterChange(event.target.value)}>
       <option value="">All</option>{types.map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}
     </select></label>}

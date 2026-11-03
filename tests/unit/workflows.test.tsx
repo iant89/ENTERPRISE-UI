@@ -36,6 +36,15 @@ describe('enterprise workflows', () => {
     expect(await axeViolations(container)).toEqual([]);
   });
 
+  it('lets the host rename or hide the activity heading', () => {
+    const { rerender } = renderWithTheme(<ActivityFeed title="History" events={[]} />);
+    expect(screen.getByRole('heading', { name: 'History' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'History' })).toBeInTheDocument();
+    rerender(<ActivityFeed title={null} events={[]} />);
+    expect(screen.queryByRole('heading')).not.toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Activity' })).toBeInTheDocument();
+  });
+
   it('renders audit details as authoritative before/after data and delegates filtering', async () => {
     const change = vi.fn();
     const { user, container } = renderWithTheme(<AuditTrail records={[{ id: '1', actor: 'Lee', timestamp: '2026-01-01T00:00:00Z', action: 'Update', source: 'API', changes: [{ field: 'Price', before: '3', after: '4' }] }]} filters={emptyFilters} onFiltersChange={change} />);

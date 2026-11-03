@@ -1,0 +1,237 @@
+.flow {
+  --pf-icon: 1.75rem;
+  display: flex;
+  gap: var(--eui-space-4);
+  margin: 0;
+  padding: 0 0 var(--eui-space-2);
+  overflow-x: auto;
+  list-style: none;
+  color: var(--eui-color-text);
+}
+
+.lane {
+  position: relative;
+  display: flex;
+  flex: 1 0 12rem;
+  flex-direction: column;
+  gap: var(--eui-space-3);
+  min-width: 0;
+}
+
+.laneHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--eui-space-2);
+}
+
+/* Connector from this lane's title to the next lane's icon; solid once the next stage has started. */
+.connector {
+  flex: 1;
+  min-width: var(--eui-space-4);
+  margin-inline-end: calc(-1 * var(--eui-space-4));
+  border-block-start: 2px dashed var(--eui-color-border-strong);
+}
+
+.reached .connector {
+  border-block-start-style: solid;
+  border-block-start-color: var(--eui-color-success);
+}
+
+.icon {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--pf-icon);
+  height: var(--pf-icon);
+  border: 2px solid currentColor;
+  border-radius: var(--eui-radius-full);
+  background: var(--eui-color-surface);
+}
+
+.icon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.done .icon {
+  color: var(--eui-color-success);
+}
+
+.current .icon {
+  color: var(--eui-color-info);
+}
+
+.pending .icon {
+  color: var(--eui-color-neutral-border);
+}
+
+.warning .icon {
+  color: var(--eui-color-warning);
+}
+
+.error .icon {
+  color: var(--eui-color-error);
+}
+
+.laneTitle {
+  overflow: hidden;
+  font-weight: var(--eui-font-weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.placeholder {
+  margin: 0;
+  padding: var(--eui-space-3);
+  border: var(--eui-border-width) dashed var(--eui-color-border);
+  border-radius: var(--eui-radius-md);
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.nodes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.node {
+  background: var(--eui-color-surface);
+  border: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  border-inline-start: 3px solid var(--eui-color-neutral-border);
+  border-radius: var(--eui-radius-md);
+  box-shadow: var(--eui-shadow-level-0);
+}
+
+.node-done {
+  border-inline-start-color: var(--eui-color-success);
+}
+
+.node-current {
+  border-inline-start-color: var(--eui-color-info);
+}
+
+.node-warning {
+  border-inline-start-color: var(--eui-color-warning);
+}
+
+.node-error {
+  border-inline-start-color: var(--eui-color-error);
+}
+
+.selected {
+  background: var(--eui-color-surface-selected);
+  border-color: var(--eui-color-primary);
+}
+
+.nodeBody,
+.nodeButton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-0-5);
+  width: 100%;
+  padding: var(--eui-space-2) var(--eui-space-3);
+  text-align: start;
+}
+
+.nodeButton {
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.nodeButton:hover {
+  background: var(--eui-color-surface-hover);
+}
+
+.nodeButton:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+}
+
+.nodeTitle {
+  font-weight: var(--eui-font-weight-semibold);
+  overflow-wrap: anywhere;
+}
+
+.nodeSubtitle,
+.nodeMeta {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.nodeStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--eui-space-1);
+  font-size: var(--eui-font-size-sm);
+}
+
+.nodeStatus svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex: none;
+}
+
+.text-done {
+  color: var(--eui-color-success-text);
+}
+
+.text-current {
+  color: var(--eui-color-info-text);
+}
+
+.text-pending {
+  color: var(--eui-color-text-secondary);
+}
+
+.text-warning {
+  color: var(--eui-color-warning-text);
+}
+
+.text-error {
+  color: var(--eui-color-error-text);
+}
+
+/* Phones: lanes stack vertically and the connector runs down the icon column. */
+@media (max-width: 599.98px) {
+  .flow {
+    flex-direction: column;
+    overflow-x: visible;
+  }
+
+  .lane {
+    flex: none;
+    padding-inline-start: calc(var(--pf-icon) + var(--eui-space-2));
+  }
+
+  .laneHeader {
+    margin-inline-start: calc(-1 * (var(--pf-icon) + var(--eui-space-2)));
+  }
+
+  .connector {
+    display: none;
+  }
+
+  .hasNext::after {
+    content: '';
+    position: absolute;
+    inset-block-start: var(--pf-icon);
+    inset-block-end: calc(-1 * var(--eui-space-4));
+    inset-inline-start: calc(var(--pf-icon) / 2 - 1px);
+    inset-inline-end: auto;
+    border-block-start: 0;
+    border-inline-start: 2px dashed var(--eui-color-border-strong);
+  }
+
+  .reached::after {
+    border-inline-start-style: solid;
+    border-inline-start-color: var(--eui-color-success);
+  }
+}

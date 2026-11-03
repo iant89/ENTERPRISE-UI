@@ -83,6 +83,20 @@
   --eui-color-accent-7: #7b5f00;
   --eui-color-accent-8: #5b738b;
 
+  /* Chart palette. Categorical hues in a fixed order validated for colour-vision deficiency
+   * (adjacent CVD ΔE ≥ 15) against the light and dark surfaces. light-dark() resolves from each
+   * theme's color-scheme, so the SAP light/dark themes need no overrides. Slot 8 ("other") is
+   * neutral: series beyond the seventh fold into it rather than reusing a hue. */
+  --eui-color-chart-1: light-dark(#0a6ed1, #3199e5);
+  --eui-color-chart-2: light-dark(#107e3e, #4dac06);
+  --eui-color-chart-3: light-dark(#6c32a9, #a27add);
+  --eui-color-chart-4: light-dark(#7b5f00, #af8f01);
+  --eui-color-chart-5: light-dark(#008aa0, #09a6b1);
+  --eui-color-chart-6: light-dark(#c35500, #d67604);
+  --eui-color-chart-7: light-dark(#a93e7d, #d664a4);
+  --eui-color-chart-other: light-dark(#5b738b, #8696a9);
+  /* Gridline and axis tokens: see the [data-eui-theme] rule at the end of this file. */
+
   /* Elevation */
   --eui-shadow-sm: 0 0 2px rgba(34, 53, 72, 0.12), 0 1px 2px rgba(34, 53, 72, 0.1);
   --eui-shadow-md: 0 0 2px rgba(34, 53, 72, 0.12), 0 2px 8px rgba(34, 53, 72, 0.12);
@@ -102,4 +116,13 @@
   --eui-shadow-positive: 0 0 0 0 transparent;
   --eui-shadow-informative: 0 0 0 0 transparent;
   --eui-shadow-text: none;
+}
+
+/* Tokens built from other tokens must be declared on every theme root: a custom property's var()
+ * references resolve where it is declared, so a :root-only declaration would carry the light colors
+ * into dark themes. Later theme files (high contrast, SAP) still override these. */
+:root,
+[data-eui-theme] {
+  --eui-color-chart-grid: color-mix(in oklab, var(--eui-color-text) 12%, var(--eui-color-surface));
+  --eui-color-chart-axis: var(--eui-color-border-strong);
 }

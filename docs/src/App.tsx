@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, type ReactElement } from 'react';
 import {
   Accessibility, BookOpen, Boxes, Code2, Component, LayoutDashboard, LayoutTemplate, Palette, Rocket, SwatchBook, Workflow,
-  Moon, Sun, Contrast, Monitor, Rows3, Columns3, FormInput, MousePointerClick, Navigation, PanelsTopLeft, Table2, MessageSquareWarning, PencilRuler } from 'lucide-react';
+  Moon, Sun, Contrast, Monitor, Rows3, Columns3, FormInput, MousePointerClick, Navigation, PanelsTopLeft, Table2, MessageSquareWarning, PencilRuler, ChartColumn } from 'lucide-react';
 import {
   AppShell, ApplicationHeader, ComboBox, DropdownMenu, IconButton, NavigationGroup, NavigationItem, SideNavigation, ThemeProvider,
   ToastProvider, ToggleButton, Tooltip, type ThemePreference,
@@ -216,6 +216,7 @@ const CATEGORY_ICONS = {
   Buttons: <MousePointerClick />,
   Forms: <FormInput />,
   'Data display': <Table2 />,
+  Charts: <ChartColumn />,
   Feedback: <MessageSquareWarning />,
   Patterns: <Columns3 />,
 } as const;

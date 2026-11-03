@@ -111,6 +111,16 @@ for (const t of themes) {
   v['color-focus'] = c('sapContent_FocusColor');
   // Accents
   for (let n = 1; n <= 8; n++) v[`color-accent-${n}`] = fix(`accent-${n}`, c(`sapAccentColor${n}`), surface, 3);
+  // Charts: SAP's sapChart_OrderedColor_* sequence puts hues that collapse under colour-vision deficiency next to
+  // each other (Horizon: olive beside amber, deutan ΔE 3.0), and no reordering of its colors does better than the
+  // library palette, so the SAP themes use the library's validated chart palette (see docs/component-gap-analysis.md).
+  const chart = dark
+    ? ['#3199e5', '#4dac06', '#a27add', '#af8f01', '#09a6b1', '#d67604', '#d664a4', '#8696a9']
+    : ['#0a6ed1', '#107e3e', '#6c32a9', '#7b5f00', '#008aa0', '#c35500', '#a93e7d', '#5b738b'];
+  for (let n = 1; n <= 7; n++) v[`color-chart-${n}`] = chart[n - 1];
+  v['color-chart-other'] = chart[7];
+  v['color-chart-grid'] = 'color-mix(in oklab, var(--eui-color-text) 12%, var(--eui-color-surface))';
+  v['color-chart-axis'] = 'var(--eui-color-border-strong)';
   // Elevation: SAP content shadow levels 0–3 (Shadow Concept) and interaction shadows.
   v['shadow-sm'] = get('sapContent_Shadow0');
   v['shadow-md'] = get('sapContent_Shadow1');

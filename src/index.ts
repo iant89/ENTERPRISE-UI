@@ -65,6 +65,25 @@ export * from './components/combo-box';
 export * from './components/prompt-input';
 export * from './components/multi-select';
 export * from './components/multi-input';
+export * from './components/dual-list-selector';
+export * from './components/amount-input';
+export * from './components/masked-input';
+export * from './components/password-input';
+export * from './components/otp-input';
+export * from './components/duration-input';
+export * from './components/period-picker';
+export * from './components/tree-select';
+export * from './components/time-zone-picker';
+export * from './components/recurrence-picker';
+export * from './components/value-help';
+export * from './components/rich-text-editor';
+export * from './components/signature-pad';
+export * from './components/address-input';
+export * from './components/mention-input';
+export * from './components/form-error-summary';
+export * from './components/message-popover';
+export * from './components/draft-indicator';
+export * from './components/editable-grid';
 export * from './components/token';
 export * from './components/checkbox';
 export * from './components/radio-group';
@@ -107,6 +126,19 @@ export * from './components/hero-banner';
 export * from './components/media-gallery';
 export * from './components/title';
 export * from './components/text';
+export * from './components/description-list';
+
+// Charts and micro charts
+export * from './components/line-chart';
+export * from './components/bar-chart';
+export * from './components/donut-chart';
+export * from './components/sparkline';
+export * from './components/bullet-chart';
+export * from './components/radial-chart';
+export * from './components/proportion-bar';
+export * from './components/heatmap';
+export * from './components/chart-container';
+export * from './components/refresh-control';
 
 // Feedback
 export * from './components/dialog';
@@ -133,6 +165,11 @@ export * from './patterns/wizard';
 export * from './patterns/dashboard';
 export * from './patterns/command-toolbar';
 export * from './patterns/empty-state';
+export * from './patterns/analytical-card';
+export * from './patterns/dashboard-card';
+export * from './patterns/dashboard-filters';
+export * from './patterns/kanban-board';
+export * from './patterns/process-flow';
 
 // Transport-independent data loading
 export * from './data';

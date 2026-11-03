@@ -13,6 +13,30 @@
 
 ### Library
 
+- Added charts with no chart dependency: LineChart, BarChart (grouped, stacked, horizontal, value labels, reference lines), DonutChart and Heatmap. They share a keyboard model (arrow keys move between points with polite announcements), hover and focus tooltips, a legend for two or more series, direct end labels and a data-table view that is always in the DOM.
+- Added micro charts: Sparkline (line, area, bar), BulletChart (actual, target, forecast and qualitative ranges), RadialChart (a `meter`) and ProportionBar (a 100% stacked bar).
+- Added `--eui-color-chart-1…7`, `--eui-color-chart-other`, `--eui-color-chart-grid` and `--eui-color-chart-axis`. The series order is validated for color-vision deficiency on the light and dark surfaces, with adjacent CVD ΔE ≥ 15. A single `light-dark()` definition serves the built-in light and dark themes, and high contrast has its own values. The SAP themes are regenerated with the same values, because SAP's `sapChart_OrderedColor` sequence fails the colour-vision check. An eighth series uses the neutral "other" color instead of reusing a hue.
+- Added DescriptionList (read-only term/value pairs) and DualListSelector (choose and order a subset between two panes).
+- Added enterprise patterns: AnalyticalCard (KPI header, trend, target and deviation over a chart), KanbanBoard (WIP limits, `canMove` transition rules, drag and drop with a full keyboard alternative) and ProcessFlow (document flow across stages, stacking vertically on phones).
+- Added dashboard infrastructure:
+  - `DashboardCard`: a widget frame with standard loading, error (with Retry), empty and no-access states. It shows "Updated … ago" freshness, flags data older than `staleAfter` as out of date, offers a refresh button that keeps content visible, and announces errors.
+  - `ChartContainer`, also available as `DashboardCard chartTools`: switches every chart inside between chart and table and toggles legends. Its download menu offers a PNG or JPEG image (2× resolution, in the current theme, with title and legends) and one CSV of all the charts (with CSV-injection guarding). Full screen measures the available space, so charts fill it and follow window resizes.
+  - `RefreshControl`: a refresh button, freshness text and an auto-refresh interval. Auto-refresh pauses in hidden tabs and is not announced.
+  - `DashboardFilterProvider`, `useDashboardFilters` and `DashboardFilterBar`: cross-filtering between widgets and a drill-down path. State can be controlled and kept in the URL, filter tokens are removable, and every change is announced.
+- Charts: `onSelect` (click, Enter or Space) and `selectedCategory` (dims the other categories) on LineChart, BarChart and DonutChart. A `view` prop shows the data table in place of the plot.
+- LineChart and BarChart legends are toggle buttons that hide or show a series (`legendToggle`, `hiddenSeries`, `defaultHiddenSeries`, `onHiddenSeriesChange`). The other series keep their colors, the value axis rescales, stacks re-stack, and the data table and CSV keep every series. The last visible series cannot be hidden.
+- Added data entry components:
+  - **Validation:** `useForm` and `validators` (sync and async rules with stale results discarded, cross-field validation, touched and dirty tracking, server errors, and a `field()` binding that accepts value callbacks or events), `FormErrorSummary` (focused, linked errors per WCAG 3.3.1) and `MessagePopover` (Fiori message handling).
+  - **Numbers:** `AmountInput` and `QuantityInput`, plus `parseLocaleNumber` and `formatLocaleNumber`. They handle locale separators, currency minor units and unit-of-measure decimals. Ambiguous input such as "1.5" in German is rejected, never guessed. `NumberInput` has an opt-in `locale`.
+  - **Grid editing:** `EditableGrid`, with spreadsheet keyboard model, in-cell editors (text, number, select, checkbox, date), per-cell validation, add/duplicate/delete rows and paste of tab-separated blocks.
+  - **Value help:** `ValueHelpDialog` and `ValueHelpInput` (F4): local or debounced server search with stale requests aborted, filters, and single or multiple selection.
+  - **Specialised inputs:** `MaskedInput`, `PasswordInput`, `OtpInput`, `DurationInput`, `PeriodPicker` (month, quarter, year, fiscal period, ISO week), `TreeSelect`, `TimeZonePicker` and `RecurrencePicker` (RRULE).
+  - **Drafts:** `DraftIndicator` with the `useAutosave` hook.
+  - **Rich and specialised entry:** `RichTextEditor` (allowlist-sanitized HTML, including pasted content), `SignaturePad` (with a typed alternative), `AddressInput` (per-country layout, postal-code checks, autofill tokens and lookup) and `MentionInput`.
+- Added the `formatRelativeTime` and `useNow` hooks.
+- Fixed: the chart gridline and axis tokens now resolve against each theme. They were bright in the dark themes because their `var()` references resolved at `:root`.
+- Added `docs/component-gap-analysis.md`, which compares the library with SAP Fiori/UI5, Ant Design, Mantine, PatternFly, Carbon and Tremor and ranks the remaining gaps.
+
 - Documented every component property and redesigned the API reference, with generated API metadata (`scripts/extract-api.mjs`) and a description check (`scripts/check-api-descriptions.mjs`).
 - Fixed: a polite screen-reader announcement no longer clears an earlier assertive one before its 7-second window, and pending announcements are cancelled on unmount.
 - Fixed: a toast with keyboard focus is no longer auto-dismissed when the pointer leaves it.

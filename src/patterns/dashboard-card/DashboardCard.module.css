@@ -1,0 +1,163 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--eui-color-surface);
+  border: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  border-radius: var(--eui-radius-lg);
+  box-shadow: var(--eui-shadow-level-0);
+  color: var(--eui-color-text);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-4) var(--eui-space-4) var(--eui-space-2);
+}
+
+.titles {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--eui-font-size-md);
+  font-weight: var(--eui-font-weight-semibold);
+}
+
+.subtitle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--eui-space-1);
+  margin: var(--eui-space-0-5) 0 0;
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.stale {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--eui-space-1);
+  margin-inline-start: var(--eui-space-1);
+  padding: 0 var(--eui-space-1);
+  border-radius: var(--eui-radius-sm);
+  background: var(--eui-color-warning-subtle);
+  color: var(--eui-color-warning-text);
+  font-weight: var(--eui-font-weight-semibold);
+}
+
+.stale svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--eui-space-1);
+}
+
+.actions svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  padding: var(--eui-space-2) var(--eui-space-4) var(--eui-space-4);
+  transition: opacity var(--eui-duration-fast);
+}
+
+/* Keep the last data visible but recessive while it reloads. */
+.refreshing {
+  opacity: 0.6;
+}
+
+.placeholder {
+  display: flex;
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-4);
+  color: var(--eui-color-text-secondary);
+  text-align: center;
+}
+
+.stateIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.stateText {
+  margin: 0;
+  max-width: 28rem;
+  font-size: var(--eui-font-size-sm);
+}
+
+.error {
+  color: var(--eui-color-error-text);
+}
+
+.error .stateText {
+  color: var(--eui-color-text);
+}
+
+.footer {
+  padding: var(--eui-space-2) var(--eui-space-4);
+  border-block-start: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  font-size: var(--eui-font-size-sm);
+}
+
+.spinning {
+  animation: eui-card-spin 1s linear infinite;
+}
+
+@keyframes eui-card-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fullscreen {
+  overflow: hidden;
+  border-radius: 0;
+}
+
+/* The body takes the height left under the header and footer; charts inside share it. */
+.fullscreen .body {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: var(--eui-space-4);
+  min-height: 0;
+  overflow: auto;
+}
+
+.expanded {
+  position: fixed;
+  inset: 0;
+  z-index: var(--eui-z-modal);
+  box-shadow: var(--eui-shadow-level-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinning {
+    animation: none;
+  }
+
+  .body {
+    transition: none;
+  }
+}

@@ -1,0 +1,44 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--eui-space-2);
+  min-height: 1.5rem;
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.text {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--eui-space-1);
+}
+
+.text svg {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+
+.saved .text svg {
+  color: var(--eui-color-success-text);
+}
+
+.error {
+  color: var(--eui-color-error-text);
+}
+
+.retry {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--eui-color-link);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.retry:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+  border-radius: var(--eui-radius-xs);
+}

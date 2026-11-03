@@ -1,0 +1,65 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-2);
+  min-width: 0;
+  color: var(--eui-color-text);
+  font-size: var(--eui-font-size-sm);
+}
+
+/* A 2px surface gap separates segments so adjacent fills never touch. */
+.bar {
+  display: flex;
+  gap: 2px;
+  height: 0.75rem;
+  overflow: hidden;
+  border-radius: var(--eui-radius-xs);
+}
+
+.sm .bar {
+  height: 0.5rem;
+}
+
+.segment,
+.remainder {
+  flex-basis: 0;
+  min-width: 2px;
+}
+
+.remainder {
+  background: var(--eui-color-neutral-subtle);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--eui-space-1) var(--eui-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--eui-space-1);
+}
+
+.swatch {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: var(--eui-radius-xs);
+  background: currentColor;
+}
+
+.value {
+  color: var(--eui-color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (forced-colors: active) {
+  .segment,
+  .swatch {
+    forced-color-adjust: none;
+  }
+}

@@ -1,6 +1,6 @@
 /** Documentation metadata for every component page. API reference tables come from docs/generated/api.json. */
 
-export type Category = 'Layout' | 'Navigation' | 'Buttons' | 'Forms' | 'Data display' | 'Feedback' | 'Patterns';
+export type Category = 'Layout' | 'Navigation' | 'Buttons' | 'Forms' | 'Data display' | 'Charts' | 'Feedback' | 'Patterns';
 
 export const categories: { id: Category; description: string }[] = [
   { id: 'Layout', description: 'Application frame and layout primitives.' },
@@ -8,6 +8,7 @@ export const categories: { id: Category; description: string }[] = [
   { id: 'Buttons', description: 'Trigger actions with the right emphasis.' },
   { id: 'Forms', description: 'Labelled, validated data entry controls.' },
   { id: 'Data display', description: 'Tables, lists, trees and business objects.' },
+  { id: 'Charts', description: 'Dependency-free SVG charts and micro charts with keyboard access and data-table views.' },
   { id: 'Feedback', description: 'Dialogs, messages and progress.' },
   { id: 'Patterns', description: 'Higher-level enterprise floorplans composed from components.' },
 ];
@@ -35,6 +36,131 @@ export interface ComponentDoc {
 const k = (keys: string, action: string): KeyboardRow => ({ keys, action });
 
 export const docs: ComponentDoc[] = [
+
+
+  // Data entry
+  {
+    slug: 'form-validation', name: 'Form validation', category: 'Forms', components: ['FormErrorSummary', 'MessagePopover'], examples: 'form-validation',
+    summary: 'useForm state and validation with an error summary and Fiori-style message popover.',
+    keyboard: [k('Enter (submit)', 'Validates; focus moves to the error summary when there are errors'), k('Enter (summary link)', 'Moves focus to the field')],
+    a11y: ['After a failed submit, the summary takes focus, is announced as an alert, and links to every field (WCAG 3.3.1).', 'Fields get `aria-invalid` and their message through the existing FormField wiring.', 'useForm validates on blur, then on every change while a field has an error, so errors are not shown while typing for the first time.', 'Server errors returned from `onSubmit` are shown on their fields.'],
+    related: ['form', 'form-field', 'editable-grid'],
+  },
+  { slug: 'amount-input', name: 'AmountInput', category: 'Forms', components: ['AmountInput', 'QuantityInput'], summary: 'Money amounts with currency and quantities with a unit of measure, in the user’s number format.', a11y: ['Typed text is parsed in the locale (1.234,56 in German); ambiguous input is reported as an error, never silently reinterpreted.', 'Currency and unit selects are native and labelled.', 'Values round to the currency’s minor unit or the unit’s decimals on commit.'], related: ['number-input', 'form-validation'] },
+  {
+    slug: 'editable-grid', name: 'EditableGrid', category: 'Data display', components: ['EditableGrid'],
+    summary: 'Spreadsheet-style editing of line items with validation, row actions and paste from Excel.',
+    keyboard: [k('Arrow keys, Home / End, Ctrl + Home / End', 'Move between cells'), k('Enter / F2 / typing', 'Edit the cell (typing replaces its value)'), k('Enter / Shift + Enter', 'Commit and move down / up'), k('Tab / Shift + Tab', 'Commit and move right / left'), k('Escape', 'Cancel the edit'), k('Space', 'Toggle a checkbox cell'), k('Delete', 'Clear the cell'), k('Ctrl + Delete / Ctrl + D', 'Delete / duplicate the row'), k('Ctrl + C / Ctrl + V', 'Copy the cell / paste a block')],
+    a11y: ['An ARIA `grid` with one tab stop; the active cell or its editor has focus.', 'Invalid cells expose `aria-invalid` and their message; the focused cell’s message is also shown and announced under the grid.', 'Read-only cells have `aria-readonly`; row buttons name their row.', 'Adds, deletes, duplicates and pastes are announced.'],
+    related: ['data-grid', 'form-validation'],
+  },
+  {
+    slug: 'value-help', name: 'ValueHelp', category: 'Forms', components: ['ValueHelpInput', 'ValueHelpDialog'],
+    summary: 'Search large reference data in a dialog and pick one or many items (Fiori value help, F4).',
+    keyboard: [k('F4 (field)', 'Opens the value help'), k('Enter (search, one result)', 'Picks it'), k('Space (row)', 'Selects the row'), k('Escape', 'Closes without a choice')],
+    a11y: ['Built on Dialog: focus starts in the search field and returns to the field.', 'Result counts and searching are announced; each row has a named radio or checkbox.', 'Stale server requests are aborted so results never arrive out of order.'],
+    related: ['combo-box', 'multi-input', 'dialog'],
+  },
+  { slug: 'masked-input', name: 'MaskedInput', category: 'Forms', components: ['MaskedInput'], summary: 'Fixed-format text such as IBAN, phone and tax IDs, formatted while typing.', a11y: ['Separators are inserted for the user; pasted values with other separators are accepted.', 'The placeholder shows the format; also describe it in `description` for screen readers.'], related: ['input'] },
+  { slug: 'password-input', name: 'PasswordInput', category: 'Forms', components: ['PasswordInput'], summary: 'Password entry with a show toggle, strength meter and requirement checklist.', a11y: ['The show/hide button is a pressed-state toggle with a changing name.', 'Strength is text, not color alone, and describes the field; each requirement says met or not met.', 'Sets `autocomplete` to current-password or new-password for password managers.'], related: ['input'] },
+  { slug: 'otp-input', name: 'OtpInput', category: 'Forms', components: ['OtpInput'], summary: 'One-time codes in separate boxes with paste and SMS autofill.', keyboard: [k('Typing', 'Fills a box and moves on'), k('Backspace', 'Clears and moves back'), k('← / →', 'Move between boxes')], a11y: ['A fieldset with a legend; each box is named “Character n of 6”.', 'Pasting anywhere fills every box; the first box uses `autocomplete="one-time-code"`.'], related: ['input'] },
+  { slug: 'duration-input', name: 'DurationInput', category: 'Forms', components: ['DurationInput'], summary: 'Time spans typed naturally (2h 30m, 1:45, 90) and stored in minutes.', a11y: ['Invalid text gets a message with examples instead of being dropped.', 'Localize the unit words with `labels.units` and the display with `labels.format`.'], related: ['time-picker', 'number-input'] },
+  { slug: 'period-picker', name: 'PeriodPicker', category: 'Forms', components: ['PeriodPicker'], summary: 'Pick a month, quarter, year, fiscal period or ISO week instead of two dates.', keyboard: [k('Arrow keys', 'Move between periods'), k('Home / End', 'First / last period'), k('Enter / Space', 'Choose the period')], a11y: ['The trigger is named by the label and the current period; options are pressed-state buttons whose names include the visible text.', 'The year heading is announced when it changes.'], related: ['date-range-picker', 'dynamic-date-range'] },
+  { slug: 'tree-select', name: 'TreeSelect', category: 'Forms', components: ['TreeSelect'], summary: 'Choose a node from a hierarchy; the field shows its path.', a11y: ['Uses the Tree component (arrow keys, expand and collapse) inside a popover with a filter field.', 'The trigger is named by the label and the selected path.'], related: ['tree', 'combo-box'] },
+  { slug: 'time-zone-picker', name: 'TimeZonePicker', category: 'Forms', components: ['TimeZonePicker'], summary: 'Choose an IANA time zone by city, name or current UTC offset.', a11y: ['Built on ComboBox; offsets account for daylight saving time on the reference date.'], related: ['combo-box', 'date-time-picker'] },
+  { slug: 'recurrence-picker', name: 'RecurrencePicker', category: 'Forms', components: ['RecurrencePicker'], summary: 'Edit a repeat rule and get an iCalendar RRULE plus a readable summary.', a11y: ['A fieldset of native and library controls; weekdays are toggle buttons named with full day names.', 'The summary describes the group and updates politely.'], related: ['date-picker', 'segmented-button'] },
+  { slug: 'draft-indicator', name: 'DraftIndicator', category: 'Feedback', components: ['DraftIndicator'], summary: 'Saving, saved and failed states for drafts, with the useAutosave hook.', a11y: ['A polite status that announces outcomes (saved, failed), not every “Saving…”.', 'Errors offer a Retry button.'], related: ['form-validation', 'object-editor'] },
+  { slug: 'rich-text-editor', name: 'RichTextEditor', category: 'Forms', components: ['RichTextEditor'], summary: 'Lightweight formatted text: bold, italic, underline, lists and links, as sanitized HTML.', keyboard: [k('Ctrl + B / I / U', 'Bold / italic / underline'), k('Ctrl + K', 'Add or edit a link')], a11y: ['A labelled multiline textbox with a formatting toolbar whose buttons show pressed state.', 'Output and pasted content are sanitized to an allowlist; links must be http(s) or mailto.', 'Uses the browser editing commands (execCommand); for tables, images or collaboration, integrate a dedicated editor.'], related: ['text-area', 'mention-input'] },
+  { slug: 'signature-pad', name: 'SignaturePad', category: 'Forms', components: ['SignaturePad'], summary: 'Capture a handwritten signature, or type one instead.', a11y: ['Drawing needs a pointer, so a Type mode gives keyboard and switch users an equivalent (WCAG 2.1.1, 2.5.1).', 'Signed or not signed is stated in text and announced.', 'Legal validity, storage and identity checks are application responsibilities.'], related: ['approval-workflow'] },
+  { slug: 'address-input', name: 'AddressInput', category: 'Forms', components: ['AddressInput'], summary: 'Postal addresses whose fields and checks follow the country, with autofill and lookup.', a11y: ['Each field has a visible label and the right `autocomplete` token for browser autofill.', 'Postal codes are checked per country with an example in the message.', 'Lookup suggestions are a labelled list of buttons and their count is announced.'], related: ['form-validation', 'input'] },
+  { slug: 'mention-input', name: 'MentionInput', category: 'Forms', components: ['MentionInput'], summary: 'Comments where @ suggests people to mention.', keyboard: [k('@ + name', 'Shows suggestions'), k('↑ / ↓', 'Move through suggestions'), k('Enter / Tab', 'Insert the mention'), k('Escape', 'Close suggestions')], a11y: ['The textarea keeps its textbox role and points at the active suggestion with `aria-activedescendant`.', 'The number of suggestions is announced; @ inside words (email addresses) does not trigger.'], related: ['text-area', 'activity-feed'] },
+  // Charts
+
+  {
+    slug: 'chart-container', name: 'ChartContainer', category: 'Charts', components: ['ChartContainer'],
+    summary: 'A toolbar frame for charts: chart or table view, legend, PNG, JPEG and CSV download, and full screen.',
+    keyboard: [k('Tab', 'Moves through the toolbar and into the charts'), k('Escape', 'Leaves full screen')],
+    a11y: ['The tools are a labelled `toolbar`; the view switch exposes `aria-pressed` and the legend toggle is a pressed-state button.', 'Table view shows the same data table the charts already provide for screen readers.', 'Downloads are a menu of named items; image formats are disabled in table view, where no plot is drawn.', 'Exported images are not accessible on their own: share the CSV, or add the takeaway as text, wherever an image is used.', 'CSV cells that start like a formula are prefixed so spreadsheets do not run them.', 'Uses the browser Fullscreen API, falling back to an in-page overlay that Escape closes; charts are measured and redrawn to fill the space, also when the window is resized.'],
+    related: ['dashboard-card', 'line-chart', 'bar-chart'],
+  },
+  {
+    slug: 'refresh-control', name: 'RefreshControl', category: 'Data display', components: ['RefreshControl'],
+    summary: 'A refresh button, “Updated … ago” freshness text and an optional auto-refresh interval.',
+    a11y: ['The freshness text is a `time` element with the absolute time as its tooltip.', 'Manual refreshes are announced politely; automatic ones are not, to avoid noise.', 'The interval is a labelled native select; auto-refresh pauses while the tab is hidden.'],
+    related: ['dashboard', 'dashboard-card'],
+  },
+  {
+    slug: 'dashboard-card', name: 'DashboardCard', category: 'Patterns', components: ['DashboardCard'],
+    summary: 'The frame for a dashboard widget: freshness, refresh, chart tools and standard loading, error, empty and no-access states.',
+    a11y: ['An `article` labelled by its heading; `aria-busy` while loading or refreshing.', 'Errors show an icon and text, offer Retry, and are announced when they appear after the first render.', '“Out of date” is shown as text with an icon, not only color.'],
+    related: ['dashboard', 'chart-container', 'refresh-control', 'analytical-card'],
+  },
+  {
+    slug: 'dashboard-filters', name: 'Dashboard filters', category: 'Patterns', components: ['DashboardFilterProvider', 'DashboardFilterBar'],
+    summary: 'Cross-filtering between widgets and a drill-down path, shared through context.',
+    keyboard: [k('Enter / Space (chart point)', 'Applies or clears the filter, or drills down'), k('Tab', 'Moves to the filter tokens and the path links')],
+    a11y: ['Charts announce that points can be selected; applying, removing and drilling are announced politely.', 'Active filters are removable tokens with named remove buttons; the drill path is a labelled navigation with the current level marked `aria-current`.', 'Keep state in the URL with the controlled `value` so filtered views can be shared.'],
+    related: ['dashboard', 'filter-token', 'bar-chart', 'donut-chart'],
+  },
+  {
+    slug: 'line-chart', name: 'LineChart', category: 'Charts', components: ['LineChart'],
+    summary: 'Trends over an ordered dimension, usually time, for one or more measures.',
+    keyboard: [k('Tab', 'Focuses the chart'), k('← / →', 'Previous / next data point'), k('Home / End', 'First / last data point'), k('Escape', 'Hides the tooltip')],
+    a11y: ['The plot is a focusable, named `group` with `aria-roledescription="chart"`; moving between points announces the category and every series value politely.', 'A data table with the same values is always in the DOM (visually hidden until “Show table”).', 'Two to four series are labelled at their line ends, so identity never depends on color alone.', 'Legend entries are toggle buttons (`aria-pressed`) that hide or show a series; the change is announced, the last visible series cannot be hidden, and hidden entries are struck through, not just dimmed.', 'Series colors follow a fixed order validated for colour-vision deficiency; an eighth series falls back to the neutral “other” color.'],
+    related: ['bar-chart', 'sparkline', 'analytical-card'],
+  },
+  {
+    slug: 'bar-chart', name: 'BarChart', category: 'Charts', components: ['BarChart'],
+    summary: 'Compare magnitudes across categories: grouped or stacked, columns or horizontal bars.',
+    keyboard: [k('Tab', 'Focuses the chart'), k('Arrow keys', 'Previous / next category'), k('Home / End', 'First / last category'), k('Escape', 'Hides the tooltip')],
+    a11y: ['Same keyboard, data-table and legend-toggle model as LineChart; stacked charts include the total in the announcement and table.', 'Bars always start at zero; rounded ends mark the value side only.', 'Use `layout="horizontal"` for long category names instead of rotated labels.'],
+    related: ['line-chart', 'proportion-bar'],
+  },
+  {
+    slug: 'donut-chart', name: 'DonutChart', category: 'Charts', components: ['DonutChart'],
+    summary: 'Part-to-whole for a handful of categories, with value and share in the legend.',
+    keyboard: [k('Tab', 'Focuses the chart'), k('Arrow keys', 'Previous / next segment')],
+    a11y: ['Each segment is announced with its value and percentage; the legend shows the same text.', 'Segments beyond `maxSegments` fold into “Other” so no hue is reused.', 'Prefer BarChart when categories need precise comparison.'],
+    related: ['proportion-bar', 'bar-chart'],
+  },
+  { slug: 'sparkline', name: 'Sparkline', category: 'Charts', components: ['Sparkline'], summary: 'A word-sized trend without axes for tables, tiles and headers.', a11y: ['With `label`, it is an image whose name summarizes the count, first, last, low and high values.', 'Without `label`, it is decorative; put the numbers in adjacent text.'], related: ['line-chart', 'metric-card'] },
+  { slug: 'bullet-chart', name: 'BulletChart', category: 'Charts', components: ['BulletChart'], summary: 'Actual versus target and forecast at one point in time, against qualitative ranges.', a11y: ['One image with a text summary: actual, target, forecast and the range name.', 'Range status comes from `ranges[].label`; color is supplementary.'], related: ['radial-chart', 'analytical-card'] },
+  { slug: 'radial-chart', name: 'RadialChart', category: 'Charts', components: ['RadialChart'], summary: 'A single percentage such as completion or utilization, as a ring.', a11y: ['Exposed as a `meter` with min, max, current value and a localizable `aria-valuetext`.', 'The center text is visual; screen readers use the value text.'], related: ['bullet-chart', 'progress-bar'] },
+  { slug: 'proportion-bar', name: 'ProportionBar', category: 'Charts', components: ['ProportionBar'], summary: 'One 100% bar showing how a total splits into a few parts.', a11y: ['With the legend, a labelled group whose legend lists every value and share; without it, an image with the same summary.', 'Use `tone` only when segments are states (on time, late), not categories.'], related: ['donut-chart', 'bar-chart'] },
+  {
+    slug: 'heatmap', name: 'Heatmap', category: 'Charts', components: ['Heatmap'],
+    summary: 'Magnitude across two categorical dimensions as a grid of shaded cells.',
+    keyboard: [k('Arrow keys', 'Move between cells'), k('Home / End', 'First / last cell in the row'), k('Ctrl + Home / End', 'First / last cell in the grid'), k('Enter / Space', 'Activates the cell')],
+    a11y: ['A `grid` with row and column headers; each cell exposes its value (or “No data”) as text.', 'A single-hue ramp from light to dark; missing values are hatched, not just empty.'],
+    related: ['bar-chart'],
+  },
+  { slug: 'description-list', name: 'DescriptionList', category: 'Data display', components: ['DescriptionList'], summary: 'Read-only term and value pairs for business object facts.', a11y: ['A native `dl` with `dt`/`dd` pairs in reading order.', 'Missing values show visible text instead of an empty cell.'], related: ['object-page', 'form'] },
+  {
+    slug: 'dual-list-selector', name: 'DualListSelector', category: 'Forms', components: ['DualListSelector'],
+    summary: 'Choose, and optionally order, a subset of a long list by moving items between two panes.',
+    keyboard: [k('Tab', 'Moves between filter fields, checkboxes and move buttons'), k('Space', 'Checks the focused item')],
+    a11y: ['Each pane is a labelled region with a select-all checkbox, filter field and native checkboxes.', 'Move buttons are named icon buttons; moves are announced politely.', 'Prefer MultiSelect for fewer than about 20 options.'],
+    related: ['multi-select', 'view-settings-dialog'],
+  },
+  {
+    slug: 'analytical-card', name: 'AnalyticalCard', category: 'Patterns', components: ['AnalyticalCard'],
+    summary: 'An overview-page card: KPI header with trend and target, a chart and an optional drill-down.',
+    a11y: ['An `article` labelled by its heading; with `onHeaderClick` the title is a button covering the header.', 'Trend direction is announced as text; indicators are a `dl`.'],
+    related: ['dashboard', 'metric-card', 'line-chart'],
+  },
+  {
+    slug: 'kanban-board', name: 'KanbanBoard', category: 'Patterns', components: ['KanbanBoard'],
+    summary: 'Items moving through stages as cards in columns, with WIP limits and transition rules.',
+    keyboard: [k('Space / Enter (handle)', 'Pick up or drop the card'), k('↑ / ↓', 'Move within the column'), k('← / →', 'Move to the previous / next allowed column'), k('Escape', 'Cancel the move')],
+    a11y: ['Every card has a named move handle; drag and drop has a complete keyboard alternative.', 'Pick-up, each move, drop and cancel are announced with column and position.', 'Over-limit columns say so in text, not only with color.', 'Persist moves in `onMove`; the board does not save anything.'],
+    related: ['list', 'process-flow'],
+  },
+  {
+    slug: 'process-flow', name: 'ProcessFlow', category: 'Patterns', components: ['ProcessFlow'],
+    summary: 'The documents of a business process across its stages, such as order → delivery → invoice → payment.',
+    a11y: ['An ordered list of stages; each stage title includes its status as text.', 'Every document has visible status text with an icon; color is supplementary.', 'Selectable documents are native buttons; the selected one has `aria-current`.'],
+    related: ['timeline', 'object-page', 'kanban-board'],
+  },
   { slug: 'calendar', name: 'Calendar', category: 'Forms', components: ['Calendar'], summary: 'A standalone month grid for selecting one date.', keyboard: [k('Arrow keys', 'Previous / next day or week'), k('Page Up / Page Down', 'Previous / next month'), k('Enter / Space', 'Selects the date')], a11y: ['A `grid` labelled by the visible month; each day has a full date label.', 'Today is marked with `aria-current="date"`.'], related: ['date-picker', 'calendar-legend'] },
   { slug: 'date-range-picker', name: 'DateRangePicker', category: 'Forms', components: ['DateRangePicker'], summary: 'Start and end date inputs with quick presets.', a11y: ['Native date inputs are grouped and labelled.', 'Localize the preset labels.'], related: ['date-picker'] },
   { slug: 'filter-token', name: 'FilterToken', category: 'Forms', components: ['FilterToken', 'FilterTokenGroup'], summary: 'Removable applied-filter tokens.', a11y: ['Each remove button names the filter it removes.', 'The group is a labelled region.'], related: ['filter-bar'] },

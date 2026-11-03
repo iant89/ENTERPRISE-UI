@@ -68,6 +68,16 @@
   --eui-color-accent-6: #286eb4;
   --eui-color-accent-7: #0f828f;
   --eui-color-accent-8: #7ca10c;
+  --eui-color-chart-1: #0a6ed1;
+  --eui-color-chart-2: #107e3e;
+  --eui-color-chart-3: #6c32a9;
+  --eui-color-chart-4: #7b5f00;
+  --eui-color-chart-5: #008aa0;
+  --eui-color-chart-6: #c35500;
+  --eui-color-chart-7: #a93e7d;
+  --eui-color-chart-other: #5b738b;
+  --eui-color-chart-grid: color-mix(in oklab, var(--eui-color-text) 12%, var(--eui-color-surface));
+  --eui-color-chart-axis: var(--eui-color-border-strong);
   --eui-shadow-sm: 0 0 0 0.0625rem rgba(0,0,0,0.1), 0 0.125rem 0.5rem 0 rgba(0,0,0,0.1);
   --eui-shadow-md: 0 0 0 0.0625rem rgba(0,0,0,0.42), 0 0.125rem 0.5rem 0 rgba(0,0,0,0.3);
   --eui-shadow-lg: 0 0 0 0.0625rem rgba(0,0,0,0.42), 0 0.625rem 1.875rem 0 rgba(0,0,0,0.3);

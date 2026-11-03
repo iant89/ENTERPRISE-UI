@@ -369,6 +369,56 @@ Every component and pattern should document:
 - Package releases are reproducible and verified.
 - Consumers have clear installation, migration, and support guidance.
 
+## Phase 6: Data Visualization and Expanded Enterprise Patterns
+
+The first round is in place. See `docs/component-gap-analysis.md` for the comparison with other design systems and the ranked backlog.
+
+### Objectives
+- Provide accessible charts with no chart dependency, built on the design tokens.
+- Cover the analytical and workflow floorplans business applications build most often.
+
+### 6.1 Charts and micro charts
+- [x] Add a categorical chart palette validated for color-vision deficiency in light, dark and high-contrast themes.
+- [x] Add `LineChart` and `BarChart` with keyboard navigation, tooltips, legends, direct labels, reference lines and data-table views.
+- [x] Add `DonutChart` with automatic "Other" folding and `Heatmap` as a keyboard-navigable grid.
+- [x] Add micro charts: `Sparkline`, `BulletChart`, `RadialChart` and `ProportionBar`.
+- [x] Add `ChartContainer` (chart/table toggle, legend, full screen, CSV download).
+- [ ] Add `ScatterChart` and `ComboChart` (shared value axis only).
+- [ ] Add chart pages to the Playwright visual, axe and forced-colors suites.
+- [ ] Verify chart announcements with VoiceOver and NVDA.
+
+### 6.2 Enterprise patterns and components
+- [x] Add `AnalyticalCard` for overview pages.
+- [x] Add `KanbanBoard` with WIP limits, transition rules and a keyboard alternative to drag and drop.
+- [x] Add `ProcessFlow` for document flows.
+- [x] Add `DualListSelector` and `DescriptionList`.
+- [ ] Add a planning calendar / Gantt view.
+- [ ] Add an import wizard pattern (upload, map, validate, preview, import).
+- [ ] Add `Tour` / `Coachmark`.
+
+### 6.3 Dashboard infrastructure
+- [x] Add `DashboardCard` with standard loading, error, empty and no-access states, freshness and stale-data indicators.
+- [x] Add `RefreshControl` with manual refresh and auto-refresh that pauses in hidden tabs.
+- [x] Add cross-filtering (`DashboardFilterProvider`, `useDashboardFilters`, `DashboardFilterBar`) with drill-down and chart `onSelect`.
+- [ ] Add rearrangeable, personalizable layouts persisted through the SavedViews adapter.
+- [ ] Add a KPI strip, a ranked bar list and a status-history strip.
+- [ ] Add dashboard export (PDF/PNG) and shareable filtered links.
+
+### 6.4 Data entry
+- [x] Add form state and validation (`useForm`), `FormErrorSummary` and `MessagePopover`.
+- [x] Add `AmountInput`, `QuantityInput` and locale-aware number parsing.
+- [x] Add `EditableGrid` with keyboard editing, validation and paste from spreadsheets.
+- [x] Add `ValueHelpDialog` / `ValueHelpInput`.
+- [x] Add `MaskedInput`, `PasswordInput`, `OtpInput`, `DurationInput`, `PeriodPicker`, `TreeSelect`, `TimeZonePicker`, `RecurrencePicker` and `DraftIndicator` / `useAutosave`.
+- [x] Add `RichTextEditor`, `SignaturePad`, `AddressInput` and `MentionInput`.
+- [ ] Add EditableGrid virtualization for very large line-item sets, and undo/redo.
+- [ ] Verify the data entry components with screen readers and on touch devices.
+
+### Completion Criteria
+- Charts meet the same keyboard, screen-reader and theming standards as the other components.
+- Every chart has a non-visual equivalent (a data table or a text summary).
+- New patterns have examples, unit tests and axe coverage.
+
 ## Recommended Implementation Order
 1. Reliability and release foundations.
 2. Data adapter API.

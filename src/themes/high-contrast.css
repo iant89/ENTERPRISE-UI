@@ -73,6 +73,17 @@
   --eui-color-accent-7: #ffe14d;
   --eui-color-accent-8: #e6e6e6;
 
+  --eui-color-chart-1: #66d9ff;
+  --eui-color-chart-2: #3ce07f;
+  --eui-color-chart-3: #c9a6ff;
+  --eui-color-chart-4: #ffe14d;
+  --eui-color-chart-5: #4ff0ff;
+  --eui-color-chart-6: #ffab1d;
+  --eui-color-chart-7: #ff8fd0;
+  --eui-color-chart-other: #e6e6e6;
+  --eui-color-chart-grid: #6b6b6b;
+  --eui-color-chart-axis: #ffffff;
+
   --eui-shadow-sm: 0 0 0 1px #ffffff;
   --eui-shadow-md: 0 0 0 1px #ffffff;
   --eui-shadow-lg: 0 0 0 2px #ffffff;

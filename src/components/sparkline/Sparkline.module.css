@@ -1,0 +1,11 @@
+.sparkline {
+  display: inline-block;
+  flex: none;
+  overflow: visible;
+  vertical-align: middle;
+}
+
+.last {
+  stroke: var(--eui-color-surface);
+  stroke-width: 1.5;
+}

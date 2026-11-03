@@ -65,6 +65,7 @@ export * from './components/combo-box';
 export * from './components/prompt-input';
 export * from './components/multi-select';
 export * from './components/multi-input';
+export * from './components/dual-list-selector';
 export * from './components/token';
 export * from './components/checkbox';
 export * from './components/radio-group';
@@ -107,6 +108,17 @@ export * from './components/hero-banner';
 export * from './components/media-gallery';
 export * from './components/title';
 export * from './components/text';
+export * from './components/description-list';
+
+// Charts and micro charts
+export * from './components/line-chart';
+export * from './components/bar-chart';
+export * from './components/donut-chart';
+export * from './components/sparkline';
+export * from './components/bullet-chart';
+export * from './components/radial-chart';
+export * from './components/proportion-bar';
+export * from './components/heatmap';
 
 // Feedback
 export * from './components/dialog';
@@ -133,6 +145,9 @@ export * from './patterns/wizard';
 export * from './patterns/dashboard';
 export * from './patterns/command-toolbar';
 export * from './patterns/empty-state';
+export * from './patterns/analytical-card';
+export * from './patterns/kanban-board';
+export * from './patterns/process-flow';
 
 // Transport-independent data loading
 export * from './data';

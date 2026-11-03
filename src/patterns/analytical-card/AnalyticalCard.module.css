@@ -1,0 +1,175 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--eui-color-surface);
+  border: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  border-radius: var(--eui-radius-lg);
+  box-shadow: var(--eui-shadow-level-0);
+  color: var(--eui-color-text);
+}
+
+.header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-3);
+  padding: var(--eui-space-4) var(--eui-space-4) var(--eui-space-3);
+  border-radius: var(--eui-radius-lg) var(--eui-radius-lg) 0 0;
+}
+
+.interactive .header:hover {
+  background: var(--eui-color-surface-hover);
+}
+
+.interactive .header:has(.cover:focus-visible) {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: calc(-1 * var(--eui-focus-width));
+}
+
+.cover {
+  all: unset;
+  cursor: pointer;
+}
+
+/* The whole header is the click target; actions stay above it. */
+.cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--eui-space-2);
+}
+
+.titles {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--eui-font-size-md);
+  font-weight: var(--eui-font-weight-semibold);
+}
+
+.subtitle {
+  margin: var(--eui-space-0-5) 0 0;
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.status {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+  white-space: nowrap;
+}
+
+.actions {
+  position: relative;
+  z-index: 1;
+}
+
+.kpiRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--eui-space-3);
+}
+
+.kpi {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--eui-space-1);
+}
+
+.value {
+  font-size: var(--eui-font-size-3xl);
+  font-weight: var(--eui-font-weight-regular);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--eui-line-height-tight);
+}
+
+.success {
+  color: var(--eui-color-success-text);
+}
+
+.warning {
+  color: var(--eui-color-warning-text);
+}
+
+.error {
+  color: var(--eui-color-error-text);
+}
+
+.information {
+  color: var(--eui-color-info-text);
+}
+
+.trend {
+  display: inline-flex;
+  align-self: center;
+}
+
+.trend svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.good {
+  color: var(--eui-color-success-text);
+}
+
+.bad {
+  color: var(--eui-color-error-text);
+}
+
+.flat {
+  color: var(--eui-color-text-secondary);
+}
+
+.unit {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.trendText {
+  flex-basis: 100%;
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.indicators {
+  display: flex;
+  gap: var(--eui-space-4);
+  margin: 0;
+  text-align: end;
+}
+
+.indicator dt {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-xs);
+}
+
+.indicator dd {
+  margin: 0;
+  font-size: var(--eui-font-size-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.content {
+  padding: 0 var(--eui-space-4) var(--eui-space-4);
+}
+
+.footer {
+  padding: var(--eui-space-2) var(--eui-space-4);
+  border-block-start: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}

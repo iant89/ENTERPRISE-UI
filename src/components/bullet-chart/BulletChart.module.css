@@ -1,0 +1,81 @@
+.bullet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-1);
+  min-width: 6rem;
+  color: var(--eui-color-text);
+  font-size: var(--eui-font-size-sm);
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--eui-space-2);
+}
+
+.label {
+  overflow: hidden;
+  color: var(--eui-color-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.values {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.target {
+  color: var(--eui-color-text-secondary);
+}
+
+.track {
+  position: relative;
+  height: 1.25rem;
+  background: var(--eui-color-neutral-subtle);
+  border-radius: var(--eui-radius-xs);
+}
+
+.sm .track {
+  height: 0.875rem;
+}
+
+.range {
+  position: absolute;
+  inset-block: 0;
+}
+
+.bar {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: 30%;
+  background: currentColor;
+  border-start-end-radius: var(--eui-radius-xs);
+  border-end-end-radius: var(--eui-radius-xs);
+}
+
+.forecast {
+  inset-block: 18%;
+  opacity: 0.3;
+}
+
+.marker {
+  position: absolute;
+  inset-block: 8%;
+  width: 2px;
+  margin-inline-start: -1px;
+  background: var(--eui-color-text);
+}
+
+@media (forced-colors: active) {
+  .bar,
+  .marker {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+
+  .track {
+    border: 1px solid CanvasText;
+  }
+}

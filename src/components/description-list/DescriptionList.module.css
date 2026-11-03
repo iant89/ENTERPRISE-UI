@@ -1,0 +1,75 @@
+.list {
+  display: grid;
+  grid-template-columns: repeat(var(--eui-dl-columns, 2), minmax(0, 1fr));
+  gap: var(--eui-space-4) var(--eui-space-6);
+  margin: 0;
+  color: var(--eui-color-text);
+  font-size: var(--eui-font-size-md);
+}
+
+/* Only spans the item's columns where (the auto-placed) DOM order matches reading order. */
+.item {
+  grid-column: span var(--eui-dl-span, 1);
+  min-width: 0;
+}
+
+.term {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.hint {
+  color: var(--eui-color-text-secondary);
+}
+
+.description {
+  margin: var(--eui-space-0-5) 0 0;
+  overflow-wrap: anywhere;
+}
+
+.empty {
+  color: var(--eui-color-text-secondary);
+}
+
+.inline .item {
+  display: grid;
+  grid-template-columns: minmax(6rem, 40%) minmax(0, 1fr);
+  gap: var(--eui-space-3);
+  align-items: baseline;
+}
+
+.inline .term {
+  text-align: end;
+}
+
+.inline .description {
+  margin: 0;
+}
+
+.bordered {
+  row-gap: 0;
+}
+
+.bordered .item {
+  padding-block: var(--eui-space-2);
+  border-block-end: var(--eui-border-width) solid var(--eui-color-border-subtle);
+}
+
+@media (max-width: 599.98px) {
+  .list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .item {
+    grid-column: auto;
+  }
+
+  .inline .item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--eui-space-0-5);
+  }
+
+  .inline .term {
+    text-align: start;
+  }
+}

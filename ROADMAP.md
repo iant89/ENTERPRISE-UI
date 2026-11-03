@@ -369,6 +369,38 @@ Every component and pattern should document:
 - Package releases are reproducible and verified.
 - Consumers have clear installation, migration, and support guidance.
 
+## Phase 6: Data Visualization and Expanded Enterprise Patterns
+
+The first round is in place. See `docs/component-gap-analysis.md` for the comparison with other design systems and the ranked backlog.
+
+### Objectives
+- Provide accessible charts with no chart dependency, built on the design tokens.
+- Cover the analytical and workflow floorplans business applications build most often.
+
+### 6.1 Charts and micro charts
+- [x] Add a categorical chart palette validated for color-vision deficiency in light, dark and high-contrast themes.
+- [x] Add `LineChart` and `BarChart` with keyboard navigation, tooltips, legends, direct labels, reference lines and data-table views.
+- [x] Add `DonutChart` with automatic "Other" folding and `Heatmap` as a keyboard-navigable grid.
+- [x] Add micro charts: `Sparkline`, `BulletChart`, `RadialChart` and `ProportionBar`.
+- [ ] Add `ChartContainer` (chart/table toggle, legend, full screen, CSV download).
+- [ ] Add `ScatterChart` and `ComboChart` (shared value axis only).
+- [ ] Add chart pages to the Playwright visual, axe and forced-colors suites.
+- [ ] Verify chart announcements with VoiceOver and NVDA.
+
+### 6.2 Enterprise patterns and components
+- [x] Add `AnalyticalCard` for overview pages.
+- [x] Add `KanbanBoard` with WIP limits, transition rules and a keyboard alternative to drag and drop.
+- [x] Add `ProcessFlow` for document flows.
+- [x] Add `DualListSelector` and `DescriptionList`.
+- [ ] Add a planning calendar / Gantt view.
+- [ ] Add an import wizard pattern (upload, map, validate, preview, import).
+- [ ] Add `Tour` / `Coachmark`.
+
+### Completion Criteria
+- Charts meet the same keyboard, screen-reader and theming standards as the other components.
+- Every chart has a non-visual equivalent (a data table or a text summary).
+- New patterns have examples, unit tests and axe coverage.
+
 ## Recommended Implementation Order
 1. Reliability and release foundations.
 2. Data adapter API.

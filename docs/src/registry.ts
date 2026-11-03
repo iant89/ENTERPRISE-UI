@@ -1,6 +1,6 @@
 /** Documentation metadata for every component page. API reference tables come from docs/generated/api.json. */
 
-export type Category = 'Layout' | 'Navigation' | 'Buttons' | 'Forms' | 'Data display' | 'Feedback' | 'Patterns';
+export type Category = 'Layout' | 'Navigation' | 'Buttons' | 'Forms' | 'Data display' | 'Charts' | 'Feedback' | 'Patterns';
 
 export const categories: { id: Category; description: string }[] = [
   { id: 'Layout', description: 'Application frame and layout primitives.' },
@@ -8,6 +8,7 @@ export const categories: { id: Category; description: string }[] = [
   { id: 'Buttons', description: 'Trigger actions with the right emphasis.' },
   { id: 'Forms', description: 'Labelled, validated data entry controls.' },
   { id: 'Data display', description: 'Tables, lists, trees and business objects.' },
+  { id: 'Charts', description: 'Dependency-free SVG charts and micro charts with keyboard access and data-table views.' },
   { id: 'Feedback', description: 'Dialogs, messages and progress.' },
   { id: 'Patterns', description: 'Higher-level enterprise floorplans composed from components.' },
 ];
@@ -35,6 +36,67 @@ export interface ComponentDoc {
 const k = (keys: string, action: string): KeyboardRow => ({ keys, action });
 
 export const docs: ComponentDoc[] = [
+
+  // Charts
+  {
+    slug: 'line-chart', name: 'LineChart', category: 'Charts', components: ['LineChart'],
+    summary: 'Trends over an ordered dimension, usually time, for one or more measures.',
+    keyboard: [k('Tab', 'Focuses the chart'), k('← / →', 'Previous / next data point'), k('Home / End', 'First / last data point'), k('Escape', 'Hides the tooltip')],
+    a11y: ['The plot is a focusable, named `group` with `aria-roledescription="chart"`; moving between points announces the category and every series value politely.', 'A data table with the same values is always in the DOM (visually hidden until “Show table”).', 'Two to four series are labelled at their line ends, so identity never depends on color alone.', 'Series colors follow a fixed order validated for colour-vision deficiency; an eighth series falls back to the neutral “other” color.'],
+    related: ['bar-chart', 'sparkline', 'analytical-card'],
+  },
+  {
+    slug: 'bar-chart', name: 'BarChart', category: 'Charts', components: ['BarChart'],
+    summary: 'Compare magnitudes across categories: grouped or stacked, columns or horizontal bars.',
+    keyboard: [k('Tab', 'Focuses the chart'), k('Arrow keys', 'Previous / next category'), k('Home / End', 'First / last category'), k('Escape', 'Hides the tooltip')],
+    a11y: ['Same keyboard and data-table model as LineChart; stacked charts include the total in the announcement and table.', 'Bars always start at zero; rounded ends mark the value side only.', 'Use `layout="horizontal"` for long category names instead of rotated labels.'],
+    related: ['line-chart', 'proportion-bar'],
+  },
+  {
+    slug: 'donut-chart', name: 'DonutChart', category: 'Charts', components: ['DonutChart'],
+    summary: 'Part-to-whole for a handful of categories, with value and share in the legend.',
+    keyboard: [k('Tab', 'Focuses the chart'), k('Arrow keys', 'Previous / next segment')],
+    a11y: ['Each segment is announced with its value and percentage; the legend shows the same text.', 'Segments beyond `maxSegments` fold into “Other” so no hue is reused.', 'Prefer BarChart when categories need precise comparison.'],
+    related: ['proportion-bar', 'bar-chart'],
+  },
+  { slug: 'sparkline', name: 'Sparkline', category: 'Charts', components: ['Sparkline'], summary: 'A word-sized trend without axes for tables, tiles and headers.', a11y: ['With `label`, it is an image whose name summarizes the count, first, last, low and high values.', 'Without `label`, it is decorative; put the numbers in adjacent text.'], related: ['line-chart', 'metric-card'] },
+  { slug: 'bullet-chart', name: 'BulletChart', category: 'Charts', components: ['BulletChart'], summary: 'Actual versus target and forecast at one point in time, against qualitative ranges.', a11y: ['One image with a text summary: actual, target, forecast and the range name.', 'Range status comes from `ranges[].label`; color is supplementary.'], related: ['radial-chart', 'analytical-card'] },
+  { slug: 'radial-chart', name: 'RadialChart', category: 'Charts', components: ['RadialChart'], summary: 'A single percentage such as completion or utilization, as a ring.', a11y: ['Exposed as a `meter` with min, max, current value and a localizable `aria-valuetext`.', 'The center text is visual; screen readers use the value text.'], related: ['bullet-chart', 'progress-bar'] },
+  { slug: 'proportion-bar', name: 'ProportionBar', category: 'Charts', components: ['ProportionBar'], summary: 'One 100% bar showing how a total splits into a few parts.', a11y: ['With the legend, a labelled group whose legend lists every value and share; without it, an image with the same summary.', 'Use `tone` only when segments are states (on time, late), not categories.'], related: ['donut-chart', 'bar-chart'] },
+  {
+    slug: 'heatmap', name: 'Heatmap', category: 'Charts', components: ['Heatmap'],
+    summary: 'Magnitude across two categorical dimensions as a grid of shaded cells.',
+    keyboard: [k('Arrow keys', 'Move between cells'), k('Home / End', 'First / last cell in the row'), k('Ctrl + Home / End', 'First / last cell in the grid'), k('Enter / Space', 'Activates the cell')],
+    a11y: ['A `grid` with row and column headers; each cell exposes its value (or “No data”) as text.', 'A single-hue ramp from light to dark; missing values are hatched, not just empty.'],
+    related: ['bar-chart'],
+  },
+  { slug: 'description-list', name: 'DescriptionList', category: 'Data display', components: ['DescriptionList'], summary: 'Read-only term and value pairs for business object facts.', a11y: ['A native `dl` with `dt`/`dd` pairs in reading order.', 'Missing values show visible text instead of an empty cell.'], related: ['object-page', 'form'] },
+  {
+    slug: 'dual-list-selector', name: 'DualListSelector', category: 'Forms', components: ['DualListSelector'],
+    summary: 'Choose, and optionally order, a subset of a long list by moving items between two panes.',
+    keyboard: [k('Tab', 'Moves between filter fields, checkboxes and move buttons'), k('Space', 'Checks the focused item')],
+    a11y: ['Each pane is a labelled region with a select-all checkbox, filter field and native checkboxes.', 'Move buttons are named icon buttons; moves are announced politely.', 'Prefer MultiSelect for fewer than about 20 options.'],
+    related: ['multi-select', 'view-settings-dialog'],
+  },
+  {
+    slug: 'analytical-card', name: 'AnalyticalCard', category: 'Patterns', components: ['AnalyticalCard'],
+    summary: 'An overview-page card: KPI header with trend and target, a chart and an optional drill-down.',
+    a11y: ['An `article` labelled by its heading; with `onHeaderClick` the title is a button covering the header.', 'Trend direction is announced as text; indicators are a `dl`.'],
+    related: ['dashboard', 'metric-card', 'line-chart'],
+  },
+  {
+    slug: 'kanban-board', name: 'KanbanBoard', category: 'Patterns', components: ['KanbanBoard'],
+    summary: 'Items moving through stages as cards in columns, with WIP limits and transition rules.',
+    keyboard: [k('Space / Enter (handle)', 'Pick up or drop the card'), k('↑ / ↓', 'Move within the column'), k('← / →', 'Move to the previous / next allowed column'), k('Escape', 'Cancel the move')],
+    a11y: ['Every card has a named move handle; drag and drop has a complete keyboard alternative.', 'Pick-up, each move, drop and cancel are announced with column and position.', 'Over-limit columns say so in text, not only with color.', 'Persist moves in `onMove`; the board does not save anything.'],
+    related: ['list', 'process-flow'],
+  },
+  {
+    slug: 'process-flow', name: 'ProcessFlow', category: 'Patterns', components: ['ProcessFlow'],
+    summary: 'The documents of a business process across its stages, such as order → delivery → invoice → payment.',
+    a11y: ['An ordered list of stages; each stage title includes its status as text.', 'Every document has visible status text with an icon; color is supplementary.', 'Selectable documents are native buttons; the selected one has `aria-current`.'],
+    related: ['timeline', 'object-page', 'kanban-board'],
+  },
   { slug: 'calendar', name: 'Calendar', category: 'Forms', components: ['Calendar'], summary: 'A standalone month grid for selecting one date.', keyboard: [k('Arrow keys', 'Previous / next day or week'), k('Page Up / Page Down', 'Previous / next month'), k('Enter / Space', 'Selects the date')], a11y: ['A `grid` labelled by the visible month; each day has a full date label.', 'Today is marked with `aria-current="date"`.'], related: ['date-picker', 'calendar-legend'] },
   { slug: 'date-range-picker', name: 'DateRangePicker', category: 'Forms', components: ['DateRangePicker'], summary: 'Start and end date inputs with quick presets.', a11y: ['Native date inputs are grouped and labelled.', 'Localize the preset labels.'], related: ['date-picker'] },
   { slug: 'filter-token', name: 'FilterToken', category: 'Forms', components: ['FilterToken', 'FilterTokenGroup'], summary: 'Removable applied-filter tokens.', a11y: ['Each remove button names the filter it removes.', 'The group is a labelled region.'], related: ['filter-bar'] },

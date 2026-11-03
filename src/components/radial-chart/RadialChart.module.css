@@ -1,0 +1,66 @@
+.radial {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--eui-space-1);
+}
+
+.ring {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+}
+
+.ring svg {
+  position: absolute;
+  inset: 0;
+}
+
+.track {
+  stroke: var(--eui-color-neutral-subtle);
+}
+
+.value {
+  transition: stroke-dasharray var(--eui-duration-normal) var(--eui-easing-standard);
+}
+
+.center {
+  position: relative;
+  color: var(--eui-color-text);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--eui-font-weight-semibold);
+}
+
+.sm .center {
+  font-size: var(--eui-font-size-xs);
+}
+
+.md .center {
+  font-size: var(--eui-font-size-md);
+}
+
+.lg .center {
+  font-size: var(--eui-font-size-xl);
+}
+
+.label {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .value {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .value {
+    stroke: CanvasText;
+  }
+
+  .track {
+    stroke: GrayText;
+  }
+}

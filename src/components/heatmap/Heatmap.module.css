@@ -1,0 +1,93 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-2);
+  min-width: 0;
+  color: var(--eui-color-text);
+  font-size: var(--eui-font-size-sm);
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+/* 2px surface gap between cells via border-spacing. */
+.grid {
+  border-collapse: separate;
+  border-spacing: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.corner {
+  padding: 0;
+}
+
+.colHeader {
+  padding: 0 var(--eui-space-1) var(--eui-space-1);
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-xs);
+  font-weight: var(--eui-font-weight-regular);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.rowHeader {
+  padding-inline-end: var(--eui-space-2);
+  color: var(--eui-color-text-secondary);
+  font-weight: var(--eui-font-weight-regular);
+  text-align: end;
+  white-space: nowrap;
+}
+
+.cell {
+  min-width: 2rem;
+  height: 1.75rem;
+  padding: 0 var(--eui-space-1);
+  border-radius: var(--eui-radius-xs);
+  color: var(--eui-color-text);
+  font-size: var(--eui-font-size-xs);
+  text-align: center;
+}
+
+.strong {
+  color: var(--eui-color-text-inverse);
+}
+
+.missing {
+  background: repeating-linear-gradient(135deg, var(--eui-color-surface-sunken) 0 4px, var(--eui-color-surface) 4px 8px);
+  box-shadow: inset 0 0 0 1px var(--eui-color-border-subtle);
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.cell:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: 1px;
+}
+
+.cell:hover {
+  box-shadow: inset 0 0 0 2px var(--eui-color-text);
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: var(--eui-space-2);
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.ramp {
+  width: 8rem;
+  height: 0.5rem;
+  border-radius: var(--eui-radius-xs);
+}
+
+@media (forced-colors: active) {
+  .cell {
+    forced-color-adjust: none;
+  }
+}

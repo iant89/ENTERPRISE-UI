@@ -67,6 +67,11 @@ export const tokenGroups: TokenGroup[] = [
     tokens: [1, 2, 3, 4, 5, 6, 7, 8].map((n) => t(`color-accent-${n}`)),
   },
   {
+    id: 'chart', title: 'Chart palette', kind: 'color',
+    description: 'Categorical series colors in a fixed, colour-vision-safe order. Series beyond the seventh fold into "other".',
+    tokens: [...[1, 2, 3, 4, 5, 6, 7].map((n) => t(`color-chart-${n}`)), t('color-chart-other'), t('color-chart-grid'), t('color-chart-axis')],
+  },
+  {
     id: 'space', title: 'Spacing', kind: 'space',
     description: '4px-based spacing scale used for padding, gaps and margins.',
     tokens: ['0-5', '1', '2', '3', '4', '5', '6', '8', '10', '12', '16'].map((n) => t(`space-${n}`)),

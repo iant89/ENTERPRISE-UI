@@ -392,16 +392,16 @@ The first round is in place. See `docs/component-gap-analysis.md` for the compar
 - [x] Add `KanbanBoard` with WIP limits, transition rules and a keyboard alternative to drag and drop.
 - [x] Add `ProcessFlow` for document flows.
 - [x] Add `DualListSelector` and `DescriptionList`.
-- [ ] Add a planning calendar / Gantt view.
+- [x] Add a planning calendar (`PlanningCalendar`: resource rows over day, week and month, with drag and keyboard rescheduling). Dependencies between bars (full Gantt) are not included.
 - [ ] Add an import wizard pattern (upload, map, validate, preview, import).
-- [ ] Add `Tour` / `Coachmark`.
+- [x] Add `Tour` / `Coachmark`.
 
 ### 6.3 Dashboard infrastructure
 - [x] Add `DashboardCard` with standard loading, error, empty and no-access states, freshness and stale-data indicators.
 - [x] Add `RefreshControl` with manual refresh and auto-refresh that pauses in hidden tabs.
 - [x] Add cross-filtering (`DashboardFilterProvider`, `useDashboardFilters`, `DashboardFilterBar`) with drill-down and chart `onSelect`.
 - [ ] Add rearrangeable, personalizable layouts persisted through the SavedViews adapter.
-- [ ] Add a KPI strip, a ranked bar list and a status-history strip.
+- [x] Add a KPI strip, a ranked bar list and a status-history strip (`KpiStrip`, `RankedBarList`, `StatusHistory`).
 - [ ] Add dashboard export (PDF/PNG) and shareable filtered links.
 
 ### 6.4 Data entry

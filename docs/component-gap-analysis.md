@@ -73,7 +73,6 @@ A follow-up compared dashboards with Fiori overview pages, Grafana, Power BI and
 
 Still open for dashboards:
 - Rearrangeable and personalizable layouts, persisted through the `SavedViews` adapter.
-- A KPI strip, a ranked bar list and a status-history strip.
 - Chart annotations.
 - Dashboard export (PDF/PNG) and shareable filtered links.
 - A TV / kiosk mode.
@@ -96,6 +95,14 @@ Design decisions:
 
 Still open: EditableGrid virtualization and undo/redo, and screen reader and touch verification of the new components.
 
+## Roadmap patterns round
+
+| Gap | Added |
+| --- | --- |
+| Planning calendar | `PlanningCalendar`: resource rows over day, week and month; stacked overlaps; drag to move or resize with a full keyboard alternative (M, arrow keys, Enter / Escape); `canChange` and locked appointments. Dependencies between bars (a full Gantt) are still open. |
+| Tour / Coachmark | `Tour` and `Coachmark`: non-modal anchored cards with a spotlight, focus moved to each step and restored at the end, and a centered fallback for missing targets. |
+| Dashboard strips | `KpiStrip`, `RankedBarList` and `StatusHistory` (a tracker of status blocks with height cues and a counted legend). |
+
 ## Remaining gaps, ranked
 
 The priority reflects how often each item is needed in ERP, inventory, fleet and admin screens, and how hard it is to build well outside the library.
@@ -104,17 +111,14 @@ The priority reflects how often each item is needed in ERP, inventory, fleet and
 
 | Component or pattern | Why it matters | Reference |
 | --- | --- | --- |
-| **Planning calendar / Gantt** | Resource and time planning: shifts, maintenance windows, fleet or room booking. It is hard to build accessibly, so it is a strong reason to adopt the library. Start with a read-only timeline of rows and bars, then add drag to reschedule with a keyboard alternative. | Fiori PlanningCalendar, MUI X Scheduler |
 | **Import wizard pattern** | Upload a CSV or Excel file, map columns, validate rows with inline fixes, preview, and import with partial-success reporting. It can compose Wizard, FileUploader, DataGrid and BulkActionBar. | Carbon ImportModal, Salesforce data import |
 | **ScatterChart and ComboChart** | Scatter shows correlation (price against volume, lead time against defect rate). ComboChart is bars and a line on one shared axis, for example actual bars against a plan line. These are the two chart forms most often asked for after this round. | UI5 ScatterChart and ComposedChart, Mantine |
-| **Tour / Coachmark** | Guided onboarding for new features, anchored to elements, with a focus-safe sequence. | Ant Tour, Carbon Coachmark |
 
 ### P2: valuable
 
 | Component or pattern | Notes |
 | --- | --- |
 | **Delta and comparison micro charts** | Fiori delta (difference between two values) and comparison (labelled bars). BarChart with `layout="horizontal"` and `valueLabels` partly covers comparison; a compact variant without axes would fit tables. |
-| **Tracker / status history** | A row of status blocks for uptime, SLA or batch runs (Tremor Tracker). Smaller than Heatmap and needs no ramp. |
 | **Funnel and Waterfall charts** | Funnel for pipeline conversion; Waterfall for finance bridges such as budget to actual. |
 | **Treemap** | Hierarchical part-to-whole, for spend by category and supplier. |
 | **Cascader** | Selection from a hierarchy, such as a material group or cost center tree. ComboBox and Tree cover part of this today. |

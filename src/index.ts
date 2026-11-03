@@ -173,6 +173,7 @@ export * from './patterns/dashboard-card';
 export * from './patterns/dashboard-filters';
 export * from './patterns/kanban-board';
 export * from './patterns/tour';
+export * from './patterns/planning-calendar';
 export * from './patterns/process-flow';
 
 // Transport-independent data loading

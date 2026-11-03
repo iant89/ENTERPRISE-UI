@@ -18,9 +18,11 @@
 .block:focus-visible { outline: var(--eui-focus-width) solid var(--eui-color-focus); position: relative; z-index: 1; }
 .active { box-shadow: 0 0 0 1px var(--eui-color-surface), 0 0 0 3px var(--eui-color-text); position: relative; z-index: 1; }
 .clickable { cursor: pointer; }
-/* Shape cues so status does not rely on color alone: problems are full height, others shorter. */
-.block.success, .block.information { height: 1.5rem; }
-.block.neutral { height: 1rem; opacity: 0.7; }
+/* Height cues so status does not rely on color alone: the worse the status, the taller the block. */
+.block.error { height: 2rem; }
+.block.warning { height: 1.5rem; }
+.block.success, .block.information { height: 1rem; }
+.block.neutral { height: 0.625rem; opacity: 0.7; }
 
 .axis { display: flex; justify-content: space-between; color: var(--eui-color-text-secondary); font-size: var(--eui-font-size-xs); }
 .details { min-height: 1.4em; margin: 0; font-size: var(--eui-font-size-sm); }

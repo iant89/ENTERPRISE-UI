@@ -1,7 +1,7 @@
 import { StatusHistory, type StatusHistoryItem } from '@enterprise-ui/react';
 
 export const title = 'Service uptime, last 30 days';
-export const description = 'Tab to the strip, then use the arrow keys, Home and End; hover or tap on touch screens. Each block is read as "date: status", and outages are taller blocks so status does not depend on color alone.';
+export const description = 'Tab to the strip, then use the arrow keys, Home and End; hover or tap on touch screens. Each block is read as "date: status", and worse statuses are taller blocks, so status does not depend on color alone.';
 
 const day = (offset: number) => new Date(Date.UTC(2026, 9, 5 + offset)).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 const incidents: Record<number, Pick<StatusHistoryItem, 'status' | 'description'>> = {

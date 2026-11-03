@@ -163,6 +163,13 @@ export const docs: ComponentDoc[] = [
     related: ['popover', 'wizard'],
   },
   {
+    slug: 'planning-calendar', name: 'PlanningCalendar', category: 'Patterns', components: ['PlanningCalendar'],
+    summary: 'Resource planning over time: people, machines, vehicles or rooms with appointments across hours or days, rescheduled by drag or keyboard.',
+    keyboard: [k('Arrow keys', 'Move between appointments (up and down go to the nearest one on the next row)'), k('Home / End', 'First / last appointment in the row; with Ctrl, in the plan'), k('Enter', 'Selects the appointment'), k('M', 'Starts moving the appointment'), k('Arrow keys (moving)', 'Move by one step, or to the previous / next resource'), k('Shift + ← / → (moving)', 'Shorten / lengthen'), k('Enter / Escape (moving)', 'Drop / cancel')],
+    a11y: ['A `grid` with one row per resource: a row header and a cell holding the appointment buttons. The grid is one tab stop.', 'Each appointment is named by its title, time and description, and says when it is locked.', 'Every drag has a keyboard alternative; each step, drop, cancel and rejection is announced.', 'Overlapping appointments stack in lanes instead of covering each other.'],
+    related: ['calendar', 'timeline', 'kanban-board'],
+  },
+  {
     slug: 'process-flow', name: 'ProcessFlow', category: 'Patterns', components: ['ProcessFlow'],
     summary: 'The documents of a business process across its stages, such as order → delivery → invoice → payment.',
     a11y: ['An ordered list of stages; each stage title includes its status as text.', 'Every document has visible status text with an icon; color is supplementary.', 'Selectable documents are native buttons; the selected one has `aria-current`.'],
@@ -452,7 +459,7 @@ export const docs: ComponentDoc[] = [
   { slug: 'metric-card', name: 'MetricCard', category: 'Data display', components: ['MetricCard'], summary: 'KPI tile with value, unit, trend and sparkline.', a11y: ['Trend direction is announced as text (“Up +8.2%”), not just shown by an arrow.', 'The sparkline is decorative; put essential numbers in text.'], related: ['kpi-strip'] },
   { slug: 'kpi-strip', name: 'KpiStrip', category: 'Data display', components: ['KpiStrip'], summary: 'A compact row of headline indicators for the top of a dashboard or object page.', a11y: ['A labelled region containing a list; each indicator reads label, value, unit, trend and target in order.', 'Trend direction is text (“Down −1.2 pts”); `tone` must be explained by visible target or hint text.', 'Drill-down items are native buttons named by their content.'], related: ['metric-card', 'analytical-card', 'dashboard'] },
   { slug: 'ranked-bar-list', name: 'RankedBarList', category: 'Charts', components: ['RankedBarList'], summary: 'A ranked list of labelled values with proportional bars, such as top suppliers or error codes.', a11y: ['An ordered list; every value (and share) is printed as text, so the bars are decorative.', 'Bars sit behind the text at low opacity, keeping full text contrast.', 'With `onSelect`, rows are toggle buttons with `aria-pressed`; "Show all" exposes `aria-expanded`.'], related: ['bar-chart', 'proportion-bar'] },
-  { slug: 'status-history', name: 'StatusHistory', category: 'Charts', components: ['StatusHistory'], summary: 'A row of status blocks for uptime, SLA periods or batch runs.', keyboard: [k('← / →', 'Previous / next block'), k('Home / End', 'First / last block'), k('Enter / Space', 'Activates the block (with `onSelect`)')], a11y: ['One tab stop; each block reads “period: status. details”.', 'Problem periods are taller blocks, and a legend counts each status, so color is not the only cue.', 'The details line under the strip shows the focused, hovered or tapped block.'], related: ['heatmap', 'timeline'] },
+  { slug: 'status-history', name: 'StatusHistory', category: 'Charts', components: ['StatusHistory'], summary: 'A row of status blocks for uptime, SLA periods or batch runs.', keyboard: [k('← / →', 'Previous / next block'), k('Home / End', 'First / last block'), k('Enter / Space', 'Activates the block (with `onSelect`)')], a11y: ['One tab stop; each block reads “period: status. details”.', 'The worse the status, the taller the block, and a legend counts each status, so color is not the only cue.', 'The details line under the strip shows the focused, hovered or tapped block.'], related: ['heatmap', 'timeline'] },
   // Feedback
   {
     slug: 'dialog', name: 'Dialog', category: 'Feedback', components: ['Dialog'],

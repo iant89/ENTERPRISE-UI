@@ -1,0 +1,34 @@
+.root { display: flex; flex-direction: column; gap: var(--eui-space-1); min-width: 0; color: var(--eui-color-text); }
+.header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--eui-space-2); margin-bottom: var(--eui-space-1); }
+.title { font-weight: var(--eui-font-weight-semibold); }
+.summary { color: var(--eui-color-text-secondary); font-size: var(--eui-font-size-sm); font-variant-numeric: tabular-nums; }
+
+.track { display: flex; align-items: flex-end; gap: 2px; min-height: 2rem; margin: 0; padding: 0; list-style: none; }
+.cell { display: flex; flex: 1 1 0; align-items: flex-end; min-width: 2px; height: 2rem; }
+.block {
+  display: block;
+  flex: 1;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  border-radius: 2px;
+  outline-offset: 2px;
+}
+.block:focus-visible { outline: var(--eui-focus-width) solid var(--eui-color-focus); position: relative; z-index: 1; }
+.active { box-shadow: 0 0 0 1px var(--eui-color-surface), 0 0 0 3px var(--eui-color-text); position: relative; z-index: 1; }
+.clickable { cursor: pointer; }
+/* Shape cues so status does not rely on color alone: problems are full height, others shorter. */
+.block.success, .block.information { height: 1.5rem; }
+.block.neutral { height: 1rem; opacity: 0.7; }
+
+.axis { display: flex; justify-content: space-between; color: var(--eui-color-text-secondary); font-size: var(--eui-font-size-xs); }
+.details { min-height: 1.4em; margin: 0; font-size: var(--eui-font-size-sm); }
+
+.legend { display: flex; flex-wrap: wrap; gap: var(--eui-space-1) var(--eui-space-4); margin: 0; padding: 0; list-style: none; font-size: var(--eui-font-size-sm); color: var(--eui-color-text-secondary); }
+.legend li { display: inline-flex; align-items: center; gap: var(--eui-space-1); }
+.swatch { display: inline-block; width: 0.75rem; height: 0.75rem; border-radius: 2px; align-self: center; }
+.count { color: var(--eui-color-text); font-weight: var(--eui-font-weight-semibold); font-variant-numeric: tabular-nums; }
+@media (forced-colors: active) {
+  .block, .swatch { forced-color-adjust: none; border: 1px solid CanvasText; }
+}

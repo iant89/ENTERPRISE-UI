@@ -1,0 +1,162 @@
+.stepper {
+  --stepper-marker: 1.75rem;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--eui-color-text);
+}
+
+.horizontal {
+  gap: var(--eui-space-2);
+}
+
+.vertical {
+  flex-direction: column;
+}
+
+.step {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Connector line to the next step. */
+.horizontal .step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  inset-block-start: calc(var(--stepper-marker) / 2);
+  inset-inline: calc(var(--stepper-marker) + var(--eui-space-2)) 0;
+  height: 2px;
+  background: var(--eui-color-border);
+}
+
+.vertical .step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  inset-block: calc(var(--stepper-marker) + 4px) 4px;
+  inset-inline-start: calc(var(--stepper-marker) / 2 - 1px);
+  width: 2px;
+  background: var(--eui-color-border);
+}
+
+.complete:not(:last-child)::after {
+  background: var(--eui-color-primary) !important;
+}
+
+.button,
+.static {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--eui-space-2);
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+}
+
+.horizontal .button,
+.horizontal .static {
+  flex-direction: column;
+}
+
+.vertical .button,
+.vertical .static {
+  padding-block-end: var(--eui-space-5);
+}
+
+.button {
+  cursor: pointer;
+  border-radius: var(--eui-radius-sm);
+}
+
+.button:hover .label {
+  text-decoration: underline;
+}
+
+.button:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+}
+
+.marker {
+  position: relative;
+  z-index: 1;
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--stepper-marker);
+  height: var(--stepper-marker);
+  border: 2px solid var(--eui-color-border-strong);
+  border-radius: var(--eui-radius-full);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+  font-weight: var(--eui-font-weight-semibold);
+}
+
+.marker svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.complete .marker {
+  border-color: var(--eui-color-primary);
+  background: var(--eui-color-primary);
+  color: var(--eui-color-on-primary);
+}
+
+.current .marker {
+  border-color: var(--eui-color-primary);
+  color: var(--eui-color-selected-text);
+  box-shadow: 0 0 0 3px var(--eui-color-primary-subtle);
+}
+
+.error .marker {
+  border-color: var(--eui-color-error);
+  background: var(--eui-color-error-subtle);
+  color: var(--eui-color-error-text);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.label {
+  font-weight: var(--eui-font-weight-semibold);
+}
+
+.upcoming .label {
+  color: var(--eui-color-text-secondary);
+  font-weight: var(--eui-font-weight-regular);
+}
+
+.description {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+@media (max-width: 599.98px) {
+  .horizontal {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .horizontal .button,
+  .horizontal .static {
+    flex-direction: row;
+    padding-block-end: var(--eui-space-4);
+  }
+
+  .horizontal .step:not(:last-child)::after {
+    inset-block: calc(var(--stepper-marker) + 4px) 4px;
+    inset-inline: calc(var(--stepper-marker) / 2 - 1px) auto;
+    width: 2px;
+    height: auto;
+  }
+}

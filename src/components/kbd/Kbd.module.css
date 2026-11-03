@@ -1,0 +1,32 @@
+.combo {
+  display: inline-flex;
+  font: inherit;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+
+.caps {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.key {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.5em;
+  padding: 0 0.35em;
+  border: var(--eui-border-width) solid var(--eui-color-border-strong);
+  border-block-end-width: 2px;
+  border-radius: var(--eui-radius-sm);
+  background: var(--eui-color-surface-alt);
+  color: var(--eui-color-text);
+  font-family: var(--eui-font-family);
+  font-size: var(--eui-font-size-xs);
+  font-weight: var(--eui-font-weight-semibold);
+  line-height: 1.6;
+}
+
+.sm .key {
+  font-size: 0.6875rem;
+  line-height: 1.4;
+}

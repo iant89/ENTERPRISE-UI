@@ -1,0 +1,140 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: var(--eui-border-width) solid var(--eui-color-border);
+  border-radius: var(--eui-radius-md);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-2);
+  border-block-end: var(--eui-border-width) solid var(--eui-color-border-subtle);
+}
+
+.search {
+  flex: 0 1 14rem;
+  min-height: var(--eui-control-height-sm);
+  padding: 0 var(--eui-space-2);
+  border: var(--eui-border-width) solid var(--eui-color-border-strong);
+  border-radius: var(--eui-radius-sm);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+  font: inherit;
+  font-size: var(--eui-font-size-sm);
+}
+
+.search:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.scroll {
+  overflow: auto;
+  background: var(--eui-color-surface-sunken);
+  font-family: var(--eui-font-family-mono);
+  font-size: var(--eui-font-size-xs);
+}
+
+.scroll:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: calc(-1 * var(--eui-focus-width));
+}
+
+.line {
+  display: flex;
+  gap: var(--eui-space-2);
+  min-height: 20px;
+  padding-inline: var(--eui-space-2);
+  line-height: 20px;
+  white-space: pre;
+}
+
+.wrap .line {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Levels are conveyed by the message text or the level column, color is supplementary. */
+.error {
+  background: var(--eui-color-error-subtle);
+  color: var(--eui-color-error-text);
+}
+
+.warn {
+  background: var(--eui-color-warning-subtle);
+  color: var(--eui-color-warning-text);
+}
+
+.debug {
+  color: var(--eui-color-text-secondary);
+}
+
+.number {
+  flex: none;
+  color: var(--eui-color-text-secondary);
+  text-align: end;
+  user-select: none;
+}
+
+.time {
+  flex: none;
+  color: var(--eui-color-text-secondary);
+}
+
+.level {
+  flex: none;
+  width: 5ch;
+  font-weight: var(--eui-font-weight-semibold);
+}
+
+.message {
+  min-width: 0;
+}
+
+.message mark {
+  border-radius: 2px;
+  background: var(--eui-color-warning);
+  color: var(--eui-color-on-warning);
+}
+
+.empty {
+  margin: 0;
+  padding: var(--eui-space-4);
+  color: var(--eui-color-text-secondary);
+  font-family: var(--eui-font-family);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-1) var(--eui-space-3);
+  border-block-start: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-xs);
+}
+
+.jump {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--eui-color-link);
+  font: inherit;
+  cursor: pointer;
+}
+
+.jump:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+}

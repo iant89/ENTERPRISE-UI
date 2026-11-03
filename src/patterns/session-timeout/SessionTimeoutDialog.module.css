@@ -1,0 +1,13 @@
+.message {
+  margin: 0;
+  line-height: var(--eui-line-height-relaxed);
+}
+
+.timer {
+  margin: var(--eui-space-3) 0 0;
+  color: var(--eui-color-warning-text);
+  font-size: var(--eui-font-size-3xl);
+  font-weight: var(--eui-font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}

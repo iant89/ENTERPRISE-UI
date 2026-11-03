@@ -96,6 +96,15 @@ Design decisions:
 
 Still open: EditableGrid virtualization and undo/redo, and screen reader and touch verification of the new components.
 
+## App-level pages and building blocks round
+
+Added `SignInPage`, `ErrorPage`, `SessionTimeoutDialog` with `useIdleTimer`, `KeyboardShortcutsDialog`, `SearchResultsPage`, `Accordion`, `Stepper`, `Kbd`, `CodeSnippet`, `LogViewer`, `DocumentViewer` and `CommentThread`.
+
+Still open from the latest survey:
+- DataGrid grouping, aggregation footers, pinned columns, expandable rows and pivot views.
+- Planning calendar or Gantt chart, scheduler views, import wizard and object comparison.
+- Guided tour, and an AI answer card with sources and feedback.
+
 ## Remaining gaps, ranked
 
 The priority reflects how often each item is needed in ERP, inventory, fleet and admin screens, and how hard it is to build well outside the library.
@@ -119,14 +128,14 @@ The priority reflects how often each item is needed in ERP, inventory, fleet and
 | **Treemap** | Hierarchical part-to-whole, for spend by category and supplier. |
 | **Cascader** | Selection from a hierarchy, such as a material group or cost center tree. ComboBox and Tree cover part of this today. |
 | **Tearsheet** | A large modal workspace between a Dialog and a page, for creation flows. DetailPanel `overlay` is close but narrower. |
-| **LogViewer / CodeSnippet** | Virtualized, searchable logs and copyable code for integration and admin screens. VirtualList and CopyButton exist to build on. |
-| **Result page** | Success and failure end states after a flow. EmptyState covers some of this. |
+| **LogViewer / CodeSnippet** | Added. |
+| **Result page** | `ErrorPage` covers failures; success end states still use EmptyState. |
 
 ### P3: niche or covered elsewhere
 
 | Item | Status |
 | --- | --- |
-| Accordion | `Panel` is collapsible; a grouped single-open variant is a small addition. |
+| Accordion | Added (`Accordion`). |
 | Splitter | Covered by `ResizablePanel` and `SplitView`. |
 | Statistic | Covered by `MetricCard`. |
 | Notification drawer | Covered by `NotificationCenter`. |

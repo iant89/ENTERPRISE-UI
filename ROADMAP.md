@@ -414,6 +414,12 @@ The first round is in place. See `docs/component-gap-analysis.md` for the compar
 - [ ] Add EditableGrid virtualization for very large line-item sets, and undo/redo.
 - [ ] Verify the data entry components with screen readers and on touch devices.
 
+### 6.5 App-level pages and building blocks
+- [x] Add `SignInPage`, `ErrorPage`, `SessionTimeoutDialog`, `KeyboardShortcutsDialog` and `SearchResultsPage`.
+- [x] Add `Accordion`, `Stepper`, `Kbd`, `CodeSnippet`, `LogViewer`, `DocumentViewer` and `CommentThread`.
+- [ ] Synchronize session timeout across browser tabs (BroadcastChannel) in a reference implementation.
+- [ ] Add DataGrid grouping, aggregation, pinned columns and expandable rows.
+
 ### Completion Criteria
 - Charts meet the same keyboard, screen-reader and theming standards as the other components.
 - Every chart has a non-visual equivalent (a data table or a text summary).

@@ -1,0 +1,99 @@
+.viewer {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border: var(--eui-border-width) solid var(--eui-color-border);
+  border-radius: var(--eui-radius-md);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--eui-space-1);
+  padding: var(--eui-space-1) var(--eui-space-1) var(--eui-space-1) var(--eui-space-3);
+  border-block-end: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  background: var(--eui-color-surface-alt);
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: var(--eui-font-weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zoom {
+  min-width: 3.5em;
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.link {
+  display: inline-grid;
+  place-items: center;
+  width: var(--eui-control-height-sm);
+  height: var(--eui-control-height-sm);
+  border-radius: var(--eui-radius-sm);
+  color: var(--eui-color-icon);
+}
+
+.link svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.link:hover {
+  background: var(--eui-color-surface-hover);
+  color: var(--eui-color-text);
+}
+
+.link:focus-visible,
+.stage:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: calc(-1 * var(--eui-focus-width));
+}
+
+.stage {
+  overflow: auto;
+  background: var(--eui-color-surface-sunken);
+}
+
+.imageStage {
+  display: grid;
+  place-items: start center;
+  padding: var(--eui-space-4);
+}
+
+.frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.image {
+  max-width: none;
+  transition: transform var(--eui-duration-fast);
+  box-shadow: var(--eui-shadow-level-1);
+}
+
+.text {
+  margin: 0;
+  padding: var(--eui-space-3);
+  font-family: var(--eui-font-family-mono);
+  font-size: var(--eui-font-size-sm);
+  white-space: pre-wrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image {
+    transition: none;
+  }
+}

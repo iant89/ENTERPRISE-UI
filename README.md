@@ -233,14 +233,14 @@ When you override colors, keep text at 4.5:1 contrast or better, and borders and
 
 | Category | Components |
 | --- | --- |
-| Layout | AppShell, Page, Container, Grid, Flex, Stack, SplitView, ResizablePanel |
-| Navigation | ApplicationHeader, SideNavigation, NavigationItem, NavigationGroup, Breadcrumbs, Tabs, Menu, DropdownMenu, Pagination |
+| Layout | AppShell, Page, Container, Grid, Flex, Stack, SplitView, ResizablePanel, Accordion |
+| Navigation | ApplicationHeader, SideNavigation, NavigationItem, NavigationGroup, Breadcrumbs, Tabs, Menu, DropdownMenu, Pagination, Stepper |
 | Buttons | Button, IconButton, SplitButton, ToggleButton, ButtonGroup |
 | Forms | Input, TextArea, NumberInput, AmountInput, QuantityInput, MaskedInput, PasswordInput, OtpInput, DurationInput, SearchField, Select, ComboBox, MultiSelect, DualListSelector, TreeSelect, ValueHelpInput, TimeZonePicker, Checkbox, RadioGroup, Switch, DatePicker, Calendar, TimePicker, PeriodPicker, RecurrencePicker, RichTextEditor, MentionInput, AddressInput, SignaturePad, FormField, FormGroup, FormErrorSummary, MessagePopover, DraftIndicator |
-| Data display | Table, DataGrid, EditableGrid, List, Tree, TreeTable, Card, Avatar, Badge, StatusIndicator, Timeline, ObjectIdentifier, MetricCard, DescriptionList |
+| Data display | Table, DataGrid, EditableGrid, Kbd, CodeSnippet, LogViewer, DocumentViewer, CommentThread, List, Tree, TreeTable, Card, Avatar, Badge, StatusIndicator, Timeline, ObjectIdentifier, MetricCard, DescriptionList |
 | Charts | LineChart, BarChart, DonutChart, Heatmap, Sparkline, BulletChart, RadialChart, ProportionBar, ChartContainer |
 | Feedback | Dialog, AlertDialog, Toast (`ToastProvider` + `useToast`), MessageStrip, Tooltip, Popover, ProgressBar, Spinner, Skeleton |
-| Enterprise patterns | FilterBar, MasterDetail, ObjectPage, DetailPanel, Wizard, Dashboard, DashboardCard, DashboardFilterProvider, DashboardFilterBar, RefreshControl, AnalyticalCard, KanbanBoard, ProcessFlow, CommandToolbar, EmptyState |
+| Enterprise patterns | SignInPage, ErrorPage, SessionTimeoutDialog, KeyboardShortcutsDialog, SearchResultsPage, FilterBar, MasterDetail, ObjectPage, DetailPanel, Wizard, Dashboard, DashboardCard, DashboardFilterProvider, DashboardFilterBar, RefreshControl, AnalyticalCard, KanbanBoard, ProcessFlow, CommandToolbar, EmptyState |
 
 The library also exports these hooks:
 

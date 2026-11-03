@@ -1,8 +1,9 @@
-import { forwardRef, useRef, useState, type HTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
+import { forwardRef, useEffect, useRef, useState, type HTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
 import { cx } from '../../utilities/cx';
 import { useId } from '../../hooks/useId';
 import { useElementSize } from '../../hooks/useResizeObserver';
 import { Skeleton } from '../skeleton';
+import { useChartTools } from './ChartToolsContext';
 import styles from './Chart.module.css';
 
 /** Localizable strings shared by the charts. */
@@ -23,6 +24,8 @@ export interface ChartLabels {
   instructions: string;
   /** Name of the total row or column of stacked charts. */
   total: string;
+  /** Extra instruction when points can be selected (for example to filter a dashboard). */
+  selectInstructions: string;
 }
 
 export const defaultChartLabels: ChartLabels = {
@@ -34,10 +37,11 @@ export const defaultChartLabels: ChartLabels = {
   other: 'Other',
   instructions: 'Use the arrow keys to move between data points.',
   total: 'Total',
+  selectInstructions: 'Press Enter to select the point.',
 };
 
 /** Properties shared by every full-size chart. */
-export interface ChartBaseProps extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'title'> {
+export interface ChartBaseProps extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'title' | 'onSelect'> {
   /** Accessible name of the chart, for example "Revenue by month". Also the data table caption. */
   label: string;
   /** Visible one-line takeaway shown under the chart (for example "Revenue is up 12% on last year"). */
@@ -48,10 +52,12 @@ export interface ChartBaseProps extends Omit<HTMLAttributes<HTMLElement>, 'child
   formatValue?: (value: number) => string;
   /** Shows the legend when there are two or more series. @default true */
   showLegend?: boolean;
-  /** Shows a button that reveals the underlying data as a table. @default true */
+  /** Shows a button that reveals the underlying data as a table. Defaults to `true`, or `false` inside a ChartContainer, whose toolbar has its own table view. */
   tableToggle?: boolean;
   /** Shows a placeholder while data loads. @default false */
   loading?: boolean;
+  /** `table` replaces the plot with its data table. Inside a ChartContainer the toolbar sets this. @default 'chart' */
+  view?: 'chart' | 'table';
   /** Overrides for the built-in strings. */
   labels?: Partial<ChartLabels>;
 }
@@ -85,6 +91,8 @@ interface ChartFrameProps extends ChartBaseProps {
   anchor: (index: number, width: number) => { x: number; y: number };
   /** Renders the SVG plot for the measured width. */
   plot: (width: number, active: number | null, setActive: (index: number | null) => void) => ReactNode;
+  /** Called when a point is chosen with Enter, Space or a click. */
+  onSelectIndex?: (index: number) => void;
   rootClassName?: string;
 }
 
@@ -93,12 +101,24 @@ const FALLBACK_WIDTH = 480;
 /** Internal frame: legend, keyboard navigation, live announcements, tooltip and data-table view. */
 export const ChartFrame = forwardRef<HTMLElement, ChartFrameProps>(function ChartFrame(
   {
-    label, description, height = 240, showLegend = true, tableToggle = true, loading = false, labels: labelOverrides,
-    count, empty, legend, table, announce, tooltip, anchor, plot, rootClassName, className, formatValue: _formatValue, ...rest
+    label, description, height = 240, showLegend: showLegendProp, tableToggle: tableToggleProp, loading = false, labels: labelOverrides, view: viewProp,
+    count, empty, legend, table, announce, tooltip, anchor, plot, onSelectIndex, rootClassName, className, formatValue: _formatValue, ...rest
   },
   ref,
 ) {
   const labels = { ...defaultChartLabels, ...labelOverrides };
+  const tools = useChartTools();
+  // Explicit props win over the surrounding toolbar.
+  const view = viewProp ?? tools?.view ?? 'chart';
+  const showLegend = showLegendProp ?? tools?.showLegend ?? true;
+  // A container toolbar already offers the table view.
+  const tableToggle = tableToggleProp ?? !tools;
+  const registryId = useId(undefined, 'chart');
+  const tableKey = JSON.stringify(table);
+  useEffect(() => {
+    if (!tools || empty) return;
+    return tools.register(registryId, { label, table: JSON.parse(tableKey) });
+  }, [tools, registryId, label, tableKey, empty]);
   const plotRef = useRef<HTMLDivElement>(null);
   const { width: measured } = useElementSize(plotRef);
   const width = measured || FALLBACK_WIDTH;
@@ -125,6 +145,7 @@ export const ChartFrame = forwardRef<HTMLElement, ChartFrameProps>(function Char
       Home: () => moveTo(0),
       End: () => moveTo(count - 1),
       Escape: () => setActive(null),
+      ...(onSelectIndex && active !== null ? { Enter: () => onSelectIndex(active), ' ': () => onSelectIndex(active) } : {}),
     };
     const handler = keys[event.key];
     if (handler) {
@@ -148,7 +169,7 @@ export const ChartFrame = forwardRef<HTMLElement, ChartFrameProps>(function Char
         <div className={styles.empty} style={{ height }} role="img" aria-label={`${label}: ${labels.noData}`}>
           {labels.noData}
         </div>
-      ) : (
+      ) : view === 'table' ? null : (
         <div
           ref={plotRef}
           className={styles.plot}
@@ -162,17 +183,22 @@ export const ChartFrame = forwardRef<HTMLElement, ChartFrameProps>(function Char
           onBlur={() => setActive(null)}
           onPointerLeave={() => setActive(null)}
         >
-          {plot(width, active, setActive)}
+          <div onClick={onSelectIndex ? () => active !== null && onSelectIndex(active) : undefined} style={onSelectIndex ? { cursor: 'pointer' } : undefined}>
+            {plot(width, active, setActive)}
+          </div>
           {tip && point && (
             <div className={cx(styles.tooltip, styles[`tooltip-${align}`])} style={{ left: point.x, top: point.y }} aria-hidden="true">
               {tip}
             </div>
           )}
-          <span id={instructionsId} className="eui-visually-hidden">{labels.instructions}</span>
+          <span id={instructionsId} className="eui-visually-hidden">
+            {labels.instructions}
+            {onSelectIndex ? ` ${labels.selectInstructions}` : ''}
+          </span>
           <span className="eui-visually-hidden" aria-live="polite">{message}</span>
         </div>
       )}
-      {!loading && !empty && showLegend && legend.length >= 2 && (
+      {!loading && !empty && view === 'chart' && showLegend && legend.length >= 2 && (
         <ul className={styles.legend}>
           {legend.map((item) => (
             <li key={item.key} className={styles.legendItem}>
@@ -183,10 +209,10 @@ export const ChartFrame = forwardRef<HTMLElement, ChartFrameProps>(function Char
           ))}
         </ul>
       )}
-      {(description || (tableToggle && !loading && !empty)) && (
+      {(description || (tableToggle && view === 'chart' && !loading && !empty)) && (
         <figcaption className={styles.caption}>
           {description && <span className={styles.description}>{description}</span>}
-          {tableToggle && !loading && !empty && (
+          {tableToggle && view === 'chart' && !loading && !empty && (
             <button type="button" className={styles.tableToggle} aria-expanded={tableOpen} aria-controls={tableId} onClick={() => setTableOpen((v) => !v)}>
               {tableOpen ? labels.hideTable : labels.showTable}
             </button>
@@ -194,9 +220,9 @@ export const ChartFrame = forwardRef<HTMLElement, ChartFrameProps>(function Char
         </figcaption>
       )}
       {!loading && !empty && (
-        <div id={tableId} className={cx(styles.tableWrap, !tableOpen && 'eui-visually-hidden')}>
+        <div id={tableId} className={cx(styles.tableWrap, !tableOpen && view === 'chart' && 'eui-visually-hidden')}>
           <table className={styles.table}>
-            <caption className="eui-visually-hidden">{label}</caption>
+            <caption className={view === 'table' ? styles.tableCaption : 'eui-visually-hidden'}>{label}</caption>
             <thead>
               <tr>
                 {table.headers.map((h, i) => (

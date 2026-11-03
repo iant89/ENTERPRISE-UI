@@ -18,6 +18,13 @@
 - Added `--eui-color-chart-1…7`, `--eui-color-chart-other`, `--eui-color-chart-grid` and `--eui-color-chart-axis`. The series order is validated for color-vision deficiency on the light and dark surfaces, with adjacent CVD ΔE ≥ 15. A single `light-dark()` definition serves the built-in light and dark themes, and high contrast has its own values. The SAP themes are regenerated with the same values, because SAP's `sapChart_OrderedColor` sequence fails the colour-vision check. An eighth series uses the neutral "other" color instead of reusing a hue.
 - Added DescriptionList (read-only term/value pairs) and DualListSelector (choose and order a subset between two panes).
 - Added enterprise patterns: AnalyticalCard (KPI header, trend, target and deviation over a chart), KanbanBoard (WIP limits, `canMove` transition rules, drag and drop with a full keyboard alternative) and ProcessFlow (document flow across stages, stacking vertically on phones).
+- Added dashboard infrastructure:
+  - `DashboardCard`: a widget frame with standard loading, error (with Retry), empty and no-access states. It shows "Updated … ago" freshness, flags data older than `staleAfter` as out of date, offers a refresh button that keeps content visible, and announces errors.
+  - `ChartContainer`, also available as `DashboardCard chartTools`: switches every chart inside between chart and table, toggles legends, downloads all charts as one CSV (with CSV-injection guarding), and expands to full screen with charts resized to fill it.
+  - `RefreshControl`: a refresh button, freshness text and an auto-refresh interval. Auto-refresh pauses in hidden tabs and is not announced.
+  - `DashboardFilterProvider`, `useDashboardFilters` and `DashboardFilterBar`: cross-filtering between widgets and a drill-down path. State can be controlled and kept in the URL, filter tokens are removable, and every change is announced.
+- Charts: `onSelect` (click, Enter or Space) and `selectedCategory` (dims the other categories) on LineChart, BarChart and DonutChart. A `view` prop shows the data table in place of the plot.
+- Added the `formatRelativeTime` and `useNow` hooks.
 - Added `docs/component-gap-analysis.md`, which compares the library with SAP Fiori/UI5, Ant Design, Mantine, PatternFly, Carbon and Tremor and ranks the remaining gaps.
 
 - Documented every component property and redesigned the API reference, with generated API metadata (`scripts/extract-api.mjs`) and a description check (`scripts/check-api-descriptions.mjs`).

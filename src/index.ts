@@ -119,6 +119,8 @@ export * from './components/bullet-chart';
 export * from './components/radial-chart';
 export * from './components/proportion-bar';
 export * from './components/heatmap';
+export * from './components/chart-container';
+export * from './components/refresh-control';
 
 // Feedback
 export * from './components/dialog';
@@ -146,6 +148,8 @@ export * from './patterns/dashboard';
 export * from './patterns/command-toolbar';
 export * from './patterns/empty-state';
 export * from './patterns/analytical-card';
+export * from './patterns/dashboard-card';
+export * from './patterns/dashboard-filters';
 export * from './patterns/kanban-board';
 export * from './patterns/process-flow';
 

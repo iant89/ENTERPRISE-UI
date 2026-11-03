@@ -28,3 +28,19 @@ export function valueOf(datum: ChartDatum, key: string): number | null {
   const v = datum[key];
   return typeof v === 'number' && Number.isFinite(v) ? v : null;
 }
+
+/** A point chosen with a click, Enter or Space (for cross-filtering or drill-down). */
+export interface ChartSelection {
+  /** Index of the category or segment. */
+  index: number;
+  /** Category or segment label. */
+  category: string;
+}
+
+/** Selection properties shared by the cartesian and donut charts. */
+export interface ChartSelectProps {
+  /** Called when the user chooses a category with a click, Enter or Space. Use it to filter or drill down. */
+  onSelect?: (selection: ChartSelection) => void;
+  /** Highlights one category and dims the others, e.g. the active dashboard filter. */
+  selectedCategory?: string | null;
+}

@@ -1,0 +1,32 @@
+.root {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--eui-space-2);
+}
+
+.updated {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+  white-space: nowrap;
+}
+
+.select {
+  min-width: 10rem;
+}
+
+.spinning {
+  animation: eui-refresh-spin 1s linear infinite;
+}
+
+@keyframes eui-refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinning {
+    animation: none;
+  }
+}

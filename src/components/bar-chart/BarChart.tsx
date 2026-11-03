@@ -1,12 +1,13 @@
 import { forwardRef, type PointerEvent } from 'react';
+import { useChartHeight } from '../chart-core/ChartToolsContext';
 import { ChartFrame, TooltipContent, defaultChartLabels, type ChartBaseProps, type ChartLegendItem } from '../chart-core/ChartFrame';
 import { ReferenceLines, ValueGridX, ValueGridY, barPath, labelEvery, valueAxisWidth } from '../chart-core/cartesian';
 import { formatCompact, formatNumber, seriesColor, toneColor } from '../chart-core/palette';
 import { bandScale, estimateTextWidth, linearScale, truncate } from '../chart-core/scale';
-import { valueOf, type ChartDatum, type ChartReferenceLine, type ChartSeries } from '../chart-core/types';
+import { valueOf, type ChartDatum, type ChartReferenceLine, type ChartSelectProps, type ChartSeries } from '../chart-core/types';
 import styles from '../chart-core/Chart.module.css';
 
-export interface BarChartProps extends ChartBaseProps {
+export interface BarChartProps extends ChartBaseProps, ChartSelectProps {
   /** Rows of data, one per category, in display order. Sort by value for rankings. */
   data: ChartDatum[];
   /** Field holding each row's category label. */
@@ -69,11 +70,11 @@ function segmentsFor(datum: ChartDatum, series: ChartSeries[], stacked: boolean)
 
 /** Compare magnitudes across categories: grouped or stacked, vertical columns or horizontal bars. */
 export const BarChart = forwardRef<HTMLElement, BarChartProps>(function BarChart(
-  { data, categoryKey, categoryLabel, series, layout = 'vertical', stacked = false, valueLabels = false, referenceLines = [], valueDomain, height: heightProp, formatValue = formatNumber, labels: labelOverrides, ...rest },
+  { data, categoryKey, categoryLabel, series, layout = 'vertical', stacked = false, valueLabels = false, referenceLines = [], valueDomain, height: heightProp, formatValue = formatNumber, labels: labelOverrides, onSelect, selectedCategory, ...rest },
   ref,
 ) {
   const horizontal = layout === 'horizontal';
-  const height = heightProp ?? (horizontal ? Math.max(120, data.length * (series.length > 1 && !stacked ? 36 : 28) + M.top + M.bottom) : 240);
+  const height = useChartHeight(heightProp ?? (horizontal ? Math.max(120, data.length * (series.length > 1 && !stacked ? 36 : 28) + M.top + M.bottom) : 240));
   const categories = data.map((d) => String(d[categoryKey] ?? ''));
   const stacks = data.map((d) => segmentsFor(d, series, stacked));
   const extents = stacks.flatMap((segs) => segs.map((s) => s.to));
@@ -89,6 +90,7 @@ export const BarChart = forwardRef<HTMLElement, BarChartProps>(function BarChart
   };
   const totalOf = (i: number) => stacks[i].reduce((sum, s) => sum + s.value, 0);
   const showTotal = stacked && series.length > 1;
+  const dimmed = (i: number) => selectedCategory != null && categories[i] !== selectedCategory;
   const totalLabel = labelOverrides?.total ?? defaultChartLabels.total;
 
   const geometry = (width: number) => {
@@ -173,7 +175,7 @@ export const BarChart = forwardRef<HTMLElement, BarChartProps>(function BarChart
                   const left = Math.min(a, b) + (seg.value < 0 ? inset : 0);
                   const w = Math.abs(b - a) - inset;
                   return (
-                    <path key={`${i}-${k}`} className={styles.bar} fill={seriesColor(seg.series, series[seg.series].color)} d={barPath(left, y0, w, sb.size, seg.outer ? (seg.value < 0 ? 'start' : 'end') : null)} />
+                    <path key={`${i}-${k}`} className={`${styles.bar}${dimmed(i) ? ` ${styles.dimmed}` : ''}`} fill={seriesColor(seg.series, series[seg.series].color)} d={barPath(left, y0, w, sb.size, seg.outer ? (seg.value < 0 ? 'start' : 'end') : null)} />
                   );
                 }),
               )}
@@ -221,7 +223,7 @@ export const BarChart = forwardRef<HTMLElement, BarChartProps>(function BarChart
                 const top = Math.min(a, b) + (seg.value > 0 ? inset : 0);
                 const h = Math.abs(b - a) - inset;
                 return (
-                  <path key={`${i}-${k}`} className={styles.bar} fill={seriesColor(seg.series, series[seg.series].color)} d={barPath(x0, top, sb.size, h, seg.outer ? (seg.value < 0 ? 'bottom' : 'top') : null)} />
+                  <path key={`${i}-${k}`} className={`${styles.bar}${dimmed(i) ? ` ${styles.dimmed}` : ''}`} fill={seriesColor(seg.series, series[seg.series].color)} d={barPath(x0, top, sb.size, h, seg.outer ? (seg.value < 0 ? 'bottom' : 'top') : null)} />
                 );
               }),
             )}
@@ -244,6 +246,7 @@ export const BarChart = forwardRef<HTMLElement, BarChartProps>(function BarChart
           </svg>
         );
       }}
+      onSelectIndex={onSelect ? (i) => onSelect({ index: i, category: categories[i] }) : undefined}
       labels={labelOverrides}
       {...rest}
     />

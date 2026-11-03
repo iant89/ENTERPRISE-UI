@@ -38,6 +38,33 @@ const k = (keys: string, action: string): KeyboardRow => ({ keys, action });
 export const docs: ComponentDoc[] = [
 
   // Charts
+
+  {
+    slug: 'chart-container', name: 'ChartContainer', category: 'Charts', components: ['ChartContainer'],
+    summary: 'A toolbar frame for charts: chart or table view, legend, CSV download and full screen.',
+    keyboard: [k('Tab', 'Moves through the toolbar and into the charts'), k('Escape', 'Leaves full screen')],
+    a11y: ['The tools are a labelled `toolbar`; the view switch exposes `aria-pressed` and the legend toggle is a pressed-state button.', 'Table view shows the same data table the charts already provide for screen readers.', 'CSV cells that start like a formula are prefixed so spreadsheets do not run them.', 'Uses the browser Fullscreen API, falling back to an in-page overlay that Escape closes.'],
+    related: ['dashboard-card', 'line-chart', 'bar-chart'],
+  },
+  {
+    slug: 'refresh-control', name: 'RefreshControl', category: 'Data display', components: ['RefreshControl'],
+    summary: 'A refresh button, “Updated … ago” freshness text and an optional auto-refresh interval.',
+    a11y: ['The freshness text is a `time` element with the absolute time as its tooltip.', 'Manual refreshes are announced politely; automatic ones are not, to avoid noise.', 'The interval is a labelled native select; auto-refresh pauses while the tab is hidden.'],
+    related: ['dashboard', 'dashboard-card'],
+  },
+  {
+    slug: 'dashboard-card', name: 'DashboardCard', category: 'Patterns', components: ['DashboardCard'],
+    summary: 'The frame for a dashboard widget: freshness, refresh, chart tools and standard loading, error, empty and no-access states.',
+    a11y: ['An `article` labelled by its heading; `aria-busy` while loading or refreshing.', 'Errors show an icon and text, offer Retry, and are announced when they appear after the first render.', '“Out of date” is shown as text with an icon, not only color.'],
+    related: ['dashboard', 'chart-container', 'refresh-control', 'analytical-card'],
+  },
+  {
+    slug: 'dashboard-filters', name: 'Dashboard filters', category: 'Patterns', components: ['DashboardFilterProvider', 'DashboardFilterBar'],
+    summary: 'Cross-filtering between widgets and a drill-down path, shared through context.',
+    keyboard: [k('Enter / Space (chart point)', 'Applies or clears the filter, or drills down'), k('Tab', 'Moves to the filter tokens and the path links')],
+    a11y: ['Charts announce that points can be selected; applying, removing and drilling are announced politely.', 'Active filters are removable tokens with named remove buttons; the drill path is a labelled navigation with the current level marked `aria-current`.', 'Keep state in the URL with the controlled `value` so filtered views can be shared.'],
+    related: ['dashboard', 'filter-token', 'bar-chart', 'donut-chart'],
+  },
   {
     slug: 'line-chart', name: 'LineChart', category: 'Charts', components: ['LineChart'],
     summary: 'Trends over an ordered dimension, usually time, for one or more measures.',

@@ -1,12 +1,13 @@
 import { forwardRef, type PointerEvent } from 'react';
+import { useChartHeight } from '../chart-core/ChartToolsContext';
 import { ChartFrame, TooltipContent, type ChartBaseProps, type ChartLegendItem } from '../chart-core/ChartFrame';
 import { ReferenceLines, ValueGridY, labelEvery, valueAxisWidth } from '../chart-core/cartesian';
 import { formatNumber, seriesColor, toneColor } from '../chart-core/palette';
 import { estimateTextWidth, linearScale, truncate } from '../chart-core/scale';
-import { valueOf, type ChartDatum, type ChartReferenceLine, type ChartSeries } from '../chart-core/types';
+import { valueOf, type ChartDatum, type ChartReferenceLine, type ChartSelectProps, type ChartSeries } from '../chart-core/types';
 import styles from '../chart-core/Chart.module.css';
 
-export interface LineChartProps extends ChartBaseProps {
+export interface LineChartProps extends ChartBaseProps, ChartSelectProps {
   /** Rows of data, one per category (usually a time period), in display order. */
   data: ChartDatum[];
   /** Field holding each row's category label. */
@@ -33,9 +34,10 @@ const M = { top: 12, bottom: 28, right: 16 };
 
 /** Trend over an ordered dimension (usually time) for one or more measures. */
 export const LineChart = forwardRef<HTMLElement, LineChartProps>(function LineChart(
-  { data, categoryKey, categoryLabel, series, area = false, markers = false, directLabels = true, referenceLines = [], yDomain, includeZero = true, height = 240, formatValue = formatNumber, ...rest },
+  { data, categoryKey, categoryLabel, series, area = false, markers = false, directLabels = true, referenceLines = [], yDomain, includeZero = true, height: heightProp = 240, formatValue = formatNumber, onSelect, selectedCategory, ...rest },
   ref,
 ) {
+  const height = useChartHeight(heightProp);
   const categories = data.map((d) => String(d[categoryKey] ?? ''));
   const values = data.flatMap((d) => series.map((s) => valueOf(d, s.key))).filter((v): v is number => v !== null);
   const empty = data.length === 0 || series.length === 0 || values.length === 0;
@@ -109,6 +111,9 @@ export const LineChart = forwardRef<HTMLElement, LineChartProps>(function LineCh
               ) : null,
             )}
             <ReferenceLines lines={referenceLines} scale={g.y} from={g.left} to={g.left + g.plotWidth} />
+            {selectedCategory != null && categories.includes(selectedCategory) && (
+              <rect className={styles.hoverBand} x={g.x(categories.indexOf(selectedCategory)) - Math.max(g.step / 2, 6)} width={Math.max(g.step, 12)} y={M.top} height={bottom - M.top} />
+            )}
             {active !== null && <line className={styles.crosshair} x1={g.x(active)} x2={g.x(active)} y1={M.top} y2={bottom} />}
             {series.map((s, si) => {
               const color = seriesColor(si, s.color);
@@ -151,6 +156,7 @@ export const LineChart = forwardRef<HTMLElement, LineChartProps>(function LineCh
           </svg>
         );
       }}
+      onSelectIndex={onSelect ? (i) => onSelect({ index: i, category: categories[i] }) : undefined}
       {...rest}
     />
   );

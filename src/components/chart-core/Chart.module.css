@@ -290,3 +290,10 @@
     forced-color-adjust: none;
   }
 }
+
+.tableCaption {
+  padding-block-end: var(--eui-space-1);
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+  text-align: start;
+}

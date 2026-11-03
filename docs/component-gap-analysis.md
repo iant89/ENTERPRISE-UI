@@ -60,6 +60,24 @@ Relevant findings:
 - **Theming.** Chart tokens use CSS `light-dark()`, so they resolve from each theme's `color-scheme`, and custom themes inherit the right steps. High contrast has its own values. The SAP themes write the library palette explicitly, through `scripts/generate-sap-themes.mjs`. SAP's own `sapChart_OrderedColor_*` sequence puts olive next to amber in Horizon (deutan ΔE 3.0), and no reordering of SAP's eleven colors did better than the library palette when all pairs were checked.
 - **One value axis.** There is no dual-axis option. Two measures on different scales belong in two charts.
 
+## Dashboard round
+
+A follow-up compared dashboards with Fiori overview pages, Grafana, Power BI and Tremor. Before it, `Dashboard` was a responsive grid and `DashboardWidget` set only a column span. Added:
+
+| Gap | Added |
+| --- | --- |
+| No standard widget states | `DashboardCard`: loading, error with Retry, empty and no access; "Updated … ago" with an out-of-date flag; refresh that keeps content visible |
+| No chart frame | `ChartContainer` and `DashboardCard chartTools`: chart or table view, legend toggle, CSV download, full screen with charts resized to fill it |
+| No refresh model | `RefreshControl`: manual refresh, auto-refresh intervals that pause in hidden tabs, and announcements for manual refreshes only |
+| No interaction between widgets | `DashboardFilterProvider`, `useDashboardFilters` and `DashboardFilterBar`; chart `onSelect` and `selectedCategory` for cross-filtering and drill-down |
+
+Still open for dashboards:
+- Rearrangeable and personalizable layouts, persisted through the `SavedViews` adapter.
+- A KPI strip, a ranked bar list and a status-history strip.
+- Chart annotations.
+- Dashboard export (PDF/PNG) and shareable filtered links.
+- A TV / kiosk mode.
+
 ## Remaining gaps, ranked
 
 The priority reflects how often each item is needed in ERP, inventory, fleet and admin screens, and how hard it is to build well outside the library.
@@ -68,7 +86,6 @@ The priority reflects how often each item is needed in ERP, inventory, fleet and
 
 | Component or pattern | Why it matters | Reference |
 | --- | --- | --- |
-| **ChartContainer** | A toolbar around any chart: switch between chart and table, show or hide the legend, full screen, download as CSV, and personalize measures. It is the standard Fiori frame for analytical content and would reuse the data tables the charts already render. | Fiori ChartContainer |
 | **Planning calendar / Gantt** | Resource and time planning: shifts, maintenance windows, fleet or room booking. It is hard to build accessibly, so it is a strong reason to adopt the library. Start with a read-only timeline of rows and bars, then add drag to reschedule with a keyboard alternative. | Fiori PlanningCalendar, MUI X Scheduler |
 | **Import wizard pattern** | Upload a CSV or Excel file, map columns, validate rows with inline fixes, preview, and import with partial-success reporting. It can compose Wizard, FileUploader, DataGrid and BulkActionBar. | Carbon ImportModal, Salesforce data import |
 | **ScatterChart and ComboChart** | Scatter shows correlation (price against volume, lead time against defect rate). ComboChart is bars and a line on one shared axis, for example actual bars against a plan line. These are the two chart forms most often asked for after this round. | UI5 ScatterChart and ComposedChart, Mantine |

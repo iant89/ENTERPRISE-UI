@@ -1,6 +1,8 @@
 import { forwardRef, type ReactNode } from 'react';
+import { useChartHeight } from '../chart-core/ChartToolsContext';
 import { ChartFrame, TooltipContent, defaultChartLabels, type ChartBaseProps } from '../chart-core/ChartFrame';
 import { CHART_HUES, formatNumber, seriesColor } from '../chart-core/palette';
+import type { ChartSelectProps } from '../chart-core/types';
 import styles from '../chart-core/Chart.module.css';
 
 export interface DonutChartDatum {
@@ -12,7 +14,7 @@ export interface DonutChartDatum {
   color?: string;
 }
 
-export interface DonutChartProps extends ChartBaseProps {
+export interface DonutChartProps extends ChartBaseProps, ChartSelectProps {
   /** Parts of the whole. Keep to a few segments; beyond `maxSegments` the smallest fold into "Other". */
   data: DonutChartDatum[];
   /** `donut` leaves room for a total in the middle; `pie` is a full disc. @default 'donut' */
@@ -45,9 +47,10 @@ function arc(cx: number, cy: number, outer: number, inner: number, start: number
 
 /** Part-to-whole for a handful of categories, with share labels in the legend. */
 export const DonutChart = forwardRef<HTMLElement, DonutChartProps>(function DonutChart(
-  { data, variant = 'donut', centerValue, centerLabel, maxSegments = 6, categoryLabel = 'Category', valueLabel = 'Value', height = 220, formatValue = formatNumber, labels: labelOverrides, ...rest },
+  { data, variant = 'donut', centerValue, centerLabel, maxSegments = 6, categoryLabel = 'Category', valueLabel = 'Value', height: heightProp = 220, formatValue = formatNumber, labels: labelOverrides, onSelect, selectedCategory, ...rest },
   ref,
 ) {
+  const height = useChartHeight(heightProp);
   const labels = { ...defaultChartLabels, ...labelOverrides };
   const cap = Math.min(Math.max(maxSegments, 1), CHART_HUES);
   const positive = data.filter((d) => d.value > 0);
@@ -90,7 +93,7 @@ export const DonutChart = forwardRef<HTMLElement, DonutChartProps>(function Donu
             {segments.map((d, i) => (
               <path
                 key={`${d.label}-${i}`}
-                className={`${styles.segment}${active !== null && active !== i ? ` ${styles.dimmed}` : ''}`}
+                className={`${styles.segment}${(active !== null ? active !== i : selectedCategory != null && d.label !== selectedCategory) ? ` ${styles.dimmed}` : ''}`}
                 fill={d.color}
                 d={arc(cx, cy, active === i ? outer + 3 : outer, inner, angles[i].start, angles[i].end)}
                 onPointerEnter={() => setActive(i)}
@@ -112,6 +115,7 @@ export const DonutChart = forwardRef<HTMLElement, DonutChartProps>(function Donu
           </svg>
         );
       }}
+      onSelectIndex={onSelect ? (i) => onSelect({ index: i, category: segments[i].label }) : undefined}
       labels={labelOverrides}
       {...rest}
     />

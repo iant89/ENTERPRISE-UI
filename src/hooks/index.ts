@@ -8,3 +8,4 @@ export { useClickOutside, useEscapeKey } from './useDismiss';
 export { useScrollLock } from './useScrollLock';
 export { useElementSize } from './useResizeObserver';
 export { usePosition, computePosition, type UsePositionOptions } from './usePosition';
+export { formatRelativeTime, useNow } from './useRelativeTime';

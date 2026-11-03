@@ -21,6 +21,7 @@ See the [development roadmap](https://github.com/iant89/ENTERPRISE-UI/blob/main/
   - Wizard
   - Dashboard
   - KanbanBoard, ProcessFlow and AnalyticalCard
+  - DashboardCard, ChartContainer, RefreshControl and dashboard cross-filtering
   - and more
 - **Charts with no chart dependency.** LineChart, BarChart, DonutChart and Heatmap, plus Fiori-style micro charts (Sparkline, BulletChart, RadialChart, ProportionBar). They are drawn in SVG from the design tokens, with a colorblind-safe series palette, keyboard navigation, screen-reader announcements and a data-table view.
 - **Design tokens.** Every color, spacing, type, radius, shadow, size, z-index, motion and density value is a CSS custom property (`--eui-*`).
@@ -236,9 +237,9 @@ When you override colors, keep text at 4.5:1 contrast or better, and borders and
 | Buttons | Button, IconButton, SplitButton, ToggleButton, ButtonGroup |
 | Forms | Input, TextArea, NumberInput, SearchField, Select, ComboBox, MultiSelect, DualListSelector, Checkbox, RadioGroup, Switch, DatePicker, Calendar, TimePicker, FormField, FormGroup |
 | Data display | Table, DataGrid, List, Tree, TreeTable, Card, Avatar, Badge, StatusIndicator, Timeline, ObjectIdentifier, MetricCard, DescriptionList |
-| Charts | LineChart, BarChart, DonutChart, Heatmap, Sparkline, BulletChart, RadialChart, ProportionBar |
+| Charts | LineChart, BarChart, DonutChart, Heatmap, Sparkline, BulletChart, RadialChart, ProportionBar, ChartContainer |
 | Feedback | Dialog, AlertDialog, Toast (`ToastProvider` + `useToast`), MessageStrip, Tooltip, Popover, ProgressBar, Spinner, Skeleton |
-| Enterprise patterns | FilterBar, MasterDetail, ObjectPage, DetailPanel, Wizard, Dashboard, AnalyticalCard, KanbanBoard, ProcessFlow, CommandToolbar, EmptyState |
+| Enterprise patterns | FilterBar, MasterDetail, ObjectPage, DetailPanel, Wizard, Dashboard, DashboardCard, DashboardFilterProvider, DashboardFilterBar, RefreshControl, AnalyticalCard, KanbanBoard, ProcessFlow, CommandToolbar, EmptyState |
 
 The library also exports these hooks:
 

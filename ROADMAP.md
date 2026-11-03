@@ -382,7 +382,7 @@ The first round is in place. See `docs/component-gap-analysis.md` for the compar
 - [x] Add `LineChart` and `BarChart` with keyboard navigation, tooltips, legends, direct labels, reference lines and data-table views.
 - [x] Add `DonutChart` with automatic "Other" folding and `Heatmap` as a keyboard-navigable grid.
 - [x] Add micro charts: `Sparkline`, `BulletChart`, `RadialChart` and `ProportionBar`.
-- [ ] Add `ChartContainer` (chart/table toggle, legend, full screen, CSV download).
+- [x] Add `ChartContainer` (chart/table toggle, legend, full screen, CSV download).
 - [ ] Add `ScatterChart` and `ComboChart` (shared value axis only).
 - [ ] Add chart pages to the Playwright visual, axe and forced-colors suites.
 - [ ] Verify chart announcements with VoiceOver and NVDA.
@@ -395,6 +395,14 @@ The first round is in place. See `docs/component-gap-analysis.md` for the compar
 - [ ] Add a planning calendar / Gantt view.
 - [ ] Add an import wizard pattern (upload, map, validate, preview, import).
 - [ ] Add `Tour` / `Coachmark`.
+
+### 6.3 Dashboard infrastructure
+- [x] Add `DashboardCard` with standard loading, error, empty and no-access states, freshness and stale-data indicators.
+- [x] Add `RefreshControl` with manual refresh and auto-refresh that pauses in hidden tabs.
+- [x] Add cross-filtering (`DashboardFilterProvider`, `useDashboardFilters`, `DashboardFilterBar`) with drill-down and chart `onSelect`.
+- [ ] Add rearrangeable, personalizable layouts persisted through the SavedViews adapter.
+- [ ] Add a KPI strip, a ranked bar list and a status-history strip.
+- [ ] Add dashboard export (PDF/PNG) and shareable filtered links.
 
 ### Completion Criteria
 - Charts meet the same keyboard, screen-reader and theming standards as the other components.

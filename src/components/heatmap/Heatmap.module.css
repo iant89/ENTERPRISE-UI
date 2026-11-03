@@ -49,8 +49,15 @@
   text-align: center;
 }
 
-.strong {
-  color: var(--eui-color-text-inverse);
+/* Values sit on a surface chip: no single text color reaches 4.5:1 across the middle of a one-hue
+   ramp, so the chip keeps text readable in every theme while the cell color stays visible around it. */
+.value {
+  display: inline-block;
+  padding: 0 3px;
+  border-radius: var(--eui-radius-xs);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+  line-height: 1.4;
 }
 
 .missing {

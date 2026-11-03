@@ -103,7 +103,6 @@ export const Heatmap = forwardRef<HTMLDivElement, HeatmapProps>(function Heatmap
                 {columns.map((col, c) => {
                   const v = values[r]?.[c];
                   const has = typeof v === 'number' && Number.isFinite(v);
-                  const strong = has && t(v) > 0.55;
                   const text = has ? formatValue(v) : labels.noValue;
                   return (
                     <td
@@ -111,13 +110,13 @@ export const Heatmap = forwardRef<HTMLDivElement, HeatmapProps>(function Heatmap
                       role="gridcell"
                       data-cell={`${r}-${c}`}
                       tabIndex={focus[0] === r && focus[1] === c ? 0 : -1}
-                      className={cx(styles.cell, !has && styles.missing, strong && styles.strong, onCellClick && styles.clickable)}
+                      className={cx(styles.cell, !has && styles.missing, onCellClick && styles.clickable)}
                       style={has ? { background: sequentialColor(t(v), color) } : undefined}
                       title={`${row}, ${col}: ${text}`}
                       onFocus={() => setFocus([r, c])}
                       onClick={onCellClick ? () => onCellClick({ row: r, column: c, value: has ? v : null }) : undefined}
                     >
-                      {showValues && has ? <span aria-hidden="true">{formatValue(v)}</span> : null}
+                      {showValues && has ? <span className={styles.value} aria-hidden="true">{formatValue(v)}</span> : null}
                       <span className="eui-visually-hidden">{text}</span>
                     </td>
                   );

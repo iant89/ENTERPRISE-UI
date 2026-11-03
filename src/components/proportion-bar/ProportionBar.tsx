@@ -26,7 +26,7 @@ export interface ProportionBarProps extends Omit<HTMLAttributes<HTMLDivElement>,
   showLegend?: boolean;
   /** Bar thickness. @default 'md' */
   size?: 'sm' | 'md';
-  /** Formats values. */
+  /** Formats values. @default locale number format */
   formatValue?: (value: number) => string;
 }
 

@@ -20,13 +20,13 @@ export interface PromptInputProps extends Omit<TextAreaProps, 'value' | 'default
   generating?: boolean;
   /** Called when the user stops a running request. The stop button is shown while `loading` is true. */
   onStop?: () => void;
-  /** Suggested prompts shown as quick picks. */
+  /** Suggested prompts shown as quick picks. @default [] */
   suggestions?: string[];
   /** Clear the input after submitting. @default true */
   clearOnSubmit?: boolean;
   /** Content above the input, e.g. an AI disclaimer. */
   footnote?: ReactNode;
-  /** Override strings for localization. */
+  /** Override strings for localization. @default { send: 'Send', stop: 'Stop generating', suggestions: 'Suggested prompts' } */
   labels?: { send: string; stop: string; suggestions: string };
 }
 

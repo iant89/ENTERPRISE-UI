@@ -11,7 +11,7 @@ export interface MasterDetailProps {
   master: ReactNode;
   /** Details of the selected object. */
   detail: ReactNode;
-  /** On phones only one pane shows: the detail when this is true. */
+  /** On phones only one pane shows: the detail when this is true. @default false */
   showDetail?: boolean;
   /** Called by the phone back button to return to the master list. */
   onBack?: () => void;

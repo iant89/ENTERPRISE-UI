@@ -19,7 +19,7 @@ export interface TreeTableProps<T> {
   'aria-label': string;
   /** IDs of the expanded rows. Providing it makes the expanded state controlled. */
   expandedIds?: string[];
-  /** IDs of the rows expanded initially when the expanded state is uncontrolled. */
+  /** IDs of the rows expanded initially when the expanded state is uncontrolled. @default [] */
   defaultExpandedIds?: string[];
   /** Called with the IDs of the expanded rows when the user expands or collapses a row. */
   onExpandedChange?: (ids: string[]) => void;

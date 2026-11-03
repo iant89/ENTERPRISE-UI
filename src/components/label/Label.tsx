@@ -2,7 +2,7 @@ import { forwardRef, type LabelHTMLAttributes } from 'react';
 import { cx } from '../../utilities/cx';
 import styles from './Label.module.css';
 export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
-  /** Displays a decorative required marker; also set required on the control. */
+  /** Displays a decorative required marker; also set required on the control. @default false */
   required?: boolean;
 }
 /** Visible label for a form control. Connect it with htmlFor and the control id. */

@@ -25,13 +25,13 @@ export interface RangeSliderProps extends Omit<HTMLAttributes<HTMLFieldSetElemen
   /** @default 1 */
   /** Amount the value changes by per step. */
   step?: number;
-  /** Disables the range slider. A disabled control cannot be focused or changed. */
+  /** Disables the range slider. A disabled control cannot be focused or changed. @default false */
   disabled?: boolean;
   /** Show the selected range as text. @default true */
   showValue?: boolean;
-  /** Formats a value for the visible labels and `aria-valuetext`. */
+  /** Formats a value for the visible labels and `aria-valuetext`. @default String */
   formatValue?: (value: number) => string;
-  /** Localized thumb names. */
+  /** Localized thumb names. @default { start: 'Minimum', end: 'Maximum' } */
   labels?: { start: string; end: string };
 }
 

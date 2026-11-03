@@ -12,7 +12,7 @@ export interface DynamicSideContentProps extends HTMLAttributes<HTMLDivElement> 
   sideContentLabel?: string;
   /** Side placement. @default 'end' */
   sidePosition?: 'start' | 'end';
-  /** Breakpoints at which side content is hidden. @default ['sm'] — on phones it moves below unless hidden. */
+  /** Breakpoints at which side content is hidden. Without `sm`, side content moves below the main content on phones. @default [] */
   hideSideContentOn?: ('sm' | 'md' | 'lg' | 'xl')[];
   /** Hide the side content entirely. @default false */
   hideSideContent?: boolean;

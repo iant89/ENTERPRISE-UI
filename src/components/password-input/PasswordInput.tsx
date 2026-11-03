@@ -24,9 +24,9 @@ export interface PasswordInputLabels {
 export interface PasswordInputProps extends Omit<InputProps, 'type' | 'endAdornment'> {
   /** `new` for sign-up and password change (shows strength), `current` for sign-in. @default 'current' */
   purpose?: 'current' | 'new';
-  /** Requirements shown as a live checklist (new passwords). */
+  /** Requirements shown as a live checklist (new passwords). @default [] */
   requirements?: PasswordRequirement[];
-  /** Custom strength score 0–3. Defaults to a heuristic on length and character variety. */
+  /** Custom strength score 0–3. @default `defaultPasswordScore` (length and character variety) */
   scoreStrength?: (password: string) => 0 | 1 | 2 | 3;
   /** Overrides for the built-in strings. */
   labels?: Partial<PasswordInputLabels>;

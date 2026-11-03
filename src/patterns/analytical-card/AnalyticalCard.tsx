@@ -37,7 +37,7 @@ export interface AnalyticalCardProps extends Omit<HTMLAttributes<HTMLElement>, '
   valueTone?: Exclude<Tone, 'neutral'>;
   /** Trend arrow and change text. */
   trend?: MetricTrend;
-  /** Up to three side indicators such as target and deviation. */
+  /** Up to three side indicators such as target and deviation. @default [] */
   indicators?: AnalyticalCardIndicator[];
   /** Header actions, e.g. an overflow menu. */
   actions?: ReactNode;

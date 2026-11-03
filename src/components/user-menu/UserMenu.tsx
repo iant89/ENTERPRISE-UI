@@ -18,11 +18,11 @@ export interface UserMenuProps {
   trigger: ReactElement;
   /** The signed-in account. */
   account: UserMenuAccount;
-  /** Other accounts the user can switch to. */
+  /** Other accounts the user can switch to. @default [] */
   otherAccounts?: UserMenuAccount[];
   /** Called with the ID of the account the user switches to. */
   onAccountSwitch?: (id: string) => void;
-  /** Menu entries (settings, help…). */
+  /** Menu entries (settings, help…). @default [] */
   items?: MenuEntry[];
   /** Called with the ID of the action the user chose. */
   onAction?: (id: string) => void;

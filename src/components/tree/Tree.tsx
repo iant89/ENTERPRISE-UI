@@ -22,7 +22,7 @@ export interface TreeProps {
   'aria-label': string;
   /** IDs of the expanded nodes. Providing it makes the expanded state controlled. */
   expandedIds?: string[];
-  /** IDs of the nodes expanded initially when the expanded state is uncontrolled. */
+  /** IDs of the nodes expanded initially when the expanded state is uncontrolled. @default [] */
   defaultExpandedIds?: string[];
   /** Called with the IDs of the expanded nodes when the user expands or collapses a node. */
   onExpandedChange?: (ids: string[]) => void;

@@ -44,7 +44,7 @@ export interface RecurrencePickerLabels {
 export interface RecurrencePickerProps extends Omit<HTMLAttributes<HTMLFieldSetElement>, 'onChange' | 'defaultValue'> {
   /** Current rule. Providing it makes the picker controlled. */
   value?: Recurrence;
-  /** Initial rule when uncontrolled. */
+  /** Initial rule when uncontrolled. @default `defaultRecurrence` (weekly on Monday, never ending) */
   defaultValue?: Recurrence;
   /** Called with the rule, its iCalendar RRULE and a readable summary. */
   onChange?: (value: Recurrence, details: { rrule: string; summary: string }) => void;

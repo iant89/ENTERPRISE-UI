@@ -11,7 +11,7 @@ export interface DateRangePickerProps {
   label: string;
   /** The current value. Providing it makes the component controlled; update it from the change callback. */
   value?: DateRange;
-  /** The initial value when the component is uncontrolled. */
+  /** The initial value when the component is uncontrolled. @default { start: '', end: '' } */
   defaultValue?: DateRange;
   /** Called with the new range when the user changes either date. */
   onChange?: (value: DateRange) => void;
@@ -21,9 +21,9 @@ export interface DateRangePickerProps {
   max?: string;
   /** Disables the date range picker. A disabled control cannot be focused or changed. */
   disabled?: boolean;
-  /** Preset labels may be replaced for localization. */
+  /** Preset labels may be replaced for localization. @default { today: 'Today', last7Days: 'Last 7 Days', thisMonth: 'This Month' } */
   presetLabels?: { today: string; last7Days: string; thisMonth: string };
-  /** Supplies the current local calendar date, useful for deterministic tests. */
+  /** Supplies the current local calendar date, useful for deterministic tests. @default the current date */
   today?: () => Date;
 }
 

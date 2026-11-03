@@ -25,7 +25,7 @@ export interface SliderProps extends Omit<InputHTMLAttributes<HTMLInputElement>,
   step?: number;
   /** Show the current value next to the label. @default false */
   showValue?: boolean;
-  /** Formats the visible value and `aria-valuetext`. */
+  /** Formats the visible value and `aria-valuetext`. @default String */
   formatValue?: (value: number) => string;
 }
 

@@ -22,7 +22,7 @@ export interface LineChartProps extends ChartBaseProps, ChartSelectProps, ChartS
   markers?: boolean;
   /** Labels each line at its last point (2–4 series), so identity is not color-only. @default true */
   directLabels?: boolean;
-  /** Targets or thresholds drawn as dashed lines. */
+  /** Targets or thresholds drawn as dashed lines. @default [] */
   referenceLines?: ChartReferenceLine[];
   /** Fixed value-axis bounds; leave either side undefined to compute it. */
   yDomain?: [number?, number?];

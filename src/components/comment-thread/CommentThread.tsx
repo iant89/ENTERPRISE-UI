@@ -45,7 +45,7 @@ export interface CommentThreadProps extends Omit<HTMLAttributes<HTMLElement>, 'o
   onEdit?: (id: string, body: string) => void | Promise<void>;
   /** Deletes a comment. Confirm in the application if needed. */
   onDelete?: (id: string) => void;
-  /** People who can be @mentioned in new comments. */
+  /** People who can be @mentioned in new comments. @default [] */
   people?: MentionPerson[];
   /** Locale for relative times. */
   locale?: string;

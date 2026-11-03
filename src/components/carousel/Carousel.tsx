@@ -15,7 +15,7 @@ export interface CarouselProps extends Omit<HTMLAttributes<HTMLElement>, 'aria-l
   defaultPage?: number;
   /** Called with the zero-based index of the page the user moves to. */
   onPageChange?: (page: number) => void;
-  /** Localized navigation and page text. */
+  /** Localized navigation and page text. @default { previous: 'Previous', next: 'Next', page: (current, total) => `${current} of ${total}` } */
   labels?: { previous: string; next: string; page: (page: number, total: number) => string };
 }
 /** A manually controlled, one-item-per-page carousel. It never advances automatically. */

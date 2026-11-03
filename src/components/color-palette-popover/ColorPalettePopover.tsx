@@ -12,7 +12,7 @@ export interface ColorPalettePopoverProps {
   'aria-label': string;
   /** The current value. Providing it makes the component controlled; update it from the change callback. */
   value?: string | null;
-  /** The initial value when the component is uncontrolled. */
+  /** The initial value when the component is uncontrolled. @default null */
   defaultValue?: string | null;
   /** Called with the color the user selects. */
   onChange?: (color: string) => void;

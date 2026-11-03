@@ -32,7 +32,7 @@ export interface UserSettingsDialogProps {
   footer?: ReactNode;
   /** Localized navigation name. @default 'Settings categories' */
   navigationLabel?: string;
-  /** Text of the close button. */
+  /** Text of the close button. @default 'Close' */
   closeLabel?: string;
 }
 

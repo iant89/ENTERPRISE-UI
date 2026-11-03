@@ -19,6 +19,13 @@ describe('DonutChart', () => {
     expect(screen.getByRole('rowheader', { name: 'Sonstige' }).parentElement).toHaveTextContent('Sonstige6040%');
   });
 
+  it('folds the smallest segments, keeping the others in data order', () => {
+    const data = [{ label: 'Small', value: 1 }, { label: 'Big', value: 50 }, { label: 'Tiny', value: 2 }, { label: 'Mid', value: 30 }];
+    renderWithTheme(<DonutChart label="Parts" data={data} maxSegments={3} />);
+    expect(screen.getAllByRole('listitem').map((li) => li.firstChild?.nextSibling?.textContent)).toEqual(['Big', 'Mid', 'Other']);
+    expect(screen.getByRole('rowheader', { name: 'Other' }).parentElement).toHaveTextContent('Other34%');
+  });
+
   it('treats an all-zero dataset as empty and passes axe', async () => {
     const { container, rerender } = renderWithTheme(<DonutChart label="Parts" data={[{ label: 'A', value: 0 }]} />);
     expect(screen.getByRole('img', { name: 'Parts: No data' })).toBeInTheDocument();

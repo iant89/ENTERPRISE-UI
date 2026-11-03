@@ -13,7 +13,7 @@ export interface CopyButtonProps extends Omit<ButtonProps, 'onClick' | 'children
   value: string;
   /** Override clipboard access for applications or tests. */
   copy?: (value: string) => Promise<void>;
-  /** Accessible name and tooltip of the button. */
+  /** Accessible name and tooltip of the button. @default 'Copy' */
   label?: string;
   /** Overrides success, failure and clipboard-unavailable messages. */
   messages?: Partial<CopyButtonMessages>;

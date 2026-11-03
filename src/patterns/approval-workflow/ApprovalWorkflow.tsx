@@ -28,7 +28,7 @@ export interface ApprovalWorkflowProps {
   locale?: string;
   /** IANA time zone used to display and interpret times, for example `Europe/Berlin`. */
   timeZone?: string;
-  /** UI hints only; the backend must enforce authorization. */
+  /** UI hints only; the backend must enforce authorization. @default [] */
   allowedDecisions?: ApprovalDecision[];
   /** Called after confirmation. Update status and history from authoritative backend data. */
   onDecision: (decision: ApprovalDecision, comment: string, signal: AbortSignal) => Promise<void>;

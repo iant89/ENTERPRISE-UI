@@ -36,7 +36,7 @@ export interface DynamicPageProps extends Omit<HTMLAttributes<HTMLDivElement>, '
   onHeaderPinnedChange?: (pinned: boolean) => void;
   /** Hide the pin button. @default false */
   hidePinButton?: boolean;
-  /** Localized control names. */
+  /** Localized control names. @default { expand: 'Expand header', collapse: 'Collapse header', pin: 'Pin header', unpin: 'Unpin header' } */
   labels?: { expand: string; collapse: string; pin: string; unpin: string };
   /** Content rendered inside the dynamic page. */
   children?: ReactNode;

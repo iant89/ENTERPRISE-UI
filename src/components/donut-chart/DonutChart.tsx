@@ -53,11 +53,12 @@ export const DonutChart = forwardRef<HTMLElement, DonutChartProps>(function Donu
   const labels = { ...defaultChartLabels, ...labelOverrides };
   const cap = Math.min(Math.max(maxSegments, 1), CHART_HUES);
   const positive = data.filter((d) => d.value > 0);
-  // Fold the tail into "Other" so no hue is reused and small slivers stay readable.
-  const segments =
-    positive.length > cap
-      ? [...positive.slice(0, cap - 1).map((d, i) => ({ ...d, color: seriesColor(i, d.color) })), { label: labels.other, value: positive.slice(cap - 1).reduce((s, d) => s + d.value, 0), color: 'var(--eui-color-chart-other)' }]
-      : positive.map((d, i) => ({ ...d, color: seriesColor(i, d.color) }));
+  // Keep the largest segments in their original order and fold the smallest into "Other", so no hue
+  // is reused and small slivers stay readable.
+  const keep = new Set(positive.length > cap ? [...positive].sort((a, b) => b.value - a.value).slice(0, cap - 1) : positive);
+  const kept = positive.filter((d) => keep.has(d)).map((d, i) => ({ ...d, color: seriesColor(i, d.color) }));
+  const folded = positive.filter((d) => !keep.has(d));
+  const segments = folded.length ? [...kept, { label: labels.other, value: folded.reduce((s, d) => s + d.value, 0), color: 'var(--eui-color-chart-other)' }] : kept;
   const total = segments.reduce((s, d) => s + d.value, 0);
   const share = (v: number) => `${Math.round((v / (total || 1)) * 100)}%`;
   const describe = (i: number) => `${segments[i].label}: ${formatValue(segments[i].value)} (${share(segments[i].value)})`;

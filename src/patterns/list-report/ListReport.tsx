@@ -57,7 +57,7 @@ export interface ListReportProps<T> {
   selectedIds?: string[];
   /** Called with the new selection when the user changes it. */
   onSelectionChange?: (ids: string[]) => void;
-  /** Returns the display name of a filter field. */
+  /** Returns the display name of a filter field. @default (field) => field */
   getFilterName?: (field: string) => string;
 }
 

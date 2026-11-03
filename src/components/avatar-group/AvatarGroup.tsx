@@ -26,7 +26,7 @@ export interface AvatarGroupProps extends Omit<HTMLAttributes<HTMLDivElement>, '
   onItemPress?: (item: AvatarGroupItem) => void;
   /** Called with currently hidden items when overflow is activated. */
   onOverflowPress?: (items: AvatarGroupItem[]) => void;
-  /** Localized accessible label for the overflow indicator. */
+  /** Localized accessible label for the overflow indicator. @default (count) => `${count} more` */
   overflowLabel?: (count: number) => string;
 }
 

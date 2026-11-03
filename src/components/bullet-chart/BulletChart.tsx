@@ -31,7 +31,7 @@ export interface BulletChartProps extends Omit<HTMLAttributes<HTMLDivElement>, '
   min?: number;
   /** End of the scale. Defaults to the largest value plus 10%. */
   max?: number;
-  /** Qualitative background ranges (poor, satisfactory, good). */
+  /** Qualitative background ranges (poor, satisfactory, good). @default [] */
   ranges?: BulletChartRange[];
   /** Status color of the actual bar. Defaults to the range the value falls in, else the first chart color. */
   tone?: Tone;
@@ -39,7 +39,7 @@ export interface BulletChartProps extends Omit<HTMLAttributes<HTMLDivElement>, '
   hideLabel?: boolean;
   /** `sm` for table cells, `md` for cards. @default 'md' */
   size?: 'sm' | 'md';
-  /** Formats values. */
+  /** Formats values. @default locale number format */
   formatValue?: (value: number) => string;
   /** Overrides for the built-in strings. */
   labels?: Partial<BulletChartLabels>;

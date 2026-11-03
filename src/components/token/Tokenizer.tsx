@@ -18,7 +18,7 @@ export interface TokenizerProps extends Omit<HTMLAttributes<HTMLUListElement>, '
   /** @default false */
   /** Disables the tokenizer. A disabled control cannot be focused or changed. */
   disabled?: boolean;
-  /** Localized delete-button name. */
+  /** Localized delete-button name. @default (t) => `Remove ${t}` */
   deleteLabel?: (text: string) => string;
 }
 

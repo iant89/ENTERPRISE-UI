@@ -9,7 +9,7 @@ import { Popover, type PopoverProps } from '../popover';
 export interface ResponsivePopoverProps extends PopoverProps {
   /** Title; required on phones where the content opens in a full-screen dialog. Falls back to `aria-label`. */
   title?: ReactNode;
-  /** Force a presentation instead of following the viewport. */
+  /** Force a presentation instead of following the viewport. @default 'auto' */
   presentation?: 'auto' | 'popover' | 'dialog';
 }
 

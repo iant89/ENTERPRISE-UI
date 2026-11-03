@@ -22,7 +22,7 @@ export interface BarChartProps extends ChartBaseProps, ChartSelectProps, ChartSe
   stacked?: boolean;
   /** Prints each bar's value at its end. Best for one series and a handful of bars. @default false */
   valueLabels?: boolean;
-  /** Targets or thresholds drawn as dashed lines across the bars. */
+  /** Targets or thresholds drawn as dashed lines across the bars. @default [] */
   referenceLines?: ChartReferenceLine[];
   /** Fixed value-axis bounds; leave either side undefined to compute it. */
   valueDomain?: [number?, number?];

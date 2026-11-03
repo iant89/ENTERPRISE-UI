@@ -19,7 +19,7 @@ export interface FormErrorSummaryProps extends Omit<HTMLAttributes<HTMLDivElemen
   errors: FormErrorSummaryItem[];
   /** Moves focus to the summary whenever this changes while there are errors. Pass `form.submitCount`. */
   focusKey?: unknown;
-  /** Heading. Defaults to a count, e.g. "There are 2 problems". */
+  /** Heading, or a function of the error count. @default "There is a problem" or "There are n problems" */
   title?: string | ((count: number) => string);
   /** Heading level. @default 2 */
   headingLevel?: 2 | 3 | 4;

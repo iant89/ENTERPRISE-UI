@@ -7,7 +7,7 @@ export interface DiffEntry { path: string; kind: 'added' | 'removed' | 'modified
 export interface DiffViewerProps extends Omit<HTMLAttributes<HTMLElement>, 'title' | 'children'> {
   /** Changes supplied by a trusted source or produced with compareDiffValues. */
   changes: readonly DiffEntry[];
-  /** Title shown above the comparison. */
+  /** Title shown above the comparison. @default 'Changes' */
   title?: string;
 }
 const isObject = (value: DiffValue): value is { [key: string]: DiffValue } => value !== null && typeof value === 'object' && !Array.isArray(value);

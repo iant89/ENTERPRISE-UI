@@ -50,7 +50,7 @@ export interface TableProps<T> {
   columns: TableColumn<T>[];
   /** Rows to display. */
   data: T[];
-  /** Returns a stable id for a row. Defaults to `row.id`, then the index. */
+  /** Returns a stable id for a row. @default `row.id`, or the row index when there is no id */
   getRowId?: (row: T, index: number) => string;
   /** Visible caption / accessible name. */
   caption?: ReactNode;
@@ -60,7 +60,7 @@ export interface TableProps<T> {
   'aria-label'?: string;
   /** Controlled sort. */
   sort?: SortState | null;
-  /** Sort applied initially when sorting is uncontrolled. */
+  /** Sort applied initially when sorting is uncontrolled. @default null */
   defaultSort?: SortState | null;
   /** Called with the new sort, or `null` when sorting is cleared. */
   onSortChange?: (sort: SortState | null) => void;
@@ -73,11 +73,11 @@ export interface TableProps<T> {
   selectAllLabel?: string;
   /** Accessible selection-column heading. @default 'Selection' */
   selectionHeaderLabel?: string;
-  /** Format the accessible selection control name from the row label. */
+  /** Format the accessible selection control name from the row label. @default (label) => `Select ${label}` */
   selectRowLabel?: (rowLabel: string) => string;
   /** IDs of the selected items. Providing it makes the selection controlled. */
   selectedIds?: string[];
-  /** IDs of the items selected initially when the selection is uncontrolled. */
+  /** IDs of the items selected initially when the selection is uncontrolled. @default [] */
   defaultSelectedIds?: string[];
   /** Called with the new selection when the user changes it. */
   onSelectionChange?: (ids: string[]) => void;

@@ -25,13 +25,13 @@ export interface CommandPaletteProps {
   commands: PaletteCommand[];
   /** Called with the selected command; the host performs navigation or the action. */
   onSelect: (command: PaletteCommand) => void;
-  /** Most recent command IDs first. Only permitted, currently available IDs are shown. */
+  /** Most recent command IDs first. Only permitted, currently available IDs are shown. @default [] */
   recentIds?: string[];
   /** Enable the global Ctrl/Command+K shortcut. Mount only one shortcut-enabled palette. @default false */
   globalShortcut?: boolean;
-  /** Title of the palette, used as its accessible name. */
+  /** Title of the palette, used as its accessible name. @default 'Command palette' */
   title?: string;
-  /** Accessible name of the search field. */
+  /** Accessible name of the search field. @default 'Search commands' */
   searchLabel?: string;
   /** Accessible name of the results list. @default "Commands" */
   resultsLabel?: string;

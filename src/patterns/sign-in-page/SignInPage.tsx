@@ -40,7 +40,7 @@ export interface SignInPageProps extends Omit<HTMLAttributes<HTMLElement>, 'onSu
   logo?: ReactNode;
   /** Signs in. Reject or return an error message to show it (keep it generic, e.g. "The user name or password is incorrect."). */
   onSubmit?: (credentials: SignInCredentials) => Promise<string | void> | string | void;
-  /** Single sign-on options shown above the form. */
+  /** Single sign-on options shown above the form. @default [] */
   providers?: SignInProvider[];
   /** Called when a provider button is pressed (redirect to the identity provider). */
   onProviderSignIn?: (id: string) => void;

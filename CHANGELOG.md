@@ -36,6 +36,9 @@
 - Added app-level pages: `SignInPage` (single sign-on options, password-manager autocomplete, generic errors), `ErrorPage` (404, 403, 500, maintenance and offline, with a copyable support reference), `SessionTimeoutDialog` with `useIdleTimer` (WCAG 2.2.1 warning and extension), `KeyboardShortcutsDialog` (searchable, opens with `?` outside text fields) and `SearchResultsPage` (type facets, highlighting and paging).
 - Added building blocks: `Accordion`, `Stepper`, `Kbd`, `CodeSnippet`, `LogViewer` (search, level filter, follow mode, windowing), `DocumentViewer` (PDF, image and text previews) and `CommentThread` (replies, @mentions, edit and delete).
 - Added the `formatRelativeTime` and `useNow` hooks.
+- Fixed: the API reference now shows `@default` values written in a separate JSDoc block above a property's description. The extractor used to read only the last block, so about 120 defaults were missing from the docs. Another 85 properties that had a default in code but none in the docs now document it.
+- Fixed: `DynamicSideContent.hideSideContentOn` was documented as defaulting to `['sm']`; the default is `[]`.
+- Changed: DonutChart now folds the smallest segments into "Other", as documented, rather than the last segments in the data. The kept segments stay in data order.
 - Fixed: the chart gridline and axis tokens now resolve against each theme. They were bright in the dark themes because their `var()` references resolved at `:root`.
 - Added `docs/component-gap-analysis.md`, which compares the library with SAP Fiori/UI5, Ant Design, Mantine, PatternFly, Carbon and Tremor and ranks the remaining gaps.
 

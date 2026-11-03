@@ -31,7 +31,7 @@ export interface HeatmapProps extends Omit<HTMLAttributes<HTMLDivElement>, 'titl
   showLegend?: boolean;
   /** Ramp hue; one hue light to dark. @default 'var(--eui-color-chart-1)' */
   color?: string;
-  /** Formats values. */
+  /** Formats values. @default locale number format */
   formatValue?: (value: number) => string;
   /** Called when a cell is activated with Enter, Space or a click. */
   onCellClick?: (cell: { row: number; column: number; value: number | null }) => void;

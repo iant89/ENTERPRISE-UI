@@ -24,7 +24,7 @@ export interface SparklineProps extends Omit<SVGAttributes<SVGSVGElement>, 'valu
   tone?: Tone;
   /** Highlights the last value with a dot. @default true */
   showLast?: boolean;
-  /** Formats values in the accessible summary. */
+  /** Formats values in the accessible summary. @default locale number format */
   formatValue?: (value: number) => string;
   /** Overrides for the built-in strings. */
   labels?: Partial<SparklineLabels>;

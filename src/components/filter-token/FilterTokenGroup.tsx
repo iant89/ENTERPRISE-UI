@@ -10,9 +10,9 @@ export interface FilterTokenGroupProps {
   onRemove: (id: string) => void;
   /** Called when the user clears all filters. */
   onClear: () => void;
-  /** Accessible name of the group. */
+  /** Accessible name of the group. @default 'Active filters' */
   label?: string;
-  /** Text of the clear-all button. */
+  /** Text of the clear-all button. @default 'Clear all filters' */
   clearLabel?: string;
 }
 

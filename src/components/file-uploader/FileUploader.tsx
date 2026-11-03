@@ -33,15 +33,15 @@ const defaultMessages: FileUploaderMessages = {
 export interface FileUploaderProps {
   /** Transport must honor AbortSignal and report progress from 0 to 1. */
   upload: (file: File, context: UploadContext) => Promise<void>;
-  /** MIME types, MIME wildcards, or extensions (e.g. .pdf). Empty means all types. */
+  /** MIME types, MIME wildcards, or extensions (e.g. .pdf). Empty means all types. @default [] */
   accept?: string[];
   /** Largest accepted file size, in bytes. Larger files are rejected with an error. */
   maxFileSize?: number;
-  /** Allows selecting more than one file. */
+  /** Allows selecting more than one file. @default true */
   multiple?: boolean;
   /** Enable retry only when the transport uses idempotency or confirms the server outcome. @default false */
   retrySafe?: boolean;
-  /** Visible label of the drop zone. It is also its accessible name. */
+  /** Visible label of the drop zone. It is also its accessible name. @default 'Upload files' */
   label?: string;
   /** Overrides visible text and announcements. Supply all statuses when overriding them. */
   messages?: Partial<FileUploaderMessages>;

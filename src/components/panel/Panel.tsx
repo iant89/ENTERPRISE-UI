@@ -12,7 +12,7 @@ export interface PanelProps extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
   fixed?: boolean;
   /** Whether it is expanded. Providing it makes the expanded state controlled. */
   expanded?: boolean;
-  /** Whether it is expanded initially when the expanded state is uncontrolled. */
+  /** Whether it is expanded initially when the expanded state is uncontrolled. @default true */
   defaultExpanded?: boolean;
   /** Called with the new expanded state when the user expands or collapses it. */
   onExpandedChange?: (expanded: boolean) => void;

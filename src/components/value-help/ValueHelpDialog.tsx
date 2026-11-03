@@ -64,13 +64,13 @@ export interface ValueHelpDialogProps<T> {
   items?: T[];
   /** Server search; called debounced, and stale requests are aborted. May return a total for "50 of 3,200". */
   fetchItems?: (query: ValueHelpQuery, signal: AbortSignal) => Promise<T[] | { items: T[]; total?: number }>;
-  /** Extra filter fields above the results. */
+  /** Extra filter fields above the results. @default [] */
   filters?: ValueHelpFilter[];
   /** One item (confirms immediately) or many (with a selected list and OK). @default 'single' */
   selectionMode?: 'single' | 'multiple';
-  /** Initially selected items (multiple mode). */
+  /** Initially selected items (multiple mode). @default [] */
   defaultSelected?: T[];
-  /** Text to start searching with, e.g. what the user typed in the field. */
+  /** Text to start searching with, e.g. what the user typed in the field. @default '' */
   initialSearch?: string;
   /** Overrides for the built-in strings. */
   labels?: Partial<ValueHelpLabels>;

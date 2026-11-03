@@ -10,7 +10,7 @@ export interface ExpandableTextProps extends Omit<HTMLAttributes<HTMLDivElement>
   maxCharacters?: number;
   /** Whether it is expanded. Providing it makes the expanded state controlled. */
   expanded?: boolean;
-  /** Whether it is expanded initially when the expanded state is uncontrolled. */
+  /** Whether it is expanded initially when the expanded state is uncontrolled. @default false */
   defaultExpanded?: boolean;
   /** Called with the new expanded state when the user expands or collapses it. */
   onExpandedChange?: (expanded: boolean) => void;

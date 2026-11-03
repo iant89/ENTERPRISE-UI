@@ -39,7 +39,7 @@ export interface UploadCollectionProps extends Omit<HTMLAttributes<HTMLElement>,
   /** @default true */
   /** Allows selecting more than one file. */
   multiple?: boolean;
-  /** Shown when there are no items. */
+  /** Shown when there are no items. @default 'No files yet.' */
   noDataText?: ReactNode;
   /** Localized labels. */
   labels?: { add: string; dropHere: string; delete: (fileName: string) => string; progress: (fileName: string) => string; statuses: Record<UploadCollectionItemStatus, string> };

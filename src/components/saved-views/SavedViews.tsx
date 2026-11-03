@@ -39,9 +39,9 @@ export interface SavedViewsProps {
   onDelete: (id: string) => void | Promise<void>;
   /** Optional action for persisting a default in the selected view scope. */
   onSetDefault?: (id: string) => void | Promise<void>;
-  /** UI permissions only. The backend must enforce authorization. */
+  /** UI permissions only. The backend must enforce authorization. @default false */
   canSaveShared?: boolean;
-  /** Returns whether the user may rename or delete a view. By default, every view except the standard view can be modified. */
+  /** Returns whether the user may rename or delete a view. By default, every view except the standard view can be modified. @default () => true */
   canModify?: (view: SavedView) => boolean;
 }
 

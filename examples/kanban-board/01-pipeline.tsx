@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Avatar, Badge, KanbanBoard, type KanbanItem } from '@enterprise-ui/react';
 
 export const title = 'Sales pipeline';
-export const description = 'Drag cards with the mouse, or focus a card’s handle and press Space to pick it up, the arrow keys to move and Space to drop. `limit` flags WIP overruns; `canMove` enforces that lost deals cannot reopen as won.';
+export const description = 'Drag cards with the mouse, or focus a card’s handle and press Space to pick it up, the arrow keys to move and Space to drop. `limit` flags WIP overruns; `canMove` stops a lost deal from being moved straight to Won (keyboard moves skip that column).';
 
 interface Deal extends KanbanItem {
   name: string;
@@ -20,6 +20,7 @@ const initial: Deal[] = [
   { id: 'd5', columnId: 'proposal', name: 'Field service app', account: 'Litware', value: 150, owner: 'Kai Moreno' },
   { id: 'd6', columnId: 'proposal', name: 'Quality analytics', account: 'Adventure Works', value: 95, owner: 'Priya Natarajan' },
   { id: 'd7', columnId: 'won', name: 'Supplier onboarding', account: 'Woodgrove', value: 60, owner: 'Kai Moreno' },
+  { id: 'd8', columnId: 'lost', name: 'Fleet tracking', account: 'Litware', value: 180, owner: 'Avery Lindqvist' },
 ];
 
 const columns = [
@@ -27,6 +28,7 @@ const columns = [
   { id: 'qualified', title: 'Qualified', limit: 3 },
   { id: 'proposal', title: 'Proposal', limit: 2 },
   { id: 'won', title: 'Won' },
+  { id: 'lost', title: 'Lost' },
 ];
 
 export default function KanbanPipeline() {
@@ -42,6 +44,8 @@ export default function KanbanPipeline() {
         onItemsChange={setDeals}
         onMove={({ item, toColumnId }) => setLog(`Saved: ${item.name} → ${columns.find((c) => c.id === toColumnId)?.title}`)}
         getItemLabel={(d) => d.name}
+        // A lost deal can be reopened as a lead, but not marked as won directly.
+        canMove={(d, to) => !(d.columnId === 'lost' && to === 'won')}
         renderItem={(d) => (
           <div style={{ display: 'grid', gap: 4 }}>
             <strong>{d.name}</strong>

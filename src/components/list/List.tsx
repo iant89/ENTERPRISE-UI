@@ -43,7 +43,7 @@ export interface ListProps {
   selectionMode?: 'none' | 'single' | 'multiple';
   /** IDs of the selected items. Providing it makes the selection controlled. */
   selectedIds?: string[];
-  /** IDs of the items selected initially when the selection is uncontrolled. */
+  /** IDs of the items selected initially when the selection is uncontrolled. @default [] */
   defaultSelectedIds?: string[];
   /** Called with the new selection when the user changes it. */
   onSelectionChange?: (ids: string[]) => void;
@@ -54,7 +54,7 @@ export interface ListProps {
   /** @default true */
   /** Draws a separator between items. */
   dividers?: boolean;
-  /** Content shown when the list has no items. */
+  /** Content shown when the list has no items. @default 'No items' */
   emptyState?: ReactNode;
   /** Additional CSS class names for the root element. */
   className?: string;

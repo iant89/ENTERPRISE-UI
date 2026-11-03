@@ -29,11 +29,11 @@ export interface ViewSettingsDialogProps {
   onConfirm: (settings: ViewSettings) => void;
   /** Current sort, group and filter settings. */
   settings: ViewSettings;
-  /** Fields the user can sort by. */
+  /** Fields the user can sort by. @default [] */
   sortItems?: ViewSettingsSortItem[];
-  /** Fields the user can group by. */
+  /** Fields the user can group by. @default [] */
   groupItems?: ViewSettingsGroupItem[];
-  /** Fields and values the user can filter by. */
+  /** Fields and values the user can filter by. @default [] */
   filterItems?: ViewSettingsFilterItem[];
   /** @default 'View settings' */
   /** Title of the dialog. */

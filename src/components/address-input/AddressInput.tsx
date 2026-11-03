@@ -79,7 +79,7 @@ export interface AddressInputProps extends Omit<HTMLAttributes<HTMLFieldSetEleme
   fetchSuggestions?: (text: string, country: string, signal: AbortSignal) => Promise<AddressSuggestion[]>;
   /** Required address (line 1, city, postal code and, where used, region). @default false */
   required?: boolean;
-  /** Errors per field, e.g. from the server. */
+  /** Errors per field, e.g. from the server. @default {} */
   errors?: Partial<Record<keyof Address, string>>;
   /** Disables the fields. @default false */
   disabled?: boolean;

@@ -30,7 +30,7 @@ export interface DynamicDateRangeProps extends Omit<HTMLAttributes<HTMLDivElemen
   optionLabels?: Partial<Record<DynamicDateRangeOption, string>>;
   /** First day of week for "this week" (0 = Sunday). @default 1 */
   weekStartsOn?: number;
-  /** Supplies the current local date; useful for deterministic tests. */
+  /** Supplies the current local date; useful for deterministic tests. @default the current date */
   today?: () => Date;
   /** Disables the dynamic date range. A disabled control cannot be focused or changed. */
   disabled?: boolean;

@@ -23,7 +23,7 @@ export interface MultiSelectProps extends FieldProps {
   defaultValue?: string[];
   /** Called with the new value when the user changes it. */
   onChange?: (value: string[]) => void;
-  /** Hint text shown while the field is empty. Do not use it in place of a label. */
+  /** Hint text shown while the field is empty. Do not use it in place of a label. @default 'Select' */
   placeholder?: string;
   /** Maximum tokens shown before collapsing into “+N more”. @default 3 */
   maxVisibleTokens?: number;

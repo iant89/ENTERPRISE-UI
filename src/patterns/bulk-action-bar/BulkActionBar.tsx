@@ -74,7 +74,7 @@ export interface BulkActionBarProps {
   onResult?: (actionId: string, result: BulkActionResult) => void;
   /** Called after undo succeeds so the host can refresh its data. */
   onUndo?: (actionId: string, ids: string[]) => void;
-  /** Accessible name, used when there is no visible label. */
+  /** Accessible name, used when there is no visible label. @default 'Bulk actions' */
   'aria-label'?: string;
   /** Overrides built-in text and announcements. */
   messages?: Partial<BulkActionBarMessages>;

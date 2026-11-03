@@ -28,7 +28,7 @@ const panelId = (base: string, value: string) => `${base}-panel-${value}`;
 export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
   /** Controlled selected tab value. */
   value?: string;
-  /** Value of the tab selected initially when the selection is uncontrolled. */
+  /** Value of the tab selected initially when the selection is uncontrolled. Pass the first tab's value: the default selects no tab. @default '' */
   defaultValue?: string;
   /** Called with the value of the tab the user selects. */
   onValueChange?: (value: string) => void;

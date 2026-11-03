@@ -19,7 +19,7 @@ export interface RadialChartProps extends Omit<HTMLAttributes<HTMLDivElement>, '
   size?: 'sm' | 'md' | 'lg';
   /** Text in the middle of the ring. Defaults to the percentage. */
   centerContent?: ReactNode;
-  /** Formats the value for assistive technology and the default center text. Defaults to a percentage of `max`. */
+  /** Formats the value for assistive technology and the default center text. @default percentage of `max` */
   formatValue?: (value: number, max: number) => string;
 }
 

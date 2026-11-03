@@ -25,7 +25,7 @@ export interface BreadcrumbsProps extends HTMLAttributes<HTMLElement> {
   showCurrent?: boolean;
   /** Accessible name for the collapsed-items menu. @default 'Hidden breadcrumbs' */
   overflowMenuLabel?: string;
-  /** Localized label for the overflow trigger. */
+  /** Localized label for the overflow trigger. @default (count) => `Show ${count} more` */
   overflowTriggerLabel?: (count: number) => string;
   /** @default 'Breadcrumb' */
   'aria-label'?: string;

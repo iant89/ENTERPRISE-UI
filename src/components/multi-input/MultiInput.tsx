@@ -13,7 +13,7 @@ export interface MultiInputProps extends Omit<InputProps, 'value' | 'defaultValu
   defaultValue?: string[];
   /** Called with the new value when the user changes it. */
   onChange?: (value: string[]) => void;
-  /** Validates or normalizes typed text before it becomes a token; return null to reject. */
+  /** Validates or normalizes typed text before it becomes a token; return null to reject. @default (t) => t.trim() || null */
   parseValue?: (text: string) => string | null;
   /** Keys that commit the typed text. @default ['Enter', ','] */
   commitKeys?: string[];

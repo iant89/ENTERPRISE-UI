@@ -10,18 +10,18 @@ export interface RatingIndicatorProps extends Omit<FieldsetHTMLAttributes<HTMLFi
   name?: string;
   /** Whole-number rating; zero means no selection. */
   value?: number;
-  /** The initial value when the component is uncontrolled. */
+  /** The initial value when the component is uncontrolled. @default 0 */
   defaultValue?: number;
   /** Called with the new value when the user changes it. */
   onChange?: (value: number) => void;
   /** @default 5 */
   /** Number of stars. */
   max?: number;
-  /** Disables the rating indicator. A disabled control cannot be focused or changed. */
+  /** Disables the rating indicator. A disabled control cannot be focused or changed. @default false */
   disabled?: boolean;
-  /** Non-editable but still announced. */
+  /** Non-editable but still announced. @default false */
   readOnly?: boolean;
-  /** Localized name for each choice. */
+  /** Localized name for each choice. @default (n, total) => `${n} of ${total}` */
   formatLabel?: (value: number, max: number) => string;
 }
 /** Integer rating using a native radio group. */

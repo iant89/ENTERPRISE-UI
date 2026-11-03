@@ -19,7 +19,17 @@ const exports = checker.getExportsOfModule(moduleSymbol);
 
 const isPascal = (name) => /^[A-Z]/.test(name);
 const jsDoc = (symbol) => ts.displayPartsToString(symbol.getDocumentationComment(checker)).trim();
-const tag = (symbol, name) => symbol.getJsDocTags(checker).find((t) => t.name === name);
+// A property can carry several JSDoc blocks (e.g. `/** @default 'md' */` above `/** Size … */`);
+// the symbol API only returns tags from the last block, so read every block on the declaration.
+const tag = (symbol, name) => {
+  const own = symbol.getJsDocTags(checker).find((t) => t.name === name);
+  if (own) return own;
+  for (const decl of symbol.declarations ?? []) {
+    const found = (decl.jsDoc ?? []).flatMap((doc) => doc.tags ?? []).find((t) => t.tagName.text === name);
+    if (found) return { name, text: [{ kind: 'text', text: typeof found.comment === 'string' ? found.comment : ts.getTextOfJSDocComment(found.comment) ?? '' }] };
+  }
+  return undefined;
+};
 const tagText = (t) => (t ? ts.displayPartsToString(t.text).trim() : undefined);
 
 function cleanType(text) {

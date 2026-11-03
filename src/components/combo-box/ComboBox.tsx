@@ -37,7 +37,7 @@ export interface ComboBoxProps
   allowCustomValue?: boolean;
   /** Normalises custom text; return `null` to reject it. */
   parseCustomValue?: (text: string) => string | null;
-  /** Custom filter. Defaults to case-insensitive "contains" on the label. */
+  /** Custom filter. @default case-insensitive match on the option label */
   filter?: (option: SelectOption, text: string) => boolean;
   /** Show a busy indicator while options load. @default false */
   loading?: boolean;

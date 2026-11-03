@@ -13,7 +13,7 @@ export interface FilterBarProps extends Omit<HTMLAttributes<HTMLFormElement>, 'o
   title?: ReactNode;
   /** Quick search slot, always visible. */
   search?: ReactNode;
-  /** Number of active filters, shown on the toggle button. */
+  /** Number of active filters, shown on the toggle button. @default 0 */
   activeCount?: number;
   /** Called when the user applies filters (Go button or Enter). */
   onGo?: () => void;

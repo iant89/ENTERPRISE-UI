@@ -21,7 +21,7 @@ export interface FlexibleColumnLayoutProps extends HTMLAttributes<HTMLDivElement
   endColumn?: ReactNode;
   /** Application-controlled layout (list → detail → detail-detail). @default 'OneColumn' */
   layout?: FlexibleColumnLayoutMode;
-  /** Localized column region names. */
+  /** Localized column region names. @default { start: 'List', mid: 'Details', end: 'Further details' } */
   labels?: { start: string; mid: string; end: string };
 }
 

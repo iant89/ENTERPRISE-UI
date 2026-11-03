@@ -24,7 +24,7 @@ export interface ActivityFeedProps {
   onLoadMore?: () => void;
   /** Event types offered in the type filter. */
   types?: { value: string; label: string }[];
-  /** Selected event type. Providing it makes the filter controlled. */
+  /** Selected event type. Providing it makes the filter controlled. @default '' */
   typeFilter?: string;
   /** Called with the event type the user selects. */
   onTypeFilterChange?: (value: string) => void;

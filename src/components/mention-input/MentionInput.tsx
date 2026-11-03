@@ -30,7 +30,7 @@ export interface MentionInputProps extends FieldProps {
   defaultValue?: string;
   /** Called with the text and the people mentioned in it. */
   onChange?: (text: string, mentions: MentionPerson[]) => void;
-  /** People who can be mentioned (filtered locally). */
+  /** People who can be mentioned (filtered locally). @default [] */
   people?: MentionPerson[];
   /** Server lookup instead of `people`; called with the text after the trigger. */
   fetchPeople?: (query: string, signal: AbortSignal) => Promise<MentionPerson[]>;

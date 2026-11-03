@@ -47,7 +47,7 @@ Relevant findings:
 
 ### Chart design decisions
 
-- **No dependency.** The charts are SVG built from design tokens, which keeps the single runtime dependency (`lucide-react`). All of the chart code, styles included, is under 2,000 lines, while Recharts or ECharts would add several hundred kilobytes for features most business screens do not use.
+- **No dependency.** The charts are SVG built from design tokens, which keeps the single runtime dependency (`lucide-react`). All of the chart code, including the toolbar and image export and with styles but not tests, is about 3,000 lines. Recharts or ECharts would add several hundred kilobytes for features most business screens do not use.
 - **Accessibility.**
   - Each chart is a focusable `group` with `aria-roledescription="chart"`.
   - The arrow keys move between data points and every move is announced politely.
@@ -126,7 +126,7 @@ The priority reflects how often each item is needed in ERP, inventory, fleet and
 | **Tracker / status history** | A row of status blocks for uptime, SLA or batch runs (Tremor Tracker). Smaller than Heatmap and needs no ramp. |
 | **Funnel and Waterfall charts** | Funnel for pipeline conversion; Waterfall for finance bridges such as budget to actual. |
 | **Treemap** | Hierarchical part-to-whole, for spend by category and supplier. |
-| **Cascader** | Selection from a hierarchy, such as a material group or cost center tree. ComboBox and Tree cover part of this today. |
+| **Cascader** | Mostly covered by `TreeSelect` (a filterable tree in a popover). A column-by-column cascader layout is not provided. |
 | **Tearsheet** | A large modal workspace between a Dialog and a page, for creation flows. DetailPanel `overlay` is close but narrower. |
 | **LogViewer / CodeSnippet** | Added. |
 | **Result page** | `ErrorPage` covers failures; success end states still use EmptyState. |

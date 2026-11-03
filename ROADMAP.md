@@ -393,7 +393,7 @@ The first round is in place. See `docs/component-gap-analysis.md` for the compar
 - [x] Add `ProcessFlow` for document flows.
 - [x] Add `DualListSelector` and `DescriptionList`.
 - [ ] Add a planning calendar / Gantt view.
-- [ ] Add an import wizard pattern (upload, map, validate, preview, import).
+- [x] Add an import wizard pattern (upload, map, validate, preview, import).
 - [ ] Add `Tour` / `Coachmark`.
 
 ### 6.3 Dashboard infrastructure

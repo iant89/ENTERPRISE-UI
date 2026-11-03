@@ -169,6 +169,7 @@ export * from './patterns/analytical-card';
 export * from './patterns/dashboard-card';
 export * from './patterns/dashboard-filters';
 export * from './patterns/kanban-board';
+export * from './patterns/import-wizard';
 export * from './patterns/process-flow';
 
 // Transport-independent data loading

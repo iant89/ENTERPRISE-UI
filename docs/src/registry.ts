@@ -156,6 +156,12 @@ export const docs: ComponentDoc[] = [
     related: ['list', 'process-flow'],
   },
   {
+    slug: 'import-wizard', name: 'ImportWizard', category: 'Patterns', components: ['ImportWizard'],
+    summary: 'Import records from a CSV or similar file: upload, map columns to fields, review validated rows, then import.',
+    a11y: ['Built on Wizard: the current step is marked with `aria-current="step"`, focus moves to each step heading and validation errors are announced.', 'The file picker is a native file input with a visible label; dropping a file is optional.', 'Each column picker is named after its field; rows with errors say so in text, not only with color.', 'Focus moves to the results heading after the import.'],
+    related: ['wizard', 'file-uploader', 'editable-grid'],
+  },
+  {
     slug: 'process-flow', name: 'ProcessFlow', category: 'Patterns', components: ['ProcessFlow'],
     summary: 'The documents of a business process across its stages, such as order → delivery → invoice → payment.',
     a11y: ['An ordered list of stages; each stage title includes its status as text.', 'Every document has visible status text with an icon; color is supplementary.', 'Selectable documents are native buttons; the selected one has `aria-current`.'],

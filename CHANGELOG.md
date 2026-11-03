@@ -24,6 +24,7 @@
   - `RefreshControl`: a refresh button, freshness text and an auto-refresh interval. Auto-refresh pauses in hidden tabs and is not announced.
   - `DashboardFilterProvider`, `useDashboardFilters` and `DashboardFilterBar`: cross-filtering between widgets and a drill-down path. State can be controlled and kept in the URL, filter tokens are removable, and every change is announced.
 - Charts: `onSelect` (click, Enter or Space) and `selectedCategory` (dims the other categories) on LineChart, BarChart and DonutChart. A `view` prop shows the data table in place of the plot.
+- LineChart and BarChart legends are toggle buttons that hide or show a series (`legendToggle`, `hiddenSeries`, `defaultHiddenSeries`, `onHiddenSeriesChange`). The other series keep their colors, the value axis rescales, stacks re-stack, and the data table and CSV keep every series. The last visible series cannot be hidden.
 - Added the `formatRelativeTime` and `useNow` hooks.
 - Fixed: the chart gridline and axis tokens now resolve against each theme. They were bright in the dark themes because their `var()` references resolved at `:root`.
 - Added `docs/component-gap-analysis.md`, which compares the library with SAP Fiori/UI5, Ant Design, Mantine, PatternFly, Carbon and Tremor and ranks the remaining gaps.

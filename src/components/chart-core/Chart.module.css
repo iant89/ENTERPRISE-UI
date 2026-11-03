@@ -315,3 +315,42 @@
   inset-block-start: 0;
   inset-inline-start: 0;
 }
+
+/* Legend entries that hide or show their series. */
+.legendToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--eui-space-1);
+  margin: calc(-1 * var(--eui-space-0-5)) calc(-1 * var(--eui-space-1));
+  padding: var(--eui-space-0-5) var(--eui-space-1);
+  border: 0;
+  border-radius: var(--eui-radius-sm);
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.legendToggle:hover:not(:disabled) {
+  background: var(--eui-color-surface-hover);
+}
+
+.legendToggle:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+}
+
+.legendToggle:disabled {
+  cursor: default;
+}
+
+/* Hidden series: hollow swatch and struck-through name, so the state is not shown by color alone. */
+.legendHidden {
+  color: var(--eui-color-text-secondary);
+  text-decoration: line-through;
+}
+
+.legendHidden .swatch {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px currentColor;
+}

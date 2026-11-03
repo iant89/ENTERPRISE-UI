@@ -44,3 +44,15 @@ export interface ChartSelectProps {
   /** Highlights one category and dims the others, e.g. the active dashboard filter. */
   selectedCategory?: string | null;
 }
+
+/** Legend toggling for charts with several series. */
+export interface ChartSeriesToggleProps {
+  /** Makes legend entries buttons that hide or show their series. @default true */
+  legendToggle?: boolean;
+  /** Keys of hidden series. Providing it makes the hidden set controlled. */
+  hiddenSeries?: string[];
+  /** Initially hidden series when uncontrolled. @default [] */
+  defaultHiddenSeries?: string[];
+  /** Called with the keys of the hidden series after a legend toggle. */
+  onHiddenSeriesChange?: (keys: string[]) => void;
+}

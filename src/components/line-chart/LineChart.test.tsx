@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { createRef } from 'react';
 import { fireEvent, screen } from '@testing-library/react';
 import { axeViolations, renderWithTheme } from '../../../tests/utils';
@@ -50,10 +50,41 @@ describe('LineChart', () => {
     const many = Array.from({ length: 8 }, (_, i) => ({ key: `s${i}`, label: `S${i}` }));
     const row = Object.fromEntries(many.map((s, i) => [s.key, i]));
     renderWithTheme(<LineChart label="Many" data={[{ c: 'a', ...row }, { c: 'b', ...row }]} categoryKey="c" series={many} directLabels={false} />);
-    const swatches = screen.getAllByRole('listitem').map((li) => (li.firstChild as HTMLElement).style.color);
+    const swatches = screen.getAllByRole('listitem').map((li) => li.querySelector<HTMLElement>('[aria-hidden="true"]')!.style.color);
     expect(swatches[0]).toBe('var(--eui-color-chart-1)');
     expect(swatches[6]).toBe('var(--eui-color-chart-7)');
     expect(swatches[7]).toBe('var(--eui-color-chart-other)');
+  });
+
+  it('hides and shows series from the legend without repainting the others', async () => {
+    const onHiddenSeriesChange = vi.fn();
+    const { user, container } = renderWithTheme(<LineChart label="Revenue" data={data} categoryKey="month" series={series} onHiddenSeriesChange={onHiddenSeriesChange} />);
+    const actual = screen.getByRole('button', { name: 'Actual' });
+    const plan = screen.getByRole('button', { name: 'Plan' });
+    expect(actual).toHaveAttribute('aria-pressed', 'true');
+    await user.click(actual);
+    expect(onHiddenSeriesChange).toHaveBeenLastCalledWith(['actual']);
+    expect(actual).toHaveAttribute('aria-pressed', 'false');
+    expect(container).toHaveTextContent('Actual hidden');
+    // Only the Plan line is drawn, still in its own (second) color, and Plan cannot be hidden too.
+    const lines = [...container.querySelectorAll('path[class*="line"]')].map((p) => (p.closest('g[style]') as HTMLElement).style.color);
+    expect(new Set(lines)).toEqual(new Set(['var(--eui-color-chart-2)']));
+    expect(plan).toBeDisabled();
+    // Tooltip and announcements skip the hidden series; the data table keeps it.
+    screen.getByRole('group', { name: 'Revenue' }).focus();
+    await user.keyboard('{ArrowRight}');
+    expect(screen.getByRole('group', { name: 'Revenue' })).toHaveTextContent('Jan: Plan 12');
+    expect(screen.getAllByRole('columnheader').map((h) => h.textContent)).toEqual(['month', 'Actual', 'Plan']);
+    await user.click(actual);
+    expect(actual).toHaveAttribute('aria-pressed', 'true');
+    expect(plan).toBeEnabled();
+  });
+
+  it('can turn the legend toggle off or control the hidden set', () => {
+    const { rerender } = renderWithTheme(<LineChart label="Revenue" data={data} categoryKey="month" series={series} legendToggle={false} />);
+    expect(screen.queryByRole('button', { name: 'Actual' })).toBeNull();
+    rerender(<LineChart label="Revenue" data={data} categoryKey="month" series={series} hiddenSeries={['plan']} />);
+    expect(screen.getByRole('button', { name: 'Plan' })).toHaveAttribute('aria-pressed', 'false');
   });
 
   it('renders an empty state and a loading state', () => {

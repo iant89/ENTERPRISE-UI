@@ -1,12 +1,13 @@
 import { forwardRef, type PointerEvent } from 'react';
+import { useControllableState } from '../../hooks/useControllableState';
 import { ChartFrame, TooltipContent, type ChartBaseProps, type ChartLegendItem } from '../chart-core/ChartFrame';
 import { ReferenceLines, ValueGridY, labelEvery, valueAxisWidth } from '../chart-core/cartesian';
 import { formatNumber, seriesColor, toneColor } from '../chart-core/palette';
 import { estimateTextWidth, linearScale, truncate } from '../chart-core/scale';
-import { valueOf, type ChartDatum, type ChartReferenceLine, type ChartSelectProps, type ChartSeries } from '../chart-core/types';
+import { valueOf, type ChartDatum, type ChartReferenceLine, type ChartSelectProps, type ChartSeries, type ChartSeriesToggleProps } from '../chart-core/types';
 import styles from '../chart-core/Chart.module.css';
 
-export interface LineChartProps extends ChartBaseProps, ChartSelectProps {
+export interface LineChartProps extends ChartBaseProps, ChartSelectProps, ChartSeriesToggleProps {
   /** Rows of data, one per category (usually a time period), in display order. */
   data: ChartDatum[];
   /** Field holding each row's category label. */
@@ -33,17 +34,23 @@ const M = { top: 12, bottom: 28, right: 16 };
 
 /** Trend over an ordered dimension (usually time) for one or more measures. */
 export const LineChart = forwardRef<HTMLElement, LineChartProps>(function LineChart(
-  { data, categoryKey, categoryLabel, series, area = false, markers = false, directLabels = true, referenceLines = [], yDomain, includeZero = true, height: heightProp = 240, formatValue = formatNumber, onSelect, selectedCategory, ...rest },
+  { data, categoryKey, categoryLabel, series: allSeries, legendToggle = true, hiddenSeries, defaultHiddenSeries = [], onHiddenSeriesChange, area = false, markers = false, directLabels = true, referenceLines = [], yDomain, includeZero = true, height: heightProp = 240, formatValue = formatNumber, onSelect, selectedCategory, ...rest },
   ref,
 ) {
   const baseHeight = heightProp;
+  const [hidden, setHidden] = useControllableState(hiddenSeries, defaultHiddenSeries, onHiddenSeriesChange);
+  // Colors follow the series, not its position among the visible ones, so hiding one never repaints the rest.
+  const colors = new Map(allSeries.map((s, i) => [s.key, seriesColor(i, s.color)]));
+  const colorOf = (s: ChartSeries) => colors.get(s.key)!;
+  const series = allSeries.filter((s) => !hidden.includes(s.key));
+  const toggleable = legendToggle && allSeries.length >= 2;
   const categories = data.map((d) => String(d[categoryKey] ?? ''));
   const values = data.flatMap((d) => series.map((s) => valueOf(d, s.key))).filter((v): v is number => v !== null);
-  const empty = data.length === 0 || series.length === 0 || values.length === 0;
+  const empty = data.length === 0 || allSeries.length === 0 || (values.length === 0 && series.length === allSeries.length);
   const labelled = directLabels && series.length >= 2 && series.length <= 4;
 
   const legend: ChartLegendItem[] = [
-    ...series.map((s, i) => ({ key: s.key, label: s.label, color: seriesColor(i, s.color) })),
+    ...allSeries.map((s) => ({ key: s.key, label: s.label, color: colorOf(s), hidden: hidden.includes(s.key), toggleable })),
     ...referenceLines.map((r) => ({ key: `ref-${r.label}`, label: r.label, color: toneColor(r.tone ?? 'neutral'), dashed: true })),
   ];
   const cell = (d: ChartDatum, key: string) => {
@@ -69,9 +76,9 @@ export const LineChart = forwardRef<HTMLElement, LineChartProps>(function LineCh
       count={data.length}
       empty={empty}
       legend={legend}
-      table={{ headers: [categoryLabel ?? categoryKey, ...series.map((s) => s.label)], rows: data.map((d, i) => [categories[i], ...series.map((s) => cell(d, s.key))]) }}
+      table={{ headers: [categoryLabel ?? categoryKey, ...allSeries.map((s) => s.label)], rows: data.map((d, i) => [categories[i], ...allSeries.map((s) => cell(d, s.key))]) }}
       announce={(i) => `${categories[i]}: ${series.map((s) => `${s.label} ${cell(data[i], s.key)}`).join(', ')}`}
-      tooltip={(i) => <TooltipContent title={categories[i]} rows={series.map((s, si) => ({ key: s.key, label: s.label, value: cell(data[i], s.key), color: seriesColor(si, s.color) }))} />}
+      tooltip={(i) => <TooltipContent title={categories[i]} rows={series.map((s) => ({ key: s.key, label: s.label, value: cell(data[i], s.key), color: colorOf(s) }))} />}
       anchor={(i, width, height) => {
         const g = geometry(width, height);
         const ys = series.map((s) => valueOf(data[i], s.key)).filter((v): v is number => v !== null).map(g.y);
@@ -90,10 +97,10 @@ export const LineChart = forwardRef<HTMLElement, LineChartProps>(function LineCh
         // End labels, nudged apart so they never overlap.
         const ends = labelled
           ? series
-              .map((s, si) => {
+              .map((s) => {
                 let last = data.length - 1;
                 while (last >= 0 && valueOf(data[last], s.key) === null) last--;
-                return last < 0 ? null : { key: s.key, label: s.label, x: g.x(last), y: g.y(valueOf(data[last], s.key)!), color: seriesColor(si, s.color) };
+                return last < 0 ? null : { key: s.key, label: s.label, x: g.x(last), y: g.y(valueOf(data[last], s.key)!), color: colorOf(s) };
               })
               .filter((e): e is NonNullable<typeof e> => e !== null)
               .sort((a, b) => a.y - b.y)
@@ -114,8 +121,8 @@ export const LineChart = forwardRef<HTMLElement, LineChartProps>(function LineCh
               <rect className={styles.hoverBand} x={g.x(categories.indexOf(selectedCategory)) - Math.max(g.step / 2, 6)} width={Math.max(g.step, 12)} y={M.top} height={bottom - M.top} />
             )}
             {active !== null && <line className={styles.crosshair} x1={g.x(active)} x2={g.x(active)} y1={M.top} y2={bottom} />}
-            {series.map((s, si) => {
-              const color = seriesColor(si, s.color);
+            {series.map((s) => {
+              const color = colorOf(s);
               // Split into runs so missing values leave a gap instead of a misleading interpolation.
               const runs: [number, number][][] = [[]];
               data.forEach((d, i) => {
@@ -155,6 +162,7 @@ export const LineChart = forwardRef<HTMLElement, LineChartProps>(function LineCh
           </svg>
         );
       }}
+      onLegendToggle={toggleable ? (key) => setHidden((h) => (h.includes(key) ? h.filter((k) => k !== key) : [...h, key])) : undefined}
       onSelectIndex={onSelect ? (i) => onSelect({ index: i, category: categories[i] }) : undefined}
       {...rest}
     />

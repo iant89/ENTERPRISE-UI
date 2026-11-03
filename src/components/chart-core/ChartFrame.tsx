@@ -26,6 +26,8 @@ export interface ChartLabels {
   total: string;
   /** Extra instruction when points can be selected (for example to filter a dashboard). */
   selectInstructions: string;
+  /** Announced after a legend toggle. */
+  seriesToggled: (series: string, visible: boolean) => string;
 }
 
 export const defaultChartLabels: ChartLabels = {
@@ -38,6 +40,7 @@ export const defaultChartLabels: ChartLabels = {
   instructions: 'Use the arrow keys to move between data points.',
   total: 'Total',
   selectInstructions: 'Press Enter to select the point.',
+  seriesToggled: (series, visible) => `${series} ${visible ? 'shown' : 'hidden'}`,
 };
 
 /** Properties shared by every full-size chart. */
@@ -70,6 +73,10 @@ export interface ChartLegendItem {
   value?: string;
   /** Dashed swatch for reference lines and forecasts. */
   dashed?: boolean;
+  /** The series is hidden with the legend toggle. */
+  hidden?: boolean;
+  /** The legend entry is a toggle button for its series. */
+  toggleable?: boolean;
 }
 
 export interface ChartTable {
@@ -93,6 +100,8 @@ interface ChartFrameProps extends ChartBaseProps {
   plot: (width: number, active: number | null, setActive: (index: number | null) => void, height: number) => ReactNode;
   /** Called when a point is chosen with Enter, Space or a click. */
   onSelectIndex?: (index: number) => void;
+  /** Called when a toggleable legend entry is pressed. */
+  onLegendToggle?: (key: string) => void;
   rootClassName?: string;
 }
 
@@ -102,7 +111,7 @@ const FALLBACK_WIDTH = 480;
 export const ChartFrame = forwardRef<HTMLElement, ChartFrameProps>(function ChartFrame(
   {
     label, description, height = 240, showLegend: showLegendProp, tableToggle: tableToggleProp, loading = false, labels: labelOverrides, view: viewProp,
-    count, empty, legend, table, announce, tooltip, anchor, plot, onSelectIndex, rootClassName, className, formatValue: _formatValue, ...rest
+    count, empty, legend, table, announce, tooltip, anchor, plot, onSelectIndex, onLegendToggle, rootClassName, className, formatValue: _formatValue, ...rest
   },
   ref,
 ) {
@@ -121,7 +130,8 @@ export const ChartFrame = forwardRef<HTMLElement, ChartFrameProps>(function Char
     return tools.register(registryId, {
       label,
       table: JSON.parse(tableKey),
-      legend: JSON.parse(legendKey),
+      // Exported images show only what is visible.
+      legend: (JSON.parse(legendKey) as ChartLegendItem[]).filter((item) => !item.hidden),
       getSvg: () => plotRef.current?.querySelector('svg') ?? null,
     });
   }, [tools, registryId, label, tableKey, legendKey, empty]);
@@ -210,13 +220,40 @@ export const ChartFrame = forwardRef<HTMLElement, ChartFrameProps>(function Char
       )}
       {!loading && !empty && view === 'chart' && showLegend && legend.length >= 2 && (
         <ul className={styles.legend}>
-          {legend.map((item) => (
-            <li key={item.key} className={styles.legendItem}>
-              <span className={cx(styles.swatch, item.dashed && styles.swatchDashed)} style={{ color: item.color }} aria-hidden="true" />
-              <span>{item.label}</span>
-              {item.value && <span className={styles.legendValue}>{item.value}</span>}
-            </li>
-          ))}
+          {legend.map((item) => {
+            const body = (
+              <>
+                <span className={cx(styles.swatch, item.dashed && styles.swatchDashed)} style={{ color: item.color }} aria-hidden="true" />
+                <span>{item.label}</span>
+                {item.value && <span className={styles.legendValue}>{item.value}</span>}
+              </>
+            );
+            if (!item.toggleable || !onLegendToggle) {
+              return (
+                <li key={item.key} className={styles.legendItem}>
+                  {body}
+                </li>
+              );
+            }
+            // The last visible series cannot be hidden, so the chart is never empty by accident.
+            const lastVisible = !item.hidden && legend.filter((l) => l.toggleable && !l.hidden).length === 1;
+            return (
+              <li key={item.key} className={styles.legendItem}>
+                <button
+                  type="button"
+                  className={cx(styles.legendToggle, item.hidden && styles.legendHidden)}
+                  aria-pressed={!item.hidden}
+                  disabled={lastVisible}
+                  onClick={() => {
+                    onLegendToggle(item.key);
+                    setMessage(labels.seriesToggled(item.label, !!item.hidden));
+                  }}
+                >
+                  {body}
+                </button>
+              </li>
+            );
+          })}
         </ul>
       )}
       {(description || (tableToggle && view === 'chart' && !loading && !empty)) && (

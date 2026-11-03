@@ -69,14 +69,14 @@ export const docs: ComponentDoc[] = [
     slug: 'line-chart', name: 'LineChart', category: 'Charts', components: ['LineChart'],
     summary: 'Trends over an ordered dimension, usually time, for one or more measures.',
     keyboard: [k('Tab', 'Focuses the chart'), k('← / →', 'Previous / next data point'), k('Home / End', 'First / last data point'), k('Escape', 'Hides the tooltip')],
-    a11y: ['The plot is a focusable, named `group` with `aria-roledescription="chart"`; moving between points announces the category and every series value politely.', 'A data table with the same values is always in the DOM (visually hidden until “Show table”).', 'Two to four series are labelled at their line ends, so identity never depends on color alone.', 'Series colors follow a fixed order validated for colour-vision deficiency; an eighth series falls back to the neutral “other” color.'],
+    a11y: ['The plot is a focusable, named `group` with `aria-roledescription="chart"`; moving between points announces the category and every series value politely.', 'A data table with the same values is always in the DOM (visually hidden until “Show table”).', 'Two to four series are labelled at their line ends, so identity never depends on color alone.', 'Legend entries are toggle buttons (`aria-pressed`) that hide or show a series; the change is announced, the last visible series cannot be hidden, and hidden entries are struck through, not just dimmed.', 'Series colors follow a fixed order validated for colour-vision deficiency; an eighth series falls back to the neutral “other” color.'],
     related: ['bar-chart', 'sparkline', 'analytical-card'],
   },
   {
     slug: 'bar-chart', name: 'BarChart', category: 'Charts', components: ['BarChart'],
     summary: 'Compare magnitudes across categories: grouped or stacked, columns or horizontal bars.',
     keyboard: [k('Tab', 'Focuses the chart'), k('Arrow keys', 'Previous / next category'), k('Home / End', 'First / last category'), k('Escape', 'Hides the tooltip')],
-    a11y: ['Same keyboard and data-table model as LineChart; stacked charts include the total in the announcement and table.', 'Bars always start at zero; rounded ends mark the value side only.', 'Use `layout="horizontal"` for long category names instead of rotated labels.'],
+    a11y: ['Same keyboard, data-table and legend-toggle model as LineChart; stacked charts include the total in the announcement and table.', 'Bars always start at zero; rounded ends mark the value side only.', 'Use `layout="horizontal"` for long category names instead of rotated labels.'],
     related: ['line-chart', 'proportion-bar'],
   },
   {

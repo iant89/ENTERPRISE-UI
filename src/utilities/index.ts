@@ -6,3 +6,4 @@ export { VisuallyHidden, type VisuallyHiddenProps } from './VisuallyHidden';
 export { Portal, type PortalProps } from './Portal';
 export { getInitials, hashString, clamp } from './format';
 export type { Tone, ValidationStatus, Size, Placement } from './types';
+export { parseLocaleNumber, formatLocaleNumber, numberSymbols, currencyDigits, type NumberSymbols } from './number';

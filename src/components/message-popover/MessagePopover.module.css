@@ -1,0 +1,114 @@
+.trigger svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.trigger.error svg,
+.icon.error {
+  color: var(--eui-color-error-text);
+}
+
+.trigger.warning svg,
+.icon.warning {
+  color: var(--eui-color-warning-text);
+}
+
+.icon.information {
+  color: var(--eui-color-info-text);
+}
+
+.icon.success {
+  color: var(--eui-color-success-text);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-2);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--eui-space-1);
+}
+
+.filter {
+  padding: var(--eui-space-0-5) var(--eui-space-2);
+  border: var(--eui-border-width) solid var(--eui-color-border);
+  border-radius: var(--eui-radius-full);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+  font: inherit;
+  font-size: var(--eui-font-size-sm);
+  cursor: pointer;
+}
+
+.filter[aria-pressed='true'] {
+  border-color: var(--eui-color-primary);
+  background: var(--eui-color-primary-subtle);
+  color: var(--eui-color-selected-text);
+  font-weight: var(--eui-font-weight-semibold);
+}
+
+.filter:focus-visible,
+.item:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  max-height: 20rem;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  gap: var(--eui-space-2);
+  width: 100%;
+  padding: var(--eui-space-2);
+  border: 0;
+  border-radius: var(--eui-radius-sm);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.item:hover {
+  background: var(--eui-color-surface-hover);
+}
+
+.icon {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  margin-block-start: 0.15em;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.itemTitle {
+  font-weight: var(--eui-font-weight-semibold);
+}
+
+.subtitle,
+.description {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.empty {
+  margin: 0;
+  color: var(--eui-color-text-secondary);
+}

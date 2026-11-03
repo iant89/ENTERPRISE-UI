@@ -3,6 +3,7 @@ import { Minus, Plus } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { clamp } from '../../utilities/format';
 import { useControllableState } from '../../hooks/useControllableState';
+import { formatLocaleNumber, parseLocaleNumber } from '../../utilities/number';
 import { useFormControl, type FieldProps } from '../form-field';
 import styles from '../input/InputBox.module.css';
 
@@ -29,13 +30,21 @@ export interface NumberInputProps
   showStepper?: boolean;
   /** Unit displayed after the value, e.g. `kg` or `EUR`. */
   unit?: ReactNode;
+  /** Formats and parses with this locale's grouping and decimal separators (e.g. `de-DE` shows 1.234,5). Without it, plain numbers are used. */
+  locale?: string;
   /** @default 'md' */
   /** Size of the number input. */
   size?: 'sm' | 'md' | 'lg';
 }
 
-const format = (value: number | null, precision: number | undefined) =>
-  value == null ? '' : precision != null ? value.toFixed(precision) : String(value);
+const format = (value: number | null, precision: number | undefined, locale?: string) =>
+  value == null
+    ? ''
+    : locale
+      ? formatLocaleNumber(value, locale, { minimumFractionDigits: precision, maximumFractionDigits: precision })
+      : precision != null
+        ? value.toFixed(precision)
+        : String(value);
 
 /**
  * Numeric entry with keyboard stepping (↑/↓, PageUp/PageDown, Home/End),
@@ -44,7 +53,7 @@ const format = (value: number | null, precision: number | undefined) =>
 export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(function NumberInput(
   {
     label, description, error, status, statusMessage, hideLabel, labelPosition,
-    value, defaultValue = null, onChange, min, max, step = 1, precision, showStepper = true, unit,
+    value, defaultValue = null, onChange, min, max, step = 1, precision, showStepper = true, unit, locale,
     size = 'md', id, required, disabled, readOnly, className, onBlur, onKeyDown, 'aria-describedby': ariaDescribedBy,
     ...rest
   },
@@ -52,9 +61,9 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
 ) {
   const control = useFormControl({ label, description, error, status, statusMessage, hideLabel, labelPosition, id, required, disabled, 'aria-describedby': ariaDescribedBy });
   const [current, setCurrent] = useControllableState<number | null>(value, defaultValue, onChange);
-  const [text, setText] = useState(() => format(current, precision));
+  const [text, setText] = useState(() => format(current, precision, locale));
 
-  useEffect(() => setText(format(current, precision)), [current, precision]);
+  useEffect(() => setText(format(current, precision, locale)), [current, precision, locale]);
 
   const normalize = (n: number) => {
     let next = clamp(n, min ?? -Infinity, max ?? Infinity);
@@ -63,20 +72,20 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
   };
 
   const commit = (raw: string) => {
-    const trimmed = raw.trim().replace(',', '.');
+    const trimmed = locale ? raw.trim() : raw.trim().replace(',', '.');
     if (trimmed === '') {
       setCurrent(null);
       setText('');
       return;
     }
-    const parsed = Number(trimmed);
+    const parsed = locale ? (parseLocaleNumber(trimmed, locale) as number) : Number(trimmed);
     if (Number.isNaN(parsed)) {
-      setText(format(current, precision));
+      setText(format(current, precision, locale));
       return;
     }
     const next = normalize(parsed);
     setCurrent(next);
-    setText(format(next, precision));
+    setText(format(next, precision, locale));
   };
 
   const stepBy = (delta: number) => {
@@ -86,7 +95,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
     const decimals = Math.max(precision ?? 0, (String(step).split('.')[1] ?? '').length);
     const next = normalize(Number((base + delta).toFixed(decimals)));
     setCurrent(next);
-    setText(format(next, precision));
+    setText(format(next, precision, locale));
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {

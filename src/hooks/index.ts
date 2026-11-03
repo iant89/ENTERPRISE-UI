@@ -9,3 +9,4 @@ export { useScrollLock } from './useScrollLock';
 export { useElementSize } from './useResizeObserver';
 export { usePosition, computePosition, type UsePositionOptions } from './usePosition';
 export { formatRelativeTime, useNow } from './useRelativeTime';
+export { useForm, validators, type UseFormOptions, type UseFormResult, type FormRule, type FormErrors, type FormErrorItem, type FormFieldBinding } from './useForm';

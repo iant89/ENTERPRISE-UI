@@ -23,6 +23,7 @@ See the [development roadmap](https://github.com/iant89/ENTERPRISE-UI/blob/main/
   - KanbanBoard, ProcessFlow and AnalyticalCard
   - DashboardCard, ChartContainer, RefreshControl and dashboard cross-filtering
   - and more
+- **Data entry for business apps.** `useForm` validation with an accessible error summary, an editable grid with spreadsheet paste, value help (F4), locale-aware amounts and quantities, and specialised inputs such as period, tree, time-zone and recurrence pickers.
 - **Charts with no chart dependency.** LineChart, BarChart, DonutChart and Heatmap, plus Fiori-style micro charts (Sparkline, BulletChart, RadialChart, ProportionBar). They are drawn in SVG from the design tokens, with a colorblind-safe series palette, keyboard navigation, screen-reader announcements and a data-table view.
 - **Design tokens.** Every color, spacing, type, radius, shadow, size, z-index, motion and density value is a CSS custom property (`--eui-*`).
 - **Themes.** Light, dark and high contrast, plus cozy and compact density. Switch them at runtime, or scope one to any part of the page.
@@ -235,8 +236,8 @@ When you override colors, keep text at 4.5:1 contrast or better, and borders and
 | Layout | AppShell, Page, Container, Grid, Flex, Stack, SplitView, ResizablePanel |
 | Navigation | ApplicationHeader, SideNavigation, NavigationItem, NavigationGroup, Breadcrumbs, Tabs, Menu, DropdownMenu, Pagination |
 | Buttons | Button, IconButton, SplitButton, ToggleButton, ButtonGroup |
-| Forms | Input, TextArea, NumberInput, SearchField, Select, ComboBox, MultiSelect, DualListSelector, Checkbox, RadioGroup, Switch, DatePicker, Calendar, TimePicker, FormField, FormGroup |
-| Data display | Table, DataGrid, List, Tree, TreeTable, Card, Avatar, Badge, StatusIndicator, Timeline, ObjectIdentifier, MetricCard, DescriptionList |
+| Forms | Input, TextArea, NumberInput, AmountInput, QuantityInput, MaskedInput, PasswordInput, OtpInput, DurationInput, SearchField, Select, ComboBox, MultiSelect, DualListSelector, TreeSelect, ValueHelpInput, TimeZonePicker, Checkbox, RadioGroup, Switch, DatePicker, Calendar, TimePicker, PeriodPicker, RecurrencePicker, RichTextEditor, MentionInput, AddressInput, SignaturePad, FormField, FormGroup, FormErrorSummary, MessagePopover, DraftIndicator |
+| Data display | Table, DataGrid, EditableGrid, List, Tree, TreeTable, Card, Avatar, Badge, StatusIndicator, Timeline, ObjectIdentifier, MetricCard, DescriptionList |
 | Charts | LineChart, BarChart, DonutChart, Heatmap, Sparkline, BulletChart, RadialChart, ProportionBar, ChartContainer |
 | Feedback | Dialog, AlertDialog, Toast (`ToastProvider` + `useToast`), MessageStrip, Tooltip, Popover, ProgressBar, Spinner, Skeleton |
 | Enterprise patterns | FilterBar, MasterDetail, ObjectPage, DetailPanel, Wizard, Dashboard, DashboardCard, DashboardFilterProvider, DashboardFilterBar, RefreshControl, AnalyticalCard, KanbanBoard, ProcessFlow, CommandToolbar, EmptyState |

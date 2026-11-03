@@ -1,0 +1,126 @@
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--eui-space-2);
+  width: 100%;
+  min-height: var(--eui-control-height);
+  padding: 0 var(--eui-space-2) 0 var(--eui-control-padding-x);
+  border: var(--eui-border-width) solid var(--eui-color-border-strong);
+  border-radius: var(--eui-radius-sm);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.trigger:hover:not(:disabled) {
+  border-color: var(--eui-color-border-hover);
+}
+
+.trigger:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+}
+
+.trigger:disabled {
+  cursor: var(--eui-disabled-cursor);
+  opacity: var(--eui-disabled-opacity);
+}
+
+.error {
+  border-color: var(--eui-color-error-border);
+  background: var(--eui-color-error-subtle);
+}
+
+.warning {
+  border-color: var(--eui-color-warning-border);
+}
+
+.value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.placeholder {
+  color: var(--eui-color-text-placeholder);
+}
+
+.icon {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+  color: var(--eui-color-icon);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-2);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.year {
+  font-weight: var(--eui-font-weight-semibold);
+}
+
+.nav {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: var(--eui-radius-sm);
+  background: none;
+  color: var(--eui-color-icon);
+  cursor: pointer;
+}
+
+.nav svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.grid {
+  display: grid;
+  gap: var(--eui-space-1);
+}
+
+.option {
+  min-height: 2.25rem;
+  padding: 0 var(--eui-space-1);
+  border: var(--eui-border-width) solid transparent;
+  border-radius: var(--eui-radius-sm);
+  background: none;
+  color: var(--eui-color-text);
+  font: inherit;
+  font-size: var(--eui-font-size-sm);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.option:hover,
+.nav:hover {
+  background: var(--eui-color-surface-hover);
+}
+
+.selected {
+  border-color: var(--eui-color-primary);
+  background: var(--eui-color-primary-subtle);
+  color: var(--eui-color-selected-text);
+  font-weight: var(--eui-font-weight-semibold);
+}
+
+.option:focus-visible,
+.nav:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+}

@@ -25,6 +25,14 @@
   - `DashboardFilterProvider`, `useDashboardFilters` and `DashboardFilterBar`: cross-filtering between widgets and a drill-down path. State can be controlled and kept in the URL, filter tokens are removable, and every change is announced.
 - Charts: `onSelect` (click, Enter or Space) and `selectedCategory` (dims the other categories) on LineChart, BarChart and DonutChart. A `view` prop shows the data table in place of the plot.
 - LineChart and BarChart legends are toggle buttons that hide or show a series (`legendToggle`, `hiddenSeries`, `defaultHiddenSeries`, `onHiddenSeriesChange`). The other series keep their colors, the value axis rescales, stacks re-stack, and the data table and CSV keep every series. The last visible series cannot be hidden.
+- Added data entry components:
+  - **Validation:** `useForm` and `validators` (sync and async rules with stale results discarded, cross-field validation, touched and dirty tracking, server errors, and a `field()` binding that accepts value callbacks or events), `FormErrorSummary` (focused, linked errors per WCAG 3.3.1) and `MessagePopover` (Fiori message handling).
+  - **Numbers:** `AmountInput` and `QuantityInput`, plus `parseLocaleNumber` and `formatLocaleNumber`. They handle locale separators, currency minor units and unit-of-measure decimals. Ambiguous input such as "1.5" in German is rejected, never guessed. `NumberInput` has an opt-in `locale`.
+  - **Grid editing:** `EditableGrid`, with spreadsheet keyboard model, in-cell editors (text, number, select, checkbox, date), per-cell validation, add/duplicate/delete rows and paste of tab-separated blocks.
+  - **Value help:** `ValueHelpDialog` and `ValueHelpInput` (F4): local or debounced server search with stale requests aborted, filters, and single or multiple selection.
+  - **Specialised inputs:** `MaskedInput`, `PasswordInput`, `OtpInput`, `DurationInput`, `PeriodPicker` (month, quarter, year, fiscal period, ISO week), `TreeSelect`, `TimeZonePicker` and `RecurrencePicker` (RRULE).
+  - **Drafts:** `DraftIndicator` with the `useAutosave` hook.
+  - **Rich and specialised entry:** `RichTextEditor` (allowlist-sanitized HTML, including pasted content), `SignaturePad` (with a typed alternative), `AddressInput` (per-country layout, postal-code checks, autofill tokens and lookup) and `MentionInput`.
 - Added the `formatRelativeTime` and `useNow` hooks.
 - Fixed: the chart gridline and axis tokens now resolve against each theme. They were bright in the dark themes because their `var()` references resolved at `:root`.
 - Added `docs/component-gap-analysis.md`, which compares the library with SAP Fiori/UI5, Ant Design, Mantine, PatternFly, Carbon and Tremor and ranks the remaining gaps.

@@ -78,6 +78,24 @@ Still open for dashboards:
 - Dashboard export (PDF/PNG) and shareable filtered links.
 - A TV / kiosk mode.
 
+## Data entry round
+
+The library already covered basic entry: inputs, selects, date and time pickers, uploads and InlineEdit. What it lacked were the heavier patterns ERP screens depend on. All three tiers were added:
+
+| Tier | Added |
+| --- | --- |
+| P1 | `useForm` + `FormErrorSummary` + `MessagePopover`; `AmountInput` / `QuantityInput` with locale parsing; `EditableGrid`; `ValueHelpDialog` / `ValueHelpInput` |
+| P2 | `MaskedInput`, `PeriodPicker`, `TreeSelect`, `DurationInput`, `TimeZonePicker`, `RecurrencePicker`, `PasswordInput`, `OtpInput`, `DraftIndicator` / `useAutosave` |
+| P3 | `RichTextEditor`, `SignaturePad`, `AddressInput`, `MentionInput` |
+
+Design decisions:
+- **Numbers are never guessed.** Grouping separators are accepted only between groups of three digits, so "1.5" typed in German is an error rather than 15.
+- **One validation model for fields and grids.** EditableGrid reports its errors through `onValidationChange`, so the same summary and popover can show field and line-item problems together.
+- **The editor is deliberately small.** RichTextEditor uses the browser's editing commands and an allowlist sanitizer, and is suited to notes and comments. Documents with tables, images or collaboration should use a dedicated editor.
+- **Every pointer-only input has an alternative.** SignaturePad has a typed mode, and EditableGrid paste has keyboard entry.
+
+Still open: EditableGrid virtualization and undo/redo, and screen reader and touch verification of the new components.
+
 ## Remaining gaps, ranked
 
 The priority reflects how often each item is needed in ERP, inventory, fleet and admin screens, and how hard it is to build well outside the library.

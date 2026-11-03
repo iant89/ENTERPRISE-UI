@@ -1,0 +1,163 @@
+.frame {
+  display: flex;
+  flex-direction: column;
+  border: var(--eui-border-width) solid var(--eui-color-border-strong);
+  border-radius: var(--eui-radius-sm);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+}
+
+.frame:focus-within {
+  border-color: var(--eui-color-focus);
+  box-shadow: 0 0 0 1px var(--eui-color-focus);
+}
+
+.error {
+  border-color: var(--eui-color-error-border);
+}
+
+.warning {
+  border-color: var(--eui-color-warning-border);
+}
+
+.disabled {
+  opacity: var(--eui-disabled-opacity);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding: var(--eui-space-1);
+  border-block-end: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  background: var(--eui-color-surface-alt);
+  border-radius: var(--eui-radius-sm) var(--eui-radius-sm) 0 0;
+}
+
+.tool {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: var(--eui-radius-sm);
+  background: none;
+  color: var(--eui-color-icon);
+  cursor: pointer;
+}
+
+.tool svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.tool:hover {
+  background: var(--eui-color-surface-hover);
+  color: var(--eui-color-text);
+}
+
+.tool[aria-pressed='true'] {
+  background: var(--eui-color-primary-subtle);
+  color: var(--eui-color-selected-text);
+}
+
+.tool:focus-visible,
+.textButton:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: -2px;
+}
+
+.divider {
+  width: 1px;
+  height: 1.25rem;
+  margin-inline: var(--eui-space-1);
+  background: var(--eui-color-border);
+}
+
+.linkBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-2);
+  border-block-end: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  font-size: var(--eui-font-size-sm);
+}
+
+.linkLabel {
+  display: flex;
+  flex: 1 1 14rem;
+  align-items: center;
+  gap: var(--eui-space-2);
+}
+
+.linkInput {
+  flex: 1;
+  min-height: var(--eui-control-height-sm);
+  padding: 0 var(--eui-space-2);
+  border: var(--eui-border-width) solid var(--eui-color-border-strong);
+  border-radius: var(--eui-radius-sm);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+  font: inherit;
+}
+
+.textButton {
+  padding: var(--eui-space-1) var(--eui-space-2);
+  border: 0;
+  border-radius: var(--eui-radius-sm);
+  background: none;
+  color: var(--eui-color-link);
+  font: inherit;
+  cursor: pointer;
+}
+
+.linkError {
+  flex-basis: 100%;
+  color: var(--eui-color-error-text);
+}
+
+.editor {
+  padding: var(--eui-space-2) var(--eui-space-3);
+  overflow-wrap: anywhere;
+  line-height: var(--eui-line-height-relaxed);
+  outline: none;
+}
+
+.editor p {
+  margin: 0 0 var(--eui-space-2);
+}
+
+.editor ul,
+.editor ol {
+  margin: 0 0 var(--eui-space-2);
+  padding-inline-start: var(--eui-space-6);
+}
+
+.editor a {
+  color: var(--eui-color-link);
+}
+
+.editor[data-empty]::before {
+  content: attr(data-placeholder);
+  color: var(--eui-color-text-placeholder);
+  pointer-events: none;
+}
+
+.counter {
+  padding: 0 var(--eui-space-3) var(--eui-space-1);
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-xs);
+  text-align: end;
+}
+
+.counterOver {
+  color: var(--eui-color-error-text);
+  font-weight: var(--eui-font-weight-semibold);
+}
+
+/* The frame shows focus (:focus-within); suppress the global outline on the editable area so the ring is not doubled. */
+.frame .editor:focus-visible {
+  outline: none;
+}

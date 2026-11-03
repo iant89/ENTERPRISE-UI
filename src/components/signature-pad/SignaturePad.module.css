@@ -1,0 +1,90 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.legend {
+  margin-block-end: var(--eui-space-1);
+  padding: 0;
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--eui-space-2);
+}
+
+.state {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.typed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eui-space-1);
+  font-size: var(--eui-font-size-sm);
+}
+
+.typedInput {
+  min-height: var(--eui-control-height);
+  padding: 0 var(--eui-control-padding-x);
+  border: var(--eui-border-width) solid var(--eui-color-border-strong);
+  border-radius: var(--eui-radius-sm);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+  font: inherit;
+}
+
+.typedInput:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+}
+
+/* The canvas reads its ink from `color`, so the signature follows the theme. */
+.canvas {
+  display: block;
+  width: 100%;
+  border: var(--eui-border-width) dashed var(--eui-color-border-strong);
+  border-radius: var(--eui-radius-md);
+  background:
+    linear-gradient(var(--eui-color-border) 0 0) left 1rem right 1rem bottom 30% / calc(100% - 2rem) 1px no-repeat,
+    var(--eui-color-surface);
+  color: var(--eui-color-text);
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.preview {
+  cursor: default;
+}
+
+.invalid {
+  border-color: var(--eui-color-error-border);
+}
+
+.actions {
+  display: flex;
+  gap: var(--eui-space-2);
+}
+
+.description {
+  margin: 0;
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.error {
+  margin: 0;
+  color: var(--eui-color-error-text);
+  font-size: var(--eui-font-size-sm);
+}

@@ -1,0 +1,33 @@
+.unit {
+  padding-inline: var(--eui-space-1) var(--eui-space-2);
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+  font-weight: var(--eui-font-weight-semibold);
+  white-space: nowrap;
+}
+
+/* A compact native select inside the field box: keyboard and screen reader behavior come for free. */
+.unitSelect {
+  max-width: 9rem;
+  align-self: stretch;
+  margin-inline-start: var(--eui-space-1);
+  padding: 0 var(--eui-space-1);
+  border: 0;
+  border-inline-start: var(--eui-border-width) solid var(--eui-color-border);
+  background: transparent;
+  color: var(--eui-color-text);
+  font: inherit;
+  font-size: var(--eui-font-size-sm);
+  font-weight: var(--eui-font-weight-semibold);
+  cursor: pointer;
+}
+
+.unitSelect:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: -2px;
+  border-radius: var(--eui-radius-sm);
+}
+
+.unitSelect:disabled {
+  cursor: var(--eui-disabled-cursor);
+}

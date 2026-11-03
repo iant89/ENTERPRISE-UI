@@ -404,6 +404,16 @@ The first round is in place. See `docs/component-gap-analysis.md` for the compar
 - [ ] Add a KPI strip, a ranked bar list and a status-history strip.
 - [ ] Add dashboard export (PDF/PNG) and shareable filtered links.
 
+### 6.4 Data entry
+- [x] Add form state and validation (`useForm`), `FormErrorSummary` and `MessagePopover`.
+- [x] Add `AmountInput`, `QuantityInput` and locale-aware number parsing.
+- [x] Add `EditableGrid` with keyboard editing, validation and paste from spreadsheets.
+- [x] Add `ValueHelpDialog` / `ValueHelpInput`.
+- [x] Add `MaskedInput`, `PasswordInput`, `OtpInput`, `DurationInput`, `PeriodPicker`, `TreeSelect`, `TimeZonePicker`, `RecurrencePicker` and `DraftIndicator` / `useAutosave`.
+- [x] Add `RichTextEditor`, `SignaturePad`, `AddressInput` and `MentionInput`.
+- [ ] Add EditableGrid virtualization for very large line-item sets, and undo/redo.
+- [ ] Verify the data entry components with screen readers and on touch devices.
+
 ### Completion Criteria
 - Charts meet the same keyboard, screen-reader and theming standards as the other components.
 - Every chart has a non-visual equivalent (a data table or a text summary).

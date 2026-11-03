@@ -40,14 +40,27 @@ describe('ChartContainer', () => {
     expect(legendItems()).toHaveLength(0);
   });
 
-  it('downloads all registered charts as CSV', async () => {
+  it('downloads all registered charts as CSV from the download menu', async () => {
     const onDownload = vi.fn();
     const { user } = renderWithTheme(ui({ onDownload }));
-    await user.click(screen.getByRole('button', { name: 'Download as CSV' }));
+    await user.click(screen.getByRole('button', { name: 'Download' }));
+    expect(screen.getAllByRole('menuitem').map((m) => m.textContent)).toEqual(['PNG image', 'JPEG image', 'CSV data']);
+    await user.click(screen.getByRole('menuitem', { name: 'CSV data' }));
     const [csv, name] = onDownload.mock.calls[0];
     expect(name).toBe('sales');
     expect(csv).toContain('Orders\r\nRegion,A,B\r\nEMEA,1,2\r\nAPJ,3,4');
     expect(csv).toContain('Trend\r\nr,A\r\nEMEA,1');
+  });
+
+  it('disables image formats in table view and can limit the formats', async () => {
+    const { user, rerender } = renderWithTheme(ui({ defaultView: 'table' }));
+    await user.click(screen.getByRole('button', { name: 'Download' }));
+    expect(screen.getByRole('menuitem', { name: 'PNG image' })).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByRole('menuitem', { name: 'CSV data' })).not.toHaveAttribute('aria-disabled', 'true');
+    await user.keyboard('{Escape}');
+    rerender(ui({ tools: { download: ['csv'] } }));
+    await user.click(screen.getByRole('button', { name: 'Download' }));
+    expect(screen.getAllByRole('menuitem').map((m) => m.textContent)).toEqual(['CSV data']);
   });
 
   it('expands in-page when the Fullscreen API is unavailable and Escape restores it', async () => {

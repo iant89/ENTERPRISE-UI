@@ -89,7 +89,7 @@ export const DashboardCard = forwardRef<HTMLElement, DashboardCardProps>(functio
   {
     title, subtitle, headingLevel = 3, status = 'ready', error, onRetry, emptyContent, forbiddenContent, lastUpdated, staleAfter, onRefresh, refreshing = false,
     chartTools, actions, footer, bodyHeight = 200, locale, children, labels: labelOverrides,
-    view, defaultView, onViewChange, showLegend, defaultShowLegend, onShowLegendChange, onDownload, downloadFileName,
+    view, defaultView, onViewChange, showLegend, defaultShowLegend, onShowLegendChange, onDownload, onExportImage, downloadFileName,
     className, ...rest
   },
   ref,
@@ -101,7 +101,7 @@ export const DashboardCard = forwardRef<HTMLElement, DashboardCardProps>(functio
   const now = useNow(15_000, lastUpdated !== undefined);
   const tools = chartTools ? (chartTools === true ? {} : chartTools) : null;
   const state = useChartToolsState(
-    { view, defaultView, onViewChange, showLegend, defaultShowLegend, onShowLegendChange, onDownload, downloadFileName },
+    { view, defaultView, onViewChange, showLegend, defaultShowLegend, onShowLegendChange, onDownload, onExportImage, downloadFileName },
     rootRef,
     typeof title === 'string' ? title : '',
   );

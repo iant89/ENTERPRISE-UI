@@ -95,9 +95,7 @@
   --eui-color-chart-6: light-dark(#c35500, #d67604);
   --eui-color-chart-7: light-dark(#a93e7d, #d664a4);
   --eui-color-chart-other: light-dark(#5b738b, #8696a9);
-  /* Gridlines stay recessive in every theme: a faint mix of the text color into the surface. */
-  --eui-color-chart-grid: color-mix(in oklab, var(--eui-color-text) 12%, var(--eui-color-surface));
-  --eui-color-chart-axis: var(--eui-color-border-strong);
+  /* Gridline and axis tokens: see the [data-eui-theme] rule at the end of this file. */
 
   /* Elevation */
   --eui-shadow-sm: 0 0 2px rgba(34, 53, 72, 0.12), 0 1px 2px rgba(34, 53, 72, 0.1);
@@ -118,4 +116,13 @@
   --eui-shadow-positive: 0 0 0 0 transparent;
   --eui-shadow-informative: 0 0 0 0 transparent;
   --eui-shadow-text: none;
+}
+
+/* Tokens built from other tokens must be declared on every theme root: a custom property's var()
+ * references resolve where it is declared, so a :root-only declaration would carry the light colors
+ * into dark themes. Later theme files (high contrast, SAP) still override these. */
+:root,
+[data-eui-theme] {
+  --eui-color-chart-grid: color-mix(in oklab, var(--eui-color-text) 12%, var(--eui-color-surface));
+  --eui-color-chart-axis: var(--eui-color-border-strong);
 }

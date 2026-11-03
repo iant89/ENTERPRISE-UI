@@ -1,5 +1,4 @@
 import { forwardRef, type PointerEvent } from 'react';
-import { useChartHeight } from '../chart-core/ChartToolsContext';
 import { ChartFrame, TooltipContent, defaultChartLabels, type ChartBaseProps, type ChartLegendItem } from '../chart-core/ChartFrame';
 import { ReferenceLines, ValueGridX, ValueGridY, barPath, labelEvery, valueAxisWidth } from '../chart-core/cartesian';
 import { formatCompact, formatNumber, seriesColor, toneColor } from '../chart-core/palette';
@@ -74,7 +73,7 @@ export const BarChart = forwardRef<HTMLElement, BarChartProps>(function BarChart
   ref,
 ) {
   const horizontal = layout === 'horizontal';
-  const height = useChartHeight(heightProp ?? (horizontal ? Math.max(120, data.length * (series.length > 1 && !stacked ? 36 : 28) + M.top + M.bottom) : 240));
+  const baseHeight = heightProp ?? (horizontal ? Math.max(120, data.length * (series.length > 1 && !stacked ? 36 : 28) + M.top + M.bottom) : 240);
   const categories = data.map((d) => String(d[categoryKey] ?? ''));
   const stacks = data.map((d) => segmentsFor(d, series, stacked));
   const extents = stacks.flatMap((segs) => segs.map((s) => s.to));
@@ -93,7 +92,7 @@ export const BarChart = forwardRef<HTMLElement, BarChartProps>(function BarChart
   const dimmed = (i: number) => selectedCategory != null && categories[i] !== selectedCategory;
   const totalLabel = labelOverrides?.total ?? defaultChartLabels.total;
 
-  const geometry = (width: number) => {
+  const geometry = (width: number, height: number) => {
     const extentValues = [...extents, ...referenceLines.map((r) => r.value)];
     if (horizontal) {
       const labelWidth = Math.min(Math.max(...categories.map((c) => estimateTextWidth(c)), 24) + 12, width * 0.4);
@@ -118,7 +117,7 @@ export const BarChart = forwardRef<HTMLElement, BarChartProps>(function BarChart
   return (
     <ChartFrame
       ref={ref}
-      height={height}
+      height={baseHeight}
       count={data.length}
       empty={empty}
       legend={legend}
@@ -136,14 +135,14 @@ export const BarChart = forwardRef<HTMLElement, BarChartProps>(function BarChart
           ]}
         />
       )}
-      anchor={(i, width) => {
-        const g = geometry(width);
+      anchor={(i, width, height) => {
+        const g = geometry(width, height);
         const max = Math.max(0, ...stacks[i].map((s) => s.to));
         if (horizontal) return { x: Math.min(g.x!(max), width - 20), y: g.band.start(i) };
         return { x: g.band.center(i), y: g.y!(max) };
       }}
-      plot={(width, active, setActive) => {
-        const g = geometry(width);
+      plot={(width, active, setActive, height) => {
+        const g = geometry(width, height);
         const sb = subBand(g.band.bandwidth);
         const onMove = (event: PointerEvent<SVGRectElement>) => {
           const rect = event.currentTarget.getBoundingClientRect();

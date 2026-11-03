@@ -24,13 +24,13 @@ export interface ChartContainerProps extends ChartToolsStateProps, Omit<HTMLAttr
 }
 
 /**
- * A toolbar frame for charts: switch between chart and table, toggle the legend, download the data
- * as CSV and expand to full screen (Fiori ChartContainer).
+ * A toolbar frame for charts: switch between chart and table, toggle the legend, download PNG or
+ * JPEG images and CSV data, and expand to full screen with the charts filling it (Fiori ChartContainer).
  */
 export const ChartContainer = forwardRef<HTMLElement, ChartContainerProps>(function ChartContainer(
   {
     title, subtitle, headingLevel = 3, tools = {}, actions, children, labels: labelOverrides,
-    view, defaultView, onViewChange, showLegend, defaultShowLegend, onShowLegendChange, onDownload, downloadFileName,
+    view, defaultView, onViewChange, showLegend, defaultShowLegend, onShowLegendChange, onDownload, onExportImage, downloadFileName,
     className, ...rest
   },
   ref,
@@ -40,7 +40,7 @@ export const ChartContainer = forwardRef<HTMLElement, ChartContainerProps>(funct
   const merged = useMergedRefs(ref, rootRef);
   const titleId = useId(undefined, 'chart-container');
   const state = useChartToolsState(
-    { view, defaultView, onViewChange, showLegend, defaultShowLegend, onShowLegendChange, onDownload, downloadFileName },
+    { view, defaultView, onViewChange, showLegend, defaultShowLegend, onShowLegendChange, onDownload, onExportImage, downloadFileName },
     rootRef,
     typeof title === 'string' ? title : '',
   );

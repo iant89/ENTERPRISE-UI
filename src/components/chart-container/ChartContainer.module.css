@@ -51,11 +51,18 @@
   min-width: 0;
 }
 
-/* Native full screen and the in-page fallback both fill the viewport with the page background. */
+/* Native full screen and the in-page fallback both fill the viewport with the page background;
+ * the body takes the remaining height and its charts share it. */
 .fullscreen {
-  overflow: auto;
+  overflow: hidden;
   padding: var(--eui-space-6);
   background: var(--eui-color-background);
+}
+
+.fullscreen .body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: auto;
 }
 
 .expanded {

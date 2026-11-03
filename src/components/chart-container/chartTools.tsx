@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
-import { ChartColumn, Download, List, Maximize2, Minimize2, Table2 } from 'lucide-react';
+import { ChartColumn, Download, FileImage, FileSpreadsheet, List, Maximize2, Minimize2, Table2 } from 'lucide-react';
 import { useControllableState } from '../../hooks/useControllableState';
 import type { ChartTable } from '../chart-core/ChartFrame';
-import type { ChartToolsContextValue } from '../chart-core/ChartToolsContext';
+import type { ChartRegistration, ChartToolsContextValue } from '../chart-core/ChartToolsContext';
+import { DropdownMenu } from '../dropdown-menu';
+import { renderChartImage } from './exportImage';
 import { IconButton } from '../icon-button';
 import { SegmentedButton } from '../segmented-button';
 import styles from './ChartContainer.module.css';
@@ -15,9 +17,11 @@ export interface ChartToolOptions {
   legend?: boolean;
   /** Expand to full screen. */
   fullscreen?: boolean;
-  /** Download the data as CSV. */
-  download?: boolean;
+  /** Download menu: `true` offers PNG, JPEG and CSV; an array picks the formats. */
+  download?: boolean | ChartExportFormat[];
 }
+
+export type ChartExportFormat = 'png' | 'jpeg' | 'csv';
 
 export interface ChartToolbarLabels {
   toolbar: string;
@@ -27,6 +31,9 @@ export interface ChartToolbarLabels {
   enterFullscreen: string;
   exitFullscreen: string;
   download: string;
+  downloadPng: string;
+  downloadJpeg: string;
+  downloadCsv: string;
 }
 
 export const defaultToolbarLabels: ChartToolbarLabels = {
@@ -36,7 +43,10 @@ export const defaultToolbarLabels: ChartToolbarLabels = {
   legend: 'Show legend',
   enterFullscreen: 'Enter full screen',
   exitFullscreen: 'Exit full screen',
-  download: 'Download as CSV',
+  download: 'Download',
+  downloadPng: 'PNG image',
+  downloadJpeg: 'JPEG image',
+  downloadCsv: 'CSV data',
 };
 
 /** Controlled/uncontrolled state shared by ChartContainer and DashboardCard. */
@@ -53,9 +63,11 @@ export interface ChartToolsStateProps {
   defaultShowLegend?: boolean;
   /** Called with the new legend visibility. */
   onShowLegendChange?: (show: boolean) => void;
-  /** Called instead of the built-in file download, e.g. to export server-side. Receives the CSV text. */
+  /** Called instead of the built-in CSV download, e.g. to export server-side. Receives the CSV text. */
   onDownload?: (csv: string, fileName: string) => void;
-  /** File name of the CSV download (without extension). Defaults to the title or chart label. */
+  /** Called instead of saving an exported image, e.g. to attach it to a report. */
+  onExportImage?: (image: Blob, fileName: string, format: 'png' | 'jpeg') => void;
+  /** File name of downloads (without extension). Defaults to the title or chart label. */
   downloadFileName?: string;
 }
 
@@ -72,13 +84,12 @@ export function tablesToCsv(entries: { label: string; table: ChartTable }[]): st
   return entries.map((e) => `${csvCell(e.label)}\r\n${block(e)}`).join('\r\n\r\n');
 }
 
-function saveFile(csv: string, fileName: string) {
+function saveFile(blob: Blob, fileName: string) {
   if (typeof URL === 'undefined' || typeof URL.createObjectURL !== 'function') return;
-  // A byte-order mark lets spreadsheet apps detect UTF-8.
-  const url = URL.createObjectURL(new Blob(['﻿', csv], { type: 'text/csv;charset=utf-8' }));
+  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `${fileName}.csv`;
+  a.download = fileName;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -91,7 +102,7 @@ const slug = (text: string) => text.trim().replace(/[^\p{L}\p{N}]+/gu, '-').repl
 export function useChartToolsState(props: ChartToolsStateProps, target: RefObject<HTMLElement | null>, fallbackName: string) {
   const [view, setView] = useControllableState(props.view, props.defaultView ?? 'chart', props.onViewChange);
   const [showLegend, setShowLegend] = useControllableState(props.showLegend, props.defaultShowLegend ?? true, props.onShowLegendChange);
-  const entries = useRef(new Map<string, { label: string; table: ChartTable }>());
+  const entries = useRef(new Map<string, ChartRegistration>());
   const [count, setCount] = useState(0);
   const [fullscreen, setFullscreen] = useState(false);
   const native = useRef(false);
@@ -105,9 +116,7 @@ export function useChartToolsState(props: ChartToolsStateProps, target: RefObjec
     };
   }, []);
 
-  // Full screen shares the viewport between the registered charts (leaving room for header and legends).
-  const fullscreenHeight = fullscreen && typeof window !== 'undefined' ? Math.max(240, Math.floor((window.innerHeight - 160) / Math.max(count, 1)) - 80) : undefined;
-  const context = useMemo<ChartToolsContextValue>(() => ({ view, showLegend, register, fullscreenHeight }), [view, showLegend, register, fullscreenHeight]);
+  const context = useMemo<ChartToolsContextValue>(() => ({ view, showLegend, register, fullscreen }), [view, showLegend, register, fullscreen]);
 
   // The browser leaves native full screen on its own (Escape, F11); follow it.
   useEffect(() => {
@@ -159,10 +168,25 @@ export function useChartToolsState(props: ChartToolsStateProps, target: RefObjec
     const csv = tablesToCsv(list);
     const name = props.downloadFileName ?? slug(fallbackName || list[0].label);
     if (props.onDownload) props.onDownload(csv, name);
-    else saveFile(csv, name);
+    // A byte-order mark lets spreadsheet apps detect UTF-8.
+    else saveFile(new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8' }), `${name}.csv`);
   };
 
-  return { view, setView, showLegend, setShowLegend, context, fullscreen, toggleFullscreen, download, hasData: count > 0, inPageFullscreen: fullscreen && !native.current };
+  const exportImage = async (format: 'png' | 'jpeg') => {
+    const list = [...entries.current.values()].flatMap((e) => {
+      const svg = e.getSvg();
+      return svg ? [{ label: e.label, svg, legend: showLegend ? e.legend : [] }] : [];
+    });
+    const source = target.current;
+    if (!list.length || !source) return;
+    const blob = await renderChartImage(list, format, { title: fallbackName || undefined, themeSource: source });
+    if (!blob) return;
+    const name = props.downloadFileName ?? slug(fallbackName || list[0].label);
+    if (props.onExportImage) props.onExportImage(blob, name, format);
+    else saveFile(blob, `${name}.${format === 'png' ? 'png' : 'jpg'}`);
+  };
+
+  return { view, setView, showLegend, setShowLegend, context, fullscreen, toggleFullscreen, download, exportImage, hasData: count > 0, inPageFullscreen: fullscreen && !native.current };
 }
 
 export type ChartToolsState = ReturnType<typeof useChartToolsState>;
@@ -170,6 +194,7 @@ export type ChartToolsState = ReturnType<typeof useChartToolsState>;
 /** The toolbar buttons. Rendered inside a `role="toolbar"` group. */
 export function ChartToolbar({ state, tools, labels }: { state: ChartToolsState; tools: ChartToolOptions; labels: ChartToolbarLabels }) {
   const { view: showView = true, legend = true, fullscreen = true, download = true } = tools;
+  const formats: ChartExportFormat[] = download === true ? ['png', 'jpeg', 'csv'] : download === false ? [] : download;
   return (
     <div className={styles.toolbar} role="toolbar" aria-label={labels.toolbar}>
       {showView && (
@@ -187,7 +212,20 @@ export function ChartToolbar({ state, tools, labels }: { state: ChartToolsState;
       {legend && state.view === 'chart' && (
         <IconButton icon={<List />} label={labels.legend} size="sm" aria-pressed={state.showLegend} onClick={() => state.setShowLegend(!state.showLegend)} />
       )}
-      {download && <IconButton icon={<Download />} label={labels.download} size="sm" disabled={!state.hasData} onClick={state.download} />}
+      {formats.length > 0 && (
+        <DropdownMenu
+          trigger={<IconButton icon={<Download />} label={labels.download} size="sm" disabled={!state.hasData} />}
+          placement="bottom-end"
+          items={formats.map((f) => ({
+            id: f,
+            label: f === 'png' ? labels.downloadPng : f === 'jpeg' ? labels.downloadJpeg : labels.downloadCsv,
+            icon: f === 'csv' ? <FileSpreadsheet /> : <FileImage />,
+            // Images need the plot, which the table view does not render.
+            disabled: f !== 'csv' && state.view === 'table',
+          }))}
+          onAction={(id) => (id === 'csv' ? state.download() : void state.exportImage(id as 'png' | 'jpeg'))}
+        />
+      )}
       {fullscreen && (
         <IconButton
           icon={state.fullscreen ? <Minimize2 /> : <Maximize2 />}

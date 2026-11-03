@@ -88,9 +88,9 @@ interface ChartFrameProps extends ChartBaseProps {
   /** Tooltip content for the active point. */
   tooltip: (index: number) => ReactNode;
   /** Tooltip anchor in plot coordinates. */
-  anchor: (index: number, width: number) => { x: number; y: number };
+  anchor: (index: number, width: number, height: number) => { x: number; y: number };
   /** Renders the SVG plot for the measured width. */
-  plot: (width: number, active: number | null, setActive: (index: number | null) => void) => ReactNode;
+  plot: (width: number, active: number | null, setActive: (index: number | null) => void, height: number) => ReactNode;
   /** Called when a point is chosen with Enter, Space or a click. */
   onSelectIndex?: (index: number) => void;
   rootClassName?: string;
@@ -115,13 +115,23 @@ export const ChartFrame = forwardRef<HTMLElement, ChartFrameProps>(function Char
   const tableToggle = tableToggleProp ?? !tools;
   const registryId = useId(undefined, 'chart');
   const tableKey = JSON.stringify(table);
+  const legendKey = JSON.stringify(legend);
   useEffect(() => {
     if (!tools || empty) return;
-    return tools.register(registryId, { label, table: JSON.parse(tableKey) });
-  }, [tools, registryId, label, tableKey, empty]);
+    return tools.register(registryId, {
+      label,
+      table: JSON.parse(tableKey),
+      legend: JSON.parse(legendKey),
+      getSvg: () => plotRef.current?.querySelector('svg') ?? null,
+    });
+  }, [tools, registryId, label, tableKey, legendKey, empty]);
   const plotRef = useRef<HTMLDivElement>(null);
-  const { width: measured } = useElementSize(plotRef);
+  const { width: measured, height: measuredHeight } = useElementSize(plotRef);
   const width = measured || FALLBACK_WIDTH;
+  // Full screen: the plot is a flex item that takes the space left after the legend and caption,
+  // and the chart is drawn at the measured size (never smaller than its own height).
+  const fill = !!tools?.fullscreen;
+  const plotHeight = fill ? Math.max(height, Math.floor(measuredHeight)) : height;
   const [active, setActive] = useState<number | null>(null);
   const [message, setMessage] = useState('');
   const [tableOpen, setTableOpen] = useState(false);
@@ -155,11 +165,11 @@ export const ChartFrame = forwardRef<HTMLElement, ChartFrameProps>(function Char
   };
 
   const tip = active !== null && active < count ? tooltip(active) : null;
-  const point = active !== null && active < count ? anchor(active, width) : null;
+  const point = active !== null && active < count ? anchor(active, width, plotHeight) : null;
   const align = point ? (point.x < 90 ? 'start' : point.x > width - 90 ? 'end' : 'center') : 'center';
 
   return (
-    <figure ref={ref} className={cx(styles.chart, rootClassName, className)} aria-busy={loading || undefined} {...rest}>
+    <figure ref={ref} className={cx(styles.chart, fill && styles.fill, rootClassName, className)} aria-busy={loading || undefined} {...rest}>
       {loading ? (
         <div className={styles.placeholder} style={{ height }}>
           <Skeleton variant="rect" height={height} width="100%" />
@@ -173,7 +183,7 @@ export const ChartFrame = forwardRef<HTMLElement, ChartFrameProps>(function Char
         <div
           ref={plotRef}
           className={styles.plot}
-          style={{ height }}
+          style={fill ? { minHeight: height } : { height }}
           role="group"
           tabIndex={0}
           aria-label={label}
@@ -184,7 +194,7 @@ export const ChartFrame = forwardRef<HTMLElement, ChartFrameProps>(function Char
           onPointerLeave={() => setActive(null)}
         >
           <div onClick={onSelectIndex ? () => active !== null && onSelectIndex(active) : undefined} style={onSelectIndex ? { cursor: 'pointer' } : undefined}>
-            {plot(width, active, setActive)}
+            {plot(width, active, setActive, plotHeight)}
           </div>
           {tip && point && (
             <div className={cx(styles.tooltip, styles[`tooltip-${align}`])} style={{ left: point.x, top: point.y }} aria-hidden="true">

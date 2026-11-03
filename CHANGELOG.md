@@ -20,11 +20,12 @@
 - Added enterprise patterns: AnalyticalCard (KPI header, trend, target and deviation over a chart), KanbanBoard (WIP limits, `canMove` transition rules, drag and drop with a full keyboard alternative) and ProcessFlow (document flow across stages, stacking vertically on phones).
 - Added dashboard infrastructure:
   - `DashboardCard`: a widget frame with standard loading, error (with Retry), empty and no-access states. It shows "Updated … ago" freshness, flags data older than `staleAfter` as out of date, offers a refresh button that keeps content visible, and announces errors.
-  - `ChartContainer`, also available as `DashboardCard chartTools`: switches every chart inside between chart and table, toggles legends, downloads all charts as one CSV (with CSV-injection guarding), and expands to full screen with charts resized to fill it.
+  - `ChartContainer`, also available as `DashboardCard chartTools`: switches every chart inside between chart and table and toggles legends. Its download menu offers a PNG or JPEG image (2× resolution, in the current theme, with title and legends) and one CSV of all the charts (with CSV-injection guarding). Full screen measures the available space, so charts fill it and follow window resizes.
   - `RefreshControl`: a refresh button, freshness text and an auto-refresh interval. Auto-refresh pauses in hidden tabs and is not announced.
   - `DashboardFilterProvider`, `useDashboardFilters` and `DashboardFilterBar`: cross-filtering between widgets and a drill-down path. State can be controlled and kept in the URL, filter tokens are removable, and every change is announced.
 - Charts: `onSelect` (click, Enter or Space) and `selectedCategory` (dims the other categories) on LineChart, BarChart and DonutChart. A `view` prop shows the data table in place of the plot.
 - Added the `formatRelativeTime` and `useNow` hooks.
+- Fixed: the chart gridline and axis tokens now resolve against each theme. They were bright in the dark themes because their `var()` references resolved at `:root`.
 - Added `docs/component-gap-analysis.md`, which compares the library with SAP Fiori/UI5, Ant Design, Mantine, PatternFly, Carbon and Tremor and ranks the remaining gaps.
 
 - Documented every component property and redesigned the API reference, with generated API metadata (`scripts/extract-api.mjs`) and a description check (`scripts/check-api-descriptions.mjs`).

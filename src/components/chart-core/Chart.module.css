@@ -297,3 +297,21 @@
   font-size: var(--eui-font-size-sm);
   text-align: start;
 }
+
+/* Full screen: the figure takes its share of the container, and the plot takes whatever the legend
+ * and caption leave. The SVG is positioned out of flow so the layout, not the drawing, decides the
+ * size and the chart can shrink again when the window does. */
+.fill {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.fill .plot {
+  flex: 1 1 auto;
+}
+
+.fill .plot svg {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+}

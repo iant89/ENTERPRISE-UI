@@ -41,9 +41,9 @@ export const docs: ComponentDoc[] = [
 
   {
     slug: 'chart-container', name: 'ChartContainer', category: 'Charts', components: ['ChartContainer'],
-    summary: 'A toolbar frame for charts: chart or table view, legend, CSV download and full screen.',
+    summary: 'A toolbar frame for charts: chart or table view, legend, PNG, JPEG and CSV download, and full screen.',
     keyboard: [k('Tab', 'Moves through the toolbar and into the charts'), k('Escape', 'Leaves full screen')],
-    a11y: ['The tools are a labelled `toolbar`; the view switch exposes `aria-pressed` and the legend toggle is a pressed-state button.', 'Table view shows the same data table the charts already provide for screen readers.', 'CSV cells that start like a formula are prefixed so spreadsheets do not run them.', 'Uses the browser Fullscreen API, falling back to an in-page overlay that Escape closes.'],
+    a11y: ['The tools are a labelled `toolbar`; the view switch exposes `aria-pressed` and the legend toggle is a pressed-state button.', 'Table view shows the same data table the charts already provide for screen readers.', 'Downloads are a menu of named items; image formats are disabled in table view, where no plot is drawn.', 'Exported images are not accessible on their own: share the CSV, or add the takeaway as text, wherever an image is used.', 'CSV cells that start like a formula are prefixed so spreadsheets do not run them.', 'Uses the browser Fullscreen API, falling back to an in-page overlay that Escape closes; charts are measured and redrawn to fill the space, also when the window is resized.'],
     related: ['dashboard-card', 'line-chart', 'bar-chart'],
   },
   {

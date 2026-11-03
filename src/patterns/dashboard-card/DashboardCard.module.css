@@ -131,8 +131,18 @@
 }
 
 .fullscreen {
-  overflow: auto;
+  overflow: hidden;
   border-radius: 0;
+}
+
+/* The body takes the height left under the header and footer; charts inside share it. */
+.fullscreen .body {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: var(--eui-space-4);
+  min-height: 0;
+  overflow: auto;
 }
 
 .expanded {

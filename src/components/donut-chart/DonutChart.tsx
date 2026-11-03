@@ -1,5 +1,4 @@
 import { forwardRef, type ReactNode } from 'react';
-import { useChartHeight } from '../chart-core/ChartToolsContext';
 import { ChartFrame, TooltipContent, defaultChartLabels, type ChartBaseProps } from '../chart-core/ChartFrame';
 import { CHART_HUES, formatNumber, seriesColor } from '../chart-core/palette';
 import type { ChartSelectProps } from '../chart-core/types';
@@ -50,7 +49,7 @@ export const DonutChart = forwardRef<HTMLElement, DonutChartProps>(function Donu
   { data, variant = 'donut', centerValue, centerLabel, maxSegments = 6, categoryLabel = 'Category', valueLabel = 'Value', height: heightProp = 220, formatValue = formatNumber, labels: labelOverrides, onSelect, selectedCategory, ...rest },
   ref,
 ) {
-  const height = useChartHeight(heightProp);
+  const baseHeight = heightProp;
   const labels = { ...defaultChartLabels, ...labelOverrides };
   const cap = Math.min(Math.max(maxSegments, 1), CHART_HUES);
   const positive = data.filter((d) => d.value > 0);
@@ -71,19 +70,19 @@ export const DonutChart = forwardRef<HTMLElement, DonutChartProps>(function Donu
   return (
     <ChartFrame
       ref={ref}
-      height={height}
+      height={baseHeight}
       count={segments.length}
       empty={total <= 0}
       legend={segments.map((d, i) => ({ key: `${d.label}-${i}`, label: d.label, color: d.color, value: `${formatValue(d.value)} · ${share(d.value)}` }))}
       table={{ headers: [categoryLabel, valueLabel, '%'], rows: segments.map((d) => [d.label, formatValue(d.value), share(d.value)]) }}
       announce={describe}
       tooltip={(i) => <TooltipContent title={segments[i].label} rows={[{ key: 'v', label: share(segments[i].value), value: formatValue(segments[i].value), color: segments[i].color }]} />}
-      anchor={(i, width) => {
+      anchor={(i, width, height) => {
         const r = (height / 2) * 0.82;
         const a = (angles[i].start + angles[i].end) / 2;
         return { x: width / 2 + r * Math.sin(a), y: height / 2 - r * Math.cos(a) };
       }}
-      plot={(width, active, setActive) => {
+      plot={(width, active, setActive, height) => {
         const cx = width / 2;
         const cy = height / 2;
         const outer = height / 2 - 4;

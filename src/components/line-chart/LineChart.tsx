@@ -1,5 +1,4 @@
 import { forwardRef, type PointerEvent } from 'react';
-import { useChartHeight } from '../chart-core/ChartToolsContext';
 import { ChartFrame, TooltipContent, type ChartBaseProps, type ChartLegendItem } from '../chart-core/ChartFrame';
 import { ReferenceLines, ValueGridY, labelEvery, valueAxisWidth } from '../chart-core/cartesian';
 import { formatNumber, seriesColor, toneColor } from '../chart-core/palette';
@@ -37,7 +36,7 @@ export const LineChart = forwardRef<HTMLElement, LineChartProps>(function LineCh
   { data, categoryKey, categoryLabel, series, area = false, markers = false, directLabels = true, referenceLines = [], yDomain, includeZero = true, height: heightProp = 240, formatValue = formatNumber, onSelect, selectedCategory, ...rest },
   ref,
 ) {
-  const height = useChartHeight(heightProp);
+  const baseHeight = heightProp;
   const categories = data.map((d) => String(d[categoryKey] ?? ''));
   const values = data.flatMap((d) => series.map((s) => valueOf(d, s.key))).filter((v): v is number => v !== null);
   const empty = data.length === 0 || series.length === 0 || values.length === 0;
@@ -52,7 +51,7 @@ export const LineChart = forwardRef<HTMLElement, LineChartProps>(function LineCh
     return v === null ? '–' : formatValue(v);
   };
 
-  const geometry = (width: number) => {
+  const geometry = (width: number, height: number) => {
     const plotHeight = height - M.top - M.bottom;
     const y = linearScale([...values, ...referenceLines.map((r) => r.value)], [M.top + plotHeight, M.top], { includeZero: includeZero || area, domain: yDomain });
     const left = valueAxisWidth(y);
@@ -66,20 +65,20 @@ export const LineChart = forwardRef<HTMLElement, LineChartProps>(function LineCh
   return (
     <ChartFrame
       ref={ref}
-      height={height}
+      height={baseHeight}
       count={data.length}
       empty={empty}
       legend={legend}
       table={{ headers: [categoryLabel ?? categoryKey, ...series.map((s) => s.label)], rows: data.map((d, i) => [categories[i], ...series.map((s) => cell(d, s.key))]) }}
       announce={(i) => `${categories[i]}: ${series.map((s) => `${s.label} ${cell(data[i], s.key)}`).join(', ')}`}
       tooltip={(i) => <TooltipContent title={categories[i]} rows={series.map((s, si) => ({ key: s.key, label: s.label, value: cell(data[i], s.key), color: seriesColor(si, s.color) }))} />}
-      anchor={(i, width) => {
-        const g = geometry(width);
+      anchor={(i, width, height) => {
+        const g = geometry(width, height);
         const ys = series.map((s) => valueOf(data[i], s.key)).filter((v): v is number => v !== null).map(g.y);
         return { x: g.x(i), y: ys.length ? Math.min(...ys) : M.top };
       }}
-      plot={(width, active, setActive) => {
-        const g = geometry(width);
+      plot={(width, active, setActive, height) => {
+        const g = geometry(width, height);
         const bottom = M.top + (height - M.top - M.bottom);
         const base = g.y(Math.max(g.y.domain[0], Math.min(0, g.y.domain[1])));
         const every = labelEvery(categories, g.step || g.plotWidth);

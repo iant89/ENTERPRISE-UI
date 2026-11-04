@@ -19,6 +19,10 @@ export interface CodeWorkspaceProps {
   strips?: ReactNode;
   /** The Explorer (FileTree). */
   explorer: ReactNode;
+  /** The Search activity (C2). */
+  search?: ReactNode;
+  /** Overlays: Quick Open and rename/move feedback (C2). */
+  overlays?: ReactNode;
   editor: ReactNode;
   /** PreviewPane with the iframe; always mounted. */
   preview: ReactNode;
@@ -59,11 +63,11 @@ function DocsPanel({ pinned, onPin }: { pinned: boolean; onPin: (pinned: boolean
   );
 }
 
-function SidebarBody({ activity, explorer, docsPinned, onPin }: { activity: Activity; explorer: ReactNode; docsPinned: boolean; onPin: (p: boolean) => void }) {
+function SidebarBody({ activity, explorer, search, docsPinned, onPin }: { activity: Activity; explorer: ReactNode; search?: ReactNode; docsPinned: boolean; onPin: (p: boolean) => void }) {
   return (
     <div role="tabpanel" id={ACTIVITY_PANEL_ID} aria-labelledby={activityTabId(activity)} className={styles.sidebarBody}>
       {activity === 'explorer' && explorer}
-      {activity === 'search' && <p className={styles.empty}>Search across files arrives in C2.</p>}
+      {activity === 'search' && (search ?? <p className={styles.empty}>Search is unavailable.</p>)}
       {activity === 'components' && <p className={styles.empty}>The component browser arrives in C5.</p>}
       {activity === 'docs' && (docsPinned
         ? <div className={styles.docs}><p className={styles.empty}>Docs is pinned beside the editor.</p><Button size="sm" onMouseDown={keepFocus} onClick={() => onPin(false)}>Unpin Docs</Button></div>
@@ -73,7 +77,7 @@ function SidebarBody({ activity, explorer, docsPinned, onPin }: { activity: Acti
 }
 
 export function CodeWorkspace(props: CodeWorkspaceProps) {
-  const { breakpoint, layout, dispatchLayout: d, menuBar, strips, explorer, editor, preview, tabs, activePath, dirty, onSelectTab, onCloseTab, problems, onGoToProblem, status } = props;
+  const { breakpoint, layout, dispatchLayout: d, menuBar, strips, explorer, search, overlays, editor, preview, tabs, activePath, dirty, onSelectTab, onCloseTab, problems, onGoToProblem, status } = props;
   const [overlay, setOverlay] = useState(false);
   const desktop = breakpoint === 'desktop';
   const tablet = breakpoint === 'tablet';
@@ -141,7 +145,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
                 {mobile && <ActivityTabs value={layout.activity} onChange={onActivity} compact />}
               </div>
             )}
-            <SidebarBody activity={layout.activity} explorer={explorer} docsPinned={docsColumn} onPin={pin} />
+            <SidebarBody activity={layout.activity} explorer={explorer} search={search} docsPinned={docsColumn} onPin={pin} />
           </aside>
         )}
         {desktop && showSidebar && (
@@ -197,6 +201,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
         </div>
       )}
       {!mobile && <StatusBar {...status} />}
+      {overlays}
     </div>
   );
 }

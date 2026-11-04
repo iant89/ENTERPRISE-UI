@@ -19,6 +19,8 @@ export interface VfsChange {
   rewritten: FilePath[];
   unresolved: Unresolved[];
   skipped: FilePath[];
+  /** Rewritten specifiers per file. */
+  counts?: Record<FilePath, number>;
   /** For undo labels: 'Create file', 'Rename folder', 'Move file'… */
   label: string;
 }
@@ -70,7 +72,7 @@ export function rename(files: Files, from: FilePath, to: string): VfsResult {
   const moved = (a: FilePath, b: FilePath) => a.slice(0, a.lastIndexOf('/') + 1) !== b.slice(0, b.lastIndexOf('/') + 1);
   const label = `${moved(from, dest) ? 'Move' : 'Rename'} ${folder ? 'folder' : 'file'}`;
   const out = rewriteImports(files, moves);
-  return change(out.files, label, { moves, rewritten: out.rewritten.filter((p) => ![...moves.values()].includes(p)), unresolved: out.unresolved, skipped: out.skipped });
+  return change(out.files, label, { moves, rewritten: out.rewritten.filter((p) => ![...moves.values()].includes(p)), unresolved: out.unresolved, skipped: out.skipped, counts: out.counts });
 }
 
 /** Moves a file or folder into `toFolder` ('' is the root). */

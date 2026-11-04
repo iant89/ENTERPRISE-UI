@@ -15,6 +15,18 @@ import { pruneRecent, renameRecent, touchRecent } from '../core/vfs/recent';
  */
 export interface Step { project: Project; activePath: FilePath; label: string; before?: FilePath; after?: FilePath; /** Open tabs on that side of the step (C2). */ openTabs?: FilePath[] }
 
+export interface ChangeReport {
+  id: number;
+  verb: 'Renamed' | 'Moved';
+  from: FilePath;
+  to: FilePath;
+  /** Importers whose specifiers were rewritten, with how many. */
+  files: { path: FilePath; count: number }[];
+  unresolved: vfs.VfsChange['unresolved'];
+}
+
+let changeId = 0;
+
 export interface StoreState {
   project: Project;
   activePath: FilePath;
@@ -24,6 +36,8 @@ export interface StoreState {
   openTabs: FilePath[];
   /** Recently opened files, most recent first, capped at 20. Not part of undo. */
   recent: FilePath[];
+  /** The last rename/move and its import rewrites, for the Code workspace feedback strips (C2). */
+  lastChange?: ChangeReport;
   lastEdit?: { path: FilePath; time: number };
 }
 
@@ -41,6 +55,8 @@ export type StoreAction =
   | { type: 'moveTo'; from: FilePath; folder: FilePath }
   | { type: 'closeTab'; path: FilePath }
   | { type: 'setTabs'; paths: FilePath[] }
+  | { type: 'setRecent'; paths: FilePath[] }
+  | { type: 'removeRecent'; path: FilePath }
   | { type: 'undo' }
   | { type: 'redo' };
 
@@ -62,6 +78,24 @@ function record(state: StoreState, project: Project, touched: FilePath, label: s
   const recent = pruneRecent(renameRecent(state.recent, moves ?? new Map()), project.files);
   return { ...state, project, activePath: active, past, future: [], lastEdit, openTabs: tabs, recent };
 }
+
+function withReport(prev: StoreState, r: vfs.VfsResult, from: FilePath, next: StoreState): StoreState {
+  if (!r.ok || next === prev) return next;
+  const lastChange: ChangeReport = {
+    id: ++changeId,
+    verb: r.label.startsWith('Move') ? 'Moved' : 'Renamed',
+    from,
+    to: r.moves.get(from) ?? folderDest(r.moves, from),
+    files: Object.entries(r.counts ?? {}).map(([path, count]) => ({ path, count })).sort((a, b) => (a.path < b.path ? -1 : 1)),
+    unresolved: r.unresolved,
+  };
+  return { ...next, lastChange };
+}
+
+const folderDest = (moves: ReadonlyMap<FilePath, FilePath>, from: FilePath) => {
+  const [a, b] = [...moves][0] ?? [from, from];
+  return b.slice(0, b.length - (a.length - from.length));
+};
 
 /** Applies a VFS change as one labelled undo step (its import rewrites included). Errors throw. */
 function applyVfs(state: StoreState, r: vfs.VfsResult, touched: (c: vfs.VfsChange) => FilePath, active: (c: vfs.VfsChange) => FilePath, before: FilePath): StoreState {
@@ -104,12 +138,14 @@ export function storeReducer(state: StoreState, action: StoreAction): StoreState
     case 'renameFolder': {
       const folder = action.type === 'renameFolder';
       const mapped = (c: vfs.VfsChange) => c.moves.get(state.activePath) ?? state.activePath;
-      return applyVfs(state, vfs.rename(project.files, action.from, action.to), folder ? mapped : (c) => c.moves.get(action.from) ?? action.to, mapped, folder ? state.activePath : action.from);
+      const r = vfs.rename(project.files, action.from, action.to);
+      return withReport(state, r, action.from, applyVfs(state, r, folder ? mapped : (c) => c.moves.get(action.from) ?? action.to, mapped, folder ? state.activePath : action.from));
     }
     case 'moveTo': {
       const mapped = (c: vfs.VfsChange) => c.moves.get(state.activePath) ?? state.activePath;
       const isFile = has(project, action.from);
-      return applyVfs(state, vfs.move(project.files, action.from, action.folder), isFile ? (c) => c.moves.get(action.from)! : mapped, mapped, isFile ? action.from : state.activePath);
+      const r = vfs.move(project.files, action.from, action.folder);
+      return withReport(state, r, action.from, applyVfs(state, r, isFile ? (c) => c.moves.get(action.from)! : mapped, mapped, isFile ? action.from : state.activePath));
     }
     case 'duplicateFile': {
       const r = vfs.duplicate(project.files, action.path);
@@ -131,6 +167,8 @@ export function storeReducer(state: StoreState, action: StoreAction): StoreState
       const next = tabs[i] ?? tabs[i - 1] ?? project.entry;
       return { ...state, openTabs: withTab(tabs, next), activePath: next, lastEdit: undefined };
     }
+    case 'setRecent': return { ...state, recent: pruneRecent(action.paths, project.files).slice(0, 20) };
+    case 'removeRecent': return { ...state, recent: state.recent.filter((p) => p !== action.path) };
     case 'setTabs': return { ...state, openTabs: withTab(action.paths.filter((p) => has(project, p)), state.activePath) };
     case 'setEntry': {
       if (!has(project, action.path) || project.entry === action.path) return state;

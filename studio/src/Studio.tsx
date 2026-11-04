@@ -28,6 +28,9 @@ import { CodeWorkspace } from './app/workspace/CodeWorkspace';
 import { MenuBar, type MenuItems } from './app/workspace/MenuBar';
 import { WorkspaceSwitch } from './app/workspace/WorkspaceSwitch';
 import { useBreakpoint } from './app/workspace/useBreakpoint';
+import { SearchPanel } from './app/workspace/SearchPanel';
+import { QuickOpen } from './app/workspace/QuickOpen';
+import { RewriteFeedback } from './app/workspace/RewriteFeedback';
 import { PreviewPane, type StaleInfo } from './preview/PreviewPane';
 import type { Problem } from './panels/bottom/BottomPanel';
 import {
@@ -163,6 +166,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     if (stored) {
       dispatchLayout({ type: 'load', layout: stored });
       if (stored.openTabs.length) dispatch({ type: 'setTabs', paths: stored.openTabs });
+      if (stored.recent.length) dispatch({ type: 'setRecent', paths: stored.recent });
     }
     // Sweep layouts whose project is gone (C2 follow-up 2).
     void listProjects().then((list) => layoutStore.sweep(list.map((p) => p.id))).catch(() => undefined);
@@ -188,6 +192,12 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   // Open tabs live in the store (they follow renames and undo); the layout persists them.
   const tabs = state.openTabs;
   useEffect(() => { if (layout.openTabs.join('\n') !== tabs.join('\n')) dispatchLayout({ type: 'setTabs', paths: tabs }); }, [tabs, layout.openTabs]);
+  useEffect(() => { if (layout.recent.join('\n') !== state.recent.join('\n')) dispatchLayout({ type: 'setRecent', paths: state.recent }); }, [state.recent, layout.recent]);
+  const [quickOpen, setQuickOpen] = useState(false);
+  const fileList = useMemo(() => Object.keys(project.files).sort(), [project.files]);
+  // Rename/move feedback shows only for changes made after the Code workspace opened.
+  const seenChange = useRef(state.lastChange?.id ?? 0);
+  const freshChange = state.lastChange && state.lastChange.id > seenChange.current ? state.lastChange : undefined;
   // TODO(UX-7, M3-04/M3-09): open `openProjectChannel` only after load resolves, keyed by the loaded
   // `project.id` (never the starter's random id), and re-key it when the id changes (docs example).
 
@@ -211,7 +221,10 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   // Decision 6: the preview is stale while the last build failed (parse error now; C4 wires the compiler).
   const staleMessage = doc.error ?? preview.error;
   const stale: StaleInfo | null = useMemo(() => (staleMessage ? { message: staleMessage, file: entry, line: errorLine(staleMessage) } : null), [staleMessage, entry]);
-  const problems: Problem[] = useMemo(() => (stale ? [{ file: stale.file, line: stale.line, message: stale.message.split('\n')[0], severity: 'error' }] : []), [stale]);
+  const problems: Problem[] = useMemo(() => [
+    ...(stale ? [{ file: stale.file, line: stale.line, message: stale.message.split('\n')[0], severity: 'error' as const }] : []),
+    ...(freshChange?.unresolved ?? []).map((u) => ({ file: u.file, line: u.line ?? null, message: `Import ${u.specifier} could not be updated after the ${freshChange!.verb === 'Moved' ? 'move' : 'rename'} (${u.reason ?? 'unresolved'}).`, severity: 'warning' as const })),
+  ], [stale, freshChange]);
   const wasStale = useRef(false);
   useEffect(() => {
     if (stale && !wasStale.current && workspace === 'code') dispatchLayout({ type: 'setBottomTab', tab: 'problems' });
@@ -326,6 +339,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         return;
       }
       if (event.shiftKey && event.altKey && key === 'f') { event.preventDefault(); void format(); return; }
+      if (workspace === 'code' && mod && !event.shiftKey && key === 'p') { event.preventDefault(); setQuickOpen(true); return; }
       if (workspace === 'code' && mod && !event.shiftKey && (key === 'b' || key === 'j')) {
         event.preventDefault();
         dispatchLayout({ type: 'toggle', panel: key === 'b' ? 'sidebar' : 'bottom' });
@@ -367,7 +381,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   if (workspace === 'code') {
     const menus: MenuItems = {
       Project: [{ id: 'new-page', label: 'New page' }, { id: 'download', label: 'Download project' }],
-      File: [{ id: 'save', label: 'Save', shortcut: 'Ctrl+S' }, { id: 'download-entry', label: 'Download App.tsx' }],
+      File: [{ id: 'quick-open', label: 'Quick Open…', shortcut: 'Ctrl+P' }, { id: 'save', label: 'Save', shortcut: 'Ctrl+S' }, { id: 'download-entry', label: 'Download App.tsx' }],
       Edit: [{ id: 'undo', label: 'Undo', disabled: !state.past.length }, { id: 'redo', label: 'Redo', disabled: !state.future.length }, { id: 'format', label: 'Format code', shortcut: 'Shift+Alt+F' }],
       View: [
         { id: 'toggle-sidebar', label: layout.collapsed.sidebar ? 'Show sidebar' : 'Hide sidebar', shortcut: 'Ctrl+B' },
@@ -381,6 +395,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     const onMenu = (id: string) => {
       switch (id) {
         case 'new-page': commitEntry(STARTER); break;
+        case 'quick-open': setQuickOpen(true); break;
         case 'download': downloadProject(); break;
         case 'download-entry': download(); break;
         case 'save': void persistence.saveNowResult().then((r) => { if (r === 'saved') toast.show({ title: 'Saved', tone: 'success' }); }); break;
@@ -421,8 +436,22 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
           </>
         )}
         explorer={(
-          <FileTree state={state} dispatch={dispatch} loading={!loaded} titleClassName={styles.paneTitle} dirtyPaths={dirty}
+          <FileTree state={state} dispatch={dispatch} loading={!loaded} titleClassName={styles.paneTitle} dirtyPaths={dirty} moveFeedback="strip"
             errorPaths={stale ? [stale.file] : undefined} onOpen={openTabFile} />
+        )}
+        search={<SearchPanel files={project.files} onOpen={(path, line) => goToLine(path, line)} />}
+        overlays={(
+          <>
+            {quickOpen && (
+              <QuickOpen paths={fileList} recent={state.recent} current={activePath}
+                onOpen={(path, line) => { if (line) goToLine(path, line); else openTabFile(path); }}
+                onRemoveRecent={(path) => dispatch({ type: 'removeRecent', path })}
+                onClose={() => setQuickOpen(false)} />
+            )}
+            <RewriteFeedback report={freshChange} onUndo={() => dispatch({ type: 'undo' })}
+              onOpen={(path, line) => goToLine(path, line ?? 1)}
+              onOpenProblems={() => dispatchLayout({ type: 'setBottomTab', tab: 'problems' })} />
+          </>
         )}
         editor={(
           <Suspense fallback={<BusyIndicator active text="Loading code editor" />}>

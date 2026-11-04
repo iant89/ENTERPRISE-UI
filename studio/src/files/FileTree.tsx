@@ -52,6 +52,8 @@ export interface FileTreeProps {
   announce?: (message: string) => void;
   /** Class for the `h2` (Studio's shared pane title style). */
   titleClassName?: string;
+  /** 'strip': the Code workspace shows its own rename/move feedback (C2), so no toasts here. */
+  moveFeedback?: 'toast' | 'strip';
 }
 
 interface EditState {
@@ -78,7 +80,7 @@ const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? o
 type DescribedNode = FileNode & { describedBy?: string };
 const markerId = (id: string, kind: string) => `ft-${id.replace(/[^A-Za-z0-9_-]/g, (c) => `_${c.charCodeAt(0).toString(16)}`)}-${kind}`;
 
-export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, loading, titleId = 'files-title', collapseToggle, collapsed, bodyId = 'files-body', titleClassName, announce: announceProp }: FileTreeProps) {
+export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, loading, titleId = 'files-title', collapseToggle, collapsed, bodyId = 'files-body', titleClassName, announce: announceProp, moveFeedback = 'toast' }: FileTreeProps) {
   const { project, activePath } = state;
   const { files, entry } = project;
   const toast = useToast();
@@ -242,7 +244,9 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, load
     const { rewritten, skipped: stale } = report;
     const name = basename(to);
     const head = verb === 'Moved' ? `Moved ${name} to ${dirname(to) || 'the project root'}.` : `Renamed to ${name}.`;
-    if (stale.length) {
+    if (moveFeedback === 'strip') {
+      announce(head);
+    } else if (stale.length) {
       const shown = stale.slice(0, 3);
       toast.show({
         title: skippedMessage(head, stale),
@@ -264,7 +268,7 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, load
     announceRemovedFolders(files, next.project.files);
     pendingFocus.current = folder ? folderId(to) : to;
     return true;
-  }, [announce, announceRemovedFolders, dispatch, files, onOpen, project, state, toast, undoAction]);
+  }, [announce, announceRemovedFolders, dispatch, files, moveFeedback, onOpen, project, state, toast, undoAction]);
 
   const commitEdit = useCallback((fromBlur = false) => {
     if (!edit) return;

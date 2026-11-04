@@ -124,12 +124,13 @@ localStorage behind the `LayoutStore` interface (`studio/src/app/workspace/layou
 - **Mobile (<768 px):** four full-screen tabs (Files / Code / Preview / Panel, with a dot on Code while anything is unsaved), menus behind ☰, short switch labels.
 
 ### Stubbed until C2–C7
-Search, Quick Open and Recent files UI (logic shipped in C2; UI pending mockups), multi-model editing (C3; one Monaco instance switches files for now), compiler, console logs and preview events (C4; stale is currently driven by parse and preview errors), Components and Docs content (C5), Tests (C6) and Settings (C7).
+Ctrl+Enter "open to the side" in Quick Open (needs a split editor), find-and-replace, multi-model editing (C3; one Monaco instance switches files for now), compiler, console logs and preview events (C4; stale is currently driven by parse and preview errors), Components and Docs content (C5), Tests (C6) and Settings (C7).
 
 ### Shortcuts
 
 | Shortcut | Where | Action |
 |---|---|---|
+| Ctrl/Cmd+P | Code Studio, everywhere including the editor | Quick Open. Overrides the browser's Print. |
 | Ctrl/Cmd+B | Code Studio, everywhere including the editor | Toggle the sidebar. Overrides Monaco's default for this key. |
 | Ctrl/Cmd+J | Code Studio, everywhere including the editor | Toggle the bottom panel. Overrides Monaco's default and the browser's Downloads shortcut (Ctrl+J). |
 | Ctrl/Cmd+S | Studio | Save now |
@@ -159,7 +160,10 @@ Renaming or moving a file or folder rewrites relative specifiers in every import
 Every operation, including its import rewrites, is one undo step labelled "Rename file", "Move folder", "Duplicate file" and so on. Undo and redo restore the files and the open tabs and switch to the file the step touched. Open tabs and the active file follow renames and moves, and deleting an open file closes its tab.
 
 ### Search, Quick Open and Recent files
-The logic ships in `core/vfs/search.ts` (literal or regex, case, whole word, result cap, line/column ranges), `core/vfs/fuzzy.ts` (Quick Open ranking) and the store's `recent` list (most recent first, 20 entries, pruned on delete, following renames). Their UI is waiting for mockups, so the Search activity keeps its placeholder.
+The logic ships in `core/vfs/search.ts` (literal or regex, case, whole word, result cap, line/column ranges), `core/vfs/fuzzy.ts` (Quick Open ranking) and the store's `recent` list (most recent first, 20 entries, pruned on delete, following renames). 
+- **Search activity:** live search (300 ms debounce) with Match case / Whole word / Regex toggles (Alt+C / Alt+W / Alt+R), a Files to include field, and Files to exclude behind the filter toggle (globs: `*`, `**`, `?`, comma-separated). Results are grouped by file with counts, can be collapsed, and open the file at the matching line. The cap is 1,000 results, with a warning strip. An invalid regex shows an inline error. No replace yet.
+- **Quick Open (Ctrl/Cmd+P, or File › Quick Open…):** fuzzy file search. Append `:line` to jump to a line. An empty query shows the 10 most recent files with the current one tagged, and each can be removed. Recent files are saved per project in the layout record.
+- **Rename/move feedback:** in the Code workspace a bottom-right strip says what changed. Success strips list the rewritten importers under *Show changes*, offer *Undo*, and dismiss after 8 s. Imports that could not be updated (unresolved, dynamic, or `@/`/`~/` aliases) show in a warning strip that stays until dismissed, as file:line links. They also appear in Problems as warnings. The Design workspace keeps its toasts.
 
 ### Layout storage
 Layouts stay in localStorage behind `LayoutStore`. A never-saved starter uses only the `eui-studio-layout:__unsaved__` key. On its first save the layout moves to the project's id and the unsaved key is removed. Deleting a project removes its layout, and orphaned layout keys are swept on start.

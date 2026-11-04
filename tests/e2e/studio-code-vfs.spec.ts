@@ -19,6 +19,11 @@ const item = (page: Page, name: RegExp) => files(page).getByRole('treeitem', { n
 const frame = (page: Page) => page.frameLocator('iframe[title="Page preview"]');
 const lines = (page: Page) => page.locator('[data-testid="code-editor"] .view-lines');
 
+async function toCode(page: Page) {
+  await page.getByRole('radio', { name: 'Code Studio' }).click();
+  await expect(page.getByRole('radio', { name: 'Code Studio' })).toHaveAttribute('aria-checked', 'true');
+}
+
 async function newFile(page: Page, name: string, at = /^App\.tsx/) {
   await item(page, at).focus();
   await page.keyboard.press('Alt+N');
@@ -110,4 +115,58 @@ test('reload restores the files and leaves no stray layout keys', async ({ page 
   await expect(item(page, /^Kept\.tsx/)).toBeVisible();
   await expect(page.getByRole('radio', { name: 'Code Studio' })).toHaveAttribute('aria-checked', 'true');
   expect(await keys()).toHaveLength(1);
+});
+
+test('search finds matches across files and opens the line', async ({ page }) => {
+  await openStudio(page);
+  await toCode(page);
+  await newFile(page, 'Hello.tsx');
+  await page.getByRole('tab', { name: 'Search', exact: true }).click();
+  const box = page.getByPlaceholder('Search', { exact: true });
+  await box.fill('export default');
+  await expect(page.getByRole('status').filter({ hasText: /results? in \d+ files?/ })).toBeVisible();
+  await page.getByRole('region', { name: 'Search results' }).getByRole('button', { name: /function Hello\(\)/ }).click();
+  await expect(page.getByText('src › Hello.tsx', { exact: true })).toBeVisible();
+  await expect(page.getByText(/^Ln 3, Col/)).toBeVisible();
+  await page.getByRole('button', { name: 'Use regular expression' }).click();
+  await box.fill('(');
+  await expect(page.getByText(/invalid|unterminated|regular expression/i).first()).toBeVisible();
+  const results = await new AxeBuilder({ page: page as never }).include('[aria-label="Search results"]').analyze();
+  expect(results.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id)).toEqual([]);
+});
+
+test('Quick Open lists recent files and opens a fuzzy match', async ({ page }) => {
+  await openStudio(page);
+  await toCode(page);
+  await newFile(page, 'Orders.tsx');
+  await item(page, /^App\.tsx/).click();
+  await page.keyboard.press('ControlOrMeta+P');
+  const dialog = page.getByRole('dialog', { name: 'Quick Open' });
+  await expect(dialog.getByRole('listbox', { name: 'Recently opened' })).toBeVisible();
+  await page.keyboard.type('ord');
+  await expect(dialog.getByRole('option').first()).toContainText('Orders.tsx');
+  await page.keyboard.press('Enter');
+  await expect(dialog).toBeHidden();
+  await expect(page.getByText('src › Orders.tsx', { exact: true })).toBeVisible();
+});
+
+test('rename shows the import feedback strip with undo', async ({ page }) => {
+  await openStudio(page);
+  await toCode(page);
+  await newFile(page, 'Hello.tsx');
+  await newFile(page, 'Page.tsx');
+  await item(page, /^Page\.tsx/).click();
+  await lines(page).click();
+  await page.keyboard.press('ControlOrMeta+A');
+  await page.keyboard.insertText("import Hello from './Hello';\nexport default function Page() { return <Hello />; }\n");
+  await item(page, /^Hello\.tsx/).focus();
+  await page.keyboard.press('F2');
+  await page.keyboard.type('Greeting');
+  await page.keyboard.press('Enter');
+  await expect(page.getByText('Renamed Hello.tsx to Greeting.tsx')).toBeVisible();
+  const strip = page.getByRole('region', { name: 'File changes' });
+  await strip.getByRole('button', { name: 'Show changes' }).click();
+  await expect(strip.getByRole('link', { name: 'src/Page.tsx' })).toBeVisible();
+  await strip.getByRole('button', { name: 'Undo' }).click();
+  await expect(item(page, /^Hello\.tsx/)).toBeVisible();
 });

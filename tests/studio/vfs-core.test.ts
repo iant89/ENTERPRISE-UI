@@ -135,9 +135,24 @@ describe('rewriteImports', () => {
   it('reports unresolved specifiers in moved files and skipped unparsable importers', () => {
     const files = { 'src/A.tsx': "import x from './missing';\n", 'src/Bad.tsx': 'import {', 'src/B.tsx': '' };
     const r = rewriteImports(files, new Map([['src/A.tsx', 'src/sub/A.tsx']]));
-    expect(r.unresolved).toEqual([{ file: 'src/sub/A.tsx', specifier: './missing' }]);
+    expect(r.unresolved).toEqual([{ file: 'src/sub/A.tsx', specifier: './missing', line: 1, reason: 'unresolved' }]);
     expect(r.files['src/sub/A.tsx']).toBe(files['src/A.tsx']);
     expect(r.skipped).toEqual(['src/Bad.tsx']);
+  });
+});
+
+describe('unsafe imports and counts', () => {
+  it('reports dynamic and alias imports that may point at a moved file, and counts rewrites', () => {
+    const files = {
+      'src/components/OrderTable.tsx': '',
+      'src/App.tsx': "import T from './components/OrderTable';\nimport T2 from './components/OrderTable.tsx';\n",
+      'src/pages/Legacy.tsx': "\n\nconst m = import('../components/' + name);\n",
+      'src/utils/lazy.ts': "const t = import('@/components/OrderTable');\n",
+      'src/other.ts': "const x = import(`./data/${n}`);\n",
+    };
+    const r = rewriteImports(files, new Map([['src/components/OrderTable.tsx', 'src/components/orders/OrderTable.tsx']]));
+    expect(r.counts['src/App.tsx']).toBe(2);
+    expect(r.unresolved.map((u) => [u.file, u.line, u.reason])).toEqual([['src/pages/Legacy.tsx', 3, 'dynamic'], ['src/utils/lazy.ts', 1, 'alias']]);
   });
 });
 

@@ -25,6 +25,8 @@ export interface LayoutState {
   /** Tablet: the bottom panel summary strip is expanded. */
   bottomExpanded: boolean;
   openTabs: string[];
+  /** Recently opened files for Quick Open (C2 decision 7: persisted per project). */
+  recent: string[];
 }
 
 export const ACTIVITIES: readonly Activity[] = ['explorer', 'search', 'components', 'docs'];
@@ -50,6 +52,7 @@ export const DEFAULT_LAYOUT: LayoutState = {
   mobileTab: 'code',
   bottomExpanded: false,
   openTabs: [],
+  recent: [],
 };
 
 export const TABLET_MIN = 768;
@@ -83,7 +86,8 @@ export type LayoutAction =
   | { type: 'openTab'; path: string }
   | { type: 'closeTab'; path: string }
   | { type: 'syncTabs'; paths: readonly string[] }
-  | { type: 'setTabs'; paths: readonly string[] };
+  | { type: 'setTabs'; paths: readonly string[] }
+  | { type: 'setRecent'; paths: readonly string[] };
 
 export function layoutReducer(state: LayoutState, action: LayoutAction): LayoutState {
   switch (action.type) {
@@ -106,6 +110,7 @@ export function layoutReducer(state: LayoutState, action: LayoutAction): LayoutS
     case 'openTab': return state.openTabs.includes(action.path) ? state : { ...state, openTabs: [...state.openTabs, action.path] };
     case 'closeTab': return { ...state, openTabs: state.openTabs.filter((p) => p !== action.path) };
     case 'setTabs': return { ...state, openTabs: [...action.paths] };
+    case 'setRecent': return { ...state, recent: [...action.paths] };
     case 'syncTabs': {
       const keep = state.openTabs.filter((p) => action.paths.includes(p));
       return keep.length === state.openTabs.length ? state : { ...state, openTabs: keep };
@@ -140,6 +145,7 @@ export function parseLayout(raw: unknown): LayoutState {
     mobileTab: pick(r.mobileTab, ['files', 'code', 'preview', 'panel'] as const, d.mobileTab),
     bottomExpanded: bool(r.bottomExpanded, false),
     openTabs: Array.isArray(r.openTabs) ? r.openTabs.filter((p): p is string => typeof p === 'string') : [],
+    recent: Array.isArray(r.recent) ? r.recent.filter((p): p is string => typeof p === 'string').slice(0, 20) : [],
   };
 }
 

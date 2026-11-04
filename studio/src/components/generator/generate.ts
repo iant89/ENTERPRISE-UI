@@ -6,7 +6,7 @@
 import type { FilePath, Project } from '../../model/project';
 import { storeReducer, type StoreAction, type StoreState } from '../../model/store';
 import { caseCollision, checkFilePath, checkFolderPath } from '../../core/vfs/paths';
-import * as library from '@enterprise-ui/react';
+import api from '../../../../docs/generated/api.json';
 import { componentFiles, type ComponentOptions } from './templates';
 
 export const DEFAULT_DESTINATION = 'src/components/';
@@ -16,8 +16,12 @@ const RESERVED = new Set(('break case catch class const continue debugger defaul
   + 'protected public await arguments eval undefined NaN Infinity Object Array String Number Boolean Symbol Function Promise Error Map Set Date '
   + 'Math JSON RegExp React Fragment App').split(' '));
 
-/** Every @enterprise-ui/react export (App, ThemeProvider, Button, …) is reserved so imports never shadow it. */
-const LIBRARY_EXPORTS = new Set(Object.keys(library));
+/**
+ * Every @enterprise-ui/react export (ThemeProvider, Button, …) is reserved so imports never shadow it. Read from
+ * api.json (already in the bundle; non-component exports listed by hand) rather than the library namespace, which would pull the whole library into the
+ * initial chunk; a unit test checks it covers every PascalCase runtime export.
+ */
+const LIBRARY_EXPORTS = new Set([...Object.keys(api.components), ...Object.keys(api.hooks ?? {}), 'ObjectSaveError']);
 
 /** Rejects (never rewrites) destinations outside the project tree. */
 export function destinationError(raw: string): string | undefined {

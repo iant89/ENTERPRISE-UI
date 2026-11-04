@@ -1,5 +1,5 @@
 import { forwardRef, useState, type HTMLAttributes, type ReactNode } from 'react';
-import { AlertTriangle, CheckCircle2, Info, X, XCircle } from 'lucide-react';
+import { DeclineIcon, MessageErrorIcon, MessageInformationIcon, MessageSuccessIcon, Warning2Icon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import type { Tone } from '../../utilities/types';
 import { IconButton } from '../icon-button';
@@ -29,7 +29,7 @@ export interface MessageStripProps extends Omit<HTMLAttributes<HTMLDivElement>, 
   announce?: 'off' | 'polite' | 'assertive';
 }
 
-const ICONS = { neutral: Info, information: Info, success: CheckCircle2, warning: AlertTriangle, error: XCircle } as const;
+const ICONS = { neutral: MessageInformationIcon, information: MessageInformationIcon, success: MessageSuccessIcon, warning: Warning2Icon, error: MessageErrorIcon } as const;
 const PREFIX: Record<Tone, string> = { neutral: '', information: 'Information', success: 'Success', warning: 'Warning', error: 'Error' };
 
 /** Inline message about the current page or section. */
@@ -58,7 +58,7 @@ export const MessageStrip = forwardRef<HTMLDivElement, MessageStripProps>(functi
       {dismissible && (
         <IconButton
           className={styles.close}
-          icon={<X />}
+          icon={<DeclineIcon />}
           label="Dismiss message"
           size="sm"
           neutral

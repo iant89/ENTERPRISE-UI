@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useRef, type ReactNode } from 'react';
-import { Check } from 'lucide-react';
+import { AcceptIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useMergedRefs } from '../../utilities/refs';
 import { Portal } from '../../utilities/Portal';
@@ -71,7 +71,7 @@ export const ListboxPopup = forwardRef<HTMLUListElement, ListboxPopupProps>(func
       >
         {multiple && (
           <span className={styles.check} aria-hidden="true">
-            {selected && <Check />}
+            {selected && <AcceptIcon />}
           </span>
         )}
         {option.icon && (

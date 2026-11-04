@@ -59,3 +59,6 @@
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
+
+/* Icons that point in a reading direction are mirrored in right-to-left layouts. */
+[dir="rtl"] .eui-icon-rtl-flip { transform: scaleX(-1); }

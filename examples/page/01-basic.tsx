@@ -1,5 +1,4 @@
-import { Pencil, Share2 } from 'lucide-react';
-import { Avatar, Button, Card, IconButton, Page, ProgressBar, StatusIndicator } from '@enterprise-ui/react';
+import { Avatar, Button, Card, IconButton, Page, ProgressBar, StatusIndicator, EditIcon, Share2Icon } from '@enterprise-ui/react';
 
 export const title = 'Page layout';
 export const description = 'Breadcrumbs, title with status, subtitle, actions, header content and a toolbar area above the content region.';
@@ -15,8 +14,8 @@ export default function PageBasic() {
       avatar={<Avatar name="Contoso Ltd" shape="square" size="lg" decorative />}
       actions={
         <>
-          <IconButton icon={<Share2 />} label="Share" />
-          <Button icon={<Pencil />} variant="primary">Edit</Button>
+          <IconButton icon={<Share2Icon />} label="Share" />
+          <Button icon={<EditIcon />} variant="primary">Edit</Button>
         </>
       }
       headerContent={<div style={{ maxWidth: 320 }}><ProgressBar label="Annual purchase volume" value={72} formatValue={() => '$720K of $1M'} /></div>}

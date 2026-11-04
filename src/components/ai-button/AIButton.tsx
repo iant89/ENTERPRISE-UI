@@ -1,5 +1,5 @@
 import { forwardRef, type ReactNode } from 'react';
-import { Sparkles } from 'lucide-react';
+import { AiIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { Button, type ButtonProps } from '../button';
 import styles from './AIButton.module.css';
@@ -30,7 +30,7 @@ export const AIButton = forwardRef<HTMLButtonElement, AIButtonProps>(function AI
         ref={ref}
         variant={variant}
         className={cx(styles.button, current?.busy && styles.busy, className)}
-        icon={current?.icon ?? <Sparkles />}
+        icon={current?.icon ?? <AiIcon />}
         iconEnd={current?.endIcon}
         aria-busy={current?.busy || undefined}
         {...rest}

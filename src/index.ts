@@ -12,6 +12,9 @@ export * from './themes';
 export * from './hooks';
 export * from './utilities';
 
+// Icons (SAP icon set)
+export * from './icons';
+
 // Layouts
 export * from './layouts/app-shell';
 export * from './layouts/page';

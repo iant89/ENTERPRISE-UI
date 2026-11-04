@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronRight } from 'lucide-react';
+import { ArrowBottomIcon, ArrowTopIcon, SlimArrowRightIcon, SortIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import type { Tone } from '../../utilities/types';
 import { useControllableState } from '../../hooks/useControllableState';
@@ -291,7 +291,7 @@ export function Table<T>({
             )}
             {columns.map((column) => {
               const sorted = sortState?.columnId === column.id ? sortState.direction : undefined;
-              const SortIcon = sorted === 'ascending' ? ArrowUp : sorted === 'descending' ? ArrowDown : ArrowUpDown;
+              const ColumnSortIcon = sorted === 'ascending' ? ArrowTopIcon : sorted === 'descending' ? ArrowBottomIcon : SortIcon;
               return (
                 <th
                   key={column.id}
@@ -304,7 +304,7 @@ export function Table<T>({
                     <button type="button" className={styles.sortButton} onClick={() => toggleSort(column)}>
                       <span>{column.header}</span>
                       <span className={cx(styles.sortIcon, !sorted && styles.sortIdle)} aria-hidden="true">
-                        <SortIcon />
+                        <ColumnSortIcon />
                       </span>
                     </button>
                   ) : (
@@ -402,7 +402,7 @@ export function Table<T>({
                   })}
                   {onRowClick && (
                     <td className={cx(styles.td, styles.navCell)} aria-hidden="true">
-                      {virtual ? <div className={styles.virtualContent} style={{ height: rowHeight }}><ChevronRight /></div> : <ChevronRight />}
+                      {virtual ? <div className={styles.virtualContent} style={{ height: rowHeight }}><SlimArrowRightIcon /></div> : <SlimArrowRightIcon />}
                     </td>
                   )}
                 </tr>

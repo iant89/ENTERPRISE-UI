@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ClipboardEvent, type HTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
-import { AlertCircle, Copy, Plus, Trash2 } from 'lucide-react';
+import { AddIcon, CopyIcon, DeleteIcon, HighPriorityIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useId } from '../../hooks/useId';
 import { useControllableState } from '../../hooks/useControllableState';
@@ -526,7 +526,7 @@ export function EditableGrid<T extends { id: string }>({
                           title={isDelete ? labels.deleteRow(r + 1) : labels.duplicateRow(r + 1)}
                           onClick={() => (isDelete ? deleteRow(r) : addRow(r, row))}
                         >
-                          {isDelete ? <Trash2 aria-hidden="true" /> : <Copy aria-hidden="true" />}
+                          {isDelete ? <DeleteIcon aria-hidden="true" /> : <CopyIcon aria-hidden="true" />}
                         </button>
                       </td>
                     );
@@ -559,7 +559,7 @@ export function EditableGrid<T extends { id: string }>({
                       ) : (
                         <span className={styles.value}>{column.format ? column.format(value, row) : displayText(column, value)}</span>
                       )}
-                      {shownError && !(editing && focused) && <AlertCircle className={styles.errorIcon} aria-hidden="true" />}
+                      {shownError && !(editing && focused) && <HighPriorityIcon className={styles.errorIcon} aria-hidden="true" />}
                       {shownError && <span className="eui-visually-hidden">, {shownError}</span>}
                     </td>
                   );
@@ -571,14 +571,14 @@ export function EditableGrid<T extends { id: string }>({
       </div>
       <div className={styles.footer}>
         {createRow && !readOnly && (
-          <Button size="sm" variant="tertiary" icon={<Plus />} onClick={() => addRow()}>
+          <Button size="sm" variant="tertiary" icon={<AddIcon />} onClick={() => addRow()}>
             {labels.addRow}
           </Button>
         )}
         <p className={cx(styles.messageBar, focusedError && styles.messageError)} aria-live="polite">
           {focusedError && focusedSlot?.kind === 'data' && (
             <>
-              <AlertCircle aria-hidden="true" />
+              <HighPriorityIcon aria-hidden="true" />
               {labels.location(focus.row + 1, focusedSlot.column.header)}: {focusedError}
             </>
           )}

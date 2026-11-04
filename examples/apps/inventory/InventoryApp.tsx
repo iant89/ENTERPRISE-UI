@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
-import { BarChart3, Boxes, FileText, Home, LifeBuoy, Package, Settings as SettingsIcon, ShoppingCart, Truck, Users } from 'lucide-react';
 import {
   AppShell, ApplicationHeader, Button, DescriptionList, Dialog, List, NavigationGroup, NavigationItem, SearchField, SideNavigation, StatusIndicator,
-  ThemeProvider, ToastProvider, useTheme, useToast, type Density, type ThemePreference,
+  ThemeProvider, ToastProvider, useTheme, useToast, type Density, type ThemePreference, CartIcon, DocumentTextIcon, GroupIcon, HeadsetIcon, HomeIcon, ProductIcon, SapBoxIcon, SettingsIcon, ShippingStatusIcon, VerticalBarChartIcon,
 } from '@enterprise-ui/react';
 import { isPageId, type PageId } from './data';
 import { InventoryProvider, useInventory } from './store';
@@ -75,7 +74,7 @@ function Shell({ fullHeight }: { fullHeight: boolean }) {
         <ApplicationHeader
           productName="Northwind"
           secondaryTitle="Inventory Management"
-          logo={<Boxes color="var(--eui-color-primary)" />}
+          logo={<SapBoxIcon color="var(--eui-color-primary)" />}
           search={
             <SearchField
               aria-label="Search products"
@@ -141,24 +140,24 @@ function Shell({ fullHeight }: { fullHeight: boolean }) {
           footer={
             <>
               <NavigationItem id="settings" label="Settings" icon={<SettingsIcon />} href="#/demo/settings" />
-              <NavigationItem id="help" label="Help" icon={<LifeBuoy />} href="#/demo/help" />
+              <NavigationItem id="help" label="Help" icon={<HeadsetIcon />} href="#/demo/help" />
             </>
           }
         >
-          <NavigationItem id="home" label="Overview" icon={<Home />} href="#/demo/home" />
+          <NavigationItem id="home" label="Overview" icon={<HomeIcon />} href="#/demo/home" />
           <NavigationGroup label="Inventory">
-            <NavigationItem id="catalog" label="Catalog" icon={<Package />}>
+            <NavigationItem id="catalog" label="Catalog" icon={<ProductIcon />}>
               <NavigationItem id="products" label="Products" href="#/demo/products" />
               <NavigationItem id="categories" label="Categories" href="#/demo/categories" />
             </NavigationItem>
-            <NavigationItem id="stock" label="Stock movements" icon={<Truck />} href="#/demo/stock" badge={unreadMovements || undefined} />
+            <NavigationItem id="stock" label="Stock movements" icon={<ShippingStatusIcon />} href="#/demo/stock" badge={unreadMovements || undefined} />
           </NavigationGroup>
           <NavigationGroup label="Purchasing">
-            <NavigationItem id="orders" label="Purchase orders" icon={<ShoppingCart />} href="#/demo/orders" />
-            <NavigationItem id="suppliers" label="Suppliers" icon={<Users />} href="#/demo/suppliers" />
-            <NavigationItem id="invoices" label="Invoices" icon={<FileText />} href="#/demo/invoices" />
+            <NavigationItem id="orders" label="Purchase orders" icon={<CartIcon />} href="#/demo/orders" />
+            <NavigationItem id="suppliers" label="Suppliers" icon={<GroupIcon />} href="#/demo/suppliers" />
+            <NavigationItem id="invoices" label="Invoices" icon={<DocumentTextIcon />} href="#/demo/invoices" />
           </NavigationGroup>
-          <NavigationItem id="reports" label="Reports" icon={<BarChart3 />} href="#/demo/reports" />
+          <NavigationItem id="reports" label="Reports" icon={<VerticalBarChartIcon />} href="#/demo/reports" />
         </SideNavigation>
       }
     >

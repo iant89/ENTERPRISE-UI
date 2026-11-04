@@ -1,6 +1,5 @@
 import { useMemo, useState, type KeyboardEvent } from 'react';
-import { Badge, Button, IconButton, Input } from '@enterprise-ui/react';
-import { BookOpen, ChevronDown, ChevronRight, Code2, Lock, Plus, SquarePlus, Box, Search } from 'lucide-react';
+import { Badge, Button, IconButton, Input, AddIcon, CourseBookIcon, LockedIcon, ProductIcon, SearchIcon, SlimArrowDownIcon, SlimArrowRightIcon, SourceCodeIcon, SysAddIcon } from '@enterprise-ui/react';
 import { cx } from '../../../../src/utilities/cx';
 import { signature } from '../../components/catalog/discover';
 import { CATEGORY_ORDER, LIBRARY_VERSION } from '../../components/catalog/library';
@@ -40,9 +39,9 @@ export function ComponentsPanel({ project, library, onCreate, onDocs, onSource, 
 
   const actions = (item: CatalogItem) => (
     <div role="toolbar" aria-label={`Actions for ${item.name}`} className={styles.actions}>
-      <Button size="sm" variant="tertiary" icon={<BookOpen />} onClick={() => onDocs(item)}>Docs</Button>
-      {item.origin === 'project' && <Button size="sm" variant="tertiary" icon={<Code2 />} onClick={() => onSource(item)}>Source</Button>}
-      <Button size="sm" variant="tertiary" icon={<SquarePlus />} disabled={!canInsert} title={canInsert ? undefined : 'Open a .tsx or .jsx file in the editor to insert'} onClick={() => onInsert(item)}>Insert</Button>
+      <Button size="sm" variant="tertiary" icon={<CourseBookIcon />} onClick={() => onDocs(item)}>Docs</Button>
+      {item.origin === 'project' && <Button size="sm" variant="tertiary" icon={<SourceCodeIcon />} onClick={() => onSource(item)}>Source</Button>}
+      <Button size="sm" variant="tertiary" icon={<SysAddIcon />} disabled={!canInsert} title={canInsert ? undefined : 'Open a .tsx or .jsx file in the editor to insert'} onClick={() => onInsert(item)}>Insert</Button>
     </div>
   );
 
@@ -66,7 +65,7 @@ export function ComponentsPanel({ project, library, onCreate, onDocs, onSource, 
       <div key={item.id} id={optionId(item.id)} role="option" aria-selected={item.id === selected} className={cx(styles.option, item.id === selected && styles.selected)}
         onClick={() => setSelected(item.id)} onDoubleClick={() => onDocs(item)} data-testid="catalog-item">
         <span className={styles.line1}>
-          <Box aria-hidden="true" className={styles.icon} /><span className={styles.name}>{item.name}</span>
+          <ProductIcon aria-hidden="true" className={styles.icon} /><span className={styles.name}>{item.name}</span>
           {item.origin === 'project' && !item.docs && <Badge tone="warning">No docs</Badge>}
           <span className={styles.meta}>{item.origin === 'project' ? base(item.source) : `v${LIBRARY_VERSION}`}</span>
         </span>
@@ -96,10 +95,10 @@ export function ComponentsPanel({ project, library, onCreate, onDocs, onSource, 
     <div className={styles.panel} data-testid="components-panel">
       <div className={styles.head}>
         <h2 className={styles.title}>Components</h2>
-        {onCreate && <IconButton size="sm" variant="tertiary" icon={<Plus />} label="Create component" onClick={onCreate} />}
+        {onCreate && <IconButton size="sm" variant="tertiary" icon={<AddIcon />} label="Create component" onClick={onCreate} />}
       </div>
       <div className={styles.filter}>
-        <Input size="sm" label="Filter by name or prop" hideLabel placeholder="Filter by name or prop" startAdornment={<Search aria-hidden="true" />} value={query} onChange={(e) => setQuery(e.currentTarget.value)} />
+        <Input size="sm" label="Filter by name or prop" hideLabel placeholder="Filter by name or prop" startAdornment={<SearchIcon aria-hidden="true" />} value={query} onChange={(e) => setQuery(e.currentTarget.value)} />
       </div>
       <h3 className={styles.group} id="catalog-project-title">Project <Badge count={project.length} /></h3>
       {project.length === 0
@@ -107,10 +106,10 @@ export function ComponentsPanel({ project, library, onCreate, onDocs, onSource, 
         : shownProject.length ? list('Project components', shownProject) : <p className={styles.empty}>No project components match.</p>}
       <h3 className={styles.group}>
         <button type="button" className={styles.disclosure} aria-expanded={libOpen} aria-controls="catalog-library" onClick={toggleLib}>
-          {libOpen ? <ChevronDown aria-hidden="true" /> : <ChevronRight aria-hidden="true" />}Enterprise UI library
+          {libOpen ? <SlimArrowDownIcon aria-hidden="true" /> : <SlimArrowRightIcon aria-hidden="true" />}Enterprise UI library
         </button>
         <Badge count={library.length} max={99} />
-        <span className={styles.readonly} title={`Read-only · v${LIBRARY_VERSION}`}><Lock aria-hidden="true" /><span className={styles.sr}>Read-only, version {LIBRARY_VERSION}</span></span>
+        <span className={styles.readonly} title={`Read-only · v${LIBRARY_VERSION}`}><LockedIcon aria-hidden="true" /><span className={styles.sr}>Read-only, version {LIBRARY_VERSION}</span></span>
       </h3>
       <div id="catalog-library" hidden={!libOpen}>
         {libOpen && (groups.length ? list('Library components', shownLibrary, groups) : <p className={styles.empty}>No library components match.</p>)}

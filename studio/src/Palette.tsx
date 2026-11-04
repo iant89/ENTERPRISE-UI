@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button, IconButton, SearchField, Text } from '@enterprise-ui/react';
-import { BookOpen, Plus } from 'lucide-react';
+import { Button, IconButton, SearchField, Text, AddIcon, CourseBookIcon } from '@enterprise-ui/react';
 import { catalog, categories } from './model/catalog';
 import { COMPONENT_MIME } from './Canvas';
 import styles from './Studio.module.css';
@@ -35,7 +34,7 @@ export function Palette({ onInsert, onDocs }: PaletteProps) {
                   <Button
                     size="sm"
                     variant="tertiary"
-                    icon={<Plus />}
+                    icon={<AddIcon />}
                     className={styles.paletteItem}
                     draggable
                     title={item.summary}
@@ -46,7 +45,7 @@ export function Palette({ onInsert, onDocs }: PaletteProps) {
                   >
                     {item.name}
                   </Button>
-                  {onDocs && <IconButton size="sm" variant="tertiary" icon={<BookOpen />} label={`${item.name} docs`} className={styles.paletteDocs} onClick={() => onDocs(item.name)} />}
+                  {onDocs && <IconButton size="sm" variant="tertiary" icon={<CourseBookIcon />} label={`${item.name} docs`} className={styles.paletteDocs} onClick={() => onDocs(item.name)} />}
                 </li>
               ))}
             </ul>

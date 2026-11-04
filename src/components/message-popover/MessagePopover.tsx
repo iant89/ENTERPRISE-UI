@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react';
-import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react';
+import { MessageErrorIcon, MessageInformationIcon, MessageSuccessIcon, Warning2Icon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { Button } from '../button';
 import { Popover } from '../popover';
@@ -45,7 +45,7 @@ export interface MessagePopoverProps {
   className?: string;
 }
 
-const ICONS = { error: XCircle, warning: AlertTriangle, information: Info, success: CheckCircle2 } as const;
+const ICONS = { error: MessageErrorIcon, warning: Warning2Icon, information: MessageInformationIcon, success: MessageSuccessIcon } as const;
 const ORDER: MessageType[] = ['error', 'warning', 'information', 'success'];
 
 const defaultLabels: MessagePopoverLabels = {

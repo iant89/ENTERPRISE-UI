@@ -1,6 +1,5 @@
 import { useMemo, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { IconButton, Input } from '@enterprise-ui/react';
-import { ArrowLeft, ArrowRight, Pin, PinOff } from 'lucide-react';
+import { IconButton, Input, ArrowLeftIcon, ArrowRightIcon, PushpinOffIcon, PushpinOnIcon } from '@enterprise-ui/react';
 import { search, type SearchEntry } from './search';
 import styles from './Docs.module.css';
 
@@ -41,10 +40,10 @@ export function DocsPanel({ nav, dispatchNav, index, pinned, onPin, breadcrumb, 
   return (
     <div className={styles.panel} data-testid={pinned ? 'docs-pinned' : 'docs-sidebar'} onKeyDown={onKey}>
       <div className={styles.head}>
-        <IconButton size="sm" variant="tertiary" icon={<ArrowLeft />} label="Back (Alt+Left)" disabled={nav.index <= 0} onClick={() => dispatchNav({ type: 'back' })} />
-        <IconButton size="sm" variant="tertiary" icon={<ArrowRight />} label="Forward (Alt+Right)" disabled={nav.index >= nav.stack.length - 1} onClick={() => dispatchNav({ type: 'forward' })} />
+        <IconButton size="sm" variant="tertiary" icon={<ArrowLeftIcon />} label="Back (Alt+Left)" disabled={nav.index <= 0} onClick={() => dispatchNav({ type: 'back' })} />
+        <IconButton size="sm" variant="tertiary" icon={<ArrowRightIcon />} label="Forward (Alt+Right)" disabled={nav.index >= nav.stack.length - 1} onClick={() => dispatchNav({ type: 'forward' })} />
         <h2 className={styles.headTitle}>Docs</h2>
-        <IconButton size="sm" variant="tertiary" icon={pinned ? <PinOff /> : <Pin />} label={pinned ? 'Unpin Docs' : 'Pin Docs beside the editor'} aria-pressed={pinned} onMouseDown={(e) => e.preventDefault()} onClick={() => onPin(!pinned)} />
+        <IconButton size="sm" variant="tertiary" icon={pinned ? <PushpinOffIcon /> : <PushpinOnIcon />} label={pinned ? 'Unpin Docs' : 'Pin Docs beside the editor'} aria-pressed={pinned} onMouseDown={(e) => e.preventDefault()} onClick={() => onPin(!pinned)} />
       </div>
       <div className={styles.search} role="search">
         <Input size="sm" label="Search docs" hideLabel placeholder="Search docs" value={query} onChange={(e) => setQuery(e.currentTarget.value)} />

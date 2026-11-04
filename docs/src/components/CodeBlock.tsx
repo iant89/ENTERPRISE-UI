@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Check, Copy } from 'lucide-react';
-import { IconButton, cx } from '@enterprise-ui/react';
+import { IconButton, cx, AcceptIcon, CopyIcon } from '@enterprise-ui/react';
 import { highlight } from './highlight';
 import styles from './Docs.module.css';
 
@@ -22,7 +21,7 @@ export function CodeBlock({ code, label = 'Code', language = 'tsx', className }:
         <IconButton
           size="sm"
           neutral
-          icon={copied ? <Check /> : <Copy />}
+          icon={copied ? <AcceptIcon /> : <CopyIcon />}
           label={copied ? 'Copied' : 'Copy code'}
           onClick={async () => {
             try {

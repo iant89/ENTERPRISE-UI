@@ -1,5 +1,5 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { Inbox } from 'lucide-react';
+import { InboxIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import styles from './EmptyState.module.css';
 
@@ -28,7 +28,7 @@ export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(function E
   return (
     <div ref={ref} className={cx(styles.empty, size === 'sm' && styles.sm, className)} {...rest}>
       <div className={styles.illustration} aria-hidden="true">
-        {icon ?? <Inbox />}
+        {icon ?? <InboxIcon />}
       </div>
       <Heading className={styles.title}>{title}</Heading>
       {description && <p className={styles.description}>{description}</p>}

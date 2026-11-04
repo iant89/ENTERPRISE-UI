@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { AlertTriangle, CheckCircle2, Info, X, XCircle } from 'lucide-react';
+import { DeclineIcon, MessageErrorIcon, MessageInformationIcon, MessageSuccessIcon, Warning2Icon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { Portal } from '../../utilities/Portal';
 import { useAnnouncer } from '../../themes/ThemeProvider';
@@ -44,7 +44,7 @@ export interface ToastProviderProps {
   limit?: number;
 }
 
-const ICONS = { neutral: Info, information: Info, success: CheckCircle2, warning: AlertTriangle, error: XCircle } as const;
+const ICONS = { neutral: MessageInformationIcon, information: MessageInformationIcon, success: MessageSuccessIcon, warning: Warning2Icon, error: MessageErrorIcon } as const;
 
 function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: string) => void }) {
   const tone = toast.tone ?? 'neutral';
@@ -95,7 +95,7 @@ function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: s
           </Button>
         )}
       </div>
-      <IconButton className={styles.close} icon={<X />} label="Dismiss notification" size="sm" neutral onClick={() => onDismiss(toast.id)} />
+      <IconButton className={styles.close} icon={<DeclineIcon />} label="Dismiss notification" size="sm" neutral onClick={() => onDismiss(toast.id)} />
     </li>
   );
 }

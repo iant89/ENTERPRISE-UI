@@ -1,6 +1,5 @@
-import { Plus } from 'lucide-react';
 import {
-  Avatar, Badge, Button, Card, Input, MessageStrip, MetricCard, ProgressBar, Spinner, StatusIndicator, Switch, type Tone,
+  Avatar, Badge, Button, Card, Input, MessageStrip, MetricCard, ProgressBar, Spinner, StatusIndicator, Switch, type Tone, AddIcon,
 } from '@enterprise-ui/react';
 import { jsx, type PlaygroundDef } from './components/Playground';
 
@@ -19,16 +18,15 @@ export const playgrounds: Record<string, PlaygroundDef> = {
       { name: 'fullWidth', type: 'boolean', default: false },
     ],
     render: (v) => (
-      <Button variant={v.variant as 'primary'} size={v.size as 'md'} icon={v.icon ? <Plus /> : undefined} loading={!!v.loading} disabled={!!v.disabled} fullWidth={!!v.fullWidth}>
+      <Button variant={v.variant as 'primary'} size={v.size as 'md'} icon={v.icon ? <AddIcon /> : undefined} loading={!!v.loading} disabled={!!v.disabled} fullWidth={!!v.fullWidth}>
         {String(v.label)}
       </Button>
     ),
     code: (v) =>
-      (v.icon ? `import { Plus } from 'lucide-react';\n` : '') +
-      imp('Button') +
+      imp(v.icon ? 'AddIcon, Button' : 'Button') +
       jsx('Button', { variant: v.variant, size: v.size, icon: v.icon ? '__icon__' : undefined, loading: v.loading, disabled: v.disabled, fullWidth: v.fullWidth }, { variant: 'secondary', size: 'md', loading: false, disabled: false, fullWidth: false }, String(v.label)).replace(
         'icon="__icon__"',
-        'icon={<Plus />}',
+        'icon={<AddIcon />}',
       ),
   },
   input: {

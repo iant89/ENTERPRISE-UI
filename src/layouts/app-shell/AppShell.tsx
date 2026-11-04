@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
-import { X } from 'lucide-react';
+import { DeclineIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { breakpoints } from '../../tokens';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
@@ -118,7 +118,7 @@ export function AppShell({
             >
               <div className={styles.drawerHeader}>
                 <span>{drawerTitle}</span>
-                <IconButton icon={<X />} label="Close navigation" neutral onClick={() => setMobileNavOpen(false)} />
+                <IconButton icon={<DeclineIcon />} label="Close navigation" neutral onClick={() => setMobileNavOpen(false)} />
               </div>
               {navigation}
             </div>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { Search } from 'lucide-react';
+import { SearchIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useId } from '../../hooks/useId';
 import { Button } from '../button';
@@ -201,7 +201,7 @@ export function ValueHelpDialog<T>({
             label={labels.search}
             hideLabel={filters.length === 0}
             placeholder={labels.search}
-            startAdornment={<Search aria-hidden="true" />}
+            startAdornment={<SearchIcon aria-hidden="true" />}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => {

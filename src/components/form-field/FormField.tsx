@@ -1,5 +1,5 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react';
+import { MessageErrorIcon, MessageInformationIcon, MessageSuccessIcon, Warning2Icon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import type { ValidationStatus } from '../../utilities/types';
 import { useId } from '../../hooks/useId';
@@ -36,7 +36,7 @@ export interface FormFieldProps extends FieldProps, Omit<HTMLAttributes<HTMLDivE
   children: ReactNode;
 }
 
-const STATUS_ICON = { error: XCircle, warning: AlertTriangle, success: CheckCircle2, information: Info } as const;
+const STATUS_ICON = { error: MessageErrorIcon, warning: Warning2Icon, success: MessageSuccessIcon, information: MessageInformationIcon } as const;
 
 /** Resolves the effective status and message from {@link FieldProps}. */
 export function resolveStatus(status: ValidationStatus | undefined, error: ReactNode, statusMessage: ReactNode) {

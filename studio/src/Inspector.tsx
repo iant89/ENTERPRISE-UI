@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Button, ButtonGroup, Input, NumberInput, Select, Switch, Tab, TabList, TabPanel, Tabs, Text, Title } from '@enterprise-ui/react';
-import { ArrowDown, ArrowUp, BookOpen, Code2, Copy, Trash2 } from 'lucide-react';
+import { Button, ButtonGroup, Input, NumberInput, Select, Switch, Tab, TabList, TabPanel, Tabs, Text, Title, ArrowBottomIcon, ArrowTopIcon, CopyIcon, CourseBookIcon, DeleteIcon, SourceCodeIcon } from '@enterprise-ui/react';
 import type { AttrInput, StudioNode } from './model/jsx';
 import { descriptionFor, propsFor } from './model/catalog';
 import { displayValue, groupInspectorProps, widgetFor, type PropMeta } from './model/inspector';
@@ -32,7 +31,7 @@ function PropField({ prop, node, onSet, onCode }: { prop: PropMeta; node: Studio
       <div className={styles.codeProp}>
         <span className={styles.propName}>{prop.name}</span>
         <code className={styles.propValue}>{expression ? String(value) : attr ? String(value) : prop.type}</code>
-        <Button size="sm" variant="tertiary" icon={<Code2 />} onClick={onCode} aria-label={`Edit ${prop.name} in code`}>Code</Button>
+        <Button size="sm" variant="tertiary" icon={<SourceCodeIcon />} onClick={onCode} aria-label={`Edit ${prop.name} in code`}>Code</Button>
       </div>
     );
   }
@@ -68,12 +67,12 @@ export function Inspector({ node, isRoot, canMoveUp, canMoveDown, onSetAttribute
         <Title level={2} size="sm">{name}</Title>
         {descriptionFor(node.name) && <Text size="sm" tone="secondary">{descriptionFor(node.name).split('\n')[0]}</Text>}
         <ButtonGroup aria-label="Element actions">
-          <Button size="sm" variant="tertiary" icon={<ArrowUp />} disabled={isRoot || !canMoveUp} onClick={() => onAction('up')}>Up</Button>
-          <Button size="sm" variant="tertiary" icon={<ArrowDown />} disabled={isRoot || !canMoveDown} onClick={() => onAction('down')}>Down</Button>
-          <Button size="sm" variant="tertiary" icon={<Copy />} disabled={isRoot} onClick={() => onAction('duplicate')}>Duplicate</Button>
-          <Button size="sm" variant="tertiary" icon={<Trash2 />} disabled={isRoot} onClick={() => onAction('delete')}>Delete</Button>
-          <Button size="sm" variant="tertiary" icon={<Code2 />} onClick={() => onAction('code')}>Code</Button>
-          {onDocs && known.length > 0 && <Button size="sm" variant="tertiary" icon={<BookOpen />} onClick={() => onDocs(node.name)}>Docs</Button>}
+          <Button size="sm" variant="tertiary" icon={<ArrowTopIcon />} disabled={isRoot || !canMoveUp} onClick={() => onAction('up')}>Up</Button>
+          <Button size="sm" variant="tertiary" icon={<ArrowBottomIcon />} disabled={isRoot || !canMoveDown} onClick={() => onAction('down')}>Down</Button>
+          <Button size="sm" variant="tertiary" icon={<CopyIcon />} disabled={isRoot} onClick={() => onAction('duplicate')}>Duplicate</Button>
+          <Button size="sm" variant="tertiary" icon={<DeleteIcon />} disabled={isRoot} onClick={() => onAction('delete')}>Delete</Button>
+          <Button size="sm" variant="tertiary" icon={<SourceCodeIcon />} onClick={() => onAction('code')}>Code</Button>
+          {onDocs && known.length > 0 && <Button size="sm" variant="tertiary" icon={<CourseBookIcon />} onClick={() => onDocs(node.name)}>Docs</Button>}
         </ButtonGroup>
       </div>
       {node.text !== null && (
@@ -103,7 +102,7 @@ export function Inspector({ node, isRoot, canMoveUp, canMoveDown, onSetAttribute
                   <span className={styles.propName}>{p.name}</span>
                   <code className={styles.propValue}>{attr ? (attr.value.kind === 'expression' ? attr.value.text : '…') : p.type}</code>
                   {attr
-                    ? <Button size="sm" variant="tertiary" icon={<Code2 />} onClick={() => onAction('code')} aria-label={`Edit ${p.name} in code`}>Code</Button>
+                    ? <Button size="sm" variant="tertiary" icon={<SourceCodeIcon />} onClick={() => onAction('code')} aria-label={`Edit ${p.name} in code`}>Code</Button>
                     : <Button size="sm" variant="tertiary" onClick={() => onSetAttribute(p.name, { expression: `(${/\(\)/.test(p.type) ? '' : '...args'}) => {}` })} aria-label={`Add ${p.name} handler`}>Add</Button>}
                 </div>
               );

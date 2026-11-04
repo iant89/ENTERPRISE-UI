@@ -1,5 +1,5 @@
 import { forwardRef, useRef, useState, type CSSProperties, type HTMLAttributes, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
-import { GripHorizontal, GripVertical } from 'lucide-react';
+import { HorizontalGripIcon, VerticalGripIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { clamp } from '../../utilities/format';
 import { useControllableState } from '../../hooks/useControllableState';
@@ -72,7 +72,7 @@ export const ResizablePanel = forwardRef<HTMLDivElement, ResizablePanelProps>(fu
     }
   };
 
-  const Grip = horizontal ? GripVertical : GripHorizontal;
+  const Grip = horizontal ? VerticalGripIcon : HorizontalGripIcon;
   return (
     <div ref={ref} className={cx(styles.panel, className)} style={{ ...(horizontal ? { width: value } : { height: value }), ...style } as CSSProperties} {...rest}>
       <div className={styles.content} tabIndex={focusableContent ? 0 : undefined}>

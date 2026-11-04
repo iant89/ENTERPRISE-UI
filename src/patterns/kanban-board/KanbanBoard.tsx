@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type DragEvent, type HTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
-import { GripVertical } from 'lucide-react';
+import { VerticalGripIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useId } from '../../hooks/useId';
 import { useControllableState } from '../../hooks/useControllableState';
@@ -279,7 +279,7 @@ export function KanbanBoard<T extends KanbanItem>({
                         }
                       }}
                     >
-                      <GripVertical aria-hidden="true" />
+                      <VerticalGripIcon aria-hidden="true" />
                     </button>
                     <div className={styles.content}>{renderItem(item)}</div>
                   </li>

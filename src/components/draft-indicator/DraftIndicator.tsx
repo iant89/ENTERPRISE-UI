@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useEffect, useRef, useState, type HTMLAttributes } from 'react';
-import { AlertCircle, Check, CloudUpload, PencilLine } from 'lucide-react';
+import { AcceptIcon, HighPriorityIcon, UploadToCloudIcon, WriteNewIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { formatRelativeTime, useNow } from '../../hooks/useRelativeTime';
 import styles from './DraftIndicator.module.css';
@@ -42,7 +42,7 @@ export const DraftIndicator = forwardRef<HTMLDivElement, DraftIndicatorProps>(fu
 ) {
   const labels = { ...defaultLabels, ...labelOverrides };
   const now = useNow(15_000, status === 'saved' && !!lastSaved);
-  const Icon = status === 'saving' ? CloudUpload : status === 'saved' ? Check : status === 'error' ? AlertCircle : PencilLine;
+  const Icon = status === 'saving' ? UploadToCloudIcon : status === 'saved' ? AcceptIcon : status === 'error' ? HighPriorityIcon : WriteNewIcon;
   const text =
     status === 'saving' ? labels.saving : status === 'saved' ? labels.saved(lastSaved ? formatRelativeTime(lastSaved, now, locale) : null) : status === 'error' ? labels.error : status === 'unsaved' ? labels.unsaved : '';
   return (

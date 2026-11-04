@@ -1,5 +1,5 @@
 import { useState, type KeyboardEvent } from 'react';
-import { CalendarRange, ChevronLeft, ChevronRight } from 'lucide-react';
+import { AppointmentIcon, SlimArrowLeftIcon, SlimArrowRightIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useFormControl, type FieldProps } from '../form-field';
@@ -205,20 +205,20 @@ export function PeriodPicker({
           <span id={`${control.id}-value`} className={cx(styles.value, !selected && styles.placeholder)}>
             {selected ? describe(selected) : labels.placeholder}
           </span>
-          <CalendarRange aria-hidden="true" className={styles.icon} />
+          <AppointmentIcon aria-hidden="true" className={styles.icon} />
         </button>
       }
     >
       <div className={styles.panel}>
         <div className={styles.header}>
           <button type="button" className={styles.nav} aria-label={granularity === 'year' ? labels.previousYears : labels.previousYear} onClick={() => setYear((y) => y - step)}>
-            <ChevronLeft aria-hidden="true" />
+            <SlimArrowLeftIcon aria-hidden="true" />
           </button>
           <span className={styles.year} aria-live="polite">
             {yearTitle}
           </span>
           <button type="button" className={styles.nav} aria-label={granularity === 'year' ? labels.nextYears : labels.nextYear} onClick={() => setYear((y) => y + step)}>
-            <ChevronRight aria-hidden="true" />
+            <SlimArrowRightIcon aria-hidden="true" />
           </button>
         </div>
         <div className={styles.grid} style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }} role="group" aria-label={yearTitle} onKeyDown={onGridKey}>

@@ -1,6 +1,5 @@
 import { useMemo, useState, type FormEvent } from 'react';
-import { Button, Checkbox, Dialog, Input, Select } from '@enterprise-ui/react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { Button, Checkbox, Dialog, Input, Select, SlimArrowDownIcon, SlimArrowRightIcon } from '@enterprise-ui/react';
 import { DEFAULT_OPTIONS, fileNames, type ComponentOptions, type ExportStyle, type Language, type Styling } from './templates';
 import { DEFAULT_DESTINATION, planComponent, type Plan } from './generate';
 import styles from './CreateComponentDialog.module.css';
@@ -80,7 +79,7 @@ export function CreateComponentDialog({ files, destination = DEFAULT_DESTINATION
           <Checkbox label={`Example (${shownName}.example${x})`} checked={opts.example} onChange={(c) => set('example', c)} />
         </fieldset>
         <button type="button" className={styles.disclosure} aria-expanded={advanced} aria-controls="create-component-advanced" onClick={toggleAdvanced}>
-          {advanced ? <ChevronDown aria-hidden="true" /> : <ChevronRight aria-hidden="true" />}Advanced options
+          {advanced ? <SlimArrowDownIcon aria-hidden="true" /> : <SlimArrowRightIcon aria-hidden="true" />}Advanced options
         </button>
         <div id="create-component-advanced" className={styles.advanced} hidden={!advanced}>
           <Select<Language> label="Language" value={opts.language} onChange={(v) => v && set('language', v)}

@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useEffect, useRef, useState, type HTMLAttributes, type PointerEvent, type ReactNode } from 'react';
-import { Eraser, Undo2 } from 'lucide-react';
+import { EraserIcon, UndoIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useId } from '../../hooks/useId';
 import { Button } from '../button';
@@ -206,7 +206,7 @@ export const SignaturePad = forwardRef<HTMLFieldSetElement, SignaturePadProps>(f
           <Button
             size="sm"
             variant="tertiary"
-            icon={<Undo2 />}
+            icon={<UndoIcon />}
             disabled={!strokes.length}
             onClick={() => {
               const next = strokes.slice(0, -1);
@@ -220,7 +220,7 @@ export const SignaturePad = forwardRef<HTMLFieldSetElement, SignaturePadProps>(f
         <Button
           size="sm"
           variant="tertiary"
-          icon={<Eraser />}
+          icon={<EraserIcon />}
           disabled={!signed}
           onClick={() => {
             setStrokes([]);

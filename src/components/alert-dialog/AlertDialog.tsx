@@ -1,5 +1,5 @@
 import { useRef, useState, type ReactNode } from 'react';
-import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react';
+import { MessageErrorIcon, MessageInformationIcon, MessageSuccessIcon, Warning2Icon } from '../../icons';
 import { Button } from '../button';
 import { Dialog } from '../dialog';
 
@@ -28,7 +28,7 @@ export interface AlertDialogProps {
   lang?: string;
 }
 
-const ICONS = { information: Info, success: CheckCircle2, warning: AlertTriangle, error: XCircle } as const;
+const ICONS = { information: MessageInformationIcon, success: MessageSuccessIcon, warning: Warning2Icon, error: MessageErrorIcon } as const;
 
 /**
  * Interrupts the user to confirm an important or destructive action

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
-import { ChartColumn, Download, FileImage, FileSpreadsheet, List, Maximize2, Minimize2, Table2 } from 'lucide-react';
+import { AttachmentPhotoIcon, DownloadIcon, ExcelAttachmentIcon, ExitFullScreenIcon, FullScreenIcon, ListIcon, TableViewIcon, VerticalBarChart2Icon } from '../../icons';
 import { useControllableState } from '../../hooks/useControllableState';
 import type { ChartTable } from '../chart-core/ChartFrame';
 import type { ChartRegistration, ChartToolsContextValue } from '../chart-core/ChartToolsContext';
@@ -202,24 +202,24 @@ export function ChartToolbar({ state, tools, labels }: { state: ChartToolsState;
           size="sm"
           aria-label={labels.toolbar}
           items={[
-            { value: 'chart', label: <ChartColumn aria-hidden="true" />, ariaLabel: labels.chartView },
-            { value: 'table', label: <Table2 aria-hidden="true" />, ariaLabel: labels.tableView },
+            { value: 'chart', label: <VerticalBarChart2Icon aria-hidden="true" />, ariaLabel: labels.chartView },
+            { value: 'table', label: <TableViewIcon aria-hidden="true" />, ariaLabel: labels.tableView },
           ]}
           value={[state.view]}
           onChange={(v) => v[0] && state.setView(v[0] as 'chart' | 'table')}
         />
       )}
       {legend && state.view === 'chart' && (
-        <IconButton icon={<List />} label={labels.legend} size="sm" aria-pressed={state.showLegend} onClick={() => state.setShowLegend(!state.showLegend)} />
+        <IconButton icon={<ListIcon />} label={labels.legend} size="sm" aria-pressed={state.showLegend} onClick={() => state.setShowLegend(!state.showLegend)} />
       )}
       {formats.length > 0 && (
         <DropdownMenu
-          trigger={<IconButton icon={<Download />} label={labels.download} size="sm" disabled={!state.hasData} />}
+          trigger={<IconButton icon={<DownloadIcon />} label={labels.download} size="sm" disabled={!state.hasData} />}
           placement="bottom-end"
           items={formats.map((f) => ({
             id: f,
             label: f === 'png' ? labels.downloadPng : f === 'jpeg' ? labels.downloadJpeg : labels.downloadCsv,
-            icon: f === 'csv' ? <FileSpreadsheet /> : <FileImage />,
+            icon: f === 'csv' ? <ExcelAttachmentIcon /> : <AttachmentPhotoIcon />,
             // Images need the plot, which the table view does not render.
             disabled: f !== 'csv' && state.view === 'table',
           }))}
@@ -228,7 +228,7 @@ export function ChartToolbar({ state, tools, labels }: { state: ChartToolsState;
       )}
       {fullscreen && (
         <IconButton
-          icon={state.fullscreen ? <Minimize2 /> : <Maximize2 />}
+          icon={state.fullscreen ? <ExitFullScreenIcon /> : <FullScreenIcon />}
           label={state.fullscreen ? labels.exitFullscreen : labels.enterFullscreen}
           size="sm"
           onClick={() => void state.toggleFullscreen()}

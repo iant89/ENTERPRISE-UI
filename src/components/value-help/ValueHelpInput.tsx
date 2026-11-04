@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ListFilter } from 'lucide-react';
+import { FilterFieldsIcon } from '../../icons';
 import { useControllableState } from '../../hooks/useControllableState';
 import { Input, type InputProps } from '../input';
 import { Tokenizer } from '../token';
@@ -56,7 +56,7 @@ export function ValueHelpInput<T>({
         }}
         endAdornment={
           <button type="button" className={styles.openButton} aria-label={openLabel ?? title} title={`${openLabel ?? title} (F4)`} disabled={disabled || readOnly} onClick={() => setOpen(true)}>
-            <ListFilter aria-hidden="true" />
+            <FilterFieldsIcon aria-hidden="true" />
           </button>
         }
       />

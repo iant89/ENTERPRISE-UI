@@ -1,7 +1,7 @@
 import { Button, Card, MessageStrip, Page, Stack } from '@enterprise-ui/react';
 import { CodeBlock } from '../components/CodeBlock';
 
-const install = `npm install @enterprise-ui/react lucide-react
+const install = `npm install @enterprise-ui/react
 # peer dependencies
 npm install react react-dom`;
 
@@ -34,9 +34,8 @@ export function Dashboard() {
   );
 }`;
 
-const shell = `import { Home, Package } from 'lucide-react';
-import {
-  AppShell, ApplicationHeader, SideNavigation, NavigationItem, Page, Button,
+const shell = `import {
+  AppShell, HomeIcon, ProductIcon, ApplicationHeader, SideNavigation, NavigationItem, Page, Button,
 } from '@enterprise-ui/react';
 
 export function App() {
@@ -45,8 +44,8 @@ export function App() {
       header={<ApplicationHeader productName="Northwind" user={{ name: 'Ada Lovelace' }} />}
       navigation={
         <SideNavigation activeId="products">
-          <NavigationItem id="home" label="Home" icon={<Home />} href="/" />
-          <NavigationItem id="products" label="Products" icon={<Package />} href="/products" />
+          <NavigationItem id="home" label="Home" icon={<HomeIcon />} href="/" />
+          <NavigationItem id="products" label="Products" icon={<ProductIcon />} href="/products" />
         </SideNavigation>
       }
     >

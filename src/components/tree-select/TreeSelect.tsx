@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { SlimArrowDownIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useFormControl, type FieldProps } from '../form-field';
@@ -111,7 +111,7 @@ export function TreeSelect({
           <span id={`${control.id}-value`} className={styles.value}>
             {display}
           </span>
-          <ChevronDown aria-hidden="true" className={styles.chevron} />
+          <SlimArrowDownIcon aria-hidden="true" className={styles.chevron} />
         </button>
       }
     >

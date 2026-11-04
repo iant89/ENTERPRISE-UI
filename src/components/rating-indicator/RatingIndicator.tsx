@@ -1,6 +1,6 @@
 import { forwardRef, useId, type FieldsetHTMLAttributes } from 'react';
 import { cx } from '../../utilities/cx';
-import { Star } from 'lucide-react';
+import { FavoriteIcon } from '../../icons';
 import { useControllableState } from '../../hooks/useControllableState';
 import styles from './RatingIndicator.module.css';
 export interface RatingIndicatorProps extends Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, 'onChange' | 'defaultValue' | 'children'> {
@@ -32,6 +32,6 @@ export const RatingIndicator = forwardRef<HTMLFieldSetElement, RatingIndicatorPr
   const rating = Number.isFinite(selected) ? Math.max(0, Math.min(count, Math.round(selected))) : 0;
   if (readOnly) return <span className={className} role="img" aria-label={`${label}: ${formatLabel(rating, count)}`}><span aria-hidden="true">{'★'.repeat(rating)}{'☆'.repeat(count - rating)}</span></span>;
   return <fieldset {...rest} ref={ref} className={cx(styles.group, className)} disabled={disabled}><legend className={styles.legend}>{label}</legend><div className={styles.options}>{Array.from({ length: count }, (_, index) => {
-    const score = index + 1; return <label key={score} className={styles.option}><input className={styles.input} type="radio" name={name ?? id} value={score} checked={rating === score} aria-label={formatLabel(score, count)} onChange={() => setSelected(score)} /><Star className={score <= rating ? styles.filled : styles.empty} aria-hidden="true" /></label>;
+    const score = index + 1; return <label key={score} className={styles.option}><input className={styles.input} type="radio" name={name ?? id} value={score} checked={rating === score} aria-label={formatLabel(score, count)} onChange={() => setSelected(score)} /><FavoriteIcon className={score <= rating ? styles.filled : styles.empty} aria-hidden="true" /></label>;
   })}</div></fieldset>;
 });

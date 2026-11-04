@@ -1,5 +1,5 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { AlertTriangle, Check, Circle, Clock, X } from 'lucide-react';
+import { AcceptIcon, DeclineIcon, PendingIcon, StatusInactiveIcon, Warning2Icon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import styles from './ProcessFlow.module.css';
 
@@ -56,7 +56,7 @@ const defaultLabels: ProcessFlowLabels = {
   notStarted: 'Not started',
 };
 
-const ICONS: Record<ProcessFlowStatus, typeof Check> = { done: Check, current: Clock, pending: Circle, warning: AlertTriangle, error: X };
+const ICONS: Record<ProcessFlowStatus, typeof AcceptIcon> = { done: AcceptIcon, current: PendingIcon, pending: StatusInactiveIcon, warning: Warning2Icon, error: DeclineIcon };
 const SEVERITY: ProcessFlowStatus[] = ['error', 'warning', 'current', 'pending', 'done'];
 
 function laneStatus(lane: ProcessFlowLane): ProcessFlowStatus {

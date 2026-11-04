@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { SlimArrowRightIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import type { TableColumn, TableDensity } from '../table';
@@ -155,7 +155,7 @@ export function TreeTable<T>({
                               focusRow(flat.id);
                             }}
                           >
-                            <ChevronRight aria-hidden="true" />
+                            <SlimArrowRightIcon aria-hidden="true" />
                           </button>
                         ) : (
                           <span className={styles.spacer} />

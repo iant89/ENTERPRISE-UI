@@ -1,5 +1,5 @@
 import { useState, type HTMLAttributes, type ReactNode } from 'react';
-import { Bell, HelpCircle, Menu as MenuIcon, PanelLeftClose, PanelLeftOpen, Search, Settings } from 'lucide-react';
+import { BellIcon, CloseCommandFieldIcon, Menu2Icon, OpenCommandFieldIcon, SearchIcon, SettingsIcon, SysHelpIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useAppShell } from '../../layouts/app-shell/AppShellContext';
 import { Avatar } from '../avatar';
@@ -67,7 +67,7 @@ export function ApplicationHeader({
 
   const navToggle = showNavToggle && shell?.hasNavigation && (
     <IconButton
-      icon={shell.isMobile ? <MenuIcon /> : shell.navCollapsed ? <PanelLeftOpen /> : <PanelLeftClose />}
+      icon={shell.isMobile ? <Menu2Icon /> : shell.navCollapsed ? <OpenCommandFieldIcon /> : <CloseCommandFieldIcon />}
       label={shell.isMobile ? 'Open navigation' : shell.navCollapsed ? 'Expand navigation' : 'Collapse navigation'}
       aria-expanded={shell.isMobile ? shell.mobileNavOpen : !shell.navCollapsed}
       aria-controls={shell.isMobile ? undefined : shell.navId}
@@ -84,7 +84,7 @@ export function ApplicationHeader({
     </>
   );
 
-  const bellButton = <IconButton icon={<Bell />} label={notifLabel} neutral hideTitle={!!notifications} onClick={notifications ? undefined : onNotificationsClick} />;
+  const bellButton = <IconButton icon={<BellIcon />} label={notifLabel} neutral hideTitle={!!notifications} onClick={notifications ? undefined : onNotificationsClick} />;
   const bell = (
     <span className={styles.notification}>
       {notifications ? (
@@ -113,18 +113,18 @@ export function ApplicationHeader({
       {search && <div className={styles.search} role="search">{search}</div>}
       <div className={styles.end}>
         {search && (
-          <IconButton className={styles.searchToggle} icon={<Search />} label={searchOpen ? 'Close search' : 'Search'} aria-expanded={searchOpen} neutral onClick={() => setSearchOpen(!searchOpen)} />
+          <IconButton className={styles.searchToggle} icon={<SearchIcon />} label={searchOpen ? 'Close search' : 'Search'} aria-expanded={searchOpen} neutral onClick={() => setSearchOpen(!searchOpen)} />
         )}
         {actions}
         {(notificationCount !== undefined || notifications || onNotificationsClick) && bell}
         {helpItems && helpItems.length > 0 && (
           <span className={styles.hideMobile}>
-            <DropdownMenu placement="bottom-end" items={helpItems} onAction={onHelpAction} trigger={<IconButton icon={<HelpCircle />} label="Help" neutral hideTitle />} />
+            <DropdownMenu placement="bottom-end" items={helpItems} onAction={onHelpAction} trigger={<IconButton icon={<SysHelpIcon />} label="Help" neutral hideTitle />} />
           </span>
         )}
         {onSettingsClick && (
           <span className={styles.hideMobile}>
-            <IconButton icon={<Settings />} label="Settings" neutral onClick={onSettingsClick} />
+            <IconButton icon={<SettingsIcon />} label="Settings" neutral onClick={onSettingsClick} />
           </span>
         )}
         {user && (

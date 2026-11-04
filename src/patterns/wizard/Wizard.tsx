@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Check } from 'lucide-react';
+import { AcceptIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useId } from '../../hooks/useId';
@@ -133,7 +133,7 @@ export function Wizard({ steps, step, defaultStep = 0, onStepChange, onFinish, o
                 onClick={() => goTo(i)}
               >
                 <span className={styles.marker} aria-hidden="true">
-                  {done ? <Check /> : i + 1}
+                  {done ? <AcceptIcon /> : i + 1}
                 </span>
                 <span className={styles.stepLabel}>
                   <span className="eui-visually-hidden">Step {i + 1}:</span>{' '}

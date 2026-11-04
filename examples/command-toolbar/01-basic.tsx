@@ -1,5 +1,4 @@
-import { Copy, Download, Filter, Pencil, Plus, Printer, Trash2, Upload } from 'lucide-react';
-import { CommandToolbar, ResizablePanel, SearchField } from '@enterprise-ui/react';
+import { CommandToolbar, ResizablePanel, SearchField, AddIcon, CopyIcon, DeleteIcon, DownloadIcon, EditIcon, FilterIcon, PrintIcon, UploadIcon } from '@enterprise-ui/react';
 
 export const title = 'Overflowing toolbar';
 export const description = 'Drag the panel edge: actions that no longer fit move into the “More actions” menu, lowest priority first. Arrow keys move between buttons.';
@@ -12,14 +11,14 @@ export default function CommandToolbarBasic() {
         title="Products (24)"
         start={<div style={{ width: 180 }}><SearchField aria-label="Search products" size="sm" /></div>}
         actions={[
-          { id: 'create', label: 'Create', icon: <Plus />, variant: 'primary', priority: 'always' },
-          { id: 'edit', label: 'Edit', icon: <Pencil /> },
-          { id: 'copy', label: 'Copy', icon: <Copy />, priority: 'low' },
-          { id: 'delete', label: 'Delete', icon: <Trash2 />, variant: 'destructive' },
-          { id: 'import', label: 'Import', icon: <Upload />, priority: 'low' },
-          { id: 'export', label: 'Export', icon: <Download />, priority: 'low' },
-          { id: 'print', label: 'Print', icon: <Printer />, iconOnly: true, priority: 'low' },
-          { id: 'filter', label: 'Filter', icon: <Filter />, iconOnly: true },
+          { id: 'create', label: 'Create', icon: <AddIcon />, variant: 'primary', priority: 'always' },
+          { id: 'edit', label: 'Edit', icon: <EditIcon /> },
+          { id: 'copy', label: 'Copy', icon: <CopyIcon />, priority: 'low' },
+          { id: 'delete', label: 'Delete', icon: <DeleteIcon />, variant: 'destructive' },
+          { id: 'import', label: 'Import', icon: <UploadIcon />, priority: 'low' },
+          { id: 'export', label: 'Export', icon: <DownloadIcon />, priority: 'low' },
+          { id: 'print', label: 'Print', icon: <PrintIcon />, iconOnly: true, priority: 'low' },
+          { id: 'filter', label: 'Filter', icon: <FilterIcon />, iconOnly: true },
         ]}
       />
     </ResizablePanel>

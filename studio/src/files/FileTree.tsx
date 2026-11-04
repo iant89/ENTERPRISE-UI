@@ -1,12 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type Dispatch, type DragEvent as ReactDragEvent, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type ReactNode } from 'react';
 import {
   AlertDialog, Badge, Button, Dialog, IconButton, Input, Link, Menu, OverflowMenu, Skeleton, Tooltip, Tree, VisuallyHidden, useAnnouncer, useToast,
-  type MenuEntry,
+  type MenuEntry, AddDocumentIcon, AddFolderIcon, AttachmentTextFileIcon, BrokenLinkIcon, BrowseFolderIcon, CollapseAllIcon, CopyIcon, DeleteIcon, DocumentTextIcon, EditIcon, FavoriteIcon, FolderBlankIcon, HighPriorityIcon, LabIcon, OpenFolderIcon, OutboxIcon, SapBoxIcon, ScreenSplitTwoIcon, SourceCodeIcon,
 } from '@enterprise-ui/react';
-import {
-  ChevronsDownUp, CircleAlert, Copy, FileCode, FileCode2, FileJson, FilePlus, FileText, FileType, FlaskConical, Folder, FolderInput, FolderOpen, FolderPlus,
-  Pencil, Star, Trash2, Unlink, ClipboardCopy, FileOutput, Columns2, Boxes,
-} from 'lucide-react';
 import { basename, dirname, extname, type FilePath } from '../model/project';
 import { storeReducer, type StoreAction, type StoreState } from '../model/store';
 import {
@@ -23,7 +19,7 @@ import styles from './FileTree.module.css';
  */
 
 const ICONS: Record<FileIconName, ReactNode> = {
-  FileCode: <FileCode />, FileCode2: <FileCode2 />, FlaskConical: <FlaskConical />, FileType: <FileType />, FileJson: <FileJson />, FileText: <FileText />,
+  FileCode: <SourceCodeIcon />, FileCode2: <SourceCodeIcon />, FlaskConical: <LabIcon />, FileType: <AttachmentTextFileIcon />, FileJson: <DocumentTextIcon />, FileText: <DocumentTextIcon />,
 };
 const NEW_ID = '__new__';
 const DRAG_TYPE = 'application/x-eui-studio-path';
@@ -113,7 +109,7 @@ export function FileTree({ state, dispatch, onOpen, onOpenToSide, errorPaths, di
   const baseNodes = useMemo(() => buildTreeNodes(files, entry, livePending), [files, entry, livePending]);
   const nodes = useMemo(() => {
     const decorate = (list: FileNode[]): FileNode[] => list.map((n) => {
-      if (n.folder) return { ...n, icon: expanded.includes(n.id) ? <FolderOpen /> : <Folder />, children: decorate(n.children ?? []) };
+      if (n.folder) return { ...n, icon: expanded.includes(n.id) ? <OpenFolderIcon /> : <FolderBlankIcon />, children: decorate(n.children ?? []) };
       const isEntry = n.path === entry;
       const unused = !used.has(n.path);
       const broken = errors.has(n.path);
@@ -121,8 +117,8 @@ export function FileTree({ state, dispatch, onOpen, onOpenToSide, errorPaths, di
       const trailing = (isEntry || unused || broken || unsaved) ? (
         <span className={styles.marker}>
           {isEntry && <Badge id={markerId(n.id, 'entry')} tone="neutral" aria-hidden="true">Entry</Badge>}
-          {unused && <span id={markerId(n.id, 'unused')} title="Not used by the entry page" aria-hidden="true"><Unlink className={styles.unused} /><VisuallyHidden>Not used by the entry page</VisuallyHidden></span>}
-          {broken && <span id={markerId(n.id, 'error')} aria-hidden="true"><CircleAlert className={styles.errorIcon} /><VisuallyHidden>Has an error</VisuallyHidden></span>}
+          {unused && <span id={markerId(n.id, 'unused')} title="Not used by the entry page" aria-hidden="true"><BrokenLinkIcon className={styles.unused} /><VisuallyHidden>Not used by the entry page</VisuallyHidden></span>}
+          {broken && <span id={markerId(n.id, 'error')} aria-hidden="true"><HighPriorityIcon className={styles.errorIcon} /><VisuallyHidden>Has an error</VisuallyHidden></span>}
           {unsaved && <span id={markerId(n.id, 'dirty')} className={styles.dirty} data-dirty="" aria-hidden="true"><VisuallyHidden>Unsaved changes</VisuallyHidden></span>}
         </span>
       ) : undefined;
@@ -373,35 +369,35 @@ export function FileTree({ state, dispatch, onOpen, onOpenToSide, errorPaths, di
     if (!menu) return [];
     if (menu.id === null) {
       return [
-        { id: 'new-file', label: 'New file…', icon: <FilePlus />, shortcut: 'Alt+N' },
-        { id: 'new-folder', label: 'New folder…', icon: <FolderPlus />, shortcut: 'Alt+Shift+N' },
-        { id: 'import', label: 'Import ZIP…', icon: <FolderInput />, disabled: true, description: 'Arrives with project import' },
+        { id: 'new-file', label: 'New file…', icon: <AddDocumentIcon />, shortcut: 'Alt+N' },
+        { id: 'new-folder', label: 'New folder…', icon: <AddFolderIcon />, shortcut: 'Alt+Shift+N' },
+        { id: 'import', label: 'Import ZIP…', icon: <BrowseFolderIcon />, disabled: true, description: 'Arrives with project import' },
       ];
     }
     const blocked = deleteBlocked(menu.id);
-    const del: MenuEntry = { id: 'delete', label: 'Delete', icon: <Trash2 />, shortcut: 'Del', destructive: true, disabled: !!blocked, description: blocked ?? undefined };
+    const del: MenuEntry = { id: 'delete', label: 'Delete', icon: <DeleteIcon />, shortcut: 'Del', destructive: true, disabled: !!blocked, description: blocked ?? undefined };
     if (isFolderId(menu.id)) {
       return [
-        { id: 'new-file', label: 'New file…', icon: <FilePlus /> },
-        { id: 'new-folder', label: 'New folder…', icon: <FolderPlus /> },
-        ...(onCreateComponent ? [{ id: 'create-component', label: 'Create component…', icon: <Boxes /> }] : []),
-        { id: 'rename', label: 'Rename', icon: <Pencil />, shortcut: 'F2' },
-        { id: 'move', label: 'Move to…', icon: <FileOutput /> },
-        { id: 'copy-path', label: 'Copy path', icon: <ClipboardCopy /> },
+        { id: 'new-file', label: 'New file…', icon: <AddDocumentIcon /> },
+        { id: 'new-folder', label: 'New folder…', icon: <AddFolderIcon /> },
+        ...(onCreateComponent ? [{ id: 'create-component', label: 'Create component…', icon: <SapBoxIcon /> }] : []),
+        { id: 'rename', label: 'Rename', icon: <EditIcon />, shortcut: 'F2' },
+        { id: 'move', label: 'Move to…', icon: <OutboxIcon /> },
+        { id: 'copy-path', label: 'Copy path', icon: <CopyIcon /> },
         { type: 'separator' },
         del,
       ];
     }
     const isTsx = extname(menu.id) === '.tsx';
     return [
-      { id: 'open', label: 'Open', icon: <FileCode /> },
-      ...(onOpenToSide ? [{ id: 'open-side', label: 'Open to the side', icon: <Columns2 />, shortcut: 'Ctrl+Enter' }] : []),
-      { id: 'rename', label: 'Rename', icon: <Pencil />, shortcut: 'F2' },
-      { id: 'move', label: 'Move to…', icon: <FileOutput /> },
-      { id: 'duplicate', label: 'Duplicate', icon: <Copy /> },
-      ...(onCreateComponent ? [{ id: 'create-component', label: 'Create component…', icon: <Boxes /> }] : []),
-      { id: 'copy-path', label: 'Copy path', icon: <ClipboardCopy /> },
-      ...(isTsx ? [{ id: 'entry', label: 'Set as entry', icon: <Star />, disabled: menu.id === entry }] : []),
+      { id: 'open', label: 'Open', icon: <SourceCodeIcon /> },
+      ...(onOpenToSide ? [{ id: 'open-side', label: 'Open to the side', icon: <ScreenSplitTwoIcon />, shortcut: 'Ctrl+Enter' }] : []),
+      { id: 'rename', label: 'Rename', icon: <EditIcon />, shortcut: 'F2' },
+      { id: 'move', label: 'Move to…', icon: <OutboxIcon /> },
+      { id: 'duplicate', label: 'Duplicate', icon: <CopyIcon /> },
+      ...(onCreateComponent ? [{ id: 'create-component', label: 'Create component…', icon: <SapBoxIcon /> }] : []),
+      { id: 'copy-path', label: 'Copy path', icon: <CopyIcon /> },
+      ...(isTsx ? [{ id: 'entry', label: 'Set as entry', icon: <FavoriteIcon />, disabled: menu.id === entry }] : []),
       { type: 'separator' },
       del,
     ];
@@ -589,13 +585,13 @@ export function FileTree({ state, dispatch, onOpen, onOpenToSide, errorPaths, di
         </h2>
         <span className={styles.actions}>
           <Tooltip content={fileCount >= 200 ? MESSAGES.files : 'New file (Alt+N)'}>
-            <IconButton size="sm" variant="tertiary" icon={<FilePlus />} label="New file" hideTitle aria-disabled={fileCount >= 200 || undefined} onClick={() => startCreate('file')} />
+            <IconButton size="sm" variant="tertiary" icon={<AddDocumentIcon />} label="New file" hideTitle aria-disabled={fileCount >= 200 || undefined} onClick={() => startCreate('file')} />
           </Tooltip>
           <Tooltip content="New folder (Alt+Shift+N)">
-            <IconButton size="sm" variant="tertiary" icon={<FolderPlus />} label="New folder" hideTitle onClick={() => startCreate('folder')} />
+            <IconButton size="sm" variant="tertiary" icon={<AddFolderIcon />} label="New folder" hideTitle onClick={() => startCreate('folder')} />
           </Tooltip>
           <Tooltip content="Collapse all">
-            <IconButton size="sm" variant="tertiary" icon={<ChevronsDownUp />} label="Collapse all" hideTitle onClick={collapseAll} />
+            <IconButton size="sm" variant="tertiary" icon={<CollapseAllIcon />} label="Collapse all" hideTitle onClick={collapseAll} />
           </Tooltip>
           <OverflowMenu
             label="More file actions"
@@ -760,7 +756,7 @@ function MoveDialog({ id, files, onClose, onMove, announce }: MoveDialogProps) {
   const from = pathOf(id);
   const name = basename(from);
   const folderNodes = useMemo(() => {
-    const strip = (list: FileNode[]): FileNode[] => list.filter((n) => n.folder).map((n) => ({ ...n, icon: <Folder />, children: strip(n.children ?? []) }));
+    const strip = (list: FileNode[]): FileNode[] => list.filter((n) => n.folder).map((n) => ({ ...n, icon: <FolderBlankIcon />, children: strip(n.children ?? []) }));
     return strip(buildTreeNodes(files, ''));
   }, [files]);
   const [target, setTarget] = useState<FilePath>(dirname(from) || 'src');

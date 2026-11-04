@@ -1,6 +1,5 @@
 import { useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { ChevronDown, ChevronUp, PanelBottomClose } from 'lucide-react';
-import { Button, IconButton, Link, SegmentedButton } from '@enterprise-ui/react';
+import { Button, IconButton, Link, SegmentedButton, SlimArrowDownIcon, SlimArrowUpIcon, ToasterDownIcon } from '@enterprise-ui/react';
 import { CONSOLE_CAP, filterConsole, type ConsoleEntry, type ConsoleFilter } from '../../preview/console';
 import { BOTTOM_TABS, type BottomTab } from '../../app/workspace/layout';
 import { ReferencesPanel, type ReferenceSet } from './ReferencesPanel';
@@ -55,7 +54,7 @@ export function BottomPanel({ tab, onTab, problems, onGoTo, onCollapse, summary,
       <section className={styles.bottomSummary} aria-label="Bottom panel">
         <button type="button" className={styles.summaryButton} aria-expanded={false} onClick={() => onExpanded?.(true)}>
           <span className={styles.countBadge}>{problems.length}</span> Problems <span>Console ({consoleEntries.length})</span>
-          <ChevronUp aria-hidden="true" className={styles.summaryChevron} />
+          <SlimArrowUpIcon aria-hidden="true" className={styles.summaryChevron} />
           <span className={styles.srOnly}>Expand bottom panel</span>
         </button>
       </section>
@@ -82,8 +81,8 @@ export function BottomPanel({ tab, onTab, problems, onGoTo, onCollapse, summary,
           ))}
         </div>
         {summary
-          ? <IconButton size="sm" variant="tertiary" icon={<ChevronDown />} label="Collapse to summary" onClick={() => onExpanded?.(false)} />
-          : <IconButton size="sm" variant="tertiary" icon={<PanelBottomClose />} label="Hide bottom panel" onClick={onCollapse} />}
+          ? <IconButton size="sm" variant="tertiary" icon={<SlimArrowDownIcon />} label="Collapse to summary" onClick={() => onExpanded?.(false)} />
+          : <IconButton size="sm" variant="tertiary" icon={<ToasterDownIcon />} label="Hide bottom panel" onClick={onCollapse} />}
       </div>
       <div role="tabpanel" id="bottom-tabpanel" aria-labelledby={`bottom-tab-${tab}`} className={styles.bottomBody} tabIndex={0}>
         {tab === 'references' ? (

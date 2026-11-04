@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useState, type InputHTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
-import { Minus, Plus } from 'lucide-react';
+import { AddIcon, LessIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { clamp } from '../../utilities/format';
 import { useControllableState } from '../../hooks/useControllableState';
@@ -137,7 +137,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
           disabled={control.disabled || readOnly || (min != null && current != null && current <= min)}
           onClick={() => stepBy(-step)}
         >
-          <Minus aria-hidden="true" />
+          <LessIcon aria-hidden="true" />
         </button>
       )}
       <input
@@ -175,7 +175,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
           disabled={control.disabled || readOnly || (max != null && current != null && current >= max)}
           onClick={() => stepBy(step)}
         >
-          <Plus aria-hidden="true" />
+          <AddIcon aria-hidden="true" />
         </button>
       )}
     </div>,

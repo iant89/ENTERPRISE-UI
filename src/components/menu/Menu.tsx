@@ -1,5 +1,5 @@
 import { Children, Fragment, forwardRef, isValidElement, useEffect, useMemo, useRef, useState, type HTMLAttributes, type KeyboardEvent, type MouseEvent, type ReactNode } from 'react';
-import { Check } from 'lucide-react';
+import { AcceptIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { findTypeaheadIndex, getNavigationIndex } from '../../utilities/keyboard';
 import { focusElement } from '../../utilities/focus';
@@ -207,7 +207,7 @@ export const Menu = forwardRef<HTMLDivElement, MenuProps>(function Menu(
           <>
             {(entry.icon || isCheckbox) && (
               <span className={cx(styles.icon, isCheckbox && styles.check)} aria-hidden="true">
-                {isCheckbox ? entry.checked ? <Check /> : null : entry.icon}
+                {isCheckbox ? entry.checked ? <AcceptIcon /> : null : entry.icon}
               </span>
             )}
             <span className={styles.text}>

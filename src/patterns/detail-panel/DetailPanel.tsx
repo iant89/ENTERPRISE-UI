@@ -1,5 +1,5 @@
 import { useRef, type CSSProperties, type ReactNode } from 'react';
-import { X } from 'lucide-react';
+import { DeclineIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { Portal } from '../../utilities/Portal';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
@@ -72,7 +72,7 @@ export function DetailPanel({ open, onClose, title, subtitle, headerActions, foo
         </div>
         <div className={styles.headerActions}>
           {headerActions}
-          <IconButton icon={<X />} label="Close details" neutral onClick={onClose} />
+          <IconButton icon={<DeclineIcon />} label="Close details" neutral onClick={onClose} />
         </div>
       </div>
       <div className={styles.body}>{children}</div>

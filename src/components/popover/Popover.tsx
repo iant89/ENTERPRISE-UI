@@ -1,5 +1,5 @@
 import { useRef, type CSSProperties, type ReactElement, type ReactNode } from 'react';
-import { X } from 'lucide-react';
+import { DeclineIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { cloneTrigger } from '../../utilities/cloneTrigger';
 import { Portal } from '../../utilities/Portal';
@@ -129,7 +129,7 @@ export function Popover({
                   {title}
                 </h2>
                 {(showClose ?? true) && (
-                  <IconButton icon={<X />} label="Close" size="sm" onClick={() => close()} data-eui-popover-close="true" />
+                  <IconButton icon={<DeclineIcon />} label="Close" size="sm" onClick={() => close()} data-eui-popover-close="true" />
                 )}
               </div>
             )}

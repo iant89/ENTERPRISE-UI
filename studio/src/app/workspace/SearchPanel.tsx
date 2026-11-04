@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { Badge, Button, IconButton, MessageStrip, SearchField } from '@enterprise-ui/react';
-import { CaseSensitive, ChevronDown, ChevronRight, ChevronsDownUp, Filter, Regex, RotateCw, WholeWord, X } from 'lucide-react';
+import { Badge, Button, IconButton, MessageStrip, SearchField, CollapseAllIcon, DeclineIcon, FilterIcon, RestartIcon, SlimArrowDownIcon, SlimArrowRightIcon, SyntaxIcon, TextFormattingIcon, TextIcon } from '@enterprise-ui/react';
 import { cx } from '../../../../src/utilities/cx';
 import { buildMatcher, DEFAULT_MAX_RESULTS, searchFiles, type SearchMatch } from '../../core/vfs/search';
 import { pathFilter } from '../../core/vfs/glob';
@@ -68,21 +67,21 @@ export function SearchPanel({ files, onOpen, debounceMs = 300, maxResults = DEFA
       <div className={styles.docsHead}>
         <h2 className={styles.paneTitle}>Search</h2>
         <span>
-          <IconButton size="sm" variant="tertiary" icon={<RotateCw />} label="Refresh results" onClick={() => setNonce((n) => n + 1)} />
-          <IconButton size="sm" variant="tertiary" icon={<ChevronsDownUp />} label="Collapse all" onClick={() => setCollapsed(new Set(groups.keys()))} />
-          <IconButton size="sm" variant="tertiary" icon={<X />} label="Clear search" onClick={clear} />
+          <IconButton size="sm" variant="tertiary" icon={<RestartIcon />} label="Refresh results" onClick={() => setNonce((n) => n + 1)} />
+          <IconButton size="sm" variant="tertiary" icon={<CollapseAllIcon />} label="Collapse all" onClick={() => setCollapsed(new Set(groups.keys()))} />
+          <IconButton size="sm" variant="tertiary" icon={<DeclineIcon />} label="Clear search" onClick={clear} />
         </span>
       </div>
       <div className={styles.searchFields}>
         <div className={styles.searchRow}>
           <SearchField size="sm" label="Search" hideLabel placeholder="Search" value={query} onChange={setQuery} error={regexError ?? undefined} className={styles.grow} />
-          {toggleBtn('caseSensitive', 'Match case', 'C', <CaseSensitive aria-hidden="true" />)}
-          {toggleBtn('wholeWord', 'Match whole word', 'W', <WholeWord aria-hidden="true" />)}
-          {toggleBtn('regex', 'Use regular expression', 'R', <Regex aria-hidden="true" />)}
+          {toggleBtn('caseSensitive', 'Match case', 'C', <TextFormattingIcon aria-hidden="true" />)}
+          {toggleBtn('wholeWord', 'Match whole word', 'W', <TextIcon aria-hidden="true" />)}
+          {toggleBtn('regex', 'Use regular expression', 'R', <SyntaxIcon aria-hidden="true" />)}
         </div>
         <div className={styles.searchRow}>
           <SearchField size="sm" label="Files to include" hideLabel placeholder="Files to include, e.g. src/**" value={include} onChange={setInclude} className={styles.grow} clearLabel="Clear files to include" />
-          <button type="button" className={cx(styles.toggle, showExclude && styles.toggleOn)} aria-pressed={showExclude} aria-label="Show files to exclude" title="Files to exclude" onClick={() => setShowExclude((s) => !s)}><Filter aria-hidden="true" /></button>
+          <button type="button" className={cx(styles.toggle, showExclude && styles.toggleOn)} aria-pressed={showExclude} aria-label="Show files to exclude" title="Files to exclude" onClick={() => setShowExclude((s) => !s)}><FilterIcon aria-hidden="true" /></button>
         </div>
         {showExclude && <SearchField size="sm" label="Files to exclude" hideLabel placeholder="Files to exclude, e.g. **/*.test.tsx" value={exclude} onChange={setExclude} clearLabel="Clear files to exclude" />}
       </div>
@@ -106,7 +105,7 @@ export function SearchPanel({ files, onOpen, debounceMs = 300, maxResults = DEFA
             <div key={path}>
               <button type="button" className={styles.resultFile} aria-expanded={open} title={path}
                 onClick={() => setCollapsed((c) => { const n = new Set(c); if (n.has(path)) n.delete(path); else n.add(path); return n; })}>
-                {open ? <ChevronDown aria-hidden="true" /> : <ChevronRight aria-hidden="true" />}
+                {open ? <SlimArrowDownIcon aria-hidden="true" /> : <SlimArrowRightIcon aria-hidden="true" />}
                 <strong>{path.slice(slash + 1)}</strong><span className={styles.dim}>{path.slice(0, Math.max(0, slash))}</span>
                 <Badge tone="neutral">{matches.length}</Badge><span className="eui-visually-hidden">{matches.length === 1 ? 'match' : 'matches'}</span>
               </button>

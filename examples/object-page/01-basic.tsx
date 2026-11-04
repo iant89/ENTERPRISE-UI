@@ -1,5 +1,4 @@
-import { Pencil, Printer } from 'lucide-react';
-import { Avatar, Button, Card, IconButton, MetricCard, ObjectPage, StatusIndicator, Table, Timeline } from '@enterprise-ui/react';
+import { Avatar, Button, Card, IconButton, MetricCard, ObjectPage, StatusIndicator, Table, Timeline, EditIcon, PrintIcon } from '@enterprise-ui/react';
 import { currency, products } from '../data';
 
 export const title = 'Purchase order object page';
@@ -18,8 +17,8 @@ export default function ObjectPageBasic() {
         status={<StatusIndicator tone="warning">Awaiting approval</StatusIndicator>}
         actions={
           <>
-            <IconButton icon={<Printer />} label="Print" />
-            <Button icon={<Pencil />}>Edit</Button>
+            <IconButton icon={<PrintIcon />} label="Print" />
+            <Button icon={<EditIcon />}>Edit</Button>
             <Button variant="primary">Approve</Button>
           </>
         }

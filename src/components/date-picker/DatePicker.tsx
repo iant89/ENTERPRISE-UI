@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useRef, useState, type InputHTMLAttributes } from 'react';
-import { CalendarDays } from 'lucide-react';
+import { CalendarIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { parseISODate, toISODate, isOutOfRange } from '../../utilities/date';
 import { focusElement } from '../../utilities/focus';
@@ -151,7 +151,7 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(function
           disabled={!interactive}
           onClick={() => (open ? close() : setOpen(true))}
         >
-          <CalendarDays aria-hidden="true" />
+          <CalendarIcon aria-hidden="true" />
         </button>
       </div>
       {open && (

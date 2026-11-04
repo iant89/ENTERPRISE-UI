@@ -5,9 +5,10 @@ These packages are kept in the repository so they don't need to be installed at 
 | Folder | Package | Version | License | Source |
 | --- | --- | --- | --- | --- |
 | `zxing-library/` | `@zxing/library` | 0.23.0 | Apache-2.0 (`zxing-library/LICENSE`) | https://github.com/zxing-js/library, npm tarball `esm/` build |
+| `sap-icons/` | SAP icon set (SVG export, 704 icons, plus `SAP-icons.json` code point metadata) | Provided by the project owner (2026-11) | Not included in the export; confirm before publishing | Project owner's zip of SAP's icons |
 | `ts-custom-error/` | `ts-custom-error` (runtime dependency of `@zxing/library`) | 3.3.1 | MIT (`ts-custom-error/LICENSE`) | https://github.com/adriengibrat/ts-custom-error, npm tarball `dist/custom-error.mjs` and `custom-error.d.ts` |
 
-Used only by `src/components/barcode-scanner-dialog/barcodeDecoder.ts`. It's loaded with a dynamic `import()`, so it stays a separate lazily loaded chunk that loads when a scan starts. It is the default decoder, and `decoder="native"` opts into the browser `BarcodeDetector` instead.
+`zxing-library` and `ts-custom-error` are used only by `src/components/barcode-scanner-dialog/barcodeDecoder.ts`. It's loaded with a dynamic `import()`, so it stays a separate lazily loaded chunk that loads when a scan starts. It is the default decoder, and `decoder="native"` opts into the browser `BarcodeDetector` instead.
 
 ## Local modifications
 
@@ -30,3 +31,11 @@ sed -i '/sourceMappingURL/d' vendor/ts-custom-error/custom-error.mjs
 ```
 
 Then update the versions in this file and run `npm run check && npm run build && npm run test:consumer`.
+
+## SAP icons
+
+`sap-icons/` is the source for `src/icons/sap-icons.generated.ts`, which the library's icon components are built from. Each SVG is a single 16×16 path with `fill="currentColor"`. To regenerate after replacing the folder's contents:
+
+```sh
+node scripts/generate-sap-icons.mjs vendor/sap-icons
+```

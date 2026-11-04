@@ -1,5 +1,4 @@
-import { RefreshCw } from 'lucide-react';
-import { Button, Card, Dashboard, DashboardWidget, List, MetricCard, ProgressBar, Select, Stack, StatusIndicator } from '@enterprise-ui/react';
+import { Button, Card, Dashboard, DashboardWidget, List, MetricCard, ProgressBar, Select, Stack, StatusIndicator, RefreshIcon } from '@enterprise-ui/react';
 import { currency, orders, orderTone } from '../data';
 
 export const title = 'Sales dashboard';
@@ -15,7 +14,7 @@ export default function DashboardBasic() {
           <div style={{ width: 160 }}>
             <Select aria-label="Period" size="sm" defaultValue="month" options={[{ value: 'week', label: 'This week' }, { value: 'month', label: 'This month' }, { value: 'quarter', label: 'This quarter' }]} />
           </div>
-          <Button size="sm" icon={<RefreshCw />}>Refresh</Button>
+          <Button size="sm" icon={<RefreshIcon />}>Refresh</Button>
         </>
       }
     >

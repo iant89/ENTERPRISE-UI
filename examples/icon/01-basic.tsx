@@ -1,4 +1,3 @@
-import { Bell } from 'lucide-react';
-import { Icon } from '@enterprise-ui/react';
+import { Icon, BellIcon } from '@enterprise-ui/react';
 export const title = 'Named icon';
-export default function Example() { return <Icon label="Notification"><Bell /></Icon>; }
+export default function Example() { return <Icon label="Notification"><BellIcon /></Icon>; }

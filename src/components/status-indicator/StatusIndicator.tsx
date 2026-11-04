@@ -1,5 +1,5 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { AlertTriangle, CheckCircle2, Info, MinusCircle, XCircle } from 'lucide-react';
+import { MessageErrorIcon, MessageInformationIcon, MessageSuccessIcon, SysMinusIcon, Warning2Icon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import type { Tone } from '../../utilities/types';
 import styles from './StatusIndicator.module.css';
@@ -24,12 +24,12 @@ export interface StatusIndicatorProps extends HTMLAttributes<HTMLSpanElement> {
   size?: 'sm' | 'md';
 }
 
-const ICONS: Record<Tone, typeof Info> = {
-  neutral: MinusCircle,
-  information: Info,
-  success: CheckCircle2,
-  warning: AlertTriangle,
-  error: XCircle,
+const ICONS: Record<Tone, typeof MessageInformationIcon> = {
+  neutral: SysMinusIcon,
+  information: MessageInformationIcon,
+  success: MessageSuccessIcon,
+  warning: Warning2Icon,
+  error: MessageErrorIcon,
 };
 
 /** Shows the status of an object (e.g. "Approved", "Overdue") with color, icon and text. */

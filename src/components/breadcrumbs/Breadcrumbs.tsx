@@ -1,5 +1,5 @@
 import { forwardRef, type HTMLAttributes, type MouseEvent } from 'react';
-import { ChevronRight, MoreHorizontal } from 'lucide-react';
+import { OverflowIcon, SlimArrowRightIcon } from '../../icons';
 import { BreadcrumbsItem } from './BreadcrumbsItem';
 import { cx } from '../../utilities/cx';
 import { DropdownMenu } from '../dropdown-menu';
@@ -57,9 +57,9 @@ export const Breadcrumbs = forwardRef<HTMLElement, BreadcrumbsProps>(function Br
             <DropdownMenu
               aria-label={overflowMenuLabel}
               items={hidden.map((item, i) => ({ id: String(i), label: item.label, href: item.href, target: item.target, ariaLabel: item.ariaLabel, onSelect: item.onClick }))}
-              trigger={<IconButton icon={<MoreHorizontal />} label={overflowTriggerLabel(hidden.length)} size="sm" />}
+              trigger={<IconButton icon={<OverflowIcon />} label={overflowTriggerLabel(hidden.length)} size="sm" />}
             />
-            <span className={styles.separator} aria-hidden="true"><ChevronRight /></span>
+            <span className={styles.separator} aria-hidden="true"><SlimArrowRightIcon /></span>
           </li>
         )}
         {tail.map((item, i) => renderItem(item, i === tail.length - 1, head.length + hidden.length + i))}

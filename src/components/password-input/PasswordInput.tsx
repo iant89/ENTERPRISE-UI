@@ -1,6 +1,6 @@
 import { forwardRef, useState, type ChangeEvent } from 'react';
 import { useId } from '../../hooks/useId';
-import { Check, Eye, EyeOff, X } from 'lucide-react';
+import { AcceptIcon, DeclineIcon, HideIcon, ShowIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { Input, type InputProps } from '../input';
 import styles from './PasswordInput.module.css';
@@ -80,7 +80,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(fu
         }}
         endAdornment={
           <button type="button" className={styles.toggle} aria-pressed={visible} aria-label={visible ? labels.hide : labels.show} title={visible ? labels.hide : labels.show} onClick={() => setVisible((v) => !v)}>
-            {visible ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+            {visible ? <HideIcon aria-hidden="true" /> : <ShowIcon aria-hidden="true" />}
           </button>
         }
       />
@@ -102,7 +102,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(fu
             const met = r.test(password);
             return (
               <li key={r.label} className={cx(styles.requirement, met && styles.met)}>
-                {met ? <Check aria-hidden="true" /> : <X aria-hidden="true" />}
+                {met ? <AcceptIcon aria-hidden="true" /> : <DeclineIcon aria-hidden="true" />}
                 <span>{r.label}</span>
                 <span className="eui-visually-hidden">: {met ? labels.met : labels.notMet}</span>
               </li>

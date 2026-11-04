@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Code2, PencilRuler, SquareArrowOutUpRight } from 'lucide-react';
-import { Button, cx } from '@enterprise-ui/react';
+import { Button, cx, ActionIcon, DrawRectangleIcon, SourceCodeIcon } from '@enterprise-ui/react';
 import type { Example } from '../examples';
 import { CodeBlock } from './CodeBlock';
 import { playgroundHref } from '../playgroundLink';
@@ -23,13 +22,13 @@ export function ExampleBlock({ example, headingLevel = 3 }: { example: Example; 
         <example.Component />
       </div>
       <div className={styles.exampleActions}>
-        <Button size="sm" variant="tertiary" icon={<Code2 />} aria-expanded={showCode} aria-controls={codeId} onClick={() => setShowCode(!showCode)}>
+        <Button size="sm" variant="tertiary" icon={<SourceCodeIcon />} aria-expanded={showCode} aria-controls={codeId} onClick={() => setShowCode(!showCode)}>
           {showCode ? 'Hide code' : 'Show code'}
         </Button>
         <Button
           size="sm"
           variant="tertiary"
-          icon={<PencilRuler />}
+          icon={<DrawRectangleIcon />}
           aria-describedby={`${codeId}-title`}
           data-open-studio={example.id}
           onClick={async () => { window.location.href = `studio/${(await playgroundHref(example.code)).replace('#/playground', '#')}`; }}
@@ -39,7 +38,7 @@ export function ExampleBlock({ example, headingLevel = 3 }: { example: Example; 
         <Button
           size="sm"
           variant="secondary"
-          icon={<SquareArrowOutUpRight />}
+          icon={<ActionIcon />}
           aria-describedby={`${codeId}-title`}
           data-open-playground={example.id}
           onClick={async () => { window.location.hash = (await playgroundHref(example.code)).slice(1); }}

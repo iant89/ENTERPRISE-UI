@@ -1,5 +1,5 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { ArrowDownRight, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { ArrowRightIcon, TrendDownIcon, TrendUpIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import type { Tone } from '../../utilities/types';
 import { Skeleton } from '../skeleton';
@@ -69,7 +69,7 @@ export const MetricCard = forwardRef<HTMLElement, MetricCardProps>(function Metr
   ref,
 ) {
   const Heading = `h${headingLevel}` as const;
-  const TrendIcon = trend?.direction === 'up' ? ArrowUpRight : trend?.direction === 'down' ? ArrowDownRight : ArrowRight;
+  const TrendIcon = trend?.direction === 'up' ? TrendUpIcon : trend?.direction === 'down' ? TrendDownIcon : ArrowRightIcon;
   const good = trend && trend.direction !== 'flat' ? (trend.direction === 'up') === (trend.upIsGood ?? true) : null;
   return (
     <article ref={ref} className={cx(styles.card, tone && styles[tone], onClick && styles.interactive, className)} aria-busy={loading || undefined} {...rest}>

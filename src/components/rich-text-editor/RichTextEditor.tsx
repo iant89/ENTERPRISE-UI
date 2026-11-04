@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ClipboardEvent, type KeyboardEvent, type ReactNode } from 'react';
-import { Bold, Italic, Link as LinkIcon, List, ListOrdered, RemoveFormatting, Underline } from 'lucide-react';
+import { BoldTextIcon, ChainLinkIcon, ClearAllIcon, ItalicTextIcon, ListIcon, NumberedTextIcon, UnderlineTextIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useFormControl, type FieldProps } from '../form-field';
 import { richTextToPlain, safeHref, sanitizeRichText } from './sanitize';
@@ -70,11 +70,11 @@ const defaultLabels: RichTextEditorLabels = {
 };
 
 const COMMANDS: { command: Command; icon: ReactNode; key: keyof RichTextEditorLabels; shortcut?: string }[] = [
-  { command: 'bold', icon: <Bold />, key: 'bold', shortcut: 'Control+B' },
-  { command: 'italic', icon: <Italic />, key: 'italic', shortcut: 'Control+I' },
-  { command: 'underline', icon: <Underline />, key: 'underline', shortcut: 'Control+U' },
-  { command: 'insertUnorderedList', icon: <List />, key: 'bulletList' },
-  { command: 'insertOrderedList', icon: <ListOrdered />, key: 'numberedList' },
+  { command: 'bold', icon: <BoldTextIcon />, key: 'bold', shortcut: 'Control+B' },
+  { command: 'italic', icon: <ItalicTextIcon />, key: 'italic', shortcut: 'Control+I' },
+  { command: 'underline', icon: <UnderlineTextIcon />, key: 'underline', shortcut: 'Control+U' },
+  { command: 'insertUnorderedList', icon: <ListIcon />, key: 'bulletList' },
+  { command: 'insertOrderedList', icon: <NumberedTextIcon />, key: 'numberedList' },
 ];
 
 const run = (command: string, arg?: string) => {
@@ -223,10 +223,10 @@ export function RichTextEditor({
           ))}
           <span className={styles.divider} aria-hidden="true" />
           <button type="button" className={styles.tool} aria-label={labels.link} title={`${labels.link} (Ctrl+K)`} aria-keyshortcuts="Control+K" aria-expanded={linkOpen} onMouseDown={(e) => e.preventDefault()} onClick={openLink}>
-            <LinkIcon />
+            <ChainLinkIcon />
           </button>
           <button type="button" className={styles.tool} aria-label={labels.clear} title={labels.clear} onMouseDown={(e) => e.preventDefault()} onClick={() => exec('removeFormat')}>
-            <RemoveFormatting />
+            <ClearAllIcon />
           </button>
         </div>
       )}

@@ -1,5 +1,5 @@
 import { forwardRef, type HTMLAttributes } from 'react';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { CloseCommandFieldIcon, OpenCommandFieldIcon, SlimArrowLeftIcon, SlimArrowRightIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { Button } from '../button';
 import { IconButton } from '../icon-button';
@@ -103,11 +103,11 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagi
         <ul className={styles.list}>
           {showFirstLast && (
             <li>
-              <IconButton icon={<ChevronsLeft />} label={text.firstPage} size="sm" disabled={current === 1} onClick={() => go(1)} />
+              <IconButton icon={<CloseCommandFieldIcon />} label={text.firstPage} size="sm" disabled={current === 1} onClick={() => go(1)} />
             </li>
           )}
           <li>
-            <IconButton icon={<ChevronLeft />} label={text.previousPage} size="sm" disabled={current === 1} onClick={() => go(current - 1)} />
+            <IconButton icon={<SlimArrowLeftIcon />} label={text.previousPage} size="sm" disabled={current === 1} onClick={() => go(current - 1)} />
           </li>
           <li className={styles.pages}>
             {getPageRange(current, pageCount, siblingCount).map((p, i) =>
@@ -134,11 +134,11 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagi
             {text.compactPage(current, pageCount)}
           </li>
           <li>
-            <IconButton icon={<ChevronRight />} label={text.nextPage} size="sm" disabled={current === pageCount} onClick={() => go(current + 1)} />
+            <IconButton icon={<SlimArrowRightIcon />} label={text.nextPage} size="sm" disabled={current === pageCount} onClick={() => go(current + 1)} />
           </li>
           {showFirstLast && (
             <li>
-              <IconButton icon={<ChevronsRight />} label={text.lastPage} size="sm" disabled={current === pageCount} onClick={() => go(pageCount)} />
+              <IconButton icon={<OpenCommandFieldIcon />} label={text.lastPage} size="sm" disabled={current === pageCount} onClick={() => go(pageCount)} />
             </li>
           )}
         </ul>

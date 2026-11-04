@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useRef, type HTMLAttributes, type MouseEvent } from 'react';
-import { XCircle } from 'lucide-react';
+import { MessageErrorIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useMergedRefs } from '../../utilities/refs';
 import { useId } from '../../hooks/useId';
@@ -58,7 +58,7 @@ export const FormErrorSummary = forwardRef<HTMLDivElement, FormErrorSummaryProps
   return (
     <div ref={merged} className={cx(styles.summary, className)} role="alert" aria-labelledby={titleId} tabIndex={-1} {...rest}>
       <Heading id={titleId} className={styles.title}>
-        <XCircle aria-hidden="true" />
+        <MessageErrorIcon aria-hidden="true" />
         {typeof title === 'function' ? title(count) : title}
       </Heading>
       <ul className={styles.list}>

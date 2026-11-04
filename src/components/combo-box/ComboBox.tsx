@@ -1,5 +1,5 @@
 import { forwardRef, useMemo, useRef, useState, type InputHTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
-import { ChevronDown, X } from 'lucide-react';
+import { DeclineIcon, SlimArrowDownIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { getNavigationIndex } from '../../utilities/keyboard';
 import { useMergedRefs } from '../../utilities/refs';
@@ -212,7 +212,7 @@ export const ComboBox = forwardRef<HTMLInputElement, ComboBoxProps>(function Com
               inputRef.current?.focus();
             }}
           >
-            <X aria-hidden="true" />
+            <DeclineIcon aria-hidden="true" />
           </button>
         )}
         <button
@@ -231,7 +231,7 @@ export const ComboBox = forwardRef<HTMLInputElement, ComboBoxProps>(function Com
             inputRef.current?.focus();
           }}
         >
-          <ChevronDown aria-hidden="true" />
+          <SlimArrowDownIcon aria-hidden="true" />
         </button>
       </div>
       {open && (

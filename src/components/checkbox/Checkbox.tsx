@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useRef, type InputHTMLAttributes, type ReactNode } from 'react';
-import { Check, Minus } from 'lucide-react';
+import { AcceptIcon, LessIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useMergedRefs } from '../../utilities/refs';
 import { useId } from '../../hooks/useId';
@@ -62,7 +62,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
             {...rest}
           />
           <span className={styles.mark} aria-hidden="true">
-            {indeterminate ? <Minus /> : isChecked ? <Check /> : null}
+            {indeterminate ? <LessIcon /> : isChecked ? <AcceptIcon /> : null}
           </span>
         </span>
         {(label || description) && (

@@ -1,5 +1,5 @@
 import { forwardRef, useId, useRef, useState, type DragEvent, type HTMLAttributes, type ReactNode } from 'react';
-import { FileText, Trash2 } from 'lucide-react';
+import { DeleteIcon, DocumentTextIcon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { IconButton } from '../icon-button';
 import { ProgressBar } from '../progress-bar';
@@ -91,7 +91,7 @@ export const UploadCollection = forwardRef<HTMLElement, UploadCollectionProps>(f
             const status = item.status ?? 'complete';
             return (
               <li key={item.id} className={styles.item}>
-                <span className={styles.thumb} aria-hidden="true">{item.thumbnail ?? <FileText />}</span>
+                <span className={styles.thumb} aria-hidden="true">{item.thumbnail ?? <DocumentTextIcon />}</span>
                 <div className={styles.details}>
                   {item.href ? <a href={item.href} className={styles.name}>{item.fileName}</a> : <span className={styles.name}>{item.fileName}</span>}
                   <span className={cx(styles.meta, status === 'error' && styles.error)}>
@@ -99,7 +99,7 @@ export const UploadCollection = forwardRef<HTMLElement, UploadCollectionProps>(f
                   </span>
                   {status === 'uploading' && <ProgressBar value={item.progress ?? 0} label={text.progress(item.fileName)} />}
                 </div>
-                {onItemDelete && !item.disableDelete && <IconButton icon={<Trash2 />} label={text.delete(item.fileName)} onClick={() => onItemDelete(item.id)} />}
+                {onItemDelete && !item.disableDelete && <IconButton icon={<DeleteIcon />} label={text.delete(item.fileName)} onClick={() => onItemDelete(item.id)} />}
               </li>
             );
           })}

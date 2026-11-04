@@ -1,10 +1,9 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import {
   ApplicationHeader, BusyIndicator, VisuallyHidden, Button, IconButton, MessageStrip, SegmentedButton, Select, ThemeProvider, THEMES, ToastProvider, useAnnouncer, useToast,
-  type Density, type ThemeName, type ThemePreference,
+  type Density, type ThemeName, type ThemePreference, AddDocumentIcon, AiIcon, CourseBookIcon, DownloadIcon, PushpinOffIcon, PushpinOnIcon, RedoIcon, SapBoxIcon, SlimArrowDownIcon, SlimArrowRightIcon, UndoIcon,
 } from '@enterprise-ui/react';
 import { cx } from '../../src/utilities/cx';
-import { BookOpen, Boxes, ChevronDown, Pin, PinOff, ChevronRight, Download, FilePlus2, Redo2, Sparkles, Undo2 } from 'lucide-react';
 import { useDocsSettings } from '../../docs/src/settings';
 import { decodePlaygroundCode, playgroundCodeParam } from '../../docs/src/playgroundLink';
 import { Canvas, type DropTarget } from './Canvas';
@@ -497,7 +496,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     <IconButton
       size="sm"
       variant="tertiary"
-      icon={collapsed[pane] ? <ChevronRight /> : <ChevronDown />}
+      icon={collapsed[pane] ? <SlimArrowRightIcon /> : <SlimArrowDownIcon />}
       label={`${collapsed[pane] ? 'Expand' : 'Collapse'} ${title}`}
       aria-expanded={!collapsed[pane]}
       aria-controls={`${pane}-body`}
@@ -605,7 +604,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
       <div>
         <div className={styles.docsBottomBar}>
           <span data-testid="component-docs-mode">{bottomDocsPin ? `Pinned · ${bottomPage?.name ?? ''}` : bottomPage ? `Follows cursor · ${bottomPage.name} (${activePath.split('/').pop()}:${cursor.line})` : 'Follows cursor'}</span>
-          {bottomPage && <IconButton size="sm" variant="tertiary" icon={bottomDocsPin ? <PinOff /> : <Pin />} label={bottomDocsPin ? 'Unpin component docs' : 'Pin component docs'} aria-pressed={!!bottomDocsPin}
+          {bottomPage && <IconButton size="sm" variant="tertiary" icon={bottomDocsPin ? <PushpinOffIcon /> : <PushpinOnIcon />} label={bottomDocsPin ? 'Unpin component docs' : 'Pin component docs'} aria-pressed={!!bottomDocsPin}
             onMouseDown={(e) => e.preventDefault()} onClick={() => setBottomDocsPin(bottomDocsPin ? null : bottomPage.id)} />}
         </div>
         {bottomPage ? pageView(bottomPage, true) : <p className={styles.docsBottomEmpty}>Place the cursor on a component in the editor to see its documentation.</p>}
@@ -621,7 +620,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     };
     /** C5 decision 5a: Create component at the end of the tab row. */
     const createComponentButton = (
-      <IconButton size="sm" variant="tertiary" icon={<Boxes />} label="Create component" data-testid="tab-create-component"
+      <IconButton size="sm" variant="tertiary" icon={<SapBoxIcon />} label="Create component" data-testid="tab-create-component"
         onClick={(e) => setCreateDest(destinationFromActive(activePath, project.files), e.currentTarget)} />
     );
     const themeLabel = THEMES.find((t) => t.name === resolved)?.label ?? resolved;
@@ -792,11 +791,11 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         homeHref="./"
         actions={(
           <div className={styles.headerActions}>
-            <IconButton size="sm" variant="tertiary" icon={<Undo2 />} label="Undo" disabled={!state.past.length} onClick={() => dispatch({ type: 'undo' })} />
-            <IconButton size="sm" variant="tertiary" icon={<Redo2 />} label="Redo" disabled={!state.future.length} onClick={() => dispatch({ type: 'redo' })} />
-            <IconButton size="sm" variant="tertiary" icon={<Sparkles />} label="Format code" onClick={() => void format()} />
-            <IconButton size="sm" variant="tertiary" icon={<FilePlus2 />} label="New page" onClick={() => { commitEntry(STARTER); setSelectedId(null); }} />
-            <IconButton size="sm" variant="tertiary" icon={<Download />} label="Download App.tsx" onClick={download} />
+            <IconButton size="sm" variant="tertiary" icon={<UndoIcon />} label="Undo" disabled={!state.past.length} onClick={() => dispatch({ type: 'undo' })} />
+            <IconButton size="sm" variant="tertiary" icon={<RedoIcon />} label="Redo" disabled={!state.future.length} onClick={() => dispatch({ type: 'redo' })} />
+            <IconButton size="sm" variant="tertiary" icon={<AiIcon />} label="Format code" onClick={() => void format()} />
+            <IconButton size="sm" variant="tertiary" icon={<AddDocumentIcon />} label="New page" onClick={() => { commitEntry(STARTER); setSelectedId(null); }} />
+            <IconButton size="sm" variant="tertiary" icon={<DownloadIcon />} label="Download App.tsx" onClick={download} />
             <Select
               size="sm"
               label="Theme"
@@ -805,7 +804,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
               onChange={(v) => v && setTheme(v as ThemePreference)}
               options={[{ value: 'system', label: 'System theme' }, ...THEMES.map((t) => ({ value: t.name, label: t.label }))]}
             />
-            <Button size="sm" variant="tertiary" icon={<BookOpen />} onClick={() => { window.location.href = '../'; }}>Docs</Button>
+            <Button size="sm" variant="tertiary" icon={<CourseBookIcon />} onClick={() => { window.location.href = '../'; }}>Docs</Button>
           </div>
         )}
       />

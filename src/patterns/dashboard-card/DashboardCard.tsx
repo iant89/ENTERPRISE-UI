@@ -1,5 +1,5 @@
 import { forwardRef, useRef, type HTMLAttributes, type ReactNode } from 'react';
-import { AlertTriangle, Clock, Lock, RefreshCw } from 'lucide-react';
+import { LockedIcon, PendingIcon, RefreshIcon, Warning2Icon } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useMergedRefs } from '../../utilities/refs';
 import { useId } from '../../hooks/useId';
@@ -119,10 +119,10 @@ export const DashboardCard = forwardRef<HTMLElement, DashboardCardProps>(functio
   } else if (status === 'error') {
     body = (
       <div className={cx(styles.state, styles.error)} style={{ minHeight: bodyHeight }}>
-        <AlertTriangle aria-hidden="true" className={styles.stateIcon} />
+        <Warning2Icon aria-hidden="true" className={styles.stateIcon} />
         <p className={styles.stateText}>{error ?? labels.error}</p>
         {onRetry && (
-          <Button size="sm" variant="secondary" icon={<RefreshCw />} onClick={onRetry}>
+          <Button size="sm" variant="secondary" icon={<RefreshIcon />} onClick={onRetry}>
             {labels.retry}
           </Button>
         )}
@@ -137,7 +137,7 @@ export const DashboardCard = forwardRef<HTMLElement, DashboardCardProps>(functio
   } else if (status === 'forbidden') {
     body = (
       <div className={styles.state} style={{ minHeight: bodyHeight }}>
-        <Lock aria-hidden="true" className={styles.stateIcon} />
+        <LockedIcon aria-hidden="true" className={styles.stateIcon} />
         {forbiddenContent ?? <p className={styles.stateText}>{labels.forbidden}</p>}
       </div>
     );
@@ -169,7 +169,7 @@ export const DashboardCard = forwardRef<HTMLElement, DashboardCardProps>(functio
               )}
               {stale && (
                 <span className={styles.stale}>
-                  <Clock aria-hidden="true" />
+                  <PendingIcon aria-hidden="true" />
                   {labels.stale}
                 </span>
               )}
@@ -180,7 +180,7 @@ export const DashboardCard = forwardRef<HTMLElement, DashboardCardProps>(functio
           {tools && status === 'ready' && <ChartToolbar state={state} tools={tools} labels={labels} />}
           {onRefresh && (
             <IconButton
-              icon={<RefreshCw className={cx(refreshing && styles.spinning)} />}
+              icon={<RefreshIcon className={cx(refreshing && styles.spinning)} />}
               label={labels.refresh}
               size="sm"
               aria-busy={refreshing || undefined}

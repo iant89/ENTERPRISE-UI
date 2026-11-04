@@ -1,6 +1,6 @@
 import { useEffect, useState, type Dispatch, type ReactNode } from 'react';
 import { Button, IconButton } from '@enterprise-ui/react';
-import { Code2, Columns2, Eye, Files, PanelBottomOpen, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Pin, PinOff, SquareTerminal } from 'lucide-react';
+import { Code2, Columns2, Plus, Eye, Files, PanelBottomOpen, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Pin, PinOff, SquareTerminal } from 'lucide-react';
 import { cx } from '../../../../src/utilities/cx';
 import { ActivityTabs, ACTIVITY_META, ACTIVITY_PANEL_ID, activityTabId } from './ActivityTabs';
 import { EditorTabs } from './EditorTabs';
@@ -49,6 +49,10 @@ export interface CodeWorkspaceProps {
   onClearConsole?: () => void;
   onOpenSource?: (path: string, line: number | null, column: number | null) => void;
   status: StatusBarProps;
+  /** C5: the Components activity header "+" (Create component). */
+  onCreateComponent?: () => void;
+  /** C5 decision 5a: actions at the end of the editor tab row (single-row layouts). */
+  tabActions?: ReactNode;
 }
 
 const MOBILE_TABS: { id: MobileTab; label: string; icon: ReactNode }[] = [
@@ -78,12 +82,20 @@ function DocsPanel({ pinned, onPin }: { pinned: boolean; onPin: (pinned: boolean
   );
 }
 
-function SidebarBody({ activity, explorer, search, docsPinned, onPin }: { activity: Activity; explorer: ReactNode; search?: ReactNode; docsPinned: boolean; onPin: (p: boolean) => void }) {
+function SidebarBody({ activity, explorer, search, docsPinned, onPin, onCreateComponent }: { activity: Activity; explorer: ReactNode; search?: ReactNode; docsPinned: boolean; onPin: (p: boolean) => void; onCreateComponent?: () => void }) {
   return (
     <div role="tabpanel" id={ACTIVITY_PANEL_ID} aria-labelledby={activityTabId(activity)} className={styles.sidebarBody}>
       {activity === 'explorer' && explorer}
       {activity === 'search' && (search ?? <p className={styles.empty}>Search is unavailable.</p>)}
-      {activity === 'components' && <p className={styles.empty}>The component browser arrives in C5.</p>}
+      {activity === 'components' && (
+        <div className={styles.docs} data-testid="components-panel">
+          <div className={styles.docsHead}>
+            <h2 className={styles.paneTitle}>Components</h2>
+            {onCreateComponent && <IconButton size="sm" variant="tertiary" icon={<Plus />} label="Create component" onClick={onCreateComponent} />}
+          </div>
+          <p className={styles.empty}>The component catalog arrives in C6.</p>
+        </div>
+      )}
       {activity === 'docs' && (docsPinned
         ? <div className={styles.docs}><p className={styles.empty}>Docs is pinned beside the editor.</p><Button size="sm" onMouseDown={keepFocus} onClick={() => onPin(false)}>Unpin Docs</Button></div>
         : <DocsPanel pinned={false} onPin={onPin} />)}
@@ -92,7 +104,7 @@ function SidebarBody({ activity, explorer, search, docsPinned, onPin }: { activi
 }
 
 export function CodeWorkspace(props: CodeWorkspaceProps) {
-  const { breakpoint, layout, dispatchLayout: d, menuBar, strips, explorer, search, overlays, editor, groupsEditor, references, onOpenReference, onClearReferences, preview, tabs, activePath, dirty, onSelectTab, onCloseTab, problems, onGoToProblem, consoleEntries, onClearConsole, onOpenSource, status } = props;
+  const { breakpoint, layout, dispatchLayout: d, menuBar, strips, explorer, search, overlays, editor, groupsEditor, references, onOpenReference, onClearReferences, preview, tabs, activePath, dirty, onSelectTab, onCloseTab, problems, onGoToProblem, consoleEntries, onClearConsole, onOpenSource, status, onCreateComponent, tabActions } = props;
   const [overlay, setOverlay] = useState(false);
   const desktop = breakpoint === 'desktop';
   const tablet = breakpoint === 'tablet';
@@ -148,6 +160,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
             <ActivityTabs value={layout.activity} onChange={onActivity} compact />
             {tabletSwitch}
             <EditorTabs tabs={tabs} active={activePath} dirty={dirty} onSelect={onSelectTab} onClose={onCloseTab} maxVisible={3} />
+            {tabActions}
             <span className={styles.breadcrumb}>{activePath.split('/').join(' › ')}</span>
           </div>
         )}
@@ -160,7 +173,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
                 {mobile && <ActivityTabs value={layout.activity} onChange={onActivity} compact />}
               </div>
             )}
-            <SidebarBody activity={layout.activity} explorer={explorer} search={search} docsPinned={docsColumn} onPin={pin} />
+            <SidebarBody activity={layout.activity} explorer={explorer} search={search} docsPinned={docsColumn} onPin={pin} onCreateComponent={onCreateComponent} />
           </aside>
         )}
         {desktop && showSidebar && (
@@ -172,6 +185,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
             <div className={styles.tabRow}>
               {desktop && <IconButton size="sm" variant="tertiary" icon={collapsed.sidebar ? <PanelLeftOpen /> : <PanelLeftClose />} label={collapsed.sidebar ? 'Show sidebar' : 'Hide sidebar'} onClick={() => d({ type: 'toggle', panel: 'sidebar' })} />}
               <EditorTabs tabs={tabs} active={activePath} dirty={dirty} onSelect={onSelectTab} onClose={onCloseTab} maxVisible={mobile ? 2 : undefined} />
+              {tabActions}
               {!mobile && <span className={styles.breadcrumb}>{activePath.split('/').join(' › ')}</span>}
               {desktop && collapsed.preview && <IconButton size="sm" variant="tertiary" icon={<PanelRightOpen />} label="Show preview" onClick={() => d({ type: 'toggle', panel: 'preview', collapsed: false })} />}
             </div>

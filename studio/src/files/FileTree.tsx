@@ -5,7 +5,7 @@ import {
 } from '@enterprise-ui/react';
 import {
   ChevronsDownUp, CircleAlert, Copy, FileCode, FileCode2, FileJson, FilePlus, FileText, FileType, FlaskConical, Folder, FolderInput, FolderOpen, FolderPlus,
-  Pencil, Star, Trash2, Unlink, ClipboardCopy, FileOutput, Columns2,
+  Pencil, Star, Trash2, Unlink, ClipboardCopy, FileOutput, Columns2, Boxes,
 } from 'lucide-react';
 import { basename, dirname, extname, type FilePath } from '../model/project';
 import { storeReducer, type StoreAction, type StoreState } from '../model/store';
@@ -56,6 +56,8 @@ export interface FileTreeProps {
   titleClassName?: string;
   /** 'strip': the Code workspace shows its own rename/move feedback (C2), so no toasts here. */
   moveFeedback?: 'toast' | 'strip';
+  /** C5: "Create component…" in the context menu, with the folder (or a file's folder) as destination. */
+  onCreateComponent?: (folder: FilePath) => void;
 }
 
 interface EditState {
@@ -82,7 +84,7 @@ const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? o
 type DescribedNode = FileNode & { describedBy?: string };
 const markerId = (id: string, kind: string) => `ft-${id.replace(/[^A-Za-z0-9_-]/g, (c) => `_${c.charCodeAt(0).toString(16)}`)}-${kind}`;
 
-export function FileTree({ state, dispatch, onOpen, onOpenToSide, errorPaths, dirtyPaths, loading, titleId = 'files-title', collapseToggle, collapsed, bodyId = 'files-body', titleClassName, announce: announceProp, moveFeedback = 'toast' }: FileTreeProps) {
+export function FileTree({ state, dispatch, onOpen, onOpenToSide, errorPaths, dirtyPaths, loading, titleId = 'files-title', collapseToggle, collapsed, bodyId = 'files-body', titleClassName, announce: announceProp, moveFeedback = 'toast', onCreateComponent }: FileTreeProps) {
   const { project, activePath } = state;
   const { files, entry } = project;
   const toast = useToast();
@@ -382,6 +384,7 @@ export function FileTree({ state, dispatch, onOpen, onOpenToSide, errorPaths, di
       return [
         { id: 'new-file', label: 'New file…', icon: <FilePlus /> },
         { id: 'new-folder', label: 'New folder…', icon: <FolderPlus /> },
+        ...(onCreateComponent ? [{ id: 'create-component', label: 'Create component…', icon: <Boxes /> }] : []),
         { id: 'rename', label: 'Rename', icon: <Pencil />, shortcut: 'F2' },
         { id: 'move', label: 'Move to…', icon: <FileOutput /> },
         { id: 'copy-path', label: 'Copy path', icon: <ClipboardCopy /> },
@@ -396,12 +399,13 @@ export function FileTree({ state, dispatch, onOpen, onOpenToSide, errorPaths, di
       { id: 'rename', label: 'Rename', icon: <Pencil />, shortcut: 'F2' },
       { id: 'move', label: 'Move to…', icon: <FileOutput /> },
       { id: 'duplicate', label: 'Duplicate', icon: <Copy /> },
+      ...(onCreateComponent ? [{ id: 'create-component', label: 'Create component…', icon: <Boxes /> }] : []),
       { id: 'copy-path', label: 'Copy path', icon: <ClipboardCopy /> },
       ...(isTsx ? [{ id: 'entry', label: 'Set as entry', icon: <Star />, disabled: menu.id === entry }] : []),
       { type: 'separator' },
       del,
     ];
-  }, [deleteBlocked, entry, menu, onOpenToSide]);
+  }, [deleteBlocked, entry, menu, onCreateComponent, onOpenToSide]);
 
   const closeMenu = useCallback((refocus = true) => {
     const id = menu?.id ?? null;
@@ -426,8 +430,9 @@ export function FileTree({ state, dispatch, onOpen, onOpenToSide, errorPaths, di
       case 'delete': if (id) requestDelete(id); break;
       case 'new-file': startCreate('file', id); break;
       case 'new-folder': startCreate('folder', id); break;
+      case 'create-component': if (id) { const p = pathOf(id); onCreateComponent?.(isFolderId(id) ? p : dirname(p)); } break;
     }
-  }, [announce, dispatch, files, menu, onOpen, onOpenToSide, requestDelete, startCreate, startRename, toast]);
+  }, [announce, dispatch, files, menu, onCreateComponent, onOpen, onOpenToSide, requestDelete, startCreate, startRename, toast]);
 
   // ------------------------------------------------------------ events on the tree container
 

@@ -1,0 +1,35 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`templates > default ExampleCard: the 5 §6.2 files and the spec example shape 1`] = `
+"import type { ReactNode } from 'react';
+import './ExampleCard.css';
+export interface ExampleCardProps {
+  /** Main heading displayed by the card. */
+  title: string;
+  /** Optional supporting content. */
+  children?: ReactNode;
+  /** Applies the emphasized visual treatment. */
+  emphasized?: boolean;
+}
+export function ExampleCard({
+  title,
+  children,
+  emphasized = false,
+}: ExampleCardProps) {
+  return (
+    <article
+      className={
+        emphasized
+          ? 'example-card example-card--emphasized'
+          : 'example-card'
+      }
+    >
+      <h2 className="example-card__title">{title}</h2>
+      <div className="example-card__content">
+        {children}
+      </div>
+    </article>
+  );
+}
+"
+`;

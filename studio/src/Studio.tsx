@@ -4,7 +4,7 @@ import {
   type Density, type ThemeName, type ThemePreference,
 } from '@enterprise-ui/react';
 import { cx } from '../../src/utilities/cx';
-import { BookOpen, ChevronDown, ChevronRight, Download, FilePlus2, Redo2, Sparkles, Undo2 } from 'lucide-react';
+import { BookOpen, Boxes, ChevronDown, ChevronRight, Download, FilePlus2, Redo2, Sparkles, Undo2 } from 'lucide-react';
 import { useDocsSettings } from '../../docs/src/settings';
 import { decodePlaygroundCode, playgroundCodeParam } from '../../docs/src/playgroundLink';
 import { Canvas, type DropTarget } from './Canvas';
@@ -31,6 +31,8 @@ import { STARTER } from './template';
 import styles from './Studio.module.css';
 import workspaceStyles from './app/workspace/CodeWorkspace.module.css';
 import { CodeWorkspace } from './app/workspace/CodeWorkspace';
+import { CreateComponentDialog } from './components/generator/CreateComponentDialog';
+import { applyComponent, createAction, destinationFromActive } from './components/generator/generate';
 import { MenuBar, type MenuItems } from './app/workspace/MenuBar';
 import { WorkspaceSwitch } from './app/workspace/WorkspaceSwitch';
 import { useBreakpoint } from './app/workspace/useBreakpoint';
@@ -226,6 +228,15 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   const focusOnReady = useRef(false);
   useEffect(() => { if (layout.recent.join('\n') !== state.recent.join('\n')) dispatchLayout({ type: 'setRecent', paths: state.recent }); }, [state.recent, layout.recent]);
   const [quickOpen, setQuickOpen] = useState(false);
+  /** C5: the Create component dialog's prefilled destination (null = closed). */
+  const [createDest, setCreateDestState] = useState<string | null>(null);
+  /** Focus returns to the opener on close (tab-row clicks keep focus in the editor, so remember the button). */
+  const createOpener = useRef<HTMLElement | null>(null);
+  const setCreateDest = (dest: string | null, opener?: HTMLElement | null) => {
+    if (dest !== null) createOpener.current = opener ?? (document.activeElement as HTMLElement | null);
+    else { const el = createOpener.current; requestAnimationFrame(() => { if (el?.isConnected) el.focus(); }); }
+    setCreateDestState(dest);
+  };
   const fileList = useMemo(() => Object.keys(project.files).sort(), [project.files]);
   // Rename/move feedback shows only for changes made after the Code workspace opened.
   const seenChange = useRef(state.lastChange?.id ?? 0);
@@ -540,6 +551,11 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         case 'settings': toast.show({ title: 'Settings', description: 'Studio settings arrive with C7. Use the theme menu for now.', tone: 'neutral' }); break;
       }
     };
+    /** C5 decision 5a: Create component at the end of the tab row. */
+    const createComponentButton = (
+      <IconButton size="sm" variant="tertiary" icon={<Boxes />} label="Create component" data-testid="tab-create-component"
+        onClick={(e) => setCreateDest(destinationFromActive(activePath, project.files), e.currentTarget)} />
+    );
     const themeLabel = THEMES.find((t) => t.name === resolved)?.label ?? resolved;
     return (
       <CodeWorkspace
@@ -567,11 +583,24 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         explorer={(
           <FileTree state={state} dispatch={dispatch} loading={!loaded} titleClassName={styles.paneTitle} dirtyPaths={dirty} moveFeedback="strip"
             errorPaths={stale ? [stale.file] : undefined} onOpen={(path) => openTabFile(path)}
-            onOpenToSide={breakpoint === 'desktop' ? (path) => openTabFile(path, true) : undefined} />
+            onOpenToSide={breakpoint === 'desktop' ? (path) => openTabFile(path, true) : undefined}
+            onCreateComponent={(folder) => setCreateDest(`${folder}/`)} />
         )}
         search={<SearchPanel files={project.files} onOpen={(path, line) => goToLine(path, line)} />}
         overlays={(
           <>
+            {createDest !== null && (
+              <CreateComponentDialog files={project.files} destination={createDest} onClose={() => setCreateDest(null)}
+                onCreate={(name, plan) => {
+                  // Dry run first: a failure (e.g. the file limit) leaves the project and history unchanged.
+                  const r = applyComponent(state, name, plan);
+                  if (r.error) return r.error;
+                  dispatch(createAction(name, plan));
+                  setCreateDest(null);
+                  announce(`Created component ${name}: ${Object.keys(plan.files).length} files.`);
+                  return undefined;
+                }} />
+            )}
             {quickOpen && (
               <QuickOpen paths={fileList} recent={state.recent} current={activePath}
                 onOpen={(path, line, toSide) => {
@@ -618,7 +647,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
                     onCloseAll={() => dispatch({ type: 'closeGroup', group: i })}
                     onCloseOthers={(path) => dispatch({ type: 'setGroups', groups: groups.map((x, j) => (j === i ? { tabs: [path], active: path } : x)), focused: i })}
                     leading={i === 0 ? leading : null}
-                    trailing={i === groups.length - 1 ? trailing : null}
+                    trailing={i === groups.length - 1 ? <>{createComponentButton}{trailing}</> : null}
                   />
                 </div>
                 <span className={workspaceStyles.groupCrumb}>{g.active.split('/').join(' › ')}</span>
@@ -660,6 +689,8 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         consoleEntries={consoleState.entries}
         onClearConsole={() => dispatchConsole({ type: 'clear' })}
         onOpenSource={(path, line, column) => goToLine(path, line, column ?? 1)}
+        onCreateComponent={() => setCreateDest('src/components/')}
+        tabActions={createComponentButton}
         status={{ file: activePath, line: cursor.line, column: cursor.column, saveState, theme: themeLabel, errors: problemCounts.errors, warnings: problemCounts.warnings, previewState: stale ? 'stale' : paused ? 'paused' : 'live' }}
       />
     );

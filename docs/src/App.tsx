@@ -64,6 +64,7 @@ function renderPage(path: string) {
 }
 
 const titleFor = (path: string) =>
+  path === '/demo' || path.startsWith('/demo/') ? 'Northwind Inventory demo' :
   PAGES.find((p) => p.path === path)?.label ?? docs.find((d) => path === `/components/${d.slug}`)?.name ?? 'Not found';
 
 export function App() {
@@ -101,11 +102,21 @@ export function App() {
     return <ThemeProvider theme={theme} density={density} style={{ height: '100%' }}><PlaygroundPage initialSlug={path.split('/')[2] || 'button'} theme={theme} density={density} /></ThemeProvider>;
   }
 
-  if (path === '/demo') {
+  if (path === '/demo' || path.startsWith('/demo/')) {
+    // Each demo page has its own sub-route (#/demo/<page>) so reload and back keep it; #/demo opens Products.
+    const demoPage = path.split('/')[2] || 'products';
     return (
       <ThemeProvider theme={theme} density={density} style={{ height: '100%' }}>
         <ToastProvider>
-          <InventoryApp fullHeight />
+          <InventoryApp
+            fullHeight
+            page={demoPage}
+            onPageChange={(next) => navigate(`/demo/${next}`)}
+            theme={theme}
+            onThemeChange={setTheme}
+            density={density}
+            onDensityChange={setDensity}
+          />
         </ToastProvider>
       </ThemeProvider>
     );

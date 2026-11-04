@@ -131,6 +131,11 @@ export function App() {
               secondaryTitle="v0.1"
               logo={<SapBoxIcon color="var(--eui-color-primary)" />}
               homeHref={href('/')}
+              user={{ name: 'Guest' }}
+              userMenuItems={[{ id: '/getting-started', label: 'Getting started' }, { id: 'studio', label: 'Open Studio' }]}
+              onUserAction={(id) => (id === 'studio' ? window.location.assign('studio/') : navigate(id))}
+              helpItems={[{ id: '/getting-started', label: 'Getting started' }, { id: '/accessibility', label: 'Accessibility' }, { id: '/api', label: 'API reference' }]}
+              onHelpAction={(id) => navigate(id)}
               search={
                 <ComboBox
                   aria-label="Search documentation"

@@ -789,6 +789,8 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
       <ApplicationHeader
         productName="Enterprise UI Studio"
         homeHref="./"
+        user={{ name: 'Guest' }}
+        onHelpClick={() => { window.location.href = '../'; }}
         actions={(
           <div className={styles.headerActions}>
             <IconButton size="sm" variant="tertiary" icon={<UndoIcon />} label="Undo" disabled={!state.past.length} onClick={() => dispatch({ type: 'undo' })} />

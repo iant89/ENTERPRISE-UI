@@ -123,6 +123,7 @@ export * from './components/lightbox';
 export * from './components/avatar-badge';
 export * from './components/avatar-group';
 export * from './components/badge';
+export * from './components/tag';
 export * from './components/status-indicator';
 export * from './components/timeline';
 export * from './components/object-identifier';

@@ -1,0 +1,27 @@
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--eui-space-1);
+  max-inline-size: 100%;
+  min-block-size: 1.375rem;
+  padding: 0 var(--eui-space-2);
+  border: var(--eui-border-width) solid transparent;
+  border-radius: var(--eui-radius-sm);
+  font-size: var(--eui-font-size-sm);
+  font-weight: var(--eui-font-weight-bold);
+  line-height: 1.2;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.set1 { background: var(--tag-color); color: var(--eui-color-text-inverse); }
+.set2 {
+  background: color-mix(in srgb, var(--tag-color) 10%, var(--eui-color-surface));
+  border-color: var(--tag-color);
+  color: var(--tag-color);
+}
+.text { overflow: hidden; text-overflow: ellipsis; }
+.icon { display: inline-flex; }
+.icon svg { inline-size: var(--eui-icon-size-sm); block-size: var(--eui-icon-size-sm); }
+@media (forced-colors: active) {
+  .tag { border-color: CanvasText; }
+}

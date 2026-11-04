@@ -47,6 +47,7 @@ export interface CodeWorkspaceProps {
   /** C4: preview console. */
   consoleEntries?: readonly ConsoleEntry[];
   onClearConsole?: () => void;
+  consoleDropped?: number;
   onOpenSource?: (path: string, line: number | null, column: number | null) => void;
   status: StatusBarProps;
   /** C5: the Components activity header "+" (Create component). */
@@ -104,7 +105,7 @@ function SidebarBody({ activity, explorer, search, docsPinned, onPin, onCreateCo
 }
 
 export function CodeWorkspace(props: CodeWorkspaceProps) {
-  const { breakpoint, layout, dispatchLayout: d, menuBar, strips, explorer, search, overlays, editor, groupsEditor, references, onOpenReference, onClearReferences, preview, tabs, activePath, dirty, onSelectTab, onCloseTab, problems, onGoToProblem, consoleEntries, onClearConsole, onOpenSource, status, onCreateComponent, tabActions } = props;
+  const { breakpoint, layout, dispatchLayout: d, menuBar, strips, explorer, search, overlays, editor, groupsEditor, references, onOpenReference, onClearReferences, preview, tabs, activePath, dirty, onSelectTab, onCloseTab, problems, onGoToProblem, consoleEntries, onClearConsole, consoleDropped, onOpenSource, status, onCreateComponent, tabActions } = props;
   const [overlay, setOverlay] = useState(false);
   const desktop = breakpoint === 'desktop';
   const tablet = breakpoint === 'tablet';
@@ -226,7 +227,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
           <BottomPanel
             tab={layout.bottomTab} onTab={(tab) => d({ type: 'setBottomTab', tab })}
             problems={problems} onGoTo={onGoToProblem}
-            consoleEntries={consoleEntries} onClearConsole={onClearConsole} onOpenSource={onOpenSource}
+            consoleEntries={consoleEntries} consoleDropped={consoleDropped} onClearConsole={onClearConsole} onOpenSource={onOpenSource}
             references={references} onOpenReference={onOpenReference} onClearReferences={onClearReferences}
             onCollapse={() => d({ type: 'toggle', panel: 'bottom', collapsed: true })}
             summary={tablet} expanded={layout.bottomExpanded} onExpanded={(expanded) => d({ type: 'setBottomExpanded', expanded })}

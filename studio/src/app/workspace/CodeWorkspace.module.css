@@ -311,3 +311,4 @@
 .dragGhost { position: fixed; inset-block-start: -100px; padding: 2px 8px; border: var(--eui-border-width) solid var(--eui-color-border); border-radius: var(--eui-radius-sm, 4px); background: var(--eui-color-surface); color: var(--eui-color-text); font: var(--eui-font-size-xs) var(--eui-font-family, sans-serif); box-shadow: var(--eui-shadow-md, 0 4px 12px rgb(0 0 0 / 0.25)); }
 .menuSeparator { block-size: 1px; margin-block: var(--eui-space-1); background: var(--eui-color-border-subtle); }
 .feedbackExtra { margin: var(--eui-space-1) 0 0; }
+.consoleDropped { margin: 0; padding: var(--eui-space-1) var(--eui-space-3); color: var(--eui-color-text-secondary); font-size: var(--eui-font-size-xs); font-style: italic; border-block-end: 1px solid var(--eui-color-border); }

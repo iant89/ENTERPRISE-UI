@@ -32,7 +32,7 @@ test('context menu → create ExampleCard, conflict, undo removes all', async ({
   await dialog(page).getByRole('checkbox', { name: /Example \(/ }).check();
   await expect(dialog(page).getByRole('button', { name: 'Create 6 files' })).toBeVisible();
   await dialog(page).getByRole('checkbox', { name: /Example \(/ }).uncheck();
-  const axe = await new AxeBuilder({ page }).include('[role="dialog"]').analyze();
+  const axe = await new AxeBuilder({ page: page as never }).include('[role="dialog"]').analyze();
   expect(axe.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical')).toEqual([]);
   await nameField(page).press('Enter');
   await expect(dialog(page)).toBeHidden();

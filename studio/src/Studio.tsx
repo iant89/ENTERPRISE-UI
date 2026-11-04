@@ -43,7 +43,7 @@ import { RewriteFeedback } from './app/workspace/RewriteFeedback';
 import { PreviewPane, type StaleInfo } from './preview/PreviewPane';
 import { CodePreviewFrame } from './preview/CodePreviewFrame';
 import { usePreviewBuild } from './preview/usePreviewBuild';
-import { consoleReducer, EMPTY_CONSOLE } from './preview/console';
+import { consoleReducer, createConsoleBatcher, EMPTY_CONSOLE } from './preview/console';
 import { fromMarker, fromRuntime, type Diagnostic } from './core/diagnostics';
 import type { Problem } from './panels/bottom/BottomPanel';
 import {
@@ -262,12 +262,14 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   useEffect(() => { if (selectedId && !findNode(root, selectedId)) setSelectedId(null); }, [root, selectedId]);
 
   // C4: the Code workspace previews the compiled project (module graph → compiler → bridge → sandbox).
-  const build = usePreviewBuild(project.files, entry, { paused, enabled: workspace === 'code' });
+  const build = usePreviewBuild(project.files, entry, { paused, enabled: workspace === 'code', projectKey: project.id });
   const [consoleState, dispatchConsole] = useReducer(consoleReducer, EMPTY_CONSOLE);
   const [runtimeError, setRuntimeError] = useState<Diagnostic | null>(null);
   const [tsDiagnostics, setTsDiagnostics] = useState<Diagnostic[]>([]);
   // Cleared on each reload of a new artifact (and on Refresh).
-  useEffect(() => { dispatchConsole({ type: 'clear' }); setRuntimeError(null); }, [build.artifact, previewKey]);
+  // C4 review: console messages are batched per animation frame (a 10k-log loop is one render per frame).
+  const consoleBatch = useMemo(() => createConsoleBatcher((items) => dispatchConsole({ type: 'addMany', items })), []);
+  useEffect(() => { consoleBatch.reset(); dispatchConsole({ type: 'clear' }); setRuntimeError(null); }, [build.artifact, previewKey, consoleBatch]);
   const codeMode = workspace === 'code';
   const firstError = build.failed ? build.diagnostics.find((d) => d.severity === 'error') ?? null : null;
   // Decision 6: the preview is stale while the last build failed; the last good artifact keeps running (§9.6).
@@ -674,8 +676,8 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
             onDismissRuntimeError={() => setRuntimeError(null)}
           >
             <CodePreviewFrame key={previewKey} artifact={build.artifact} theme={previewTheme} density={previewDensity}
-              onConsole={(level, args, location) => dispatchConsole({ type: 'add', level, args, location })}
-              onRuntimeError={(e) => { setRuntimeError(fromRuntime(e)); dispatchConsole({ type: 'add', level: 'uncaught', args: [e.message], location: e }); }}
+              onConsole={(level, args, location) => consoleBatch.push({ level, args, location })}
+              onRuntimeError={(e) => { setRuntimeError(fromRuntime(e)); consoleBatch.push({ level: 'uncaught', args: [e.message], location: e }); }}
               onSuccess={() => setRuntimeError(null)} />
           </PreviewPane>
         )}
@@ -687,7 +689,8 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         problems={problems}
         onGoToProblem={(p) => p.file && goToLine(p.file, p.line, p.column ?? 1)}
         consoleEntries={consoleState.entries}
-        onClearConsole={() => dispatchConsole({ type: 'clear' })}
+        onClearConsole={() => { consoleBatch.reset(); dispatchConsole({ type: 'clear' }); }}
+        consoleDropped={consoleState.dropped}
         onOpenSource={(path, line, column) => goToLine(path, line, column ?? 1)}
         onCreateComponent={() => setCreateDest('src/components/')}
         tabActions={createComponentButton}

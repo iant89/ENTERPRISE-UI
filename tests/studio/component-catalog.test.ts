@@ -113,6 +113,7 @@ describe('insert plan', () => {
     const code = "export default function App() {\n  return <main>\n  </main>;\n}\n";
     const at = offsetOf(code, 2, 16);
     const once = planInsert(code, at, item, 'src/App.tsx');
+    expect(planInsert(code, at, { ...item, source: 'src/components/ExampleCard/ExampleCard.tsx' }, 'src/App.tsx', gen)).toContain("from './components/ExampleCard';");
     expect(snippetFor(item)).toBe('<ExampleCard title="Title" />');
     expect(once).toContain("import { ExampleCard } from './components/ExampleCard';");
     expect(once).toContain('<main><ExampleCard title="Title" />');

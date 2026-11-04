@@ -35,7 +35,13 @@ async function create(page: Page, name: string, docs = true) {
 async function replaceText(page: Page, text: string) {
   await editorLines(page).click();
   await page.keyboard.press('ControlOrMeta+A');
-  await page.keyboard.insertText(text);
+  // A paste event, not keyboard.insertText: Monaco treats insertText as typing, so auto-close and
+  // auto-indent add a stray "}" and extra indentation after each "{\n" (the "garbled typing").
+  await page.evaluate((t) => {
+    const dt = new DataTransfer();
+    dt.setData('text/plain', t);
+    document.activeElement!.dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true }));
+  }, text);
 }
 
 test('generated components appear with docs badges, props update, cross-file props resolve, filter works', async ({ page }) => {
@@ -93,6 +99,7 @@ test('Insert adds snippet + import as one undo step; Source opens the file; Docs
   await activity(page, 'Components');
   await projectList(page).focus();
   await page.keyboard.press('Home');
+  await page.keyboard.press('ArrowDown');
   await page.keyboard.press('Enter');
   await expect(page.getByTestId('docs-page-title')).toHaveText('ExampleCard');
 

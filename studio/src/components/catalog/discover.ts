@@ -66,18 +66,19 @@ function componentFn(program: Node): Map<string, FnInfo> {
 }
 
 /** Props type name and destructuring defaults from the component's first parameter. */
-function paramInfo(fn: Node, decl: Node, code: string): { typeName?: string; inline?: Node; defaults: Record<string, string> } {
+function paramInfo(fn: Node, decl: Node, code: string): { typeName?: string; inline?: Node; defaults: Record<string, string>; names: string[] } {
   const p = fn.params?.[0];
   const defaults: Record<string, string> = {};
+  const names: string[] = p?.type === 'ObjectPattern' ? p.properties.filter((x: Node) => x.type === 'ObjectProperty' && x.key.type === 'Identifier').map((x: Node) => x.key.name) : [];
   let ann = p?.typeAnnotation?.typeAnnotation;
   // `const X: FC<Props> = (...) =>`
   if (!ann && decl.id?.typeAnnotation?.typeAnnotation?.typeParameters?.params?.[0]) ann = decl.id.typeAnnotation.typeAnnotation.typeParameters.params[0];
   if (p?.type === 'ObjectPattern') {
     for (const prop of p.properties) if (prop.type === 'ObjectProperty' && prop.value.type === 'AssignmentPattern') defaults[prop.key.name] = code.slice(prop.value.right.start, prop.value.right.end);
   }
-  if (ann?.type === 'TSTypeReference' && ann.typeName.type === 'Identifier') return { typeName: ann.typeName.name, defaults };
-  if (ann?.type === 'TSTypeLiteral') return { inline: ann, defaults };
-  return { defaults };
+  if (ann?.type === 'TSTypeReference' && ann.typeName.type === 'Identifier') return { typeName: ann.typeName.name, defaults, names };
+  if (ann?.type === 'TSTypeLiteral') return { inline: ann, defaults, names };
+  return { defaults, names };
 }
 
 /** Local name → import specifier for every named/default import in the file. */
@@ -126,9 +127,9 @@ export function fastPass(path: string, code: string): FileResult {
       else {
         propsFrom = imports.get(info.typeName);
         // Until the TS pass resolves the type, show the destructured names (and keep their defaults for the merge).
-        props = Object.keys(info.defaults).map((name) => ({ name, required: false }));
+        props = info.names.map((name) => ({ name, required: false }));
       }
-    } else props = Object.keys(info.defaults).map((name) => ({ name, required: false }));
+    } else props = info.names.map((name) => ({ name, required: false }));
     props = props.map((p) => (info.defaults[p.name] !== undefined ? { ...p, default: info.defaults[p.name] } : p));
     const name = exportName === 'default' ? local : exportName;
     items.push({

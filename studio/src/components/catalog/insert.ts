@@ -25,9 +25,12 @@ export function snippetFor(item: CatalogItem): string {
 }
 
 /** Import specifier: `@enterprise-ui/react`, or the relative path (extension and `/index` dropped). */
-export function importSpecifier(item: CatalogItem, into: string): string {
+export function importSpecifier(item: CatalogItem, into: string, files?: Readonly<Record<string, string>>): string {
   if (item.origin === 'library' || !item.source) return '@enterprise-ui/react';
-  return relative(into, item.source).replace(/\.[jt]sx?$/, '').replace(/\/index$/, '');
+  // Prefer the folder's index (the C5 layout) when it exists.
+  const dir = item.source.slice(0, item.source.lastIndexOf('/'));
+  const viaIndex = files && ['index.ts', 'index.tsx', 'index.js'].some((f) => Object.hasOwn(files, `${dir}/${f}`) && files[`${dir}/${f}`].includes(item.name));
+  return relative(into, viaIndex ? `${dir}/index.ts` : item.source).replace(/\.[jt]sx?$/, '').replace(/\/index$/, '');
 }
 
 function ensureDefaultImport(code: string, name: string, source: string): string {
@@ -41,10 +44,10 @@ function ensureDefaultImport(code: string, name: string, source: string): string
 }
 
 /** The edited text for the file: snippet at `offset`, then the import (never duplicated). */
-export function planInsert(code: string, offset: number, item: CatalogItem, path: string): string {
+export function planInsert(code: string, offset: number, item: CatalogItem, path: string, files?: Readonly<Record<string, string>>): string {
   const at = Math.max(0, Math.min(offset, code.length));
   const withSnippet = code.slice(0, at) + snippetFor(item) + code.slice(at);
-  const spec = importSpecifier(item, path);
+  const spec = importSpecifier(item, path, files);
   return item.exportName === 'default' ? ensureDefaultImport(withSnippet, item.name, spec) : ensureImports(withSnippet, [item.name], spec);
 }
 

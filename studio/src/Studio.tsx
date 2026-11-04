@@ -567,7 +567,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     const insertComponent = (item: CatalogItem) => {
       if (!canInsert) return;
       const code = project.files[activePath];
-      const next = planInsert(code, offsetOf(code, cursor.line, cursor.column), item, activePath);
+      const next = planInsert(code, offsetOf(code, cursor.line, cursor.column), item, activePath, project.files);
       dispatch({ type: 'applyEdits', files: { [activePath]: next }, label: `Insert ${item.name}`, touched: activePath });
       announce(`Inserted ${item.name}.`);
     };

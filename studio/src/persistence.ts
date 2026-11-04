@@ -29,6 +29,8 @@ export function useProjectPersistence(project: Project, onStart: (project: Proje
   const statusRef = useRef(status);
   statusRef.current = status;
   const startedWith = useRef<Project | null>(null);
+  /** The last project written to (or read from) storage; files that differ from it are dirty. */
+  const [savedProject, setSavedProject] = useState<Project | null>(null);
 
   const fail = useCallback((err: unknown) => {
     statusRef.current = 'unavailable';
@@ -50,6 +52,7 @@ export function useProjectPersistence(project: Project, onStart: (project: Proje
       if (!active) return;
       latest.current.onStart(loaded);
       startedWith.current = loaded ?? latest.current.project;
+      setSavedProject(startedWith.current);
       statusRef.current = 'ready';
       setStatus('ready');
       try {
@@ -64,7 +67,7 @@ export function useProjectPersistence(project: Project, onStart: (project: Proje
     if (statusRef.current !== 'ready') return false;
     try {
       await latest.current.deps.save(p);
-      if (statusRef.current === 'ready') setSaved(true);
+      if (statusRef.current === 'ready') { setSaved(true); setSavedProject(p); }
       return true;
     } catch (err) {
       fail(err);
@@ -92,7 +95,7 @@ export function useProjectPersistence(project: Project, onStart: (project: Proje
     try { await latest.current.deps.clearNotice(); } catch { /* shown again next time */ }
   }, []);
 
-  return { status, error, saved, notice, saveNow, saveNowResult, dismissNotice };
+  return { status, error, saved, savedProject, notice, saveNow, saveNowResult, dismissNotice };
 }
 
 export const defaultPersistenceDeps = (start: PersistenceDeps['start'], save: PersistenceDeps['save'] = (p) => saveProject(p)): PersistenceDeps => ({

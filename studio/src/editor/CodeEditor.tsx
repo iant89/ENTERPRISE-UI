@@ -17,14 +17,16 @@ export interface CodeEditorProps {
   onReady?: (handle: CodeEditorHandle) => void;
   /** Accessible label for the editor's text area. */
   label?: string;
+  /** Called when the caret moves (status bar). */
+  onCursor?: (position: { line: number; column: number }) => void;
 }
 
-export function CodeEditor({ value, onChange, theme, onReady, label = 'Page code' }: CodeEditorProps) {
+export function CodeEditor({ value, onChange, theme, onReady, label = 'Page code', onCursor }: CodeEditorProps) {
   const host = useRef<HTMLDivElement>(null);
   const editor = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null);
   const api = useRef<typeof import('./monaco') | null>(null);
-  const latest = useRef({ onChange, value });
-  latest.current = { onChange, value };
+  const latest = useRef({ onChange, value, onCursor });
+  latest.current = { onChange, value, onCursor };
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,6 +52,9 @@ export function CodeEditor({ value, onChange, theme, onReady, label = 'Page code
       });
       editor.current.onDidChangeModelContent((event: Monaco.editor.IModelContentChangedEvent) => {
         if (!event.isFlush) latest.current.onChange(model.getValue());
+      });
+      editor.current.onDidChangeCursorPosition((event: Monaco.editor.ICursorPositionChangedEvent) => {
+        latest.current.onCursor?.({ line: event.position.lineNumber, column: event.position.column });
       });
       mod.applyTheme(host.current, /dark/.test(document.documentElement.dataset.euiTheme ?? theme), theme === 'high-contrast');
       setLoading(false);

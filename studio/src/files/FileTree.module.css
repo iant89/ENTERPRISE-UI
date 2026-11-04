@@ -136,3 +136,6 @@
   max-block-size: 50vh;
   overflow: auto;
 }
+
+/* Unsaved-changes dot (Code Studio C1). */
+.dirty { display: inline-block; inline-size: 0.5rem; block-size: 0.5rem; border-radius: 50%; background: currentColor; }

@@ -95,3 +95,33 @@ Deleting the `eui-studio` database removes all saved projects and both copies of
 - Size: `npm run test:studio-size` (after `npm run build:docs`) fails if the initial download goes
   over 350 kB gzip, or if Monaco, the TypeScript worker or Prettier end up in it. Measured at
   `64fcbd0`: 237.1 kB gzip.
+
+## Code Studio (C1: IDE shell)
+
+The Studio has two workspaces that share one project and one undo history. Switch between them with the centred
+**Design Studio / Code Studio** switch (a radiogroup, so arrow keys work too). Design Studio stays the default. A project
+opens in Code Studio only if its saved layout says so.
+
+### Layout
+- **Menu bar:** Project, File, Edit, View, Run and Tools menus wired to existing actions (save, undo/redo, format, download, panel toggles, preview refresh/pause). On the right: undo/redo, download, save state, the Studio theme and Settings.
+- **Activity tabs** above the sidebar: Explorer (the file tree, with entry badge and unsaved dots), Search, Components and Docs. Docs has a **Pin** button that moves it into its own column between the editor and the preview. Opening or pinning Docs keeps focus in the editor.
+- **Editor tabs** with the Monaco editor. An unsaved tab (not yet written to IndexedDB) shows a dot in place of the close button; hovering or focusing the tab shows the close button. Tabs are announced as "name, unsaved".
+- **Preview** with viewport presets, a "W × H · Fit (n%)" label, a preview theme (all seven themes, independent of the Studio theme), density, refresh, pause and fullscreen. When the code doesn't parse, the preview turns **stale**: the last good frame is dimmed and outlined, a warning strip offers Go to error / Retry, and the bottom panel switches to Problems.
+- **Bottom panel:** Problems, Console, Tests, Component Docs, Output, Preview Events.
+- **Status bar:** problem counts, file, cursor position, language, preview state, theme, save state.
+
+Layout (sizes, collapsed panels, activity, bottom tab, pinned Docs, tablet layout, open tabs) is saved per project in
+localStorage behind the `LayoutStore` interface (`studio/src/app/workspace/layout.ts`). The preview theme and density are saved separately.
+
+### Keyboard
+- Splitters: Tab to focus, arrow keys resize (Shift for bigger steps), Home/End go to min/max.
+- Ctrl/Cmd+B toggles the sidebar and Ctrl/Cmd+J toggles the bottom panel (in Code Studio). Ctrl/Cmd+S saves, Shift+Alt+F formats.
+- Activity, bottom-panel and editor tabs move with Left/Right arrows. Delete on an editor tab closes it.
+
+### Breakpoints
+- **Desktop (≥1280 px):** sidebar, editor, preview and bottom panel are all visible, resizable and collapsible.
+- **Tablet (768–1279 px):** icon-only activity tabs that open the sidebar as an overlay, a Split / Editor / Preview layout switch, extra editor tabs collapsed into "+N", and the bottom panel shown as a summary strip.
+- **Mobile (<768 px):** four full-screen tabs (Files / Code / Preview / Panel, with a dot on Code while anything is unsaved), menus behind ☰, short switch labels.
+
+### Stubbed until C2–C7
+Search (C2), multi-model editing (C3; one Monaco instance switches files for now), compiler, console logs and preview events (C4; stale is currently driven by parse and preview errors), Components and Docs content (C5), Tests (C6) and Settings (C7).

@@ -36,6 +36,8 @@ export interface FileTreeProps {
   onOpen: (path: FilePath) => void;
   /** Files with a preview or compile error (UX-9). */
   errorPaths?: Iterable<FilePath>;
+  /** Files with edits not yet written to browser storage (Code Studio C1, decision 5). */
+  dirtyPaths?: Iterable<FilePath>;
   /** Shows the loading skeleton (opening a project). */
   loading?: boolean;
   /** Title id, so a surrounding `section` can be labelled by it. */
@@ -75,7 +77,7 @@ const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? o
 type DescribedNode = FileNode & { describedBy?: string };
 const markerId = (id: string, kind: string) => `ft-${id.replace(/[^A-Za-z0-9_-]/g, (c) => `_${c.charCodeAt(0).toString(16)}`)}-${kind}`;
 
-export function FileTree({ state, dispatch, onOpen, errorPaths, loading, titleId = 'files-title', collapseToggle, collapsed, bodyId = 'files-body', titleClassName, announce: announceProp }: FileTreeProps) {
+export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, loading, titleId = 'files-title', collapseToggle, collapsed, bodyId = 'files-body', titleClassName, announce: announceProp }: FileTreeProps) {
   const { project, activePath } = state;
   const { files, entry } = project;
   const toast = useToast();
@@ -96,6 +98,7 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, loading, titleId
   const tsxCount = useMemo(() => Object.keys(files).filter((p) => extname(p) === '.tsx').length, [files]);
   const used = useMemo(() => reachableFrom(files, entry), [files, entry]);
   const errors = useMemo(() => new Set(errorPaths ?? []), [errorPaths]);
+  const dirty = useMemo(() => new Set(dirtyPaths ?? []), [dirtyPaths]);
 
   const baseNodes = useMemo(() => buildTreeNodes(files, entry), [files, entry]);
   const nodes = useMemo(() => {
@@ -104,20 +107,22 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, loading, titleId
       const isEntry = n.path === entry;
       const unused = !used.has(n.path);
       const broken = errors.has(n.path);
-      const trailing = (isEntry || unused || broken) ? (
+      const unsaved = dirty.has(n.path);
+      const trailing = (isEntry || unused || broken || unsaved) ? (
         <span className={styles.marker}>
           {isEntry && <Badge id={markerId(n.id, 'entry')} tone="neutral" aria-hidden="true">Entry</Badge>}
           {unused && <span id={markerId(n.id, 'unused')} title="Not used by the entry page" aria-hidden="true"><Unlink className={styles.unused} /><VisuallyHidden>Not used by the entry page</VisuallyHidden></span>}
           {broken && <span id={markerId(n.id, 'error')} aria-hidden="true"><CircleAlert className={styles.errorIcon} /><VisuallyHidden>Has an error</VisuallyHidden></span>}
+          {unsaved && <span id={markerId(n.id, 'dirty')} className={styles.dirty} data-dirty="" aria-hidden="true"><VisuallyHidden>Unsaved changes</VisuallyHidden></span>}
         </span>
       ) : undefined;
-      const describedBy = [isEntry && markerId(n.id, 'entry'), unused && markerId(n.id, 'unused'), broken && markerId(n.id, 'error')].filter(Boolean).join(' ');
+      const describedBy = [isEntry && markerId(n.id, 'entry'), unused && markerId(n.id, 'unused'), broken && markerId(n.id, 'error'), unsaved && markerId(n.id, 'dirty')].filter(Boolean).join(' ');
       return { ...n, icon: ICONS[fileKind(n.path)], trailing, describedBy };
     });
     let out = decorate(baseNodes);
     if (edit?.mode === 'create') out = insertPlaceholder(out, edit.folder);
     return out;
-  }, [baseNodes, entry, used, errors, expanded, edit]);
+  }, [baseNodes, entry, used, errors, dirty, expanded, edit]);
 
   const nodeById = useMemo(() => {
     const map = new Map<string, FileNode>();

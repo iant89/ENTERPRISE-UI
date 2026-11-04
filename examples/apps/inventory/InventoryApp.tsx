@@ -1,4 +1,4 @@
-import { useCallback, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { BarChart3, Boxes, FileText, Home, LifeBuoy, Package, Settings as SettingsIcon, ShoppingCart, Truck, Users } from 'lucide-react';
 import {
   AppShell, ApplicationHeader, Button, DescriptionList, Dialog, List, NavigationGroup, NavigationItem, SearchField, SideNavigation, StatusIndicator,
@@ -46,6 +46,8 @@ function Shell({ fullHeight }: { fullHeight: boolean }) {
   const [search, setSearch] = useState(store.filters.query);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  // Keep the header field in step when another control (e.g. "Clear search") changes the query.
+  useEffect(() => setSearch(store.filters.query), [store.filters.query]);
   const unread = notifications.filter((n) => !n.read).length;
 
   const contactSupport = () => toast.show({ title: 'Support request sent', description: 'Our team will reply to ada@northwind.example within one business day.', tone: 'success' });

@@ -19,6 +19,7 @@ export function safeHref(raw: string): string | null {
   let decoded = h;
   try { decoded = decodeURIComponent(h); } catch { /* malformed escape: check as-is */ }
   // Browsers ignore ASCII control characters and whitespace inside a scheme (`java\tscript:`) and treat `\` like `/`.
+  // eslint-disable-next-line no-control-regex -- stripping control characters is the point.
   const n = decoded.replace(/[\u0000-\u0020\u007f-\u009f]/g, '');
   if (/^[\\/][\\/]/.test(n)) return null;
   if (/^(https?:|mailto:)/i.test(n)) return h;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, ButtonGroup, Input, NumberInput, Select, Switch, Tab, TabList, TabPanel, Tabs, Text, Title } from '@enterprise-ui/react';
-import { ArrowDown, ArrowUp, Code2, Copy, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, BookOpen, Code2, Copy, Trash2 } from 'lucide-react';
 import type { AttrInput, StudioNode } from './model/jsx';
 import { descriptionFor, propsFor } from './model/catalog';
 import { displayValue, groupInspectorProps, widgetFor, type PropMeta } from './model/inspector';
@@ -15,6 +15,8 @@ export interface InspectorProps {
   onSetAttribute: (name: string, value: AttrInput) => void;
   onSetText: (text: string) => void;
   onAction: (action: 'up' | 'down' | 'duplicate' | 'delete' | 'code') => void;
+  /** C7: opens the element's component docs. */
+  onDocs?: (name: string) => void;
 }
 
 const fieldId = (name: string) => `inspector-${name.replace(/[^a-z0-9-]/gi, '-')}`;
@@ -48,7 +50,7 @@ function PropField({ prop, node, onSet, onCode }: { prop: PropMeta; node: Studio
 }
 
 /** Edits the selected element. Widgets come from the generated API metadata (Properties, Events, States). */
-export function Inspector({ node, isRoot, canMoveUp, canMoveDown, onSetAttribute, onSetText, onAction }: InspectorProps) {
+export function Inspector({ node, isRoot, canMoveUp, canMoveDown, onSetAttribute, onSetText, onAction, onDocs }: InspectorProps) {
   const [tab, setTab] = useState('properties');
   if (!node) {
     return <div className={styles.inspectorEmpty}><Text tone="secondary">Select an element on the canvas or in the outline to edit its properties.</Text></div>;
@@ -71,6 +73,7 @@ export function Inspector({ node, isRoot, canMoveUp, canMoveDown, onSetAttribute
           <Button size="sm" variant="tertiary" icon={<Copy />} disabled={isRoot} onClick={() => onAction('duplicate')}>Duplicate</Button>
           <Button size="sm" variant="tertiary" icon={<Trash2 />} disabled={isRoot} onClick={() => onAction('delete')}>Delete</Button>
           <Button size="sm" variant="tertiary" icon={<Code2 />} onClick={() => onAction('code')}>Code</Button>
+          {onDocs && known.length > 0 && <Button size="sm" variant="tertiary" icon={<BookOpen />} onClick={() => onDocs(node.name)}>Docs</Button>}
         </ButtonGroup>
       </div>
       {node.text !== null && (

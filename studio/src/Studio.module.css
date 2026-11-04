@@ -101,6 +101,12 @@
   list-style: none;
 }
 
+.paletteItems > li { display: flex; align-items: center; }
+
+/* C7: a docs button beside each palette item; it appears on hover or focus. */
+.paletteDocs { flex: none; opacity: 0; }
+.paletteItems > li:hover .paletteDocs, .paletteDocs:focus-visible { opacity: 1; }
+
 .paletteItem {
   inline-size: 100%;
   justify-content: flex-start;
@@ -350,3 +356,5 @@
 .renameInput:focus-visible { outline: 2px solid var(--eui-color-focus, var(--eui-color-primary)); outline-offset: 1px; }
 .renameHelp, .renameError { font-size: var(--eui-font-size-xs); color: var(--eui-color-text-secondary); }
 .renameError { color: var(--eui-color-error-text, var(--eui-color-error)); }
+.docsBottomBar { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 2px 8px; font-size: var(--eui-font-size-xs); color: var(--eui-color-text-secondary); }
+.docsBottomEmpty { margin: 0; padding: 12px; color: var(--eui-color-text-secondary); }

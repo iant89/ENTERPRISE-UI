@@ -4,7 +4,7 @@ import {
   type Density, type ThemeName, type ThemePreference,
 } from '@enterprise-ui/react';
 import { cx } from '../../src/utilities/cx';
-import { BookOpen, Boxes, ChevronDown, ChevronRight, Download, FilePlus2, Redo2, Sparkles, Undo2 } from 'lucide-react';
+import { BookOpen, Boxes, ChevronDown, Pin, PinOff, ChevronRight, Download, FilePlus2, Redo2, Sparkles, Undo2 } from 'lucide-react';
 import { useDocsSettings } from '../../docs/src/settings';
 import { decodePlaygroundCode, playgroundCodeParam } from '../../docs/src/playgroundLink';
 import { Canvas, type DropTarget } from './Canvas';
@@ -36,6 +36,12 @@ import { ComponentsPanel } from './panels/components/ComponentsPanel';
 import { useCatalog } from './components/catalog/useCatalog';
 import { offsetOf, planInsert } from './components/catalog/insert';
 import type { CatalogItem } from './components/catalog/types';
+import { DocsPanel, docsNavReducer, EMPTY_NAV } from './docs/DocsPanel';
+import { DocsPageView } from './docs/DocsPageView';
+import { AddDocsDialog } from './docs/AddDocsDialog';
+import { buildIndex } from './docs/search';
+import { libraryPage, projectPage, type DocsPage } from './docs/api-metadata/pageModel';
+import { componentAt } from './docs/cursorComponent';
 import { applyComponent, createAction, destinationFromActive } from './components/generator/generate';
 import { MenuBar, type MenuItems } from './app/workspace/MenuBar';
 import { WorkspaceSwitch } from './app/workspace/WorkspaceSwitch';
@@ -237,7 +243,10 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   /** Focus returns to the opener on close (tab-row clicks keep focus in the editor, so remember the button). */
   const createOpener = useRef<HTMLElement | null>(null);
   /** C6 → C7 seam: the component whose Docs page is open. */
-  const [docsItem, setDocsItem] = useState<CatalogItem | null>(null);
+  // C7: Docs history, the bottom tab pin and the Add documentation dialog.
+  const [docsNav, dispatchNav] = useReducer(docsNavReducer, EMPTY_NAV);
+  const [bottomDocsPin, setBottomDocsPin] = useState<string | null>(null);
+  const [addDocsFor, setAddDocsFor] = useState<CatalogItem | null>(null);
   const setCreateDest = (dest: string | null, opener?: HTMLElement | null) => {
     if (dest !== null) createOpener.current = opener ?? (document.activeElement as HTMLElement | null);
     else { const el = createOpener.current; requestAnimationFrame(() => { if (el?.isConnected) el.focus(); }); }
@@ -272,6 +281,21 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   const [consoleState, dispatchConsole] = useReducer(consoleReducer, EMPTY_CONSOLE);
   // C6: the component catalog, derived from source (never persisted).
   const catalogState = useCatalog(project.files);
+  const docsIndex = useMemo(() => buildIndex(catalogState.library, catalogState.project, project.files), [catalogState, project.files]);
+  const catalogItem = useCallback((id: string) => catalogState.project.find((i) => i.id === id) ?? null, [catalogState.project]);
+  const pageFor = useCallback((id: string | undefined): DocsPage | null => {
+    if (!id) return null;
+    if (id.startsWith('library:')) return libraryPage(id.slice('library:'.length));
+    const item = catalogItem(id);
+    return item ? projectPage(item, project.files, activePath) : null;
+  }, [catalogItem, project.files, activePath]);
+  /** Opens a docs page without moving focus (plan ambiguity 6). */
+  const openDocs = useCallback((id: string) => {
+    dispatchNav({ type: 'open', id });
+    if (!layout.docsPinned) dispatchLayout({ type: 'setActivity', activity: 'docs' });
+  }, [layout.docsPinned]);
+  /** From Design Studio (palette, inspector): switch to Code Studio and open the library page. */
+  const openLibraryDocs = (name: string) => { if (workspace !== 'code') setWorkspace('code'); openDocs(`library:${name}`); };
   const [runtimeError, setRuntimeError] = useState<Diagnostic | null>(null);
   const [tsDiagnostics, setTsDiagnostics] = useState<Diagnostic[]>([]);
   // Cleared on each reload of a new artifact (and on Refresh).
@@ -562,7 +586,31 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
       }
     };
     // C6: Docs opens the Docs activity on the component (C7 fills the page); Source opens the file at the export.
-    const openComponentDocs = (item: CatalogItem) => { setDocsItem(item); if (!layout.docsPinned) dispatchLayout({ type: 'setActivity', activity: 'docs' }); };
+    const openComponentDocs = (item: CatalogItem) => openDocs(item.id);
+    const copyText = (text: string, what: string) => { void navigator.clipboard?.writeText(text).catch(() => {}); announce(`${what} copied.`); };
+    const showSource = (page: DocsPage) => page.source && page.kind === 'project' && goToLine(page.source, page.location?.line ?? 1, page.location?.column ?? 1);
+    const addDocs = (page: DocsPage) => { const item = catalogItem(page.id); if (item) setAddDocsFor(item); };
+    const currentPage = pageFor(docsNav.stack[docsNav.index]);
+    const crumb = currentPage ? (currentPage.kind === 'library' ? `Library › ${catalogState.library.find((i) => i.id === currentPage.id)?.category ?? 'Components'} › ${currentPage.name}` : `Project › ${currentPage.source?.split('/').slice(-3, -1).join(' › ') ?? ''} › ${currentPage.name}`) : undefined;
+    const pageView = (page: DocsPage, compact = false) => (
+      <DocsPageView page={page} files={project.files} theme={previewTheme} density={previewDensity} copy={copyText} compact={compact}
+        onShowSource={showSource} onAddDocs={addDocs} onOpenRelated={(slug) => { const lib = catalogState.library.find((i) => i.name.toLowerCase() === slug.replace(/-/g, '')); if (lib) openDocs(lib.id); }} />
+    );
+    // Component Docs bottom tab (decision 4a): follows the component under the cursor unless pinned.
+    const underCursor = componentAt(project.files[activePath] ?? '', cursor.line, cursor.column);
+    const cursorItem = underCursor ? (catalogState.project.find((i) => i.name === underCursor) ?? catalogState.library.find((i) => i.name === underCursor)) : undefined;
+    const bottomId = bottomDocsPin ?? cursorItem?.id;
+    const bottomPage = pageFor(bottomId);
+    const componentDocs = (
+      <div>
+        <div className={styles.docsBottomBar}>
+          <span data-testid="component-docs-mode">{bottomDocsPin ? `Pinned · ${bottomPage?.name ?? ''}` : bottomPage ? `Follows cursor · ${bottomPage.name} (${activePath.split('/').pop()}:${cursor.line})` : 'Follows cursor'}</span>
+          {bottomPage && <IconButton size="sm" variant="tertiary" icon={bottomDocsPin ? <PinOff /> : <Pin />} label={bottomDocsPin ? 'Unpin component docs' : 'Pin component docs'} aria-pressed={!!bottomDocsPin}
+            onMouseDown={(e) => e.preventDefault()} onClick={() => setBottomDocsPin(bottomDocsPin ? null : bottomPage.id)} />}
+        </div>
+        {bottomPage ? pageView(bottomPage, true) : <p className={styles.docsBottomEmpty}>Place the cursor on a component in the editor to see its documentation.</p>}
+      </div>
+    );
     const canInsert = /\.(tsx|jsx)$/.test(activePath) && Object.hasOwn(project.files, activePath);
     const insertComponent = (item: CatalogItem) => {
       if (!canInsert) return;
@@ -609,6 +657,14 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         search={<SearchPanel files={project.files} onOpen={(path, line) => goToLine(path, line)} />}
         overlays={(
           <>
+            {addDocsFor && (
+              <AddDocsDialog item={addDocsFor} files={project.files} onClose={() => setAddDocsFor(null)}
+                onCreate={(path, text) => {
+                  dispatch({ type: 'applyEdits', files: { [path]: text }, label: `Add documentation ${addDocsFor.name}`, touched: path, create: true, open: true });
+                  setAddDocsFor(null);
+                  announce(`Created ${path.split('/').pop()}.`);
+                }} />
+            )}
             {createDest !== null && (
               <CreateComponentDialog files={project.files} destination={createDest} onClose={() => setCreateDest(null)}
                 onCreate={(name, plan) => {
@@ -712,7 +768,12 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         onOpenSource={(path, line, column) => goToLine(path, line, column ?? 1)}
         onCreateComponent={() => setCreateDest('src/components/')}
         tabActions={createComponentButton}
-        docsTitle={docsItem?.name ?? null}
+        docs={(pinned) => (
+          <DocsPanel nav={docsNav} dispatchNav={dispatchNav} index={docsIndex} pinned={pinned} onPin={(p) => dispatchLayout({ type: 'pinDocs', pinned: p })} breadcrumb={crumb}>
+            {currentPage && pageView(currentPage)}
+          </DocsPanel>
+        )}
+        componentDocs={componentDocs}
         components={(
           <ComponentsPanel project={catalogState.project} library={catalogState.library} canInsert={canInsert}
             onCreate={() => setCreateDest('src/components/')} onDocs={openComponentDocs}
@@ -785,7 +846,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
           </section>
           <section className={cx(styles.pane, collapsed.components && styles.collapsed)} aria-labelledby="palette-title">
             <div className={styles.paneHead}>{paneToggle('components', 'Components')}<h2 id="palette-title" className={styles.paneTitle}>Components</h2></div>
-            <div id="components-body" className={styles.paneBody} hidden={collapsed.components}><Palette onInsert={insertAtSelection} /></div>
+            <div id="components-body" className={styles.paneBody} hidden={collapsed.components}><Palette onInsert={insertAtSelection} onDocs={openLibraryDocs} /></div>
           </section>
           <section className={cx(styles.pane, collapsed.outline && styles.collapsed)} aria-labelledby="outline-title" data-studio-outline>
             <div className={styles.paneHead}>{paneToggle('outline', 'Outline')}<h2 id="outline-title" className={styles.paneTitle}>Outline</h2></div>
@@ -861,6 +922,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         <aside className={styles.right} aria-labelledby="inspector-title">
           <h2 id="inspector-title" className={styles.paneTitle}>Inspector</h2>
           <Inspector
+            onDocs={openLibraryDocs}
             node={selected}
             isRoot={!!selected && !parentId(selected.id)}
             canMoveUp={!!selected && indexOf(selected.id) > 0}

@@ -6,6 +6,8 @@ import styles from '../Studio.module.css';
 
 export interface CodePreviewFrameProps {
   artifact: PreviewArtifact | null;
+  /** C7: docs live examples use their own title (default "Page preview"). */
+  title?: string;
   theme: ThemeName;
   density: Density;
   onConsole: (level: ConsoleLevel, args: string[], location: SourceLocation) => void;
@@ -15,7 +17,7 @@ export interface CodePreviewFrameProps {
 }
 
 /** Code Studio C4: the sandboxed preview frame for compiled artifacts (no `allow-same-origin`). */
-export function CodePreviewFrame({ artifact, theme, density, onConsole, onRuntimeError, onSuccess }: CodePreviewFrameProps) {
+export function CodePreviewFrame({ artifact, theme, density, onConsole, onRuntimeError, onSuccess, title = 'Page preview' }: CodePreviewFrameProps) {
   const frame = useRef<HTMLIFrameElement>(null);
   const [ready, setReady] = useState(false);
   const bridge = useRef<ReturnType<typeof hostBridge> | null>(null);
@@ -36,7 +38,7 @@ export function CodePreviewFrame({ artifact, theme, density, onConsole, onRuntim
   }, [ready, artifact, theme, density]);
   return (
     <div className={styles.canvas}>
-      <iframe ref={frame} title="Page preview" sandbox="allow-scripts" src="./preview.html" className={styles.frame} onLoad={() => bridge.current?.post('init', {})} />
+      <iframe ref={frame} title={title} sandbox="allow-scripts" src="./preview.html" className={styles.frame} onLoad={() => bridge.current?.post('init', {})} />
     </div>
   );
 }

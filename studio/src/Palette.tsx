@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Button, SearchField, Text } from '@enterprise-ui/react';
-import { Plus } from 'lucide-react';
+import { Button, IconButton, SearchField, Text } from '@enterprise-ui/react';
+import { BookOpen, Plus } from 'lucide-react';
 import { catalog, categories } from './model/catalog';
 import { COMPONENT_MIME } from './Canvas';
 import styles from './Studio.module.css';
@@ -8,10 +8,12 @@ import styles from './Studio.module.css';
 export interface PaletteProps {
   /** Inserts the component at the current selection (keyboard alternative to dragging). */
   onInsert: (name: string) => void;
+  /** C7: opens the component's docs page (Code Studio Docs panel). */
+  onDocs?: (name: string) => void;
 }
 
 /** Components from the catalog. Drag onto the canvas, or press Enter to insert at the selection. */
-export function Palette({ onInsert }: PaletteProps) {
+export function Palette({ onInsert, onDocs }: PaletteProps) {
   const [query, setQuery] = useState('');
   const groups = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -44,6 +46,7 @@ export function Palette({ onInsert }: PaletteProps) {
                   >
                     {item.name}
                   </Button>
+                  {onDocs && <IconButton size="sm" variant="tertiary" icon={<BookOpen />} label={`${item.name} docs`} className={styles.paletteDocs} onClick={() => onDocs(item.name)} />}
                 </li>
               ))}
             </ul>

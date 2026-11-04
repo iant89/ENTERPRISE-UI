@@ -319,7 +319,7 @@ scripts/        API extraction, contrast checker, build helpers
 
 The Playwright tests cover:
 
-- axe accessibility checks on every docs page, in all three themes;
+- axe accessibility checks on every docs page, in the default theme, plus contrast checks in all seven themes;
 - keyboard flows;
 - desktop and phone layouts;
 - visual regression.

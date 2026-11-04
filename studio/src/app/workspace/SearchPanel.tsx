@@ -119,7 +119,7 @@ export function SearchPanel({ files, onOpen, debounceMs = 300, maxResults = DEFA
                         <button type="button" aria-current={selected === id || undefined} className={cx(styles.resultLine, selected === id && styles.resultOn)}
                           title={`${path}:${m.line}`}
                           onClick={() => { setSelected(id); onOpen(m.path, m.line, m.column); }}>
-                          <span className={styles.lineNo}>{m.line}</span><span className={styles.preview}>{highlight(m)}</span>
+                          <span className={styles.lineNo}>{m.line}</span><span className={styles.matchPreview}>{highlight(m)}</span>
                         </button>
                       </li>
                     );

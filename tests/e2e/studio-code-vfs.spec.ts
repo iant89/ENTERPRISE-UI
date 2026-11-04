@@ -109,12 +109,12 @@ test('reload restores the files and leaves no stray layout keys', async ({ page 
 
   await newFile(page, 'Kept.tsx');
   await expect(page.getByText('Saved', { exact: true }).first()).toBeVisible();
-  await expect.poll(keys).toHaveLength(1);
-  expect((await keys())[0]).not.toBe('eui-studio-layout:__unsaved__');
+  // C3: the first real save moves the layout onto the project record, so no layout key is left.
+  await expect.poll(keys).toEqual([]);
   await page.reload();
   await expect(item(page, /^Kept\.tsx/)).toBeVisible();
   await expect(page.getByRole('radio', { name: 'Code Studio' })).toHaveAttribute('aria-checked', 'true');
-  expect(await keys()).toHaveLength(1);
+  expect(await keys()).toEqual([]);
 });
 
 test('search finds matches across files and opens the line', async ({ page }) => {

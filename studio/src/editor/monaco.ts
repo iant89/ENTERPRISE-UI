@@ -62,6 +62,8 @@ import 'monaco-editor/editor/contrib/caretOperations/browser/caretOperations.js'
 import 'monaco-editor/editor/contrib/dropOrPasteInto/browser/copyPasteContribution.js';
 import 'monaco-editor/editor/contrib/find/browser/findController.js';
 import 'monaco-editor/editor/contrib/gotoSymbol/browser/goToCommands.js';
+// C3: the inline references / definition peek (registers the standalone ReferencesController).
+import 'monaco-editor/editor/standalone/browser/referenceSearch/standaloneReferenceSearch.js';
 import 'monaco-editor/editor/contrib/gotoError/browser/markerSelectionStatus.js';
 import 'monaco-editor/editor/contrib/semanticTokens/browser/documentSemanticTokens.js';
 import 'monaco-editor/editor/contrib/suggest/browser/suggestController.js';
@@ -124,3 +126,11 @@ export function applyTheme(element: HTMLElement, dark: boolean, highContrast: bo
 }
 
 export { monaco };
+
+// C3 navigation keys, the same on every platform: F12 go to definition, Alt+F12 peek definition,
+// Shift+F12 peek references (F2 rename symbol is Studio's own action, see CodeEditor).
+monaco.editor.addKeybindingRules([
+  { keybinding: monaco.KeyCode.F12, command: 'editor.action.revealDefinition', when: 'editorHasDefinitionProvider && editorTextFocus' },
+  { keybinding: monaco.KeyMod.Alt | monaco.KeyCode.F12, command: 'editor.action.peekDefinition', when: 'editorHasDefinitionProvider && editorTextFocus' },
+  { keybinding: monaco.KeyMod.Shift | monaco.KeyCode.F12, command: 'editor.action.goToReferences', when: 'editorHasReferenceProvider && editorTextFocus' },
+]);

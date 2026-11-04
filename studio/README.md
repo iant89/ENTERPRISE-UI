@@ -110,8 +110,8 @@ opens in Code Studio only if its saved layout says so.
 - **Bottom panel:** Problems, Console, Tests, Component Docs, Output, Preview Events.
 - **Status bar:** problem counts, file, cursor position, language, preview state, theme, save state.
 
-Layout (sizes, collapsed panels, activity, bottom tab, pinned Docs, tablet layout, open tabs) is saved per project in
-localStorage behind the `LayoutStore` interface (`studio/src/app/workspace/layout.ts`). The preview theme and density are saved separately.
+Layout (sizes, collapsed panels, activity, bottom tab, pinned Docs, tablet layout, editor groups and their tabs) is saved per project
+behind the `LayoutStore` interface (`studio/src/app/workspace/layout.ts`); since C3 it lives on the project record (see "Layout storage" below). The preview theme and density are saved separately.
 
 ### Keyboard
 - Splitters: Tab to focus, arrow keys resize (Shift for bigger steps), Home/End go to min/max.
@@ -124,7 +124,7 @@ localStorage behind the `LayoutStore` interface (`studio/src/app/workspace/layou
 - **Mobile (<768 px):** four full-screen tabs (Files / Code / Preview / Panel, with a dot on Code while anything is unsaved), menus behind ☰, short switch labels.
 
 ### Stubbed until C2–C7
-Ctrl+Enter "open to the side" in Quick Open (needs a split editor), find-and-replace, multi-model editing (C3; one Monaco instance switches files for now), compiler, console logs and preview events (C4; stale is currently driven by parse and preview errors), Components and Docs content (C5), Tests (C6) and Settings (C7).
+Find-and-replace, compiler, console logs and preview events (C4; stale is currently driven by parse and preview errors), Components and Docs content (C5), Tests (C6) and Settings (C7).
 
 ### Shortcuts
 
@@ -166,4 +166,40 @@ The logic ships in `core/vfs/search.ts` (literal or regex, case, whole word, res
 - **Rename/move feedback:** in the Code workspace a bottom-right strip says what changed. Success strips list the rewritten importers under *Show changes*, offer *Undo*, and dismiss after 8 s. Imports that could not be updated (unresolved, dynamic, or `@/`/`~/` aliases) show in a warning strip that stays until dismissed, as file:line links. They also appear in Problems as warnings. The Design workspace keeps its toasts.
 
 ### Layout storage
-Layouts stay in localStorage behind `LayoutStore`. A never-saved starter uses only the `eui-studio-layout:__unsaved__` key. On its first save the layout moves to the project's id and the unsaved key is removed. Deleting a project removes its layout, and orphaned layout keys are swept on start.
+Since C3 a saved project's layout is stored in an optional `layout` field on its IndexedDB project record, written in the same
+transaction-safe way as the project (saving code never drops it). A never-saved starter still uses only the
+`eui-studio-layout:__unsaved__` localStorage key until its first save, when the layout moves onto the record and the key is removed.
+An older `eui-studio-layout:<id>` key is migrated onto the record the first time the project opens, then removed. Deleting a project
+deletes its record and so its layout, and orphaned keys are still swept on start.
+
+## Monaco editor: tabs, split and navigation (C3)
+
+Each VFS file has its own Monaco model (`file:///src/…`), so undo history, selection and scroll position are kept per file and
+per group, and the TypeScript service sees every file for cross-file navigation. The editor's accessible name follows the active
+file: "Code editor, src/Header.tsx", plus ", group 1" or ", group 2" when split.
+
+### Tabs
+- Up to 15 open tabs across both groups; opening a 16th closes the least recently used clean tab.
+- Tabs that don't fit go into a **⌄ +N** menu, which also has **Close all tabs in group**.
+- Middle-click or Delete closes a tab. Drag a tab to reorder it (an insertion bar shows where it lands) or drop it on the other group.
+- **Ctrl+Shift+PgUp / PgDn** moves the focused tab left or right, into the other group at the ends; each move is announced.
+
+### Split
+- **Ctrl/Cmd+\**, the split button or View › Split editor right opens the current file in a second group (at most two, side by side, desktop only).
+- **Ctrl/Cmd+Enter** in Quick Open or on an Explorer file, or **Open to the side** in its context menu, opens the file in the other group.
+- Closing a group's last tab collapses the split. The split and its tabs are restored with the project.
+
+### Navigation and refactoring
+| Shortcut | Action |
+| --- | --- |
+| F12 | Go to definition, across files |
+| Alt+F12 | Peek definition |
+| Shift+F12 | Peek references. **Pin** in the peek header copies them to the **References** tab |
+| F2 (editor) | Rename symbol inline: Enter renames, Shift+Enter previews, Esc cancels. F2 in the Explorer still renames the file |
+| Shift+Alt+F | Format the active file with Prettier |
+
+A symbol rename across files is one undo step ("Rename symbol"). The result strip lists the edited files, offers **Undo**, and,
+when the symbol matches its file's name, **Also rename the file?** (imports are rewritten as for any file rename).
+
+The **References** bottom tab (View › Show References panel) keeps the pinned results grouped by file: arrow keys, Home and End
+move through them, Enter opens one, and **Clear** empties the list. The editor theme follows the Studio theme.

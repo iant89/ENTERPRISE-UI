@@ -72,14 +72,14 @@ describe('QuickOpen', () => {
     fireEvent.change(input, { target: { value: 'ord:12' } });
     expect(screen.getAllByRole('option')[0]).toHaveTextContent('Orders.tsx');
     fireEvent.keyDown(input, { key: 'Enter' });
-    expect(onOpen).toHaveBeenCalledWith('src/Orders.tsx', 12);
+    expect(onOpen).toHaveBeenCalledWith('src/Orders.tsx', 12, false);
     fireEvent.keyDown(input, { key: 'Escape' });
     expect(onClose).toHaveBeenCalled();
   });
 });
 
 describe('RewriteFeedback', () => {
-  const base: ChangeReport = { id: 1, verb: 'Renamed', from: 'src/Card.tsx', to: 'src/Tile.tsx', files: [{ path: 'src/App.tsx', count: 1 }], unresolved: [] };
+  const base: ChangeReport = { id: 1, verb: 'Renamed', from: 'src/Card.tsx', to: 'src/Tile.tsx', files: [{ path: 'src/App.tsx', count: 1 }], unresolved: [], moves: [['src/Card.tsx', 'src/Tile.tsx']] };
   it('shows success with undo and changes, auto-dismissing', () => {
     vi.useFakeTimers();
     const onUndo = vi.fn(); const onOpen = vi.fn();
@@ -113,7 +113,7 @@ describe('C2 UI accessibility', () => {
       <div>
         <SearchPanel files={files} onOpen={() => {}} debounceMs={0} />
         <QuickOpen paths={['src/App.tsx']} recent={['src/App.tsx']} current="src/App.tsx" onOpen={() => {}} onRemoveRecent={() => {}} onClose={() => {}} />
-        <RewriteFeedback report={{ id: 3, verb: 'Moved', from: 'src/A.tsx', to: 'src/x/A.tsx', files: [], unresolved: [{ file: 'src/B.tsx', specifier: '@/A', line: 1, reason: 'alias' }] }} onUndo={() => {}} onOpen={() => {}} onOpenProblems={() => {}} />
+        <RewriteFeedback report={{ id: 3, verb: 'Moved', from: 'src/A.tsx', to: 'src/x/A.tsx', files: [], moves: [], unresolved: [{ file: 'src/B.tsx', specifier: '@/A', line: 1, reason: 'alias' }] }} onUndo={() => {}} onOpen={() => {}} onOpenProblems={() => {}} />
       </div>,
     );
     fireEvent.change(screen.getByPlaceholderText('Search'), { target: { value: 'Card' } });

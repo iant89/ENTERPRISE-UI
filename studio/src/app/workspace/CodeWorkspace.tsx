@@ -6,6 +6,7 @@ import { ActivityTabs, ACTIVITY_META, ACTIVITY_PANEL_ID, activityTabId } from '.
 import { EditorTabs } from './EditorTabs';
 import { Splitter } from './Splitter';
 import { StatusBar, type StatusBarProps } from './StatusBar';
+import type { ReferenceSet } from '../../panels/bottom/ReferencesPanel';
 import { BottomPanel, type Problem } from '../../panels/bottom/BottomPanel';
 import { SIZE_LIMITS, type Activity, type Breakpoint, type LayoutAction, type LayoutState, type MobileTab, type TabletLayout } from './layout';
 import styles from './CodeWorkspace.module.css';
@@ -24,6 +25,15 @@ export interface CodeWorkspaceProps {
   /** Overlays: Quick Open and rename/move feedback (C2). */
   overlays?: ReactNode;
   editor: ReactNode;
+  /**
+   * C3 desktop: the editor groups, each with its own tab strip. Gets the sidebar toggle and the
+   * show-preview button to place in the first and last group's strip. Replaces the single tab row.
+   */
+  groupsEditor?: (chrome: { leading: ReactNode; trailing: ReactNode }) => ReactNode;
+  /** C3: references pinned to the bottom panel. */
+  references?: ReferenceSet | null;
+  onOpenReference?: (path: string, line: number, column: number) => void;
+  onClearReferences?: () => void;
   /** PreviewPane with the iframe; always mounted. */
   preview: ReactNode;
   tabs: readonly string[];
@@ -77,7 +87,7 @@ function SidebarBody({ activity, explorer, search, docsPinned, onPin }: { activi
 }
 
 export function CodeWorkspace(props: CodeWorkspaceProps) {
-  const { breakpoint, layout, dispatchLayout: d, menuBar, strips, explorer, search, overlays, editor, preview, tabs, activePath, dirty, onSelectTab, onCloseTab, problems, onGoToProblem, status } = props;
+  const { breakpoint, layout, dispatchLayout: d, menuBar, strips, explorer, search, overlays, editor, groupsEditor, references, onOpenReference, onClearReferences, preview, tabs, activePath, dirty, onSelectTab, onCloseTab, problems, onGoToProblem, status } = props;
   const [overlay, setOverlay] = useState(false);
   const desktop = breakpoint === 'desktop';
   const tablet = breakpoint === 'tablet';
@@ -153,7 +163,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
             onChange={(size) => d({ type: 'resize', key: 'sidebar', size })} />
         )}
         <main className={styles.editorCol} aria-label="Editor" hidden={!showEditor}>
-          {!tablet && (
+          {!tablet && !(desktop && groupsEditor) && (
             <div className={styles.tabRow}>
               {desktop && <IconButton size="sm" variant="tertiary" icon={collapsed.sidebar ? <PanelLeftOpen /> : <PanelLeftClose />} label={collapsed.sidebar ? 'Show sidebar' : 'Hide sidebar'} onClick={() => d({ type: 'toggle', panel: 'sidebar' })} />}
               <EditorTabs tabs={tabs} active={activePath} dirty={dirty} onSelect={onSelectTab} onClose={onCloseTab} maxVisible={mobile ? 2 : undefined} />
@@ -162,7 +172,14 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
             </div>
           )}
           {strips}
-          <div className={styles.editorBody}>{editor}</div>
+          <div className={styles.editorBody}>
+            {desktop && groupsEditor
+              ? groupsEditor({
+                leading: <IconButton size="sm" variant="tertiary" icon={collapsed.sidebar ? <PanelLeftOpen /> : <PanelLeftClose />} label={collapsed.sidebar ? 'Show sidebar' : 'Hide sidebar'} onClick={() => d({ type: 'toggle', panel: 'sidebar' })} />,
+                trailing: collapsed.preview ? <IconButton size="sm" variant="tertiary" icon={<PanelRightOpen />} label="Show preview" onClick={() => d({ type: 'toggle', panel: 'preview', collapsed: false })} /> : null,
+              })
+              : editor}
+          </div>
         </main>
         {docsColumn && (
           <>
@@ -190,6 +207,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
           <BottomPanel
             tab={layout.bottomTab} onTab={(tab) => d({ type: 'setBottomTab', tab })}
             problems={problems} onGoTo={onGoToProblem}
+            references={references} onOpenReference={onOpenReference} onClearReferences={onClearReferences}
             onCollapse={() => d({ type: 'toggle', panel: 'bottom', collapsed: true })}
             summary={tablet} expanded={layout.bottomExpanded} onExpanded={(expanded) => d({ type: 'setBottomExpanded', expanded })}
           />

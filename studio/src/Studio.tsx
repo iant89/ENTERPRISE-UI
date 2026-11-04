@@ -11,8 +11,13 @@ import { Canvas, type DropTarget } from './Canvas';
 import { Palette } from './Palette';
 import { Outline } from './Outline';
 import { Inspector } from './Inspector';
-import type { CodeEditorHandle } from './editor/CodeEditor';
-import { createStore, storeReducer, type StoreAction, type StoreState } from './model/store';
+import type { CodeEditorHandle, RenameRequest } from './editor/CodeEditor';
+import { editorLabel } from './editor/EditorAdapter';
+import { fileNamedAfter } from './editor/navigationModel';
+import type { ReferenceSet } from './panels/bottom/ReferencesPanel';
+import { EditorTabs } from './app/workspace/EditorTabs';
+import { RenameSymbolFeedback, type SymbolRename } from './app/workspace/RenameSymbolFeedback';
+import { createStore, groupsOf, storeReducer, type StoreAction, type StoreState } from './model/store';
 import { createProject, type Project } from './model/project';
 import { FileTree } from './files/FileTree';
 import {
@@ -20,10 +25,11 @@ import {
   type AttrInput, type StudioNode,
 } from './model/jsx';
 import { acceptsChildren, defaultSnippet } from './model/catalog';
-import { listProjects, loadProject, saveProject, StorageBlockedError } from './storage';
+import { getProjectLayout, listProjects, loadProject, putProjectLayout, saveProject, StorageBlockedError } from './storage';
 import { defaultPersistenceDeps, useProjectPersistence } from './persistence';
 import { STARTER } from './template';
 import styles from './Studio.module.css';
+import workspaceStyles from './app/workspace/CodeWorkspace.module.css';
 import { CodeWorkspace } from './app/workspace/CodeWorkspace';
 import { MenuBar, type MenuItems } from './app/workspace/MenuBar';
 import { WorkspaceSwitch } from './app/workspace/WorkspaceSwitch';
@@ -34,7 +40,7 @@ import { RewriteFeedback } from './app/workspace/RewriteFeedback';
 import { PreviewPane, type StaleInfo } from './preview/PreviewPane';
 import type { Problem } from './panels/bottom/BottomPanel';
 import {
-  DEFAULT_LAYOUT, UNSAVED_PROJECT_KEY, errorLine, layoutReducer, localLayoutStore, type LayoutState, type ViewportId, type Workspace,
+  DEFAULT_LAYOUT, UNSAVED_PROJECT_KEY, errorLine, layoutReducer, recordLayoutStore, type LayoutState, type ViewportId, type Workspace,
 } from './app/workspace/layout';
 
 const CodeEditor = lazy(() => import('./editor/CodeEditor').then((m) => ({ default: m.CodeEditor })));
@@ -63,7 +69,11 @@ const readKey = <T extends string>(key: string, allowed: readonly string[], fall
   try { const v = localStorage.getItem(key); return v && allowed.includes(v) ? (v as T) : fallback; } catch { return fallback; }
 };
 const writeKey = (key: string, value: string) => { try { localStorage.setItem(key, value); } catch { /* private mode */ } };
-const layoutStore = localLayoutStore();
+/** C3: layouts live on the project record (the unsaved starter keeps the localStorage key until its first save). */
+const layoutStore = recordLayoutStore({ get: getProjectLayout, put: putProjectLayout });
+/** Layout writes to IndexedDB are batched (resizing fires many changes). */
+const LAYOUT_SAVE_MS = 150;
+let renameId = 0;
 
 
 const indexOf = (id: string) => Number(id.slice(id.lastIndexOf('.') + 1));
@@ -80,11 +90,16 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [preview, setPreview] = useState<{ error: string | null; ready: boolean }>({ error: null, ready: false });
   const editorHandle = useRef<CodeEditorHandle | null>(null);
+  /** C3: one adapter per editor group in the Code workspace. */
+  const adapters = useRef<(CodeEditorHandle | null)[]>([]);
   const pendingLine = useRef<number | null>(null);
+  /** A location to reveal once the focused group shows `path` (C3). */
+  const pendingReveal = useRef<{ path: string; line: number; column: number } | null>(null);
+  const [references, setReferences] = useState<ReferenceSet | null>(null);
+  const [symbolRename, setSymbolRename] = useState<(SymbolRename & { request: RenameRequest }) | null>(null);
   const { project, activePath } = state;
   const entry = project.entry;
   const code = project.files[entry] ?? '';
-  const activeCode = project.files[activePath] ?? '';
   const commitEntry = useCallback((next: string, source: 'visual' | 'editor' = 'visual') => dispatch({ type: 'editFile', path: entry, text: next, source }), [entry]);
   const doc = useMemo(() => parseDocument(code), [code]);
   // Keep the last good tree while the code is mid-edit, so the canvas does not go blank.
@@ -159,17 +174,22 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   useEffect(() => {
     if (!loaded) return;
     // A fresh starter (never saved) gets a new id on every load: its layout lives only under the fixed key.
-    const stored = freshStart.current ? layoutStore.load(UNSAVED_PROJECT_KEY) : layoutStore.load(project.id);
-    const next = stored ?? layout;
-    layoutFor.current = { id: project.id, layout: next };
+    const id = project.id;
+    let cancelled = false;
     firstSaved.current = persistence.savedProject;
-    if (stored) {
+    void Promise.resolve(layoutStore.load(freshStart.current ? UNSAVED_PROJECT_KEY : id)).catch(() => null).then((stored) => {
+      if (cancelled) return;
+      layoutFor.current = { id, layout: stored ?? layoutFor.current?.layout ?? DEFAULT_LAYOUT };
+      if (!stored) return;
       dispatchLayout({ type: 'load', layout: stored });
-      if (stored.openTabs.length) dispatch({ type: 'setTabs', paths: stored.openTabs });
+      // C3: groups, tabs, active tab per group and the focused group; missing files are dropped.
+      if (stored.groups.length) dispatch({ type: 'setGroups', groups: stored.groups, focused: stored.focusedGroup });
+      else if (stored.openTabs.length) dispatch({ type: 'setTabs', paths: stored.openTabs });
       if (stored.recent.length) dispatch({ type: 'setRecent', paths: stored.recent });
-    }
-    // Sweep layouts whose project is gone (C2 follow-up 2).
+    });
+    // Sweep pre-C3 layout keys whose project is gone (C2 follow-up 2).
     void listProjects().then((list) => layoutStore.sweep(list.map((p) => p.id))).catch(() => undefined);
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only when the project changes.
   }, [loaded, project.id]);
   const keyFor = () => (freshStart.current ? UNSAVED_PROJECT_KEY : project.id);
@@ -177,21 +197,43 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     const at = layoutFor.current;
     if (!at || at.id !== project.id || at.layout === layout) return;
     at.layout = layout;
-    layoutStore.save(keyFor(), layout);
+    const key = keyFor();
+    const write = () => { pendingLayout.current = null; void Promise.resolve(layoutStore.save(key, layout)).catch(() => undefined); };
+    // The unsaved starter's key is localStorage (synchronous); record writes are batched, and flushed on pagehide.
+    if (key === UNSAVED_PROJECT_KEY) { write(); return; }
+    pendingLayout.current = write;
+    const t = setTimeout(write, LAYOUT_SAVE_MS);
+    return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- keyFor reads refs.
   }, [layout, project.id]);
+  const pendingLayout = useRef<(() => void) | null>(null);
+  useEffect(() => {
+    const flush = () => pendingLayout.current?.();
+    window.addEventListener('pagehide', flush);
+    return () => window.removeEventListener('pagehide', flush);
+  }, []);
   // First real save of a fresh starter: move its layout from the unsaved key to the project's id.
   const firstSaved = useRef<Project | null>(null);
   useEffect(() => {
     const sp = persistence.savedProject;
     if (!freshStart.current || !sp || sp === firstSaved.current || sp.id !== project.id || !layoutFor.current) return;
     freshStart.current = false;
-    layoutStore.save(project.id, layoutFor.current.layout);
-    layoutStore.remove(UNSAVED_PROJECT_KEY);
+    // The first real save writes the layout onto the new record and retires the unsaved key.
+    void Promise.resolve(layoutStore.save(project.id, layoutFor.current.layout)).then(() => layoutStore.remove(UNSAVED_PROJECT_KEY)).catch(() => undefined);
   }, [persistence.savedProject, project.id]);
   // Open tabs live in the store (they follow renames and undo); the layout persists them.
   const tabs = state.openTabs;
-  useEffect(() => { if (layout.openTabs.join('\n') !== tabs.join('\n')) dispatchLayout({ type: 'setTabs', paths: tabs }); }, [tabs, layout.openTabs]);
+  const groups = useMemo(() => groupsOf(state), [state]);
+  const focusedIndex = state.side ? state.focusedGroup : 0;
+  useEffect(() => { dispatchLayout({ type: 'setGroups', groups, focused: focusedIndex }); }, [groups, focusedIndex]);
+  // Keyboard focus follows the focused group when an editor had it (split, open to the side, moves).
+  useEffect(() => {
+    const at = (document.activeElement as HTMLElement | null)?.closest?.<HTMLElement>('[data-testid="code-editor"]');
+    if (!at || Number(at.dataset.group) === focusedIndex) return;
+    if (adapters.current[focusedIndex]) adapters.current[focusedIndex]!.focus();
+    else focusOnReady.current = true;
+  }, [focusedIndex, groups.length]);
+  const focusOnReady = useRef(false);
   useEffect(() => { if (layout.recent.join('\n') !== state.recent.join('\n')) dispatchLayout({ type: 'setRecent', paths: state.recent }); }, [state.recent, layout.recent]);
   const [quickOpen, setQuickOpen] = useState(false);
   const fileList = useMemo(() => Object.keys(project.files).sort(), [project.files]);
@@ -233,19 +275,47 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   const frozen = useRef(previewCode);
   if (!paused) frozen.current = previewCode;
 
-  const goToLine = useCallback((path: string, line: number | null) => {
-    if (path !== activePath) dispatch({ type: 'openFile', path });
+  const goToLine = useCallback((path: string, line: number | null, column = 1, toSide = false) => {
+    if (path !== activePath || toSide) dispatch({ type: 'openFile', path, toSide });
     if (breakpoint === 'mobile') dispatchLayout({ type: 'setMobileTab', tab: 'code' });
     if (breakpoint === 'tablet' && layout.tabletLayout === 'preview') dispatchLayout({ type: 'setTabletLayout', layout: 'split' });
-    const target = line ?? 1;
-    if (editorHandle.current && path === activePath) editorHandle.current.revealLine(target);
-    else pendingLine.current = target;
-  }, [activePath, breakpoint, layout.tabletLayout]);
+    pendingReveal.current = { path, line: line ?? 1, column };
+    const focused = workspace === 'code' ? adapters.current[focusedIndex] : editorHandle.current;
+    if (focused && !toSide && focused.activePath() === path) { focused.reveal({ line: line ?? 1, column }); pendingReveal.current = null; }
+  }, [activePath, breakpoint, layout.tabletLayout, workspace, focusedIndex]);
+  // After a group switches file (child effects run first), reveal the pending location.
   useEffect(() => {
-    if (pendingLine.current && editorHandle.current && workspace === 'code') { editorHandle.current.revealLine(pendingLine.current); pendingLine.current = null; }
-  }, [activePath, workspace]);
-  const openTabFile = (path: string) => dispatch({ type: 'openFile', path });
-  const closeTab = (path: string) => dispatch({ type: 'closeTab', path });
+    const want = pendingReveal.current;
+    const focused = workspace === 'code' ? adapters.current[focusedIndex] : editorHandle.current;
+    if (want && focused && focused.activePath() === want.path) { focused.reveal({ line: want.line, column: want.column }); pendingReveal.current = null; }
+  }, [activePath, workspace, focusedIndex]);
+  const openTabFile = (path: string, toSide = false) => dispatch({ type: 'openFile', path, toSide });
+  const closeTab = (path: string, group?: number) => dispatch({ type: 'closeTab', path, group });
+  const splitEditor = () => {
+    if (breakpoint !== 'desktop') { announce('Split editing is available on wider screens.'); return; }
+    dispatch({ type: 'splitEditor' });
+    announce(`Opened ${activePath} in group ${state.side ? (focusedIndex === 0 ? 2 : 1) : 2}.`);
+  };
+  const moveTab = (path: string, from: number, to: number, index: number) => {
+    dispatch({ type: 'moveTab', path, from, to, index });
+    const name = path.slice(path.lastIndexOf('/') + 1);
+    if (from === to) announce(`${name} moved to position ${Math.min(index, (groups[from]?.tabs.length ?? 1) - 1) + 1}.`);
+    else announce(`${name} moved to group ${to + 1}.`);
+  };
+  const applySymbolRename = (request: RenameRequest) => {
+    dispatch({ type: 'applyEdits', files: request.plan.files, label: 'Rename symbol', touched: request.path });
+    setSymbolRename({
+      id: ++renameId, mode: 'done', oldName: request.oldName, newName: request.newName, edits: request.plan.edits,
+      fileToRename: fileNamedAfter(request.plan.edits.map((e) => e.path), request.oldName), request,
+    });
+    const files = request.plan.edits.length;
+    announce(`Renamed ${request.oldName} to ${request.newName} in ${files} ${files === 1 ? 'file' : 'files'}.`);
+  };
+  const onRenameSymbol = (request: RenameRequest) => {
+    if (!request.plan.edits.length) { announce('Nothing to rename.'); return; }
+    if (request.preview) setSymbolRename({ id: ++renameId, mode: 'preview', oldName: request.oldName, newName: request.newName, edits: request.plan.edits, fileToRename: null, request });
+    else applySymbolRename(request);
+  };
   const setWorkspace = (w: Workspace) => {
     if (w === 'code' && !layoutFor.current && loaded) layoutFor.current = { id: project.id, layout };
     dispatchLayout({ type: 'setWorkspace', workspace: w });
@@ -296,6 +366,14 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   }, [apply, code, selected, showInCode]);
 
   const format = useCallback(async () => {
+    const focused = workspace === 'code' ? adapters.current[focusedIndex] : null;
+    if (focused) {
+      // C3: Prettier on the active model of the focused group; a failure never touches the file.
+      const r = await focused.format();
+      if (r.ok) toast.show({ title: r.changed ? 'Code formatted' : 'Already formatted', tone: 'success' });
+      else toast.show({ title: 'Could not format', description: r.message, tone: 'error' });
+      return;
+    }
     try {
       const { formatCode } = await import('./editor/format');
       apply(await formatCode(code));
@@ -303,7 +381,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     } catch (error) {
       toast.show({ title: 'Could not format', description: error instanceof Error ? error.message.split('\n')[0] : String(error), tone: 'error' });
     }
-  }, [apply, code, toast]);
+  }, [apply, code, toast, workspace, focusedIndex]);
 
   /** Whole-project download while storage is down: one JSON file (`{ name, entry, files }`) until ZIP export (M3-12). */
   const downloadProject = () => {
@@ -340,6 +418,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
       }
       if (event.shiftKey && event.altKey && key === 'f') { event.preventDefault(); void format(); return; }
       if (workspace === 'code' && mod && !event.shiftKey && key === 'p') { event.preventDefault(); setQuickOpen(true); return; }
+      if (workspace === 'code' && mod && !event.shiftKey && !event.altKey && event.key === '\\') { event.preventDefault(); splitEditor(); return; }
       if (workspace === 'code' && mod && !event.shiftKey && (key === 'b' || key === 'j')) {
         event.preventDefault();
         dispatchLayout({ type: 'toggle', panel: key === 'b' ? 'sidebar' : 'bottom' });
@@ -353,7 +432,8 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [persistence, format, onAction, selected, toast, announce, workspace]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- splitEditor reads the latest state.
+  }, [persistence, format, onAction, selected, toast, announce, workspace, breakpoint, activePath, state.side, focusedIndex]);
 
   const onDropNode = (id: string, target: DropTarget) => {
     const moved = moveNode(code, id, target.parentId, target.index);
@@ -378,6 +458,42 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
 
   const saveState = doc.error ? 'Code has errors' : storageDown ? 'Not saved' : !loaded ? 'Loading…' : saved ? 'Saved' : 'Saving…';
 
+  /** One editor group's Monaco editor (C3). `single` is the tablet/mobile view of the focused group. */
+  const renderGroup = (i: number, single: boolean) => {
+    const g = groups[i] ?? groups[0];
+    const isFocused = i === focusedIndex;
+    return (
+      <Suspense fallback={<BusyIndicator active text="Loading code editor" />}>
+        <CodeEditor
+          key={single ? 'single' : `group-${i}`}
+          files={project.files}
+          path={g.active}
+          group={i}
+          moves={state.lastChange && { id: state.lastChange.id, moves: state.lastChange.moves }}
+          theme={resolved}
+          label={editorLabel(g.active, i, single ? 1 : groups.length)}
+          onCursor={isFocused ? setCursor : undefined}
+          onFocus={() => { if (!isFocused) dispatch({ type: 'focusGroup', group: i }); }}
+          onChange={(next, path) => dispatch({ type: 'editFile', path, text: next, source: 'editor' })}
+          onOpenLocation={(path, line, column) => {
+            if (!isFocused) dispatch({ type: 'focusGroup', group: i });
+            pendingReveal.current = { path, line, column };
+            dispatch({ type: 'openFile', path });
+          }}
+          onPinReferences={(refs) => { setReferences(refs); dispatchLayout({ type: 'setBottomTab', tab: 'references' }); announce(`References to ${refs.symbol} pinned to the References panel.`); }}
+          onRenameSymbol={onRenameSymbol}
+          onFormat={() => { void format(); }}
+          onReady={(handle) => {
+            adapters.current[i] = handle;
+            if (focusOnReady.current && isFocused) { focusOnReady.current = false; handle.focus(); }
+            const want = pendingReveal.current;
+            if (want && isFocused && handle.activePath() === want.path) { handle.reveal({ line: want.line, column: want.column }); pendingReveal.current = null; }
+          }}
+        />
+      </Suspense>
+    );
+  };
+
   if (workspace === 'code') {
     const menus: MenuItems = {
       Project: [{ id: 'new-page', label: 'New page' }, { id: 'download', label: 'Download project' }],
@@ -388,6 +504,8 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         { id: 'toggle-preview', label: layout.collapsed.preview ? 'Show preview' : 'Hide preview' },
         { id: 'toggle-bottom', label: layout.collapsed.bottom ? 'Show bottom panel' : 'Hide bottom panel', shortcut: 'Ctrl+J' },
         { id: 'toggle-docs', label: layout.docsPinned ? 'Unpin Docs' : 'Pin Docs' },
+        { id: 'split', label: 'Split editor right', shortcut: 'Ctrl+\\', disabled: breakpoint !== 'desktop' },
+        { id: 'show-references', label: 'Show References panel' },
       ],
       Run: [{ id: 'refresh', label: 'Refresh preview' }, { id: 'pause', label: paused ? 'Resume preview' : 'Pause preview' }],
       Tools: [{ id: 'settings', label: 'Settings' }],
@@ -406,6 +524,8 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         case 'toggle-preview': dispatchLayout({ type: 'toggle', panel: 'preview' }); break;
         case 'toggle-bottom': dispatchLayout({ type: 'toggle', panel: 'bottom' }); break;
         case 'toggle-docs': dispatchLayout({ type: 'pinDocs', pinned: !layout.docsPinned }); break;
+        case 'split': splitEditor(); break;
+        case 'show-references': dispatchLayout({ type: 'setBottomTab', tab: 'references' }); break;
         case 'refresh': setPreviewKey((k) => k + 1); break;
         case 'pause': setPaused((p) => !p); break;
         case 'settings': toast.show({ title: 'Settings', description: 'Studio settings arrive with C7. Use the theme menu for now.', tone: 'neutral' }); break;
@@ -437,37 +557,70 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         )}
         explorer={(
           <FileTree state={state} dispatch={dispatch} loading={!loaded} titleClassName={styles.paneTitle} dirtyPaths={dirty} moveFeedback="strip"
-            errorPaths={stale ? [stale.file] : undefined} onOpen={openTabFile} />
+            errorPaths={stale ? [stale.file] : undefined} onOpen={(path) => openTabFile(path)}
+            onOpenToSide={breakpoint === 'desktop' ? (path) => openTabFile(path, true) : undefined} />
         )}
         search={<SearchPanel files={project.files} onOpen={(path, line) => goToLine(path, line)} />}
         overlays={(
           <>
             {quickOpen && (
               <QuickOpen paths={fileList} recent={state.recent} current={activePath}
-                onOpen={(path, line) => { if (line) goToLine(path, line); else openTabFile(path); }}
+                onOpen={(path, line, toSide) => {
+                  const side = !!toSide && breakpoint === 'desktop';
+                  if (line) goToLine(path, line, 1, side); else openTabFile(path, side);
+                }}
                 onRemoveRecent={(path) => dispatch({ type: 'removeRecent', path })}
                 onClose={() => setQuickOpen(false)} />
             )}
             <RewriteFeedback report={freshChange} onUndo={() => dispatch({ type: 'undo' })}
               onOpen={(path, line) => goToLine(path, line ?? 1)}
               onOpenProblems={() => dispatchLayout({ type: 'setBottomTab', tab: 'problems' })} />
+            <RenameSymbolFeedback
+              result={symbolRename}
+              onApply={() => { if (symbolRename) applySymbolRename(symbolRename.request); }}
+              onCancel={() => { setSymbolRename(null); adapters.current[focusedIndex]?.focus(); }}
+              onUndo={() => { dispatch({ type: 'undo' }); setSymbolRename(null); announce('Rename undone.'); }}
+              onOpen={(path) => goToLine(path, 1)}
+              onRenameFile={(path) => {
+                const base = path.slice(path.lastIndexOf('/') + 1);
+                const to = `${path.slice(0, path.lastIndexOf('/') + 1)}${symbolRename?.newName ?? ''}${base.slice(base.lastIndexOf('.'))}`;
+                setSymbolRename(null);
+                if (!Object.hasOwn(project.files, to)) dispatch({ type: 'renameFile', from: path, to });
+                else announce(`${to} already exists.`);
+              }}
+              onDismiss={() => setSymbolRename(null)}
+            />
           </>
         )}
-        editor={(
-          <Suspense fallback={<BusyIndicator active text="Loading code editor" />}>
-            <CodeEditor
-              value={activeCode}
-              theme={resolved}
-              label={`Code of ${activePath}`}
-              onCursor={setCursor}
-              onChange={(next) => dispatch({ type: 'editFile', path: activePath, text: next, source: 'editor' })}
-              onReady={(handle) => {
-                editorHandle.current = handle;
-                if (pendingLine.current) { handle.revealLine(pendingLine.current); pendingLine.current = null; }
-              }}
-            />
-          </Suspense>
+        editor={renderGroup(focusedIndex, true)}
+        groupsEditor={({ leading, trailing }) => (
+          <div className={workspaceStyles.groups}>
+            {groups.map((g, i) => (
+              <section key={i} className={workspaceStyles.group} aria-label={groups.length > 1 ? `Editor group ${i + 1}` : undefined}
+                onMouseDownCapture={() => { if (i !== focusedIndex) dispatch({ type: 'focusGroup', group: i }); }}>
+                <div className={workspaceStyles.groupHead}>
+                  <EditorTabs
+                    tabs={g.tabs} active={g.active} dirty={dirty} group={i} groupCount={groups.length} focused={i === focusedIndex}
+                    onFocusGroup={() => dispatch({ type: 'focusGroup', group: i })}
+                    onSelect={(path) => { dispatch({ type: 'focusGroup', group: i }); openTabFile(path); }}
+                    onClose={(path) => closeTab(path, i)}
+                    onMove={(path, from, to, index) => moveTab(path, from, to, index)}
+                    onSplit={groups.length < 2 ? splitEditor : undefined}
+                    onCloseAll={() => dispatch({ type: 'closeGroup', group: i })}
+                    onCloseOthers={(path) => dispatch({ type: 'setGroups', groups: groups.map((x, j) => (j === i ? { tabs: [path], active: path } : x)), focused: i })}
+                    leading={i === 0 ? leading : null}
+                    trailing={i === groups.length - 1 ? trailing : null}
+                  />
+                </div>
+                <span className={workspaceStyles.groupCrumb}>{g.active.split('/').join(' › ')}</span>
+                <div className={workspaceStyles.groupBody}>{renderGroup(i, false)}</div>
+              </section>
+            ))}
+          </div>
         )}
+        references={references}
+        onOpenReference={(path, line, column) => goToLine(path, line, column)}
+        onClearReferences={() => setReferences(null)}
         preview={(
           <PreviewPane
             theme={previewTheme} onTheme={setPreviewTheme} density={previewDensity} onDensity={setPreviewDensity}
@@ -485,8 +638,8 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         tabs={tabs}
         activePath={activePath}
         dirty={dirty}
-        onSelectTab={openTabFile}
-        onCloseTab={closeTab}
+        onSelectTab={(path) => openTabFile(path)}
+        onCloseTab={(path) => closeTab(path)}
         problems={problems}
         onGoToProblem={(p) => goToLine(p.file, p.line)}
         status={{ file: activePath, line: cursor.line, column: cursor.column, saveState, theme: themeLabel, errors: problems.length, warnings: 0, previewState: stale ? 'stale' : paused ? 'paused' : 'live' }}
@@ -614,9 +767,10 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
               <section className={styles.codePane} aria-label="Code editor">
                 <Suspense fallback={<BusyIndicator active text="Loading code editor" />}>
                   <CodeEditor
-                    value={activeCode}
+                    files={project.files}
+                    path={activePath}
                     theme={resolved}
-                    onChange={(next) => dispatch({ type: 'editFile', path: activePath, text: next, source: 'editor' })}
+                    onChange={(next, path) => dispatch({ type: 'editFile', path, text: next, source: 'editor' })}
                     onReady={(handle) => {
                       editorHandle.current = handle;
                       if (pendingLine.current) { handle.revealLine(pendingLine.current); pendingLine.current = null; }

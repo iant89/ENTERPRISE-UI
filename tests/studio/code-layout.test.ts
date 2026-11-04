@@ -85,7 +85,7 @@ describe('layout persistence', () => {
   it('migrates a project with no or a broken layout to the defaults', () => {
     expect(parseLayout(undefined)).toEqual(DEFAULT_LAYOUT);
     expect(parseLayout({ sizes: { sidebar: 'wide', preview: 5000 }, activity: 'nope', openTabs: [1, 'a.ts'] })).toEqual({
-      ...DEFAULT_LAYOUT, sizes: { ...DEFAULT_LAYOUT.sizes, preview: SIZE_LIMITS.preview[1] }, openTabs: ['a.ts'],
+      ...DEFAULT_LAYOUT, sizes: { ...DEFAULT_LAYOUT.sizes, preview: SIZE_LIMITS.preview[1] }, openTabs: ['a.ts'], groups: [{ tabs: ['a.ts'], active: 'a.ts' }],
     });
     const storage = memory();
     storage.setItem(`${LAYOUT_KEY_PREFIX}p`, '{not json');

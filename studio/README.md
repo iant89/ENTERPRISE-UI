@@ -203,3 +203,17 @@ when the symbol matches its file's name, **Also rename the file?** (imports are 
 
 The **References** bottom tab (View › Show References panel) keeps the pinned results grouped by file: arrow keys, Home and End
 move through them, Enter opens one, and **Clear** empties the list. The editor theme follows the Studio theme.
+
+## Code Studio preview pipeline (C4)
+
+`module graph → compiler → bridge → sandbox`
+
+- **Module graph** (`src/core/module-graph/`): built from the VFS starting at the project entry (`project.entry`, else `src/main.tsx`, `src/App.tsx`, …). Relative imports (`./`, `../`) resolve exact, then `.tsx/.ts/.jsx/.js/.json`, then `.css`, then `index.*`. Type-only imports are ignored. Nodes carry a content hash; an edit invalidates only that file and its dependents, and every build emits a `graphEvents` change event (C6 catalog invalidation).
+- **Supported imports**: project files and these packages only — `react`, `react-dom`, `react-dom/client`, `react/jsx-runtime`, `@enterprise-ui/react`, `lucide-react` (`PACKAGE_ALLOWLIST`). Any other bare import, Node built-in (`node:fs`) or URL is an error; nothing is ever fetched from npm or the network (§9.3).
+- **Compiler** (`src/preview/compiler/`): `resolveEntry`, `buildGraph`, `transform`, `compile(files) → { artifact, diagnostics }`. Sucrase per module (TS + JSX, line-preserving), cached by content hash, so only edited modules are re-transformed. CSS imports become style tags in module order. The artifact is deep-frozen and hashed. It is lazy-loaded with Sucrase, outside the initial download.
+- **Debounce**: builds run 300 ms after the last edit (`usePreviewBuild(files, entry, { debounceMs })`), and not at all while the preview is paused.
+- **Bridge** (`src/preview/bridge/`): `{ source: 'eui-preview', v: 1, type, payload }` messages with a validator per type, shared by Studio, the docs playground and the frame runtime (`docs/src/playground-frame.tsx`). Hosts accept messages only from their frame's window; unknown types, bad payloads and frame messages over 64 kB are dropped. Console arguments are truncated (2,000 chars each, marked `… [truncated]`). The iframe is `sandbox="allow-scripts"` only (opaque origin, never `allow-same-origin`).
+- **Problems tab**: one diagnostics shape (`src/core/diagnostics/`) for parser (Sucrase/Babel), TypeScript (Monaco markers), compiler (module graph) and runtime errors; grouped by file, counts in the tab label and status bar; Enter or click opens the location in the focused group.
+- **Console tab**: `console.log/info/warn/error`, uncaught errors and unhandled rejections from the preview, with level filter, Clear, a count badge and `path:line` links. Capped at 500 entries; cleared on each successful reload.
+- **Stale / last good** (§9.6): a failed build keeps the previous artifact running, dims it with a dashed outline and shows the "Preview is stale" strip (Go to error, Retry). The next successful build returns to Live. A runtime error after a good build shows an overlay with a source link and keeps the artifact.
+- **Custom size**: the "W × H · Fit (n%)" label opens a popover: Width and Height (320–3840 × 320–2160 px, validated inline; Apply is disabled when invalid), an aspect-ratio lock, Zoom (Fit/50/75/100%), Reset to Desktop and Apply. Enter applies, Esc closes without changes, and focus returns to the label. The last custom size and zoom are kept per project in the layout (`previewSize`).

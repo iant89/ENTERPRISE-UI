@@ -1,7 +1,8 @@
 import { Badge, IconButton, Select, THEMES, type Density, type ThemeName } from '@enterprise-ui/react';
 import { Maximize2, Monitor, Pause, Play, RefreshCw, Smartphone, Tablet } from 'lucide-react';
 import { cx } from '../../../src/utilities/cx';
-import { VIEWPORTS, type ViewportId } from '../app/workspace/layout';
+import { VIEWPORTS, type PreviewSize, type PreviewZoom, type ViewportId } from '../app/workspace/layout';
+import { PreviewSizePopover } from './PreviewSizePopover';
 import styles from '../app/workspace/CodeWorkspace.module.css';
 
 export interface PreviewToolbarProps {
@@ -19,16 +20,20 @@ export interface PreviewToolbarProps {
   onFullscreen: () => void;
   stale: boolean;
   compact?: boolean;
+  /** C4: the frame size and zoom shown in the label (the preset, or the project's custom size). */
+  size?: { width: number; height: number; zoom: PreviewZoom; custom: boolean };
+  onCustomSize?: (size: PreviewSize | null) => void;
 }
 
 const ICONS: Record<ViewportId, typeof Monitor> = { desktop: Monitor, tablet: Tablet, mobile: Smartphone };
 
 /**
  * Decision 4: the preview theme Select changes only the iframe (all seven themes), independent of
- * the Studio theme. Viewport presets, a read-only "W × H · Fit (n%)" label, density, refresh, pause, fullscreen.
+ * the Studio theme. Viewport presets, a "W × H · Fit (n%)" label, density, refresh, pause, fullscreen.
  */
-export function PreviewToolbar({ viewport, onViewport, scale, theme, onTheme, density, onDensity, paused, onPause, onRefresh, onFullscreen, stale, compact }: PreviewToolbarProps) {
+export function PreviewToolbar({ viewport, onViewport, scale, theme, onTheme, density, onDensity, paused, onPause, onRefresh, onFullscreen, stale, compact, size, onCustomSize }: PreviewToolbarProps) {
   const vp = VIEWPORTS[viewport];
+  const shown = size ?? { width: vp.width, height: vp.height, zoom: 'fit' as const, custom: false };
   return (
     <div className={styles.previewToolbarWrap}>
       <div className={styles.previewToolbar} role="toolbar" aria-label="Preview tools">
@@ -36,8 +41,8 @@ export function PreviewToolbar({ viewport, onViewport, scale, theme, onTheme, de
           {(Object.keys(VIEWPORTS) as ViewportId[]).map((id) => {
             const Icon = ICONS[id];
             return (
-              <button key={id} type="button" aria-pressed={viewport === id} aria-label={`${VIEWPORTS[id].label} viewport`} title={VIEWPORTS[id].label}
-                className={cx(styles.viewportButton, viewport === id && styles.viewportOn)} onClick={() => onViewport(id)}>
+              <button key={id} type="button" aria-pressed={viewport === id && !shown.custom} aria-label={`${VIEWPORTS[id].label} viewport`} title={VIEWPORTS[id].label}
+                className={cx(styles.viewportButton, viewport === id && !shown.custom && styles.viewportOn)} onClick={() => { if (shown.custom) onCustomSize?.(null); onViewport(id); }}>
                 <Icon aria-hidden="true" />
               </button>
             );
@@ -55,7 +60,9 @@ export function PreviewToolbar({ viewport, onViewport, scale, theme, onTheme, de
         <IconButton size="sm" variant="tertiary" icon={paused ? <Play /> : <Pause />} label={paused ? 'Resume preview' : 'Pause preview'} aria-pressed={paused} onClick={onPause} />
         {!compact && <IconButton size="sm" variant="tertiary" icon={<Maximize2 />} label="Fullscreen preview" onClick={onFullscreen} />}
       </div>
-      <div className={styles.fitLabel} data-testid="preview-size">{vp.width} × {vp.height} · Fit ({Math.round(scale * 100)}%)</div>
+      {onCustomSize
+        ? <PreviewSizePopover size={shown} fit={scale} onApply={onCustomSize} onReset={() => { onCustomSize(null); onViewport('desktop'); }} />
+        : <div className={styles.fitLabel} data-testid="preview-size">{vp.width} × {vp.height} · Fit ({Math.round(scale * 100)}%)</div>}
     </div>
   );
 }

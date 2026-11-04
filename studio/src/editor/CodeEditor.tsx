@@ -48,7 +48,7 @@ const openers = new Map<unknown, (path: string, line: number, column: number) =>
 interface RenameBox { top: number; left: number; value: string; line: number; column: number; oldName: string; error?: string; busy?: boolean }
 
 export function CodeEditor({
-  files, path, group = 0, moves, theme, onReady, label = 'Page code', onCursor, onChange, onFocus, onOpenLocation, onPinReferences, onRenameSymbol, onFormat,
+  files, path, group = 0, moves, theme, onReady, label = 'Page code', onCursor, onChange, onFocus, onMarkers, onOpenLocation, onPinReferences, onRenameSymbol, onFormat,
 }: CodeEditorProps) {
   const host = useRef<HTMLDivElement>(null);
   const editor = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null);
@@ -56,8 +56,8 @@ export function CodeEditor({
   const nav = useRef<Nav | null>(null);
   const registry = useRef<ModelRegistry | null>(null);
   const shown = useRef<string | null>(null);
-  const latest = useRef({ files, path, group, moves, onChange, onCursor, onFocus, onOpenLocation, onPinReferences, onRenameSymbol, onFormat });
-  latest.current = { files, path, group, moves, onChange, onCursor, onFocus, onOpenLocation, onPinReferences, onRenameSymbol, onFormat };
+  const latest = useRef({ files, path, group, moves, onChange, onCursor, onFocus, onMarkers, onOpenLocation, onPinReferences, onRenameSymbol, onFormat });
+  latest.current = { files, path, group, moves, onChange, onCursor, onFocus, onMarkers, onOpenLocation, onPinReferences, onRenameSymbol, onFormat };
   const [loading, setLoading] = useState(true);
   /** A slot inside the open references peek's header, for the Pin button. */
   const [peekSlot, setPeekSlot] = useState<HTMLElement | null>(null);
@@ -165,6 +165,16 @@ export function CodeEditor({
         latest.current.onCursor?.({ line: event.position.lineNumber, column: event.position.column });
       });
       ed.onDidFocusEditorText(() => latest.current.onFocus?.());
+      // C4: TypeScript markers feed Problems (only the listener that asked for them).
+      const markerSub = (monaco.editor as Partial<typeof monaco.editor>).onDidChangeMarkers?.(() => {
+        const report = latest.current.onMarkers;
+        if (!report) return;
+        report(monaco.editor.getModelMarkers({ owner: 'typescript' }).map((m) => ({
+          severity: m.severity, message: typeof m.message === 'string' ? m.message : String(m.message), startLineNumber: m.startLineNumber, startColumn: m.startColumn,
+          endLineNumber: m.endLineNumber, endColumn: m.endColumn, path: decodeURIComponent(m.resource.path.replace(/^\//, '')),
+        })));
+      });
+      ed.onDidDispose(() => markerSub?.dispose());
       const { KeyCode, KeyMod } = monaco;
       // Shift+F12 is Monaco's own references peek (decision 5a); the position is kept for "Pin".
       ed.onKeyDown((event) => {

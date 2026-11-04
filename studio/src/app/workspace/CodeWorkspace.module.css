@@ -149,7 +149,28 @@
 .viewportButton { display: inline-grid; place-items: center; inline-size: 1.75rem; block-size: 1.5rem; padding: 0; border: 0; border-radius: var(--eui-radius-xs); background: transparent; color: var(--eui-color-text); cursor: pointer; }
 .viewportButton svg { inline-size: 1rem; block-size: 1rem; }
 .viewportOn { background: var(--eui-color-primary-subtle); color: var(--eui-color-selected-text); }
-.fitLabel { padding-block-end: var(--eui-space-1); text-align: center; font-size: var(--eui-font-size-xs); color: var(--eui-color-text-secondary); }
+.fitLabel {
+  display: block; margin-inline: auto; margin-block-end: var(--eui-space-1); padding: 0 var(--eui-space-2); border: 0; border-radius: var(--eui-radius-sm);
+  background: none; font: inherit; font-size: var(--eui-font-size-xs); color: var(--eui-color-text-secondary); cursor: pointer;
+}
+.fitLabel:hover { color: var(--eui-color-text); background: var(--eui-color-surface-hover); }
+.fitLabel:focus-visible { outline: 2px solid var(--eui-color-focus); outline-offset: 1px; }
+.sizeForm { display: grid; gap: var(--eui-space-2); }
+.sizeRow { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: var(--eui-space-1); }
+.sizeHint { margin: 0; font-size: var(--eui-font-size-xs); color: var(--eui-color-text-secondary); }
+.sizeFooter { display: flex; justify-content: space-between; gap: var(--eui-space-2); inline-size: 100%; }
+.runtimeOverlay {
+  position: absolute; inset-inline: var(--eui-space-2); inset-block-end: var(--eui-space-2); z-index: 2;
+}
+.problemGroup { margin: 0; padding: var(--eui-space-1) var(--eui-space-3); font-size: var(--eui-font-size-xs); font-weight: var(--eui-font-weight-bold); color: var(--eui-color-text-secondary); }
+.problemRow { cursor: pointer; }
+.problemRow:focus-visible { outline: 2px solid var(--eui-color-focus); outline-offset: -2px; }
+.consoleBar { display: flex; align-items: center; gap: var(--eui-space-2); padding: var(--eui-space-1) var(--eui-space-3); border-block-end: var(--eui-border-width) solid var(--eui-color-border-subtle); }
+.consoleList { margin: 0; padding: 0; list-style: none; font-family: var(--eui-font-family-mono); font-size: var(--eui-font-size-xs); }
+.consoleEntry { display: flex; gap: var(--eui-space-3); padding: 2px var(--eui-space-3); border-block-end: var(--eui-border-width) solid var(--eui-color-border-subtle); }
+.consoleEntry[data-level="warn"] { background: var(--eui-color-warning-subtle); }
+.consoleEntry[data-level="error"], .consoleEntry[data-level="uncaught"] { background: var(--eui-color-error-subtle); color: var(--eui-color-error-text); }
+.consoleText { flex: 1; min-inline-size: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
 .staleStrip { margin: var(--eui-space-2); }
 .stage {
   position: relative; display: flex; justify-content: center; align-items: flex-start; flex: 1; min-block-size: 0; overflow: hidden; padding: var(--eui-space-2);

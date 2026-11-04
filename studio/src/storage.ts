@@ -183,6 +183,41 @@ export function openDatabase(): Promise<IDBDatabase> {
 }
 const open = openDatabase;
 
+/**
+ * Read-modify-write of one project record in a single transaction, so a layout write and a
+ * project save can never overwrite each other (C3: the layout lives on the record).
+ * `change` gets the stored record (or undefined) and returns the new one, or undefined to skip.
+ */
+async function update(id: string, change: (stored: unknown) => unknown): Promise<boolean> {
+  const db = await open();
+  return new Promise<boolean>((resolve, reject) => {
+    const tx = db.transaction(PROJECTS, 'readwrite');
+    const store = tx.objectStore(PROJECTS);
+    let wrote = false;
+    const get = store.get(id);
+    get.onsuccess = () => {
+      const next = change(get.result);
+      if (next !== undefined) { store.put(next, id); wrote = true; }
+    };
+    tx.oncomplete = () => resolve(wrote);
+    tx.onerror = () => reject(tx.error ?? get.error);
+    tx.onabort = () => reject(tx.error ?? new Error('Transaction aborted'));
+  }).finally(() => db.close());
+}
+
+/** The workspace layout saved on a project record (C3), or undefined when there is none. */
+export async function getProjectLayout(id: string): Promise<unknown> {
+  if (id === V1_KEY) return undefined;
+  const value = await run<unknown>(PROJECTS, 'readonly', (s) => s.get(id));
+  return isProject(value) ? (value as Project & { layout?: unknown }).layout : undefined;
+}
+
+/** Writes the layout onto an existing project record. Returns false when the project is not stored. */
+export function putProjectLayout(id: string, layout: unknown): Promise<boolean> {
+  if (id === V1_KEY) return Promise.resolve(false);
+  return update(id, (stored) => (isProject(stored) ? { ...stored, layout } : undefined));
+}
+
 async function run<T>(store: string, mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   const db = await open();
   return new Promise<T>((resolve, reject) => {
@@ -222,7 +257,8 @@ export async function listProjects(): Promise<ProjectSummary[]> {
 
 export async function deleteProject(id: string) {
   await run(PROJECTS, 'readwrite', (s) => s.delete(id));
-  localLayoutStore().remove(id); // C2 follow-up 2: no stale layout keys
+  // C3: the layout is on the record, so it goes with it; a leftover pre-C3 key is removed too.
+  localLayoutStore().remove(id);
   if ((await getLastOpened()) === id) await run(META, 'readwrite', (s) => s.delete(LAST_OPENED));
 }
 
@@ -326,12 +362,13 @@ export async function saveProject(input: string | Project, options: SaveOptions 
     return;
   }
   if (!has(input.files, input.entry)) throw new Error(`Can't save: the entry file ${input.entry} is not in the project.`);
-  const stored = await getProject(input.id);
-  const project: Project = stored
+  if (input.id === V1_KEY) throw new Error(`"${V1_KEY}" is reserved for the retained v1 record`);
+  // One transaction: the stored name, createdAt and layout (C3) are kept; files and entry are replaced.
+  const { layout: _ignored, ...fresh } = input as Project & { layout?: unknown };
+  await update(input.id, (stored) => (isProject(stored)
     ? { ...stored, files: { ...input.files }, entry: input.entry, updatedAt: Date.now() }
-    : { ...input, files: { ...input.files }, updatedAt: Date.now() };
-  await putProject(project);
-  if (remember) await setLastOpened(project.id);
+    : { ...fresh, files: { ...input.files }, updatedAt: Date.now() }));
+  if (remember) await setLastOpened(input.id);
 }
 
 // ---------------------------------------------------------------- multi-tab notice (UX-7)

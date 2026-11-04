@@ -5,7 +5,7 @@ import {
 } from '@enterprise-ui/react';
 import {
   ChevronsDownUp, CircleAlert, Copy, FileCode, FileCode2, FileJson, FilePlus, FileText, FileType, FlaskConical, Folder, FolderInput, FolderOpen, FolderPlus,
-  Pencil, Star, Trash2, Unlink, ClipboardCopy, FileOutput,
+  Pencil, Star, Trash2, Unlink, ClipboardCopy, FileOutput, Columns2,
 } from 'lucide-react';
 import { basename, dirname, extname, type FilePath } from '../model/project';
 import { storeReducer, type StoreAction, type StoreState } from '../model/store';
@@ -35,6 +35,8 @@ export interface FileTreeProps {
   dispatch: Dispatch<StoreAction>;
   /** Opens a file as the active tab (UX-10). Called on click or Enter. */
   onOpen: (path: FilePath) => void;
+  /** C3 decision 2a: Ctrl/Cmd+Enter and the context menu open a file in the other editor group. */
+  onOpenToSide?: (path: FilePath) => void;
   /** Files with a preview or compile error (UX-9). */
   errorPaths?: Iterable<FilePath>;
   /** Files with edits not yet written to browser storage (Code Studio C1, decision 5). */
@@ -80,7 +82,7 @@ const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? o
 type DescribedNode = FileNode & { describedBy?: string };
 const markerId = (id: string, kind: string) => `ft-${id.replace(/[^A-Za-z0-9_-]/g, (c) => `_${c.charCodeAt(0).toString(16)}`)}-${kind}`;
 
-export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, loading, titleId = 'files-title', collapseToggle, collapsed, bodyId = 'files-body', titleClassName, announce: announceProp, moveFeedback = 'toast' }: FileTreeProps) {
+export function FileTree({ state, dispatch, onOpen, onOpenToSide, errorPaths, dirtyPaths, loading, titleId = 'files-title', collapseToggle, collapsed, bodyId = 'files-body', titleClassName, announce: announceProp, moveFeedback = 'toast' }: FileTreeProps) {
   const { project, activePath } = state;
   const { files, entry } = project;
   const toast = useToast();
@@ -390,6 +392,7 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, load
     const isTsx = extname(menu.id) === '.tsx';
     return [
       { id: 'open', label: 'Open', icon: <FileCode /> },
+      ...(onOpenToSide ? [{ id: 'open-side', label: 'Open to the side', icon: <Columns2 />, shortcut: 'Ctrl+Enter' }] : []),
       { id: 'rename', label: 'Rename', icon: <Pencil />, shortcut: 'F2' },
       { id: 'move', label: 'Move to…', icon: <FileOutput /> },
       { id: 'duplicate', label: 'Duplicate', icon: <Copy /> },
@@ -398,7 +401,7 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, load
       { type: 'separator' },
       del,
     ];
-  }, [deleteBlocked, entry, menu]);
+  }, [deleteBlocked, entry, menu, onOpenToSide]);
 
   const closeMenu = useCallback((refocus = true) => {
     const id = menu?.id ?? null;
@@ -411,6 +414,7 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, load
     setMenu(null);
     switch (action) {
       case 'open': if (id) onOpen(id); (pendingFocus.current = id); break;
+      case 'open-side': if (id) onOpenToSide?.(id); break;
       case 'rename': if (id) startRename(id); break;
       case 'move': if (id) setMoveId(id); break;
       case 'duplicate': if (id) {
@@ -423,7 +427,7 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, load
       case 'new-file': startCreate('file', id); break;
       case 'new-folder': startCreate('folder', id); break;
     }
-  }, [announce, dispatch, files, menu, onOpen, requestDelete, startCreate, startRename, toast]);
+  }, [announce, dispatch, files, menu, onOpen, onOpenToSide, requestDelete, startCreate, startRename, toast]);
 
   // ------------------------------------------------------------ events on the tree container
 
@@ -438,6 +442,9 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, load
     const isN = event.code === 'KeyN' || event.key.toLowerCase() === 'n';
     if (event.altKey && isN) { event.preventDefault(); event.stopPropagation(); startCreate(event.shiftKey ? 'folder' : 'file', id); return; }
     if (event.key === 'F2') { event.preventDefault(); event.stopPropagation(); startRename(id); return; }
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey) && onOpenToSide && !isFolderId(id) && id !== NEW_ID) {
+      event.preventDefault(); event.stopPropagation(); keyActivation.current = false; onOpenToSide(id); return;
+    }
     if (event.key === 'Delete') { event.preventDefault(); event.stopPropagation(); requestDelete(id); return; }
     if ((event.shiftKey && event.key === 'F10') || event.key === 'ContextMenu') {
       event.preventDefault(); event.stopPropagation();

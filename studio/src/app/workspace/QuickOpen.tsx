@@ -8,7 +8,8 @@ export interface QuickOpenProps {
   paths: readonly string[];
   recent: readonly string[];
   current: string;
-  onOpen: (path: string, line?: number) => void;
+  /** `toSide`: Ctrl/Cmd+Enter opens the file in the other editor group (C3 decision 2a). */
+  onOpen: (path: string, line?: number, toSide?: boolean) => void;
   onRemoveRecent: (path: string) => void;
   onClose: () => void;
 }
@@ -38,11 +39,11 @@ export function QuickOpen({ paths, recent, current, onOpen, onRemoveRecent, onCl
   const empty = !query.trim();
   const items = useMemo(() => (empty ? recent.filter((p) => paths.includes(p)).slice(0, RECENT_SHOWN).map((path) => ({ path, score: 0, indices: [] })) : rankPaths(query, paths, { limit: 50 })), [empty, query, recent, paths]);
   useEffect(() => setActive(0), [query]);
-  const choose = (i: number) => { const m = items[i]; if (m) { onOpen(m.path, line); onClose(); } else if (empty && line) { onOpen(current, line); onClose(); } };
+  const choose = (i: number, toSide = false) => { const m = items[i]; if (m) { onOpen(m.path, line, toSide); onClose(); } else if (empty && line) { onOpen(current, line, toSide); onClose(); } };
   const onKey = (e: KeyboardEvent) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); setActive((a) => Math.min(items.length - 1, a + 1)); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((a) => Math.max(0, a - 1)); }
-    else if (e.key === 'Enter') { e.preventDefault(); choose(active); }
+    else if (e.key === 'Enter') { e.preventDefault(); choose(active, e.ctrlKey || e.metaKey); }
     else if (e.key === 'Escape') { e.preventDefault(); onClose(); }
   };
   const optionId = (i: number) => `quick-open-option-${i}`;
@@ -78,7 +79,7 @@ export function QuickOpen({ paths, recent, current, onOpen, onRemoveRecent, onCl
           ))}
           {!items.length && <li className={styles.empty} role="presentation">{empty ? 'No recently opened files.' : `No files match “${query}”.`}</li>}
         </ul>
-        <div className={styles.quickFooter} aria-hidden="true"><span>↑↓ navigate</span><span>↵ open</span><span>:line go to line</span><span>Esc close</span></div>
+        <div className={styles.quickFooter} aria-hidden="true"><span>↑↓ navigate</span><span>↵ open</span><span>Ctrl+↵ open to the side</span><span>:line go to line</span><span>Esc close</span></div>
       </div>
     </div>
   );

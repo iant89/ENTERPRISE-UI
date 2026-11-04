@@ -315,3 +315,4 @@
 .menuSeparator { block-size: 1px; margin-block: var(--eui-space-1); background: var(--eui-color-border-subtle); }
 .feedbackExtra { margin: var(--eui-space-1) 0 0; }
 .consoleDropped { margin: 0; padding: var(--eui-space-1) var(--eui-space-3); color: var(--eui-color-text-secondary); font-size: var(--eui-font-size-xs); font-style: italic; border-block-end: 1px solid var(--eui-color-border); }
+.docsPage { margin: 0; padding-inline: var(--eui-space-3); font-size: var(--eui-font-size-lg); }

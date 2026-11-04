@@ -32,6 +32,10 @@ import styles from './Studio.module.css';
 import workspaceStyles from './app/workspace/CodeWorkspace.module.css';
 import { CodeWorkspace } from './app/workspace/CodeWorkspace';
 import { CreateComponentDialog } from './components/generator/CreateComponentDialog';
+import { ComponentsPanel } from './panels/components/ComponentsPanel';
+import { useCatalog } from './components/catalog/useCatalog';
+import { offsetOf, planInsert } from './components/catalog/insert';
+import type { CatalogItem } from './components/catalog/types';
 import { applyComponent, createAction, destinationFromActive } from './components/generator/generate';
 import { MenuBar, type MenuItems } from './app/workspace/MenuBar';
 import { WorkspaceSwitch } from './app/workspace/WorkspaceSwitch';
@@ -232,6 +236,8 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   const [createDest, setCreateDestState] = useState<string | null>(null);
   /** Focus returns to the opener on close (tab-row clicks keep focus in the editor, so remember the button). */
   const createOpener = useRef<HTMLElement | null>(null);
+  /** C6 → C7 seam: the component whose Docs page is open. */
+  const [docsItem, setDocsItem] = useState<CatalogItem | null>(null);
   const setCreateDest = (dest: string | null, opener?: HTMLElement | null) => {
     if (dest !== null) createOpener.current = opener ?? (document.activeElement as HTMLElement | null);
     else { const el = createOpener.current; requestAnimationFrame(() => { if (el?.isConnected) el.focus(); }); }
@@ -264,6 +270,8 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   // C4: the Code workspace previews the compiled project (module graph → compiler → bridge → sandbox).
   const build = usePreviewBuild(project.files, entry, { paused, enabled: workspace === 'code', projectKey: project.id });
   const [consoleState, dispatchConsole] = useReducer(consoleReducer, EMPTY_CONSOLE);
+  // C6: the component catalog, derived from source (never persisted).
+  const catalogState = useCatalog(project.files);
   const [runtimeError, setRuntimeError] = useState<Diagnostic | null>(null);
   const [tsDiagnostics, setTsDiagnostics] = useState<Diagnostic[]>([]);
   // Cleared on each reload of a new artifact (and on Refresh).
@@ -553,6 +561,16 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         case 'settings': toast.show({ title: 'Settings', description: 'Studio settings arrive with C7. Use the theme menu for now.', tone: 'neutral' }); break;
       }
     };
+    // C6: Docs opens the Docs activity on the component (C7 fills the page); Source opens the file at the export.
+    const openComponentDocs = (item: CatalogItem) => { setDocsItem(item); if (!layout.docsPinned) dispatchLayout({ type: 'setActivity', activity: 'docs' }); };
+    const canInsert = /\.(tsx|jsx)$/.test(activePath) && Object.hasOwn(project.files, activePath);
+    const insertComponent = (item: CatalogItem) => {
+      if (!canInsert) return;
+      const code = project.files[activePath];
+      const next = planInsert(code, offsetOf(code, cursor.line, cursor.column), item, activePath);
+      dispatch({ type: 'applyEdits', files: { [activePath]: next }, label: `Insert ${item.name}`, touched: activePath });
+      announce(`Inserted ${item.name}.`);
+    };
     /** C5 decision 5a: Create component at the end of the tab row. */
     const createComponentButton = (
       <IconButton size="sm" variant="tertiary" icon={<Boxes />} label="Create component" data-testid="tab-create-component"
@@ -694,6 +712,13 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         onOpenSource={(path, line, column) => goToLine(path, line, column ?? 1)}
         onCreateComponent={() => setCreateDest('src/components/')}
         tabActions={createComponentButton}
+        docsTitle={docsItem?.name ?? null}
+        components={(
+          <ComponentsPanel project={catalogState.project} library={catalogState.library} canInsert={canInsert}
+            onCreate={() => setCreateDest('src/components/')} onDocs={openComponentDocs}
+            onSource={(item) => item.source && goToLine(item.source, item.location?.line ?? 1, item.location?.column ?? 1)}
+            onInsert={insertComponent} />
+        )}
         status={{ file: activePath, line: cursor.line, column: cursor.column, saveState, theme: themeLabel, errors: problemCounts.errors, warnings: problemCounts.warnings, previewState: stale ? 'stale' : paused ? 'paused' : 'live' }}
       />
     );

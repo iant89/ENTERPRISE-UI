@@ -47,6 +47,7 @@ export * from './components/toggle-button';
 export * from './components/ai-button';
 export * from './components/button-group';
 export * from './components/segmented-button';
+export * from './components/footer-toolbar';
 
 // Forms
 export * from './components/form-field';
@@ -118,6 +119,7 @@ export * from './components/dynamic-side-content';
 export * from './components/flexible-column-layout';
 export * from './components/carousel';
 export * from './components/avatar';
+export * from './components/lightbox';
 export * from './components/avatar-badge';
 export * from './components/avatar-group';
 export * from './components/badge';
@@ -148,6 +150,7 @@ export * from './components/dialog';
 export * from './components/alert-dialog';
 export * from './components/user-settings-dialog';
 export * from './components/barcode-scanner-dialog';
+export * from './components/barcode-scanner-button';
 export * from './components/view-settings-dialog';
 export * from './components/toast';
 export * from './components/message-strip';

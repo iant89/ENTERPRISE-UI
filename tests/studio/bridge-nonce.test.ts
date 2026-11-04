@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { envelope, frameNonceGate, hostBridge, type FrameMessages } from '../../studio/src/preview/bridge';
+import { captureHost, envelope, frameNonceGate, hostBridge, type FrameMessages } from '../../studio/src/preview/bridge';
 
 describe('bridge nonce (QA 6)', () => {
   let dispose = () => {};
@@ -64,5 +64,19 @@ describe('frame nonce gate', () => {
     g.init(parent, { nonce: 'n1' });
     g.init(parent, { nonce: 'n2' });
     expect(g.get()).toBe('n1');
+  });
+});
+
+describe('F8: frame captures the host at load', () => {
+  it('keeps posting to the captured host after window.parent and postMessage are swapped', () => {
+    const real = vi.fn();
+    const fakeWin = { postMessage: real } as unknown as Window & { postMessage: unknown };
+    const h = captureHost(fakeWin);
+    const spy = vi.fn();
+    fakeWin.postMessage = spy; // user code replaces the method on the host object
+    h.post({ nonce: 'secret' });
+    expect(real).toHaveBeenCalledWith({ nonce: 'secret' }, '*');
+    expect(spy).not.toHaveBeenCalled();
+    expect(h.host).toBe(fakeWin);
   });
 });

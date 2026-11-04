@@ -10,7 +10,7 @@ import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 import * as JsxRuntime from 'react/jsx-runtime';
 import {
-  consoleArgs, envelope, frameNonceGate, hostValidators, locationFromStack, MAX_FRAME_MESSAGE_BYTES, MAX_HOST_MESSAGE_BYTES, SOURCE_URL_PREFIX, validate, TRUNCATED,
+  consoleArgs, captureHost, envelope, frameNonceGate, hostValidators, locationFromStack, MAX_FRAME_MESSAGE_BYTES, MAX_HOST_MESSAGE_BYTES, SOURCE_URL_PREFIX, validate, TRUNCATED,
   type ConsoleLevel, type FrameMessages, type HostMessages,
 } from '../../studio/src/preview/bridge';
 import '../../src/styles/index.css';
@@ -25,12 +25,14 @@ const modules: Record<string, unknown> = {
   '../data': ExampleData, './internal/InventoryViews': InventoryViews, '../apps/InventoryApp': InventoryApp,
 };
 /** Bridge nonce from the host's `init`; module-scoped (never on window) so user code cannot reach it. */
-const bridgeNonce = frameNonceGate(window.parent);
+/** F8: the host window and its postMessage, captured before any user code runs; all posts go through these. */
+const host = captureHost(window.parent);
+const bridgeNonce = frameNonceGate(host.host);
 // Typed, versioned messages (studio/src/preview/bridge); oversized payloads are trimmed before sending.
 function post<K extends keyof FrameMessages>(type: K, payload: FrameMessages[K]) {
   let body = payload as Record<string, unknown>;
   if (typeof body.message === 'string' && body.message.length > MAX_FRAME_MESSAGE_BYTES / 2) body = { ...body, message: body.message.slice(0, MAX_FRAME_MESSAGE_BYTES / 2) + TRUNCATED };
-  window.parent.postMessage(envelope<FrameMessages, K>(type, body as FrameMessages[K], bridgeNonce.get()), '*');
+  host.post(envelope<FrameMessages, K>(type, body as FrameMessages[K], bridgeNonce.get()));
 }
 const send = (type: 'ready' | 'success' | 'error', message = '') => (type === 'error' ? post('error', { message }) : post(type, {}));
 
@@ -174,7 +176,7 @@ window.addEventListener('unhandledrejection', (event) => {
 });
 
 window.addEventListener('message', (event) => {
-  if (event.source !== window.parent) return;
+  if (event.source !== host.host) return;
   const r = validate(event.data, hostValidators, MAX_HOST_MESSAGE_BYTES);
   if (!r.ok) return;
   const m = r.message;

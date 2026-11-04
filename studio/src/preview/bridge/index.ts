@@ -83,6 +83,15 @@ export const envelope = <M, K extends keyof M>(type: K, payload: M[K], nonce?: s
   (nonce === undefined ? { source: BRIDGE_SOURCE, v: BRIDGE_VERSION, type, payload } : { source: BRIDGE_SOURCE, v: BRIDGE_VERSION, type, payload, nonce });
 
 /**
+ * Frame side (F8): captures the host window and its `postMessage` once, at module load. User code that later
+ * reassigns `window.parent` (or its postMessage) to intercept messages never sees what the runtime posts.
+ */
+export function captureHost(host: Window) {
+  const postMessage = host.postMessage.bind(host) as (message: unknown, targetOrigin: string) => void;
+  return { host, post: (message: unknown) => postMessage(message, '*') };
+}
+
+/**
  * Frame side: holds the bridge nonce for one frame load. Only an `init` from `parent` is accepted and only
  * the first nonce sticks; a later init (e.g. forged by user code via a same-window postMessage) is ignored.
  */

@@ -118,7 +118,7 @@ export function fastPass(path: string, code: string): FileResult {
     if (!fn || seen.has(local)) continue;
     seen.add(local);
     const info = paramInfo(fn.node, fn.decl, code);
-    let props: CatalogProp[] = [];
+    let props: CatalogProp[];
     let propsFrom: string | undefined;
     if (info.inline) props = propsFromType({ body: [{ type: 'TSTypeAliasDeclaration', id: { name: '__inline' }, typeAnnotation: info.inline }] }, code, '__inline') ?? [];
     else if (info.typeName) {

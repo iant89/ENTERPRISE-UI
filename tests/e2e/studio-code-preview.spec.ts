@@ -123,3 +123,17 @@ test('custom preview size: Enter applies, Esc cancels, limits enforced, persists
   await page.getByRole('radio', { name: 'Code Studio' }).click().catch(() => undefined);
   await expect(page.getByTestId('preview-size')).toContainText('800 × 600');
 });
+
+test('custom size popover shows the current Width and Height unclipped at a 1024 px window', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 640 });
+  await openCode(page);
+  await page.getByTestId('preview-size').click();
+  const dialog = page.getByRole('dialog', { name: 'Custom size' });
+  for (const [name, value] of [['Width', '1280'], ['Height', '800']] as const) {
+    const input = dialog.getByLabel(name);
+    await expect(input).toHaveValue(value);
+    // The digits must fit: the field used to collapse to 0 px of content beside the steppers.
+    const fits = await input.evaluate((e: HTMLInputElement) => e.clientWidth >= 30 && e.scrollWidth <= e.clientWidth);
+    expect(fits).toBe(true);
+  }
+});

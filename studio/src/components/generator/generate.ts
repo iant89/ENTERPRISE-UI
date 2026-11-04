@@ -6,6 +6,7 @@
 import type { FilePath, Project } from '../../model/project';
 import { storeReducer, type StoreAction, type StoreState } from '../../model/store';
 import { caseCollision, checkFilePath, checkFolderPath } from '../../core/vfs/paths';
+import * as library from '@enterprise-ui/react';
 import { componentFiles, type ComponentOptions } from './templates';
 
 export const DEFAULT_DESTINATION = 'src/components/';
@@ -13,7 +14,19 @@ export const NAME_PATTERN = /^[A-Z][A-Za-z0-9]*$/;
 const RESERVED = new Set(('break case catch class const continue debugger default delete do else enum export extends false finally for function if import in '
   + 'instanceof new null return super switch this throw true try typeof var void while with yield let static implements interface package private '
   + 'protected public await arguments eval undefined NaN Infinity Object Array String Number Boolean Symbol Function Promise Error Map Set Date '
-  + 'Math JSON RegExp React Fragment').split(' '));
+  + 'Math JSON RegExp React Fragment App').split(' '));
+
+/** Every @enterprise-ui/react export (App, ThemeProvider, Button, …) is reserved so imports never shadow it. */
+const LIBRARY_EXPORTS = new Set(Object.keys(library));
+
+/** Rejects (never rewrites) destinations outside the project tree. */
+export function destinationError(raw: string): string | undefined {
+  const d = raw.trim();
+  if (d.includes('\\')) return 'Use forward slashes (/) in the destination.';
+  if (d.startsWith('/') || /^[A-Za-z]:/.test(d)) return 'Use a project-relative destination, for example src/components/.';
+  if (d.split('/').includes('node_modules')) return 'Components cannot be created under node_modules.';
+  return undefined;
+}
 
 export interface ComponentInput { name: string; destination: string; options: ComponentOptions }
 export interface PlanErrors { name?: string; destination?: string }
@@ -23,7 +36,7 @@ export function validateName(name: string): string | undefined {
   const n = name.trim();
   if (!n) return 'Enter a component name.';
   if (!NAME_PATTERN.test(n)) return 'Use PascalCase: start with a capital letter, letters and digits only (for example ExampleCard).';
-  if (RESERVED.has(n)) return `"${n}" is a reserved name. Choose another.`;
+  if (RESERVED.has(n) || LIBRARY_EXPORTS.has(n)) return `"${n}" is a reserved name. Choose another.`;
   return undefined;
 }
 
@@ -33,8 +46,10 @@ export function planComponent(project: Pick<Project, 'files'>, input: ComponentI
   const name = input.name.trim();
   const nameError = validateName(name);
   if (nameError) errors.name = nameError;
+  const rawError = destinationError(input.destination);
+  if (rawError) errors.destination = rawError;
   const dest = checkFolderPath(input.destination.trim().replace(/\/+$/, '') || DEFAULT_DESTINATION.slice(0, -1));
-  if (!dest.ok) errors.destination = dest.error.message;
+  if (!dest.ok && !errors.destination) errors.destination = dest.error.message;
   if (errors.name || errors.destination || !dest.ok) return { ok: false, errors };
   const folder = `${dest.path}/${name}`;
   const paths = Object.keys(project.files);

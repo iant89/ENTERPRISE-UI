@@ -102,3 +102,14 @@ describe('atomic apply and undo', () => {
     expect(r.artifact).toBeTruthy();
   });
 });
+
+describe('QA: destinations and reserved names', () => {
+  const opts = DEFAULT_OPTIONS;
+  it.each(['/etc', '/etc/components', 'src/node_modules/x', 'node_modules', 'src\\comp', 'C:/x'])('rejects %s without rewriting', (destination) => {
+    const plan = planComponent({ files: {} }, { name: 'Widget', destination, options: opts });
+    expect(plan.ok).toBe(false);
+    if (!plan.ok) expect(plan.errors.destination).toBeTruthy();
+  });
+  it('still accepts src/components/', () => expect(planComponent({ files: {} }, { name: 'Widget', destination: 'src/components/', options: opts }).ok).toBe(true));
+  it.each(['App', 'ThemeProvider', 'AppShell', 'Button', 'Card'])('reserves library export %s', (n) => expect(validateName(n)).toMatch(/reserved/));
+});

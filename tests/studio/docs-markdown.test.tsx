@@ -62,3 +62,13 @@ describe('markdown', () => {
     expect(parseInline('[a](https://x.y)')[0]).toMatchObject({ t: 'link', href: 'https://x.y' });
   });
 });
+
+describe('QA: safeHref hardening and balanced parentheses', () => {
+  it.each(['java\tscript:alert(1)', 'java\nscript:alert(1)', ' \u0001javascript:alert(1)', '\\\\evil.com', '/\\evil.com', '\\/evil.com', '//evil.com', 'javascript%3Aalert(1)', '%6A%61vascript:alert(1)', 'jav&#x09;ascript:x'.replace('&#x09;', '\t')])('rejects %j', (h) => {
+    expect(safeHref(h)).toBeNull();
+  });
+  it.each(['https://x.dev/a', 'mailto:a@b.c', './Card.docs.md', '#props', '/docs/a'])('keeps %j', (h) => expect(safeHref(h)).toBe(h));
+  it('keeps balanced parentheses in a link URL', () => {
+    expect(parseInline('see [a](https://x/(y)) now')).toEqual([{ t: 'text', v: 'see ' }, { t: 'link', href: 'https://x/(y)', c: [{ t: 'text', v: 'a' }] }, { t: 'text', v: ' now' }]);
+  });
+});

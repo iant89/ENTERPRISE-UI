@@ -16,9 +16,31 @@ export type Block =
 /** http(s), mailto, `#anchor` and relative paths; everything else (javascript:, data:, vbscript:…) is dropped. */
 export function safeHref(raw: string): string | null {
   const h = raw.trim();
-  if (/^(https?:|mailto:)/i.test(h)) return h;
-  if (/^[a-z][a-z0-9+.-]*:/i.test(h) || h.startsWith('//')) return null;
+  let decoded = h;
+  try { decoded = decodeURIComponent(h); } catch { /* malformed escape: check as-is */ }
+  // Browsers ignore ASCII control characters and whitespace inside a scheme (`java\tscript:`) and treat `\` like `/`.
+  const n = decoded.replace(/[\u0000-\u0020\u007f-\u009f]/g, '');
+  if (/^[\\/][\\/]/.test(n)) return null;
+  if (/^(https?:|mailto:)/i.test(n)) return h;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(n)) return null;
   return h;
+}
+
+/** `[text](url)` at the start of `src`, with balanced parentheses inside the URL. */
+function matchLink(src: string): { text: string; href: string; length: number } | null {
+  const t = /^\[([^\]]*)\]\(/.exec(src);
+  if (!t) return null;
+  let depth = 0;
+  for (let i = t[0].length; i < src.length; i++) {
+    const ch = src[i];
+    if (/\s/.test(ch)) return null;
+    if (ch === '(') depth++;
+    else if (ch === ')') {
+      if (depth === 0) return { text: t[1], href: src.slice(t[0].length, i), length: i + 1 };
+      depth--;
+    }
+  }
+  return null;
 }
 
 export function parseInline(src: string): Inline[] {
@@ -29,7 +51,8 @@ export function parseInline(src: string): Inline[] {
     const rest = src.slice(i);
     let m: RegExpMatchArray | null;
     if ((m = /^`([^`]+)`/.exec(rest))) { flush(); out.push({ t: 'code', v: m[1] }); i += m[0].length; continue; }
-    if ((m = /^\[([^\]]*)\]\(([^)\s]*)\)/.exec(rest))) { flush(); out.push({ t: 'link', href: safeHref(m[2]), c: parseInline(m[1]) }); i += m[0].length; continue; }
+    const link = matchLink(rest);
+    if (link) { flush(); out.push({ t: 'link', href: safeHref(link.href), c: parseInline(link.text) }); i += link.length; continue; }
     if ((m = /^\*\*([^*]+)\*\*/.exec(rest))) { flush(); out.push({ t: 'strong', c: parseInline(m[1]) }); i += m[0].length; continue; }
     if ((m = /^[*_]([^*_]+)[*_]/.exec(rest))) { flush(); out.push({ t: 'em', c: parseInline(m[1]) }); i += m[0].length; continue; }
     buf += src[i++];

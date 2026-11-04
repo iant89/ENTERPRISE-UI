@@ -16,7 +16,7 @@ describe('RecurrencePicker', () => {
     const onChange = vi.fn();
     const { user, container } = renderWithTheme(<RecurrencePicker locale="en-US" onChange={onChange} />);
     expect(screen.getByRole('group', { name: 'Repeat' })).toHaveAccessibleDescription('Summary: Weekly · Mon');
-    await user.click(screen.getByRole('button', { name: 'Friday' }));
+    await user.click(screen.getByRole('button', { name: 'Fri', description: 'Friday' }));
     expect(onChange).toHaveBeenLastCalledWith(expect.objectContaining({ weekdays: [0, 4] }), { rrule: 'FREQ=WEEKLY;BYDAY=MO,FR', summary: 'Weekly · Mon, Fri' });
     await user.click(screen.getByRole('radio', { name: 'After' }));
     expect(onChange.mock.lastCall![1].rrule).toBe('FREQ=WEEKLY;BYDAY=MO,FR;COUNT=10');

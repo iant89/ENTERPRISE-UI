@@ -158,7 +158,7 @@ export const RecurrencePicker = forwardRef<HTMLFieldSetElement, RecurrencePicker
             aria-label={labels.weekdays}
             selectionMode="multiple"
             size="sm"
-            items={[0, 1, 2, 3, 4, 5, 6].map((d) => ({ value: String(d), label: weekdayName(d, locale), ariaLabel: weekdayName(d, locale, 'long') }))}
+            items={[0, 1, 2, 3, 4, 5, 6].map((d) => ({ value: String(d), label: weekdayName(d, locale), title: weekdayName(d, locale, 'long') }))}
             value={rule.weekdays.map(String)}
             onChange={(v) => v.length && update({ weekdays: v.map(Number) })}
           />

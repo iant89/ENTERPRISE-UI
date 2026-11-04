@@ -29,7 +29,10 @@ export interface FileNode extends UiTreeNode { path: FilePath; folder: boolean; 
 const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
 
 /** EUI `Tree` nodes: folders first, numeric A–Z, the entry pinned first in its folder (§4.1). */
-export function buildTreeNodes(files: Record<FilePath, string>, entry: FilePath): FileNode[] {
+const PENDING = '\u0000pending';
+
+/** `pendingFolders`: empty folders created in the UI (C2); they exist only until a file is added or the tree unmounts. */
+export function buildTreeNodes(files: Record<FilePath, string>, entry: FilePath, pendingFolders: readonly FilePath[] = []): FileNode[] {
   const convert = (nodes: TreeNode[]): FileNode[] => {
     const out = nodes.map((n): FileNode => (n.kind === 'folder'
       ? { id: folderId(n.path), label: n.name, path: n.path, folder: true, children: convert(n.children) }
@@ -41,7 +44,11 @@ export function buildTreeNodes(files: Record<FilePath, string>, entry: FilePath)
       return collator.compare(a.label, b.label) || (a.label < b.label ? -1 : 1);
     });
   };
-  return convert(listTree(files));
+  if (!pendingFolders.length) return convert(listTree(files));
+  const withPending = { ...files };
+  for (const f of pendingFolders) withPending[`${f}/${PENDING}`] = '';
+  const drop = (nodes: FileNode[]): FileNode[] => nodes.filter((n) => !n.path.endsWith(`/${PENDING}`)).map((n) => (n.children ? { ...n, children: drop(n.children) } : n));
+  return drop(convert(listTree(withPending)));
 }
 
 export function walk(nodes: FileNode[], visit: (node: FileNode, parent: FileNode | null, siblings: FileNode[]) => void, parent: FileNode | null = null) {

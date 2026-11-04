@@ -1,3 +1,4 @@
+import { localLayoutStore } from './app/workspace/layout';
 import type { Project } from './model/project';
 
 /**
@@ -221,6 +222,7 @@ export async function listProjects(): Promise<ProjectSummary[]> {
 
 export async function deleteProject(id: string) {
   await run(PROJECTS, 'readwrite', (s) => s.delete(id));
+  localLayoutStore().remove(id); // C2 follow-up 2: no stale layout keys
   if ((await getLastOpened()) === id) await run(META, 'readwrite', (s) => s.delete(LAST_OPENED));
 }
 

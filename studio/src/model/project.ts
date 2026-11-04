@@ -1,3 +1,4 @@
+import { rewriteImports } from '../core/vfs/rewriteImports';
 import { parse } from '@babel/parser';
 
 /**
@@ -64,7 +65,6 @@ function checkSegments(path: string): FilePath {
 export const extname = (path: string) => { const base = basename(path); const i = base.lastIndexOf('.'); return i > 0 && !/^\.+$/.test(base.slice(0, i)) ? base.slice(i) : ''; };
 export const basename = (path: string) => path.slice(path.lastIndexOf('/') + 1);
 export const dirname = (path: string) => { const i = path.lastIndexOf('/'); return i < 0 ? '' : path.slice(0, i); };
-const stripExt = (path: string) => { const ext = extname(path); return ext ? path.slice(0, -ext.length) : path; };
 
 /** Validates a user-entered file path and returns it normalised. */
 export function validatePath(path: string): FilePath {
@@ -168,38 +168,10 @@ export function findImportSpecifiers(text: string, path: FilePath): ImportSpecif
   return out.sort((x, y) => x.start - y.start);
 }
 
-/**
- * Applies a move map (old path -> new path) to the VFS and rewrites every relative specifier
- * whose importer or target moved, keeping the specifier's style (extension, `index`) and quotes.
- */
+/** Applies a move map and rewrites relative specifiers (Code Studio C2: `core/vfs/rewriteImports`). */
 function moveFiles(files: Record<FilePath, string>, moves: Map<FilePath, FilePath>): { files: Record<FilePath, string>; skipped: FilePath[] } {
-  const next: Record<FilePath, string> = {};
-  const skipped: FilePath[] = [];
-  const movedKeys: Record<FilePath, string> = {};
-  for (const p of Object.keys(files)) movedKeys[moves.get(p) ?? p] = '';
-  for (const [oldPath, text] of Object.entries(files)) {
-    const importer = moves.get(oldPath) ?? oldPath;
-    const specs = findImportSpecifiers(text, oldPath);
-    let out = text;
-    if (!specs) skipped.push(importer);
-    if (specs) {
-      for (const s of [...specs].reverse()) {
-        const target = resolveImport(files, oldPath, s.value);
-        if (!target) continue;
-        const newTarget = moves.get(target) ?? target;
-        if (newTarget === target && importer === oldPath) continue;
-        if (resolveImport(movedKeys, importer, s.value) === newTarget) continue; // still resolves: keep it
-        const base = resolveRelative(oldPath, s.value)!;
-        let spec: string;
-        if (base === target) spec = relativeSpecifier(importer, newTarget);
-        else if (target.startsWith(join(base, 'index.')) && basename(newTarget) === basename(target)) spec = relativeSpecifier(importer, dirname(newTarget));
-        else spec = relativeSpecifier(importer, stripExt(newTarget));
-        if (spec !== s.value) out = out.slice(0, s.start + 1) + spec + out.slice(s.end - 1);
-      }
-    }
-    next[importer] = out;
-  }
-  return { files: next, skipped: skipped.sort() };
+  const r = rewriteImports(files, moves);
+  return { files: r.files, skipped: r.skipped };
 }
 
 // ---------------------------------------------------------------- commands

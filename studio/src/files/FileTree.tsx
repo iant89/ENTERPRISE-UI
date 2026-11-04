@@ -13,6 +13,7 @@ import {
   buildTreeNodes, copyName, deleteFocusTarget, fileKind, folderId, importersOf, isFolderId, MESSAGES, newFilePrefill, newFolderPrefill, pathOf, reachableFrom,
   moveReport, removedFolders, skippedMessage, starterContent, targetFolder, validateEntry, walk, type FileIconName, type FileNode, type ValidateContext,
 } from './fileTreeModel';
+import { createFolder } from '../core/vfs/ops';
 import styles from './FileTree.module.css';
 
 /**
@@ -51,6 +52,8 @@ export interface FileTreeProps {
   announce?: (message: string) => void;
   /** Class for the `h2` (Studio's shared pane title style). */
   titleClassName?: string;
+  /** 'strip': the Code workspace shows its own rename/move feedback (C2), so no toasts here. */
+  moveFeedback?: 'toast' | 'strip';
 }
 
 interface EditState {
@@ -77,7 +80,7 @@ const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? o
 type DescribedNode = FileNode & { describedBy?: string };
 const markerId = (id: string, kind: string) => `ft-${id.replace(/[^A-Za-z0-9_-]/g, (c) => `_${c.charCodeAt(0).toString(16)}`)}-${kind}`;
 
-export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, loading, titleId = 'files-title', collapseToggle, collapsed, bodyId = 'files-body', titleClassName, announce: announceProp }: FileTreeProps) {
+export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, loading, titleId = 'files-title', collapseToggle, collapsed, bodyId = 'files-body', titleClassName, announce: announceProp, moveFeedback = 'toast' }: FileTreeProps) {
   const { project, activePath } = state;
   const { files, entry } = project;
   const toast = useToast();
@@ -100,7 +103,10 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, load
   const errors = useMemo(() => new Set(errorPaths ?? []), [errorPaths]);
   const dirty = useMemo(() => new Set(dirtyPaths ?? []), [dirtyPaths]);
 
-  const baseNodes = useMemo(() => buildTreeNodes(files, entry), [files, entry]);
+  /** Empty folders created here (C2). Never persisted; dropped once a file exists inside. */
+  const [pendingFolders, setPendingFolders] = useState<FilePath[]>([]);
+  const livePending = useMemo(() => pendingFolders.filter((f) => !Object.keys(files).some((p) => p.startsWith(`${f}/`))), [pendingFolders, files]);
+  const baseNodes = useMemo(() => buildTreeNodes(files, entry, livePending), [files, entry, livePending]);
   const nodes = useMemo(() => {
     const decorate = (list: FileNode[]): FileNode[] => list.map((n) => {
       if (n.folder) return { ...n, icon: expanded.includes(n.id) ? <FolderOpen /> : <Folder />, children: decorate(n.children ?? []) };
@@ -190,7 +196,7 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, load
     setEdit({
       mode: 'create', kind, folder, value: prefill.value, select: prefill.select, anchorId: NEW_ID, returnId: from,
       label: kind === 'file' ? 'New file name' : 'New folder name',
-      helper: kind === 'file' ? 'Press Enter to create, Escape to cancel.' : 'Folders need at least one file.',
+      helper: kind === 'file' ? 'Press Enter to create, Escape to cancel.' : 'Type a folder name, or folder/File.tsx to add a file too.',
     });
   }, [announce, fileCount, toast]);
 
@@ -238,7 +244,9 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, load
     const { rewritten, skipped: stale } = report;
     const name = basename(to);
     const head = verb === 'Moved' ? `Moved ${name} to ${dirname(to) || 'the project root'}.` : `Renamed to ${name}.`;
-    if (stale.length) {
+    if (moveFeedback === 'strip') {
+      announce(head);
+    } else if (stale.length) {
       const shown = stale.slice(0, 3);
       toast.show({
         title: skippedMessage(head, stale),
@@ -260,10 +268,27 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, load
     announceRemovedFolders(files, next.project.files);
     pendingFocus.current = folder ? folderId(to) : to;
     return true;
-  }, [announce, announceRemovedFolders, dispatch, files, onOpen, project, state, toast, undoAction]);
+  }, [announce, announceRemovedFolders, dispatch, files, moveFeedback, onOpen, project, state, toast, undoAction]);
 
   const commitEdit = useCallback((fromBlur = false) => {
     if (!edit) return;
+    // A folder name without a file ("components") creates an empty folder held in UI state (C2).
+    if (edit.mode === 'create' && edit.kind === 'folder' && !extname(basename(edit.value.trim())) && edit.value.trim()) {
+      const r = createFolder(files, edit.folder ? `${edit.folder}/${edit.value.trim()}` : edit.value.trim(), livePending);
+      if (!r.ok) {
+        if (fromBlur) { cancelEdit(); return; }
+        setError(r.error.code === 'escapes-root' ? MESSAGES.escape : r.error.code === 'invalid-segment' ? MESSAGES.chars : r.error.message);
+        announce(r.error.message);
+        return;
+      }
+      setPendingFolders((prev) => [...prev, r.path]);
+      setExpanded((prev) => ancestors(`${r.path}/x`, prev));
+      setEdit(null);
+      setError(null);
+      announce(`Created folder ${basename(r.path)}. It stays until you add a file to it.`);
+      pendingFocus.current = folderId(r.path);
+      return;
+    }
     const result = validateEntry(edit.value, ctxFor(edit));
     if (result.error || !result.path) {
       if (fromBlur) { cancelEdit(); return; }
@@ -287,7 +312,7 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, load
     setError(null);
     if (path === edit.self) { (pendingFocus.current = id); return; }
     move(id, path, 'Renamed');
-  }, [announce, cancelEdit, ctxFor, dispatch, edit, move, onOpen]);
+  }, [announce, cancelEdit, ctxFor, dispatch, edit, files, livePending, move, onOpen]);
 
   /** "Create in src/": retries a root-level create in src/ (designer on #24). */
   const retryInSrc = () => {
@@ -390,7 +415,7 @@ export function FileTree({ state, dispatch, onOpen, errorPaths, dirtyPaths, load
       case 'move': if (id) setMoveId(id); break;
       case 'duplicate': if (id) {
         const to = copyName(id, files);
-        try { dispatch({ type: 'createFile', path: to, text: files[id] }); announce(`Duplicated as ${basename(to)}.`); pendingFocus.current = to; } catch (e) { toast.show({ title: String((e as Error).message), tone: 'error' }); }
+        try { dispatch({ type: 'duplicateFile', path: id }); announce(`Duplicated as ${basename(to)}.`); pendingFocus.current = to; } catch (e) { toast.show({ title: String((e as Error).message), tone: 'error' }); }
       } break;
       case 'copy-path': if (id) { void navigator.clipboard?.writeText(pathOf(id)).catch(() => {}); announce(`Copied ${pathOf(id)}`); (pendingFocus.current = id); } break;
       case 'entry': if (id) { dispatch({ type: 'setEntry', path: id }); announce(`${basename(id)} is now the entry file.`); (pendingFocus.current = id); } break;

@@ -9,6 +9,8 @@ export interface SegmentedButtonItem {
   icon?: ReactNode;
   /** Required for icon-only items. */
   ariaLabel?: string;
+  /** Longer name shown as a tooltip and exposed as the accessible description, e.g. "Tuesday" for a "Tue" label. */
+  title?: string;
   disabled?: boolean;
 }
 
@@ -68,6 +70,7 @@ export const SegmentedButton = forwardRef<HTMLDivElement, SegmentedButtonProps>(
             className={cx(styles.item, pressed && styles.selected)}
             aria-pressed={pressed}
             aria-label={item.ariaLabel}
+            title={item.title}
             disabled={item.disabled}
             onClick={() => toggle(item)}
           >

@@ -8,7 +8,7 @@
   );
   background-size: 400% 100%;
   border-radius: var(--eui-radius-sm);
-  animation: eui-shimmer 1.4s ease infinite;
+  animation: eui-shimmer 2.4s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

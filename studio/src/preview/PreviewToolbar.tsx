@@ -45,11 +45,11 @@ export function PreviewToolbar({ viewport, onViewport, scale, theme, onTheme, de
         </div>
         {stale && <Badge tone="warning">Stale</Badge>}
         <span className={styles.toolbarGrow} />
-        <Select size="sm" label="Preview theme" hideLabel value={theme} onChange={(v) => v && onTheme(v as ThemeName)}
-          options={THEMES.map((t) => ({ value: t.name, label: t.label }))} />
+        <span className={styles.themeField}><Select size="sm" label="Preview theme" hideLabel value={theme} onChange={(v) => v && onTheme(v as ThemeName)}
+          options={THEMES.map((t) => ({ value: t.name, label: t.label }))} /></span>
         {!compact && (
-          <Select size="sm" label="Preview density" hideLabel value={density} onChange={(v) => v && onDensity(v as Density)}
-            options={[{ value: 'cozy', label: 'Cozy' }, { value: 'compact', label: 'Compact' }]} />
+          <span className={styles.densityField}><Select size="sm" label="Preview density" hideLabel value={density} onChange={(v) => v && onDensity(v as Density)}
+            options={[{ value: 'cozy', label: 'Cozy' }, { value: 'compact', label: 'Compact' }]} /></span>
         )}
         <IconButton size="sm" variant="tertiary" icon={<RefreshCw />} label="Refresh preview" onClick={onRefresh} />
         <IconButton size="sm" variant="tertiary" icon={paused ? <Play /> : <Pause />} label={paused ? 'Resume preview' : 'Pause preview'} aria-pressed={paused} onClick={onPause} />

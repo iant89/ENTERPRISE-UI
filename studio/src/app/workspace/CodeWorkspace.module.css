@@ -142,7 +142,7 @@
 .liveDot { inline-size: 0.5rem; block-size: 0.5rem; border-radius: 50%; background: var(--eui-color-success); }
 .staleDot { background: var(--eui-color-warning); }
 .previewToolbarWrap { border-block-end: var(--eui-border-width) solid var(--eui-color-border-subtle); }
-.previewToolbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--eui-space-1); padding: var(--eui-space-1) var(--eui-space-2); }
+.previewToolbar { display: flex; flex-wrap: nowrap; align-items: center; gap: var(--eui-space-1); padding: var(--eui-space-1) var(--eui-space-2); }
 .toolbarGrow { flex: 1; }
 .viewports, .layoutSwitch { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border: var(--eui-border-width) solid var(--eui-color-border-subtle); border-radius: var(--eui-radius-sm); }
 .layoutSwitch { margin: auto var(--eui-space-2); border: 0; color: var(--eui-color-text-secondary); font-size: var(--eui-font-size-xs); }
@@ -214,3 +214,11 @@
 @media (prefers-reduced-motion: no-preference) {
   .activityTab, .bottomTab, .switchItem, .editorTab { transition: background-color 120ms ease, color 120ms ease; }
 }
+
+/* Mockups 01–03: one-line preview toolbar, all four activity tabs visible at the default width. */
+.previewToolbar > * { flex: none; }
+.previewToolbar .themeField { flex: 0 1 9.5rem; min-inline-size: 5rem; }
+.previewToolbar .densityField { flex: 0 1 6.5rem; min-inline-size: 4.5rem; }
+.activityTab { padding-inline: var(--eui-space-1); gap: 3px; }
+.activityTabs:not(.compact) { flex: 1; justify-content: space-between; }
+.tabRow > button:first-child { align-self: center; }

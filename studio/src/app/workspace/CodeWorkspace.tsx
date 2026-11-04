@@ -139,7 +139,6 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
               <div className={styles.sidebarHead}>
                 {!mobile && <ActivityTabs value={layout.activity} onChange={onActivity} />}
                 {mobile && <ActivityTabs value={layout.activity} onChange={onActivity} compact />}
-                {desktop && <IconButton size="sm" variant="tertiary" icon={<PanelLeftClose />} label="Hide sidebar" onClick={() => d({ type: 'toggle', panel: 'sidebar', collapsed: true })} />}
               </div>
             )}
             <SidebarBody activity={layout.activity} explorer={explorer} docsPinned={docsColumn} onPin={pin} />
@@ -152,7 +151,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
         <main className={styles.editorCol} aria-label="Editor" hidden={!showEditor}>
           {!tablet && (
             <div className={styles.tabRow}>
-              {desktop && collapsed.sidebar && <IconButton size="sm" variant="tertiary" icon={<PanelLeftOpen />} label="Show sidebar" onClick={() => d({ type: 'toggle', panel: 'sidebar', collapsed: false })} />}
+              {desktop && <IconButton size="sm" variant="tertiary" icon={collapsed.sidebar ? <PanelLeftOpen /> : <PanelLeftClose />} label={collapsed.sidebar ? 'Show sidebar' : 'Hide sidebar'} onClick={() => d({ type: 'toggle', panel: 'sidebar' })} />}
               <EditorTabs tabs={tabs} active={activePath} dirty={dirty} onSelect={onSelectTab} onClose={onCloseTab} maxVisible={mobile ? 2 : undefined} />
               {!mobile && <span className={styles.breadcrumb}>{activePath.split('/').join(' › ')}</span>}
               {desktop && collapsed.preview && <IconButton size="sm" variant="tertiary" icon={<PanelRightOpen />} label="Show preview" onClick={() => d({ type: 'toggle', panel: 'preview', collapsed: false })} />}

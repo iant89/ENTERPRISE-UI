@@ -41,7 +41,7 @@ export const SIZE_LIMITS: Record<SizeKey, readonly [number, number]> = {
 export const DEFAULT_LAYOUT: LayoutState = {
   version: 1,
   workspace: 'design',
-  sizes: { sidebar: 240, preview: 420, docs: 320, bottom: 160 },
+  sizes: { sidebar: 304, preview: 520, docs: 320, bottom: 160 },
   collapsed: { sidebar: false, preview: false, bottom: false },
   activity: 'explorer',
   bottomTab: 'console',

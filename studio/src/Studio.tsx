@@ -280,7 +280,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   const build = usePreviewBuild(project.files, entry, { paused, enabled: workspace === 'code', projectKey: project.id });
   const [consoleState, dispatchConsole] = useReducer(consoleReducer, EMPTY_CONSOLE);
   // C6: the component catalog, derived from source (never persisted).
-  const catalogState = useCatalog(project.files);
+  const catalogState = useCatalog(project.files, { entry: project.entry });
   const docsIndex = useMemo(() => buildIndex(catalogState.library, catalogState.project, project.files), [catalogState, project.files]);
   const catalogItem = useCallback((id: string) => catalogState.project.find((i) => i.id === id) ?? null, [catalogState.project]);
   const pageFor = useCallback((id: string | undefined): DocsPage | null => {

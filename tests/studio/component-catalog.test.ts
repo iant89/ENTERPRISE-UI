@@ -124,3 +124,15 @@ describe('insert plan', () => {
     expect(d).toContain("import ExampleCard from './X';");
   });
 });
+
+describe('entry file exclusion', () => {
+  const files = { 'src/App.tsx': 'export default function App() { return <main />; }', 'src/components/Card.tsx': 'export function Card({ title }: { title: string }) { return <h2>{title}</h2>; }' };
+  it('omits the default entry (src/App.tsx, App)', () => {
+    const names = updateCatalog(createCache(), files).map((i) => i.name);
+    expect(names).toEqual(['Card']);
+  });
+  it('honours a custom entry and lists App when it is not the entry', () => {
+    const names = updateCatalog(createCache(), { ...files, 'src/main.tsx': 'export function Main() { return null; }' }, 'src/main.tsx').map((i) => i.name);
+    expect(names).toEqual(['App', 'Card']);
+  });
+});

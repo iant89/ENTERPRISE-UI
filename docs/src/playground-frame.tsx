@@ -10,7 +10,7 @@ import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 import * as JsxRuntime from 'react/jsx-runtime';
 import {
-  consoleArgs, envelope, hostValidators, locationFromStack, MAX_FRAME_MESSAGE_BYTES, MAX_HOST_MESSAGE_BYTES, SOURCE_URL_PREFIX, validate, TRUNCATED,
+  consoleArgs, envelope, frameNonceGate, hostValidators, locationFromStack, MAX_FRAME_MESSAGE_BYTES, MAX_HOST_MESSAGE_BYTES, SOURCE_URL_PREFIX, validate, TRUNCATED,
   type ConsoleLevel, type FrameMessages, type HostMessages,
 } from '../../studio/src/preview/bridge';
 import '../../src/styles/index.css';
@@ -25,12 +25,12 @@ const modules: Record<string, unknown> = {
   '../data': ExampleData, './internal/InventoryViews': InventoryViews, '../apps/InventoryApp': InventoryApp,
 };
 /** Bridge nonce from the host's `init`; module-scoped (never on window) so user code cannot reach it. */
-let bridgeNonce: string | undefined;
+const bridgeNonce = frameNonceGate(window.parent);
 // Typed, versioned messages (studio/src/preview/bridge); oversized payloads are trimmed before sending.
 function post<K extends keyof FrameMessages>(type: K, payload: FrameMessages[K]) {
   let body = payload as Record<string, unknown>;
   if (typeof body.message === 'string' && body.message.length > MAX_FRAME_MESSAGE_BYTES / 2) body = { ...body, message: body.message.slice(0, MAX_FRAME_MESSAGE_BYTES / 2) + TRUNCATED };
-  window.parent.postMessage(envelope<FrameMessages, K>(type, body as FrameMessages[K], bridgeNonce), '*');
+  window.parent.postMessage(envelope<FrameMessages, K>(type, body as FrameMessages[K], bridgeNonce.get()), '*');
 }
 const send = (type: 'ready' | 'success' | 'error', message = '') => (type === 'error' ? post('error', { message }) : post(type, {}));
 
@@ -178,7 +178,7 @@ window.addEventListener('message', (event) => {
   const r = validate(event.data, hostValidators, MAX_HOST_MESSAGE_BYTES);
   if (!r.ok) return;
   const m = r.message;
-  if (m.type === 'init') { const n = (event.data as { nonce?: unknown }).nonce; if (typeof n === 'string') bridgeNonce = n; send('ready'); return; }
+  if (m.type === 'init') { if (bridgeNonce.init(event.source, event.data)) send('ready'); return; }
   if (m.type === 'scroll') { window.scrollBy(0, (m.payload as HostMessages['scroll']).deltaY); return; }
   if (m.type === 'run') {
     const p = m.payload as HostMessages['run'];

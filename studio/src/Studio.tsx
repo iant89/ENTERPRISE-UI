@@ -34,10 +34,15 @@ import { CodeWorkspace } from './app/workspace/CodeWorkspace';
 import { MenuBar, type MenuItems } from './app/workspace/MenuBar';
 import { WorkspaceSwitch } from './app/workspace/WorkspaceSwitch';
 import { useBreakpoint } from './app/workspace/useBreakpoint';
+import { useLayoutAutosave } from './app/workspace/useLayoutAutosave';
 import { SearchPanel } from './app/workspace/SearchPanel';
 import { QuickOpen } from './app/workspace/QuickOpen';
 import { RewriteFeedback } from './app/workspace/RewriteFeedback';
 import { PreviewPane, type StaleInfo } from './preview/PreviewPane';
+import { CodePreviewFrame } from './preview/CodePreviewFrame';
+import { usePreviewBuild } from './preview/usePreviewBuild';
+import { consoleReducer, EMPTY_CONSOLE } from './preview/console';
+import { fromMarker, fromRuntime, type Diagnostic } from './core/diagnostics';
 import type { Problem } from './panels/bottom/BottomPanel';
 import {
   DEFAULT_LAYOUT, UNSAVED_PROJECT_KEY, errorLine, layoutReducer, recordLayoutStore, type LayoutState, type ViewportId, type Workspace,
@@ -179,6 +184,8 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     firstSaved.current = persistence.savedProject;
     void Promise.resolve(layoutStore.load(freshStart.current ? UNSAVED_PROJECT_KEY : id)).catch(() => null).then((stored) => {
       if (cancelled) return;
+      // A project with no stored layout inherits the current in-memory layout (e.g. the unsaved
+      // starter's layout carries over to its first real save); otherwise it starts from the default.
       layoutFor.current = { id, layout: stored ?? layoutFor.current?.layout ?? DEFAULT_LAYOUT };
       if (!stored) return;
       dispatchLayout({ type: 'load', layout: stored });
@@ -193,25 +200,8 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only when the project changes.
   }, [loaded, project.id]);
   const keyFor = () => (freshStart.current ? UNSAVED_PROJECT_KEY : project.id);
-  useEffect(() => {
-    const at = layoutFor.current;
-    if (!at || at.id !== project.id || at.layout === layout) return;
-    at.layout = layout;
-    const key = keyFor();
-    const write = () => { pendingLayout.current = null; void Promise.resolve(layoutStore.save(key, layout)).catch(() => undefined); };
-    // The unsaved starter's key is localStorage (synchronous); record writes are batched, and flushed on pagehide.
-    if (key === UNSAVED_PROJECT_KEY) { write(); return; }
-    pendingLayout.current = write;
-    const t = setTimeout(write, LAYOUT_SAVE_MS);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyFor reads refs.
-  }, [layout, project.id]);
-  const pendingLayout = useRef<(() => void) | null>(null);
-  useEffect(() => {
-    const flush = () => pendingLayout.current?.();
-    window.addEventListener('pagehide', flush);
-    return () => window.removeEventListener('pagehide', flush);
-  }, []);
+  // The unsaved starter's key is localStorage (synchronous); record writes are batched, and flushed on pagehide or project switch.
+  useLayoutAutosave({ layout, projectId: project.id, layoutFor, keyFor, immediate: (k) => k === UNSAVED_PROJECT_KEY, save: (k, l) => layoutStore.save(k, l), delay: LAYOUT_SAVE_MS });
   // First real save of a fresh starter: move its layout from the unsaved key to the project's id.
   const firstSaved = useRef<Project | null>(null);
   useEffect(() => {
@@ -260,20 +250,38 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
 
   useEffect(() => { if (selectedId && !findNode(root, selectedId)) setSelectedId(null); }, [root, selectedId]);
 
-  // Decision 6: the preview is stale while the last build failed (parse error now; C4 wires the compiler).
-  const staleMessage = doc.error ?? preview.error;
-  const stale: StaleInfo | null = useMemo(() => (staleMessage ? { message: staleMessage, file: entry, line: errorLine(staleMessage) } : null), [staleMessage, entry]);
-  const problems: Problem[] = useMemo(() => [
-    ...(stale ? [{ file: stale.file, line: stale.line, message: stale.message.split('\n')[0], severity: 'error' as const }] : []),
-    ...(freshChange?.unresolved ?? []).map((u) => ({ file: u.file, line: u.line ?? null, message: `Import ${u.specifier} could not be updated after the ${freshChange!.verb === 'Moved' ? 'move' : 'rename'} (${u.reason ?? 'unresolved'}).`, severity: 'warning' as const })),
-  ], [stale, freshChange]);
+  // C4: the Code workspace previews the compiled project (module graph → compiler → bridge → sandbox).
+  const build = usePreviewBuild(project.files, entry, { paused, enabled: workspace === 'code' });
+  const [consoleState, dispatchConsole] = useReducer(consoleReducer, EMPTY_CONSOLE);
+  const [runtimeError, setRuntimeError] = useState<Diagnostic | null>(null);
+  const [tsDiagnostics, setTsDiagnostics] = useState<Diagnostic[]>([]);
+  // Cleared on each reload of a new artifact (and on Refresh).
+  useEffect(() => { dispatchConsole({ type: 'clear' }); setRuntimeError(null); }, [build.artifact, previewKey]);
+  const codeMode = workspace === 'code';
+  const firstError = build.failed ? build.diagnostics.find((d) => d.severity === 'error') ?? null : null;
+  // Decision 6: the preview is stale while the last build failed; the last good artifact keeps running (§9.6).
+  const staleMessage = codeMode ? firstError?.message ?? null : doc.error ?? preview.error;
+  const stale: StaleInfo | null = useMemo(() => {
+    if (!staleMessage) return null;
+    if (codeMode && firstError) return { message: firstError.message, file: firstError.path || entry, line: firstError.range?.startLine ?? null };
+    return { message: staleMessage, file: entry, line: errorLine(staleMessage) };
+  }, [staleMessage, entry, codeMode, firstError]);
+  const problems: Problem[] = useMemo(() => {
+    const fromDiag = (d: Diagnostic): Problem => ({ file: d.path, line: d.range?.startLine ?? null, column: d.range?.startColumn ?? null, message: d.message.split('\n')[0], severity: d.severity, origin: d.origin });
+    const diags = codeMode
+      ? [...build.diagnostics, ...tsDiagnostics.filter((d) => d.severity !== 'info' && !build.diagnostics.some((b) => b.path === d.path && b.range?.startLine === d.range?.startLine && b.origin === 'parser')), ...(runtimeError ? [runtimeError] : [])].map(fromDiag)
+      : stale ? [{ file: stale.file, line: stale.line, message: stale.message.split('\n')[0], severity: 'error' as const }] : [];
+    return [
+      ...diags,
+      ...(freshChange?.unresolved ?? []).map((u) => ({ file: u.file, line: u.line ?? null, message: `Import ${u.specifier} could not be updated after the ${freshChange!.verb === 'Moved' ? 'move' : 'rename'} (${u.reason ?? 'unresolved'}).`, severity: 'warning' as const })),
+    ];
+  }, [codeMode, build.diagnostics, tsDiagnostics, runtimeError, stale, freshChange]);
+  const problemCounts = useMemo(() => ({ errors: problems.filter((p) => p.severity === 'error').length, warnings: problems.filter((p) => p.severity === 'warning').length }), [problems]);
   const wasStale = useRef(false);
   useEffect(() => {
     if (stale && !wasStale.current && workspace === 'code') dispatchLayout({ type: 'setBottomTab', tab: 'problems' });
     wasStale.current = !!stale;
   }, [stale, workspace]);
-  const frozen = useRef(previewCode);
-  if (!paused) frozen.current = previewCode;
 
   const goToLine = useCallback((path: string, line: number | null, column = 1, toSide = false) => {
     if (path !== activePath || toSide) dispatch({ type: 'openFile', path, toSide });
@@ -473,6 +481,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
           theme={resolved}
           label={editorLabel(g.active, i, single ? 1 : groups.length)}
           onCursor={isFocused ? setCursor : undefined}
+          onMarkers={i === 0 ? (markers) => setTsDiagnostics(markers.map((m) => fromMarker(m, m.path))) : undefined}
           onFocus={() => { if (!isFocused) dispatch({ type: 'focusGroup', group: i }); }}
           onChange={(next, path) => dispatch({ type: 'editFile', path, text: next, source: 'editor' })}
           onOpenLocation={(path, line, column) => {
@@ -628,11 +637,17 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
             onRefresh={() => setPreviewKey((k) => k + 1)}
             stale={stale}
             onGoToError={() => stale && goToLine(stale.file, stale.line)}
-            onRetry={() => { if (doc.error) announce('The code still has errors. Fix them to refresh the preview.'); else setPreviewKey((k) => k + 1); }}
+            onRetry={() => { build.recompile(); if (build.failed) announce('Recompiling. The preview updates when the errors are fixed.'); }}
             compact={breakpoint !== 'desktop'}
+            customSize={layout.previewSize} onCustomSize={(size) => dispatchLayout({ type: 'setPreviewSize', size })}
+            runtimeError={runtimeError && !stale ? { message: runtimeError.message, file: runtimeError.path || null, line: runtimeError.range?.startLine ?? null } : null}
+            onGoToRuntimeError={() => runtimeError?.path && goToLine(runtimeError.path, runtimeError.range?.startLine ?? null, runtimeError.range?.startColumn ?? 1)}
+            onDismissRuntimeError={() => setRuntimeError(null)}
           >
-            <Canvas key={previewKey} code={frozen.current} root={root} theme={previewTheme} density={previewDensity} design={false}
-              selectedId={null} onSelect={() => undefined} onDropComponent={() => undefined} onDropNode={() => undefined} onStatus={setPreview} />
+            <CodePreviewFrame key={previewKey} artifact={build.artifact} theme={previewTheme} density={previewDensity}
+              onConsole={(level, args, location) => dispatchConsole({ type: 'add', level, args, location })}
+              onRuntimeError={(e) => { setRuntimeError(fromRuntime(e)); dispatchConsole({ type: 'add', level: 'uncaught', args: [e.message], location: e }); }}
+              onSuccess={() => setRuntimeError(null)} />
           </PreviewPane>
         )}
         tabs={tabs}
@@ -641,8 +656,11 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
         onSelectTab={(path) => openTabFile(path)}
         onCloseTab={(path) => closeTab(path)}
         problems={problems}
-        onGoToProblem={(p) => goToLine(p.file, p.line)}
-        status={{ file: activePath, line: cursor.line, column: cursor.column, saveState, theme: themeLabel, errors: problems.length, warnings: 0, previewState: stale ? 'stale' : paused ? 'paused' : 'live' }}
+        onGoToProblem={(p) => p.file && goToLine(p.file, p.line, p.column ?? 1)}
+        consoleEntries={consoleState.entries}
+        onClearConsole={() => dispatchConsole({ type: 'clear' })}
+        onOpenSource={(path, line, column) => goToLine(path, line, column ?? 1)}
+        status={{ file: activePath, line: cursor.line, column: cursor.column, saveState, theme: themeLabel, errors: problemCounts.errors, warnings: problemCounts.warnings, previewState: stale ? 'stale' : paused ? 'paused' : 'live' }}
       />
     );
   }

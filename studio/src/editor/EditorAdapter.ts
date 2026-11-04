@@ -35,6 +35,8 @@ export interface EditorEvents {
   onChange?: (text: string, path: string) => void;
   onCursor?: (position: { line: number; column: number }) => void;
   onFocus?: () => void;
+  /** C4: TypeScript markers for all models changed (normalised by core/diagnostics `fromMarker`). */
+  onMarkers?: (markers: { severity: number; message: string; startLineNumber: number; startColumn: number; endLineNumber: number; endColumn: number; path: string }[]) => void;
 }
 
 /** The accessible name for an editor showing `path` in `group` (0-based), e.g. "Code editor, src/App.tsx, group 1". */

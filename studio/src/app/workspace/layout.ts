@@ -32,6 +32,23 @@ export interface LayoutState {
   focusedGroup: number;
   /** Recently opened files for Quick Open (C2 decision 7: persisted per project). */
   recent: string[];
+  /** C4 (decision 3a): the last custom preview size and zoom for this project; null = the viewport preset, Fit. */
+  previewSize: PreviewSize | null;
+}
+
+export type PreviewZoom = 'fit' | 50 | 75 | 100;
+export interface PreviewSize { width: number; height: number; zoom: PreviewZoom }
+/** C4 decision 2a: custom preview size limits, px. */
+export const PREVIEW_SIZE_LIMITS = { width: [320, 3840], height: [320, 2160] } as const;
+export const PREVIEW_ZOOMS: readonly PreviewZoom[] = ['fit', 50, 75, 100];
+export const validPreviewDim = (key: 'width' | 'height', value: number) =>
+  Number.isInteger(value) && value >= PREVIEW_SIZE_LIMITS[key][0] && value <= PREVIEW_SIZE_LIMITS[key][1];
+export function parsePreviewSize(raw: unknown): PreviewSize | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const r = raw as Record<string, unknown>;
+  const w = Number(r.width), h = Number(r.height);
+  if (!validPreviewDim('width', w) || !validPreviewDim('height', h)) return null;
+  return { width: w, height: h, zoom: PREVIEW_ZOOMS.includes(r.zoom as PreviewZoom) ? (r.zoom as PreviewZoom) : 'fit' };
 }
 
 export const ACTIVITIES: readonly Activity[] = ['explorer', 'search', 'components', 'docs'];
@@ -60,6 +77,7 @@ export const DEFAULT_LAYOUT: LayoutState = {
   groups: [],
   focusedGroup: 0,
   recent: [],
+  previewSize: null,
 };
 
 export const TABLET_MIN = 768;
@@ -95,6 +113,7 @@ export type LayoutAction =
   | { type: 'syncTabs'; paths: readonly string[] }
   | { type: 'setTabs'; paths: readonly string[] }
   | { type: 'setRecent'; paths: readonly string[] }
+  | { type: 'setPreviewSize'; size: PreviewSize | null }
   | { type: 'setGroups'; groups: readonly { tabs: readonly string[]; active: string }[]; focused: number };
 
 export function layoutReducer(state: LayoutState, action: LayoutAction): LayoutState {
@@ -118,6 +137,11 @@ export function layoutReducer(state: LayoutState, action: LayoutAction): LayoutS
     case 'openTab': return state.openTabs.includes(action.path) ? state : { ...state, openTabs: [...state.openTabs, action.path] };
     case 'closeTab': return { ...state, openTabs: state.openTabs.filter((p) => p !== action.path) };
     case 'setTabs': return { ...state, openTabs: [...action.paths] };
+    case 'setPreviewSize': {
+      const size = action.size && parsePreviewSize(action.size);
+      if (action.size && !size) return state;
+      return JSON.stringify(size) === JSON.stringify(state.previewSize) ? state : { ...state, previewSize: size };
+    }
     case 'setRecent': return { ...state, recent: [...action.paths] };
     case 'setGroups': {
       const groups = action.groups.map((g) => ({ tabs: [...g.tabs], active: g.active }));
@@ -173,6 +197,7 @@ export function parseLayout(raw: unknown): LayoutState {
     groups,
     focusedGroup: Math.min(typeof r.focusedGroup === 'number' && r.focusedGroup >= 0 ? Math.floor(r.focusedGroup) : 0, Math.max(0, groups.length - 1)),
     recent: Array.isArray(r.recent) ? r.recent.filter((p): p is string => typeof p === 'string').slice(0, 20) : [],
+    previewSize: parsePreviewSize(r.previewSize),
   };
 }
 

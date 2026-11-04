@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { hostBridge, type FrameMessages } from '../../../studio/src/preview/bridge';
 import { Check, ChevronLeft, Copy, RotateCcw } from 'lucide-react';
 import { Button } from '@enterprise-ui/react';
 import type { Density, ThemePreference } from '@enterprise-ui/react';
@@ -25,7 +26,8 @@ export function PlaygroundPage({ initialSlug, theme, density }: { initialSlug: s
   const [copied, setCopied] = useState(false);
   const frame = useRef<HTMLIFrameElement>(null);
   const name = docsBySlug.get(slug)?.name ?? slug;
-  const send = useCallback(() => frame.current?.contentWindow?.postMessage({ source: 'eui-docs', type: 'render', code, theme, density }, '*'), [code, theme, density]);
+  const bridge = useRef<ReturnType<typeof hostBridge> | null>(null);
+  const send = useCallback(() => bridge.current?.post('render', { code, theme, density }), [code, theme, density]);
   useEffect(() => {
     if (encoded) return;
     setInitialCode(null); setCode(defaultsFor(slug)); setError('');
@@ -41,14 +43,14 @@ export function PlaygroundPage({ initialSlug, theme, density }: { initialSlug: s
     return () => { active = false; };
   }, [encoded]);
   useEffect(() => {
-    const onMessage = (event: MessageEvent) => {
-      if (event.source !== frame.current?.contentWindow || event.data?.source !== 'eui-playground') return;
-      if (event.data.type === 'ready') setReady(true);
-      if (event.data.type === 'error' && typeof event.data.message === 'string') setError(event.data.message);
-      if (event.data.type === 'success') setError('');
-    };
-    window.addEventListener('message', onMessage);
-    return () => window.removeEventListener('message', onMessage);
+    // Typed, validated messages from the sandboxed frame only (studio/src/preview/bridge).
+    const b = hostBridge(() => frame.current, (m) => {
+      if (m.type === 'ready') setReady(true);
+      if (m.type === 'error') setError((m.payload as FrameMessages['error']).message);
+      if (m.type === 'success') setError('');
+    });
+    bridge.current = b;
+    return () => { b.dispose(); bridge.current = null; };
   }, []);
   useEffect(() => { if (ready) { const timer = setTimeout(send, 300); return () => clearTimeout(timer); } }, [ready, send]);
   const copy = async () => {
@@ -64,7 +66,7 @@ export function PlaygroundPage({ initialSlug, theme, density }: { initialSlug: s
     <div className={styles.workspace}>
       <section className={styles.panel} aria-labelledby="preview-heading">
         <div className={styles.panelBar}><div><span className={styles.panelIndex}>01 / RENDER</span><h2 id="preview-heading">Preview</h2></div><label className={styles.selectLabel}>Component <select value={slug} onChange={(event) => { window.location.hash = `/playground/${event.target.value}`; }} aria-label="Playground component">{options.map((option) => <option key={option} value={option}>{docsBySlug.get(option)?.name ?? option}</option>)}</select></label></div>
-        <div className={styles.canvas}><iframe ref={frame} title={`${name} live preview`} sandbox="allow-scripts" src={`${import.meta.env.BASE_URL}playground-frame.html`} className={styles.frame} onLoad={() => frame.current?.contentWindow?.postMessage({ source: 'eui-docs', type: 'init' }, '*')} /></div>
+        <div className={styles.canvas}><iframe ref={frame} title={`${name} live preview`} sandbox="allow-scripts" src={`${import.meta.env.BASE_URL}playground-frame.html`} className={styles.frame} onLoad={() => bridge.current?.post('init', {})} /></div>
         <div className={styles.panelFoot}><span><span className={styles.dot} /> {error ? 'Preview needs attention' : ready ? 'Preview is ready' : 'Starting preview…'}</span><span>ISOLATED RENDER</span></div>
       </section>
       <section className={styles.panel} aria-labelledby="editor-heading">

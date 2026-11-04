@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type DragEvent, type MouseEve
 import type { Density, ThemeName } from '@enterprise-ui/react';
 import { findNode, parentId, type StudioNode } from './model/jsx';
 import { acceptsChildren } from './model/catalog';
+import { hostBridge, type FrameMessages, type HostMessages } from './preview/bridge';
 import styles from './Studio.module.css';
 
 export interface Box { id: string; x: number; y: number; width: number; height: number }
@@ -60,24 +61,24 @@ export function Canvas({ code, root, theme, density, design, selectedId, onSelec
   const statusRef = useRef(onStatus);
   statusRef.current = onStatus;
 
-  const post = useCallback((message: Record<string, unknown>) => frame.current?.contentWindow?.postMessage({ source: 'eui-docs', ...message }, '*'), []);
+  const bridge = useRef<ReturnType<typeof hostBridge> | null>(null);
+  const post = useCallback(<K extends keyof HostMessages>(type: K, payload: HostMessages[K]) => bridge.current?.post(type, payload), []);
 
   useEffect(() => {
-    const onMessage = (event: MessageEvent) => {
-      if (event.source !== frame.current?.contentWindow || event.data?.source !== 'eui-playground') return;
-      const { type } = event.data;
-      if (type === 'ready') setReady(true);
-      else if (type === 'layout' && Array.isArray(event.data.nodes)) setBoxes(event.data.nodes as Box[]);
-      else if (type === 'success') statusRef.current({ error: null, ready: true });
-      else if (type === 'error') statusRef.current({ error: String(event.data.message), ready: true });
-    };
-    window.addEventListener('message', onMessage);
-    return () => window.removeEventListener('message', onMessage);
+    // C4: typed, validated messages from this frame only (preview/bridge).
+    const b = hostBridge(() => frame.current, (m) => {
+      if (m.type === 'ready') setReady(true);
+      else if (m.type === 'layout') setBoxes((m.payload as FrameMessages['layout']).nodes);
+      else if (m.type === 'success') statusRef.current({ error: null, ready: true });
+      else if (m.type === 'error') statusRef.current({ error: (m.payload as FrameMessages['error']).message, ready: true });
+    });
+    bridge.current = b;
+    return () => { b.dispose(); bridge.current = null; };
   }, []);
 
   useEffect(() => {
     if (!ready) return;
-    const timer = setTimeout(() => post({ type: 'render', code, theme, density, design }), 150);
+    const timer = setTimeout(() => post('render', { code, theme, density, design }), 150);
     return () => clearTimeout(timer);
   }, [ready, code, theme, density, design, post]);
 
@@ -97,7 +98,7 @@ export function Canvas({ code, root, theme, density, design, selectedId, onSelec
         sandbox="allow-scripts"
         src="./preview.html"
         className={styles.frame}
-        onLoad={() => post({ type: 'init' })}
+        onLoad={() => post('init', {})}
       />
       {design && (
         <div
@@ -107,7 +108,7 @@ export function Canvas({ code, root, theme, density, design, selectedId, onSelec
           onMouseMove={(e) => { const p = point(e); setHover(hitTest(boxes, p.x, p.y)?.id ?? null); }}
           onMouseLeave={() => setHover(null)}
           onClick={(e) => { const p = point(e); onSelect(hitTest(boxes, p.x, p.y)?.id ?? null); }}
-          onWheel={(e) => post({ type: 'scroll', deltaY: e.deltaY })}
+          onWheel={(e) => post('scroll', { deltaY: e.deltaY })}
           draggable={!!selectedBox}
           onDragStart={(e) => {
             const p = point(e);

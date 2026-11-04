@@ -8,6 +8,7 @@ import { Splitter } from './Splitter';
 import { StatusBar, type StatusBarProps } from './StatusBar';
 import type { ReferenceSet } from '../../panels/bottom/ReferencesPanel';
 import { BottomPanel, type Problem } from '../../panels/bottom/BottomPanel';
+import type { ConsoleEntry } from '../../preview/console';
 import { SIZE_LIMITS, type Activity, type Breakpoint, type LayoutAction, type LayoutState, type MobileTab, type TabletLayout } from './layout';
 import styles from './CodeWorkspace.module.css';
 
@@ -43,6 +44,10 @@ export interface CodeWorkspaceProps {
   onCloseTab: (path: string) => void;
   problems: Problem[];
   onGoToProblem: (p: Problem) => void;
+  /** C4: preview console. */
+  consoleEntries?: readonly ConsoleEntry[];
+  onClearConsole?: () => void;
+  onOpenSource?: (path: string, line: number | null, column: number | null) => void;
   status: StatusBarProps;
 }
 
@@ -87,7 +92,7 @@ function SidebarBody({ activity, explorer, search, docsPinned, onPin }: { activi
 }
 
 export function CodeWorkspace(props: CodeWorkspaceProps) {
-  const { breakpoint, layout, dispatchLayout: d, menuBar, strips, explorer, search, overlays, editor, groupsEditor, references, onOpenReference, onClearReferences, preview, tabs, activePath, dirty, onSelectTab, onCloseTab, problems, onGoToProblem, status } = props;
+  const { breakpoint, layout, dispatchLayout: d, menuBar, strips, explorer, search, overlays, editor, groupsEditor, references, onOpenReference, onClearReferences, preview, tabs, activePath, dirty, onSelectTab, onCloseTab, problems, onGoToProblem, consoleEntries, onClearConsole, onOpenSource, status } = props;
   const [overlay, setOverlay] = useState(false);
   const desktop = breakpoint === 'desktop';
   const tablet = breakpoint === 'tablet';
@@ -207,6 +212,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
           <BottomPanel
             tab={layout.bottomTab} onTab={(tab) => d({ type: 'setBottomTab', tab })}
             problems={problems} onGoTo={onGoToProblem}
+            consoleEntries={consoleEntries} onClearConsole={onClearConsole} onOpenSource={onOpenSource}
             references={references} onOpenReference={onOpenReference} onClearReferences={onClearReferences}
             onCollapse={() => d({ type: 'toggle', panel: 'bottom', collapsed: true })}
             summary={tablet} expanded={layout.bottomExpanded} onExpanded={(expanded) => d({ type: 'setBottomExpanded', expanded })}

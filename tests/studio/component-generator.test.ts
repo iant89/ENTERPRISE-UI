@@ -111,5 +111,10 @@ describe('QA: destinations and reserved names', () => {
     if (!plan.ok) expect(plan.errors.destination).toBeTruthy();
   });
   it('still accepts src/components/', () => expect(planComponent({ files: {} }, { name: 'Widget', destination: 'src/components/', options: opts }).ok).toBe(true));
+  it('reserves every PascalCase runtime export of the library', async () => {
+    const lib = await import('../../src/index');
+    const missing = Object.keys(lib).filter((k) => /^[A-Z][A-Za-z0-9]*$/.test(k) && !validateName(k));
+    expect(missing).toEqual([]);
+  });
   it.each(['App', 'ThemeProvider', 'AppShell', 'Button', 'Card'])('reserves library export %s', (n) => expect(validateName(n)).toMatch(/reserved/));
 });

@@ -123,8 +123,8 @@ behind the `LayoutStore` interface (`studio/src/app/workspace/layout.ts`); since
 - **Tablet (768–1279 px):** icon-only activity tabs that open the sidebar as an overlay, a Split / Editor / Preview layout switch, extra editor tabs collapsed into "+N", and the bottom panel shown as a summary strip.
 - **Mobile (<768 px):** four full-screen tabs (Files / Code / Preview / Panel, with a dot on Code while anything is unsaved), menus behind ☰, short switch labels.
 
-### Stubbed until C2–C7
-Find-and-replace, compiler, console logs and preview events (C4; stale is currently driven by parse and preview errors), Components and Docs content (C5), Tests (C6) and Settings (C7).
+### Milestones C1–C7
+C1 IDE shell, C2 multi-file VFS, C3 Monaco tabs/split/navigation, C4 preview pipeline, C5 Create Component, C6 component catalog, C7 integrated documentation (sections below). Tests, Settings, the component detail view and the command palette remain stubbed for later milestones.
 
 ### Shortcuts
 
@@ -263,3 +263,12 @@ The Components activity lists every component discovered in the project plus the
   as placeholders) and adds the import if it's missing (relative path, via the folder `index` when it exists), as one "Insert Name" undo step.
   It is disabled unless the active file is `.tsx`/`.jsx`.
 - **Deferred:** drag to editor, the §6.4 detail view and §8 edit modes (C8), docs content (C7), and the command palette (C14).
+
+## Integrated documentation (Code Studio C7)
+- **Docs sidebar** (activity bar → Docs, or **Docs** from the Components panel, the Design Studio palette's docs button, or the Inspector): one page per component — import line, status, props table, events, examples and related components. Library pages come from `docs/generated/api.json`; project pages come from the C6 catalog plus the component's `*.docs.md` file. The footer shows `@enterprise-ui/react <version> · api <hash>` (sha256 of api.json, 8 chars, injected at build time).
+- **Search** covers names, props, summaries and markdown headings across library and project. **Back/Forward** (Alt+Left/Alt+Right) keep a history; **Pin** shows docs beside the editor and persists across reloads.
+- **Live example**: an editable preview of the component's example built through the C4 pipeline from a virtual entry that is never written to the project; controls (text, boolean, enum, number) only change the preview, never the source. Reset restores the defaults.
+- **Markdown**: a small safe subset (headings, lists, tables, code, links with http(s)/relative hrefs only; no raw HTML).
+- **Component Docs bottom tab** follows the component under the editor cursor (focus stays in the editor) unless pinned.
+- **Add documentation** on an undocumented project component drafts `<Name>.docs.md` from its props and usages; generated sections sit between `<!-- generated -->` markers so regeneration keeps hand-written text. Creation is a single undo step.
+- Known limits: library live examples use each entry's default snippet; the "found" checkboxes in Add documentation are informational.

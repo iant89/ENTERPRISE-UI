@@ -9,3 +9,5 @@ declare module 'monaco-editor/editor/contrib/*';
 declare module 'monaco-editor/editor/browser/*';
 declare module 'monaco-editor/features/*';
 declare module 'monaco-editor/base/*';
+/** C7: short content hash of docs/generated/api.json (Vite define; undefined in unit tests). */
+declare const __EUI_API_HASH__: string | undefined;

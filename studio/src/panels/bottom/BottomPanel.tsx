@@ -31,6 +31,8 @@ export interface BottomPanelProps {
   onClearConsole?: () => void;
   /** Messages dropped by the console cap (shown as a marker). */
   consoleDropped?: number;
+  /** C7: Component Docs tab content. */
+  componentDocs?: ReactNode;
   onOpenSource?: (path: string, line: number | null, column: number | null) => void;
 }
 
@@ -45,7 +47,7 @@ const EMPTY: Record<BottomTab, ReactNode> = {
 };
 
 /** Problems, Console, Tests, Component Docs, Output, Preview Events. Empty states until C4–C6. */
-export function BottomPanel({ tab, onTab, problems, onGoTo, onCollapse, summary, expanded, onExpanded, references = null, onOpenReference, onClearReferences, consoleEntries = [], onClearConsole, onOpenSource, consoleDropped = 0 }: BottomPanelProps) {
+export function BottomPanel({ tab, onTab, problems, onGoTo, onCollapse, summary, expanded, onExpanded, references = null, onOpenReference, onClearReferences, consoleEntries = [], onClearConsole, onOpenSource, consoleDropped = 0, componentDocs }: BottomPanelProps) {
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
   const grouped = useMemo(() => groupProblems(problems), [problems]);
   if (summary && !expanded) {
@@ -104,6 +106,8 @@ export function BottomPanel({ tab, onTab, problems, onGoTo, onCollapse, summary,
               </section>
             ))}
           </div>
+        ) : tab === 'component-docs' && componentDocs ? (
+          <div data-testid="component-docs-tab">{componentDocs}</div>
         ) : tab === 'console' ? (
           <ConsoleView entries={consoleEntries} dropped={consoleDropped} onClear={() => onClearConsole?.()} onOpen={(p, l, c) => onOpenSource?.(p, l, c)} />
         ) : <p className={styles.empty}>{EMPTY[tab]}</p>}

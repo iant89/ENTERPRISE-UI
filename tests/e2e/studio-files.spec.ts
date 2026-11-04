@@ -114,6 +114,17 @@ test('drag moves a file into a folder, and Move to… does the same from the key
   await page.keyboard.press('Alt+N');
   await page.keyboard.type('Card');
   await page.keyboard.press('Enter');
+  // Settle the tree first: no inline rename open, both rows rendered, and their positions stable.
+  await expect(page.getByRole('tree', { name: 'Project files' }).getByRole('textbox')).toHaveCount(0);
+  const src = item(page, /^Card\.tsx/).locator('> div');
+  const dst = item(page, /^components/).locator('> div').first();
+  await expect(src).toBeVisible();
+  await expect(dst).toBeVisible();
+  await expect.poll(async () => {
+    const a = JSON.stringify([await src.boundingBox(), await dst.boundingBox()]);
+    await page.waitForTimeout(100);
+    return a === JSON.stringify([await src.boundingBox(), await dst.boundingBox()]);
+  }).toBe(true);
   await item(page, /^Card\.tsx/).locator('> div').dragTo(item(page, /^components/).locator('> div').first());
   await expect(page.getByText('Moved Card.tsx to src/components.').first()).toBeVisible();
 

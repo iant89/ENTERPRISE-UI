@@ -271,7 +271,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   const build = usePreviewBuild(project.files, entry, { paused, enabled: workspace === 'code', projectKey: project.id });
   const [consoleState, dispatchConsole] = useReducer(consoleReducer, EMPTY_CONSOLE);
   // C6: the component catalog, derived from source (never persisted).
-  const catalogState = useCatalog(project.files);
+  const catalogState = useCatalog(project.files, { entry: project.entry });
   const [runtimeError, setRuntimeError] = useState<Diagnostic | null>(null);
   const [tsDiagnostics, setTsDiagnostics] = useState<Diagnostic[]>([]);
   // Cleared on each reload of a new artifact (and on Refresh).

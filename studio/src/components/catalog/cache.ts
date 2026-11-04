@@ -17,8 +17,11 @@ export const createCache = (): CatalogCache => ({ entries: new Map(), nodes: new
 
 const SCRIPT = /\.(tsx|jsx|ts|js)$/;
 
-/** Updates the cache for `files`; returns the project items (siblings attached), sorted by name. */
-export function updateCatalog(cache: CatalogCache, files: Readonly<Record<string, string>>): CatalogItem[] {
+/** The page entry (default `src/App.tsx`, the starter's `App`) is the page itself, not a reusable component. */
+export const DEFAULT_ENTRY = 'src/App.tsx';
+
+/** Updates the cache for `files`; returns the project items (siblings attached, entry file excluded), sorted by name. */
+export function updateCatalog(cache: CatalogCache, files: Readonly<Record<string, string>>, entry: string = DEFAULT_ENTRY): CatalogItem[] {
   const changed = new Set<string>();
   const fileSetChanged = [...cache.nodes.keys()].some((p) => !Object.hasOwn(files, p)) || Object.keys(files).some((p) => SCRIPT.test(p) && !cache.nodes.has(p));
   for (const p of [...cache.nodes.keys()]) if (!Object.hasOwn(files, p)) { cache.nodes.delete(p); cache.entries.delete(p); changed.add(p); }
@@ -38,5 +41,5 @@ export function updateCatalog(cache: CatalogCache, files: Readonly<Record<string
     if (r.parsed || !cache.entries.has(p)) cache.entries.set(p, { hash: hashText(files[p]), items: r.items });
   }
   cache.lastInvalidated = invalid;
-  return [...cache.entries.values()].flatMap((e) => e.items).map((i) => withSiblings(i, files)).sort((a, b) => a.name.localeCompare(b.name) || (a.source ?? '').localeCompare(b.source ?? ''));
+  return [...cache.entries.entries()].filter(([p]) => p !== entry).flatMap(([, e]) => e.items).map((i) => withSiblings(i, files)).sort((a, b) => a.name.localeCompare(b.name) || (a.source ?? '').localeCompare(b.source ?? ''));
 }

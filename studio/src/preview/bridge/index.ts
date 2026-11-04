@@ -37,7 +37,8 @@ export interface FrameMessages {
   layout: { nodes: LayoutBox[] };
 }
 
-export type Envelope<M, K extends keyof M = keyof M> = { source: typeof BRIDGE_SOURCE; v: typeof BRIDGE_VERSION; type: K; payload: M[K] };
+/** `nonce`: set by the host on `init` and echoed by the frame runtime on every frame message (see hostBridge). */
+export type Envelope<M, K extends keyof M = keyof M> = { source: typeof BRIDGE_SOURCE; v: typeof BRIDGE_VERSION; type: K; payload: M[K]; nonce?: string };
 type Validators<M> = { [K in keyof M]: (p: unknown) => boolean };
 
 const obj = (p: unknown): p is Record<string, unknown> => !!p && typeof p === 'object' && !Array.isArray(p);
@@ -78,19 +79,31 @@ export function validate<M>(data: unknown, validators: Validators<M>, maxBytes: 
   return { ok: true, message: data as unknown as Envelope<M> };
 }
 
-export const envelope = <M, K extends keyof M>(type: K, payload: M[K]): Envelope<M, K> => ({ source: BRIDGE_SOURCE, v: BRIDGE_VERSION, type, payload });
+export const envelope = <M, K extends keyof M>(type: K, payload: M[K], nonce?: string): Envelope<M, K> =>
+  (nonce === undefined ? { source: BRIDGE_SOURCE, v: BRIDGE_VERSION, type, payload } : { source: BRIDGE_SOURCE, v: BRIDGE_VERSION, type, payload, nonce });
 
-/** Host side: a typed poster and a listener that only accepts messages from `frame()`'s window. */
+const newNonce = () => (globalThis.crypto?.randomUUID?.() ?? `${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`);
+
+/**
+ * Host side: a typed poster and a listener that only accepts messages from `frame()`'s window carrying
+ * the current nonce. A fresh nonce goes out with every `init` (each frame load, before any user code
+ * runs); the frame runtime keeps it in its module closure, so user code cannot read or forge it.
+ */
 export function hostBridge(frame: () => HTMLIFrameElement | null, onMessage: (m: Envelope<FrameMessages>) => void) {
+  let nonce = newNonce();
   const listener = (event: MessageEvent) => {
     const win = frame()?.contentWindow;
     if (!win || event.source !== win) return;
+    if (!event.data || typeof event.data !== 'object' || (event.data as { nonce?: unknown }).nonce !== nonce) return;
     const r = validate(event.data, frameValidators, MAX_FRAME_MESSAGE_BYTES);
     if (r.ok) onMessage(r.message);
   };
   window.addEventListener('message', listener);
   return {
-    post<K extends keyof HostMessages>(type: K, payload: HostMessages[K]) { frame()?.contentWindow?.postMessage(envelope<HostMessages, K>(type, payload), '*'); },
+    post<K extends keyof HostMessages>(type: K, payload: HostMessages[K]) {
+      if (type === 'init') nonce = newNonce();
+      frame()?.contentWindow?.postMessage(envelope<HostMessages, K>(type, payload, type === 'init' ? nonce : undefined), '*');
+    },
     dispose() { window.removeEventListener('message', listener); },
   };
 }

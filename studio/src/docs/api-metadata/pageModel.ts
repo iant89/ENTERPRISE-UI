@@ -41,7 +41,8 @@ type ApiComponent = { name: string; description?: string; source?: string; props
 const components = (api as unknown as { components: Record<string, ApiComponent> }).components;
 
 /** `@enterprise-ui/react` version + api.json content hash (Vite define), e.g. `0.1.0 · api 3f9a12bc`. */
-export const BUILD_ID = `${version} · api ${typeof __EUI_API_HASH__ === 'string' ? __EUI_API_HASH__ : 'dev'}`;
+function apiHash(): string { try { return __EUI_API_HASH__ ?? 'dev'; } catch { return 'dev'; } }
+export const BUILD_ID = `${version} · api ${apiHash()}`;
 export const LIBRARY_VERSION = version;
 
 const EVENT = /^on[A-Z]/;

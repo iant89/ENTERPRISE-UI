@@ -1,6 +1,6 @@
 import { useMemo, useState, type KeyboardEvent } from 'react';
 import { Badge, Button, IconButton, Input } from '@enterprise-ui/react';
-import { BookOpen, ChevronDown, ChevronRight, Code2, Lock, Plus, SquarePlus } from 'lucide-react';
+import { BookOpen, ChevronDown, ChevronRight, Code2, Lock, Plus, SquarePlus, Box, Search } from 'lucide-react';
 import { cx } from '../../../../src/utilities/cx';
 import { signature } from '../../components/catalog/discover';
 import { CATEGORY_ORDER, LIBRARY_VERSION } from '../../components/catalog/library';
@@ -66,7 +66,7 @@ export function ComponentsPanel({ project, library, onCreate, onDocs, onSource, 
       <div key={item.id} id={optionId(item.id)} role="option" aria-selected={item.id === selected} className={cx(styles.option, item.id === selected && styles.selected)}
         onClick={() => setSelected(item.id)} onDoubleClick={() => onDocs(item)} data-testid="catalog-item">
         <span className={styles.line1}>
-          <span className={styles.name}>{item.name}</span>
+          <Box aria-hidden="true" className={styles.icon} /><span className={styles.name}>{item.name}</span>
           {item.origin === 'project' && !item.docs && <Badge tone="warning">No docs</Badge>}
           <span className={styles.meta}>{item.origin === 'project' ? base(item.source) : `v${LIBRARY_VERSION}`}</span>
         </span>
@@ -99,7 +99,7 @@ export function ComponentsPanel({ project, library, onCreate, onDocs, onSource, 
         {onCreate && <IconButton size="sm" variant="tertiary" icon={<Plus />} label="Create component" onClick={onCreate} />}
       </div>
       <div className={styles.filter}>
-        <Input size="sm" label="Filter by name or prop" hideLabel placeholder="Filter by name or prop" value={query} onChange={(e) => setQuery(e.currentTarget.value)} />
+        <Input size="sm" label="Filter by name or prop" hideLabel placeholder="Filter by name or prop" startAdornment={<Search aria-hidden="true" />} value={query} onChange={(e) => setQuery(e.currentTarget.value)} />
       </div>
       <h3 className={styles.group} id="catalog-project-title">Project <Badge count={project.length} /></h3>
       {project.length === 0

@@ -19,3 +19,6 @@
 .sig { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--eui-font-family-mono, monospace); font-size: var(--eui-font-size-xs); color: var(--eui-color-text-secondary); }
 .actions { display: flex; gap: var(--eui-space-1); padding: 0 var(--eui-space-3) var(--eui-space-2); }
 .empty { margin: 0; padding: var(--eui-space-2) var(--eui-space-3); color: var(--eui-color-text-secondary); font-size: var(--eui-font-size-sm); }
+
+/* Mockup 01: component glyph before each name. */
+.icon { width: 14px; height: 14px; flex: none; color: var(--eui-color-text-secondary, currentColor); }

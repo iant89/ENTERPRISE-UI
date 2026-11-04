@@ -5,7 +5,7 @@ import { href } from '../router';
 
 export function ComponentsIndex() {
   return (
-    <Page title="Components" subtitle={`${docs.length} documented components in seven categories.`} breadcrumbs={[{ label: 'Docs', href: '#/' }, { label: 'Components' }]}>
+    <Page title="Components" subtitle={`${new Set(docs.flatMap((d) => d.components)).size} documented components on ${docs.length} pages in ${categories.length} categories.`} breadcrumbs={[{ label: 'Docs', href: '#/' }, { label: 'Components' }]}>
       <Grid columns={{ base: 1, md: 2, lg: 3 }} gap={4}>
         {categories.map((c) => (
           <Card key={c.id} title={c.id} subtitle={c.description} headingLevel={2} noPadding headerDivider>

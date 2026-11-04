@@ -1,15 +1,18 @@
 import { ArrowRight, Accessibility, Boxes, Code2, MonitorSmartphone, Palette, Rows3, SwatchBook } from 'lucide-react';
 import {
-  Badge, Button, Card, Grid, Input, List, MetricCard, ObjectIdentifier, Select, Stack, StatusIndicator, Table, ThemeProvider,
+  Badge, Button, Card, Grid, Input, List, MetricCard, ObjectIdentifier, Select, Stack, StatusIndicator, Table, THEMES, ThemeProvider,
 } from '@enterprise-ui/react';
 import { categories, docs } from '../registry';
+
+/** Distinct components documented across all pages (one page can cover several, e.g. Tabs + Tab). */
+const componentCount = new Set(docs.flatMap((d) => d.components)).size;
 import { href, navigate } from '../router';
 import { products, statusTone, currency } from '../../../examples/data';
 import styles from './Pages.module.css';
 
 const features = [
   { icon: <SwatchBook />, title: 'Design tokens', text: 'One token system for color, spacing, typography, radii, shadows, motion and density — as CSS custom properties.', path: '/tokens' },
-  { icon: <Palette />, title: 'Light, dark & high contrast', text: 'Three themes that meet WCAG AA contrast, switchable at runtime and scoped per subtree.', path: '/themes' },
+  { icon: <Palette />, title: 'Light, dark, high contrast & SAP', text: `${THEMES.length} themes — Light, Dark and High contrast, plus SAP Morning Horizon, Evening Horizon, Quartz Light and Quartz Dark. Each passes axe contrast checks, switches at runtime and can be scoped per subtree.`, path: '/themes' },
   { icon: <Accessibility />, title: 'Accessible by default', text: 'Semantic HTML, WAI-ARIA patterns, keyboard support, focus management and live announcements.', path: '/accessibility' },
   { icon: <MonitorSmartphone />, title: 'Responsive', text: 'Shell, tables, forms and patterns adapt from desktop to tablet and phone with touch-friendly targets.', path: '/layouts' },
   { icon: <Rows3 />, title: 'Enterprise patterns', text: 'List reports, object pages, master–detail, wizards and dashboards composed from the same parts.', path: '/patterns' },
@@ -62,8 +65,8 @@ export function Overview() {
               </a>
             </div>
             <div className={styles.stats}>
-              <div className={styles.stat}><strong>{docs.length}</strong><span>documented components</span></div>
-              <div className={styles.stat}><strong>3</strong><span>themes · 2 densities</span></div>
+              <div className={styles.stat}><strong>{componentCount}</strong><span>documented components</span></div>
+              <div className={styles.stat}><strong>{THEMES.length}</strong><span>themes · 2 densities</span></div>
               <div className={styles.stat}><strong>WCAG 2.2 AA</strong><span>accessibility target</span></div>
             </div>
           </div>

@@ -34,6 +34,7 @@ import { CodeWorkspace } from './app/workspace/CodeWorkspace';
 import { MenuBar, type MenuItems } from './app/workspace/MenuBar';
 import { WorkspaceSwitch } from './app/workspace/WorkspaceSwitch';
 import { useBreakpoint } from './app/workspace/useBreakpoint';
+import { useLayoutAutosave } from './app/workspace/useLayoutAutosave';
 import { SearchPanel } from './app/workspace/SearchPanel';
 import { QuickOpen } from './app/workspace/QuickOpen';
 import { RewriteFeedback } from './app/workspace/RewriteFeedback';
@@ -179,6 +180,8 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     firstSaved.current = persistence.savedProject;
     void Promise.resolve(layoutStore.load(freshStart.current ? UNSAVED_PROJECT_KEY : id)).catch(() => null).then((stored) => {
       if (cancelled) return;
+      // A project with no stored layout inherits the current in-memory layout (e.g. the unsaved
+      // starter's layout carries over to its first real save); otherwise it starts from the default.
       layoutFor.current = { id, layout: stored ?? layoutFor.current?.layout ?? DEFAULT_LAYOUT };
       if (!stored) return;
       dispatchLayout({ type: 'load', layout: stored });
@@ -193,25 +196,8 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only when the project changes.
   }, [loaded, project.id]);
   const keyFor = () => (freshStart.current ? UNSAVED_PROJECT_KEY : project.id);
-  useEffect(() => {
-    const at = layoutFor.current;
-    if (!at || at.id !== project.id || at.layout === layout) return;
-    at.layout = layout;
-    const key = keyFor();
-    const write = () => { pendingLayout.current = null; void Promise.resolve(layoutStore.save(key, layout)).catch(() => undefined); };
-    // The unsaved starter's key is localStorage (synchronous); record writes are batched, and flushed on pagehide.
-    if (key === UNSAVED_PROJECT_KEY) { write(); return; }
-    pendingLayout.current = write;
-    const t = setTimeout(write, LAYOUT_SAVE_MS);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyFor reads refs.
-  }, [layout, project.id]);
-  const pendingLayout = useRef<(() => void) | null>(null);
-  useEffect(() => {
-    const flush = () => pendingLayout.current?.();
-    window.addEventListener('pagehide', flush);
-    return () => window.removeEventListener('pagehide', flush);
-  }, []);
+  // The unsaved starter's key is localStorage (synchronous); record writes are batched, and flushed on pagehide or project switch.
+  useLayoutAutosave({ layout, projectId: project.id, layoutFor, keyFor, immediate: (k) => k === UNSAVED_PROJECT_KEY, save: (k, l) => layoutStore.save(k, l), delay: LAYOUT_SAVE_MS });
   // First real save of a fresh starter: move its layout from the unsaved key to the project's id.
   const firstSaved = useRef<Project | null>(null);
   useEffect(() => {

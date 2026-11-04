@@ -129,7 +129,9 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(functi
     return pos;
   };
 
+  const editCount = useRef(0);
   const commit = (next: (string | null)[], caretPos: number) => {
+    editCount.current++;
     const nextRaw = toRaw(next);
     caret.current = caretPos;
     setEdits((n) => n + 1);
@@ -178,6 +180,8 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(functi
     // Typed or pasted text fills editable positions from the edit point; invalid characters are skipped.
     let slot = firstSlotAtOrAfter(start);
     if (inserted.length > 1 && removedSlots.length === slotPositions.length) slot = 0;
+    // Typing past the last editable position (for example with the caret at the end) fills the first empty one.
+    if (slot < 0) slot = next.findIndex((c) => c === null);
     let lastFilled = -1;
     for (const ch of inserted) {
       if (slot < 0 || slot >= slotPositions.length) break;
@@ -204,9 +208,18 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(functi
 
   const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
     setFocused(true);
-    // Put the caret at the first empty position once the mask is shown.
-    const firstEmpty = slots.findIndex((c) => c === null);
-    caret.current = firstEmpty >= 0 ? slotPositions[firstEmpty] : tokens.length;
+    if (!hasValue) {
+      // The mask appears on focus: put the caret at the first editable position. A pointer click
+      // places the caret after the focus event, so set it again on the next frame.
+      const pos = slotPositions[0] ?? 0;
+      caret.current = pos;
+      const input = event.currentTarget;
+      const editsAtFocus = editCount.current;
+      requestAnimationFrame(() => {
+        // Skip if the user already typed: the edit has placed the caret.
+        if (document.activeElement === input && editCount.current === editsAtFocus) input.setSelectionRange(pos, pos);
+      });
+    }
     onFocus?.(event);
   };
   const handleBlur = (event: FocusEvent<HTMLInputElement>) => {

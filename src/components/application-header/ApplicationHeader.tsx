@@ -180,7 +180,10 @@ export function ApplicationHeader({
     return () => observer.disconnect();
   }, []);
 
-  // Pick the first collapse step whose content fits. Widths come from a hidden measuring layer.
+  // Pick the first collapse step whose content fits. Widths come from a hidden measuring layer, whose
+  // content can change with any prop, so this runs after every render; setLayout only updates when
+  // the chosen step changes, which cannot loop because the step does not affect the measured widths.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     const measure = measureRef.current;
     const header = headerRef.current;

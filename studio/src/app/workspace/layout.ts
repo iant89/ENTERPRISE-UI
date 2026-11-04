@@ -54,6 +54,9 @@ export const DEFAULT_LAYOUT: LayoutState = {
 
 export const TABLET_MIN = 768;
 export const DESKTOP_MIN = 1280;
+/** Media queries for the two boundaries (C2 follow-up 3: matchMedia instead of resize events). */
+export const TABLET_QUERY = `(min-width: ${TABLET_MIN}px)`;
+export const DESKTOP_QUERY = `(min-width: ${DESKTOP_MIN}px)`;
 
 export function breakpointFor(width: number): Breakpoint {
   if (width < TABLET_MIN) return 'mobile';
@@ -79,7 +82,8 @@ export type LayoutAction =
   | { type: 'setBottomExpanded'; expanded: boolean }
   | { type: 'openTab'; path: string }
   | { type: 'closeTab'; path: string }
-  | { type: 'syncTabs'; paths: readonly string[] };
+  | { type: 'syncTabs'; paths: readonly string[] }
+  | { type: 'setTabs'; paths: readonly string[] };
 
 export function layoutReducer(state: LayoutState, action: LayoutAction): LayoutState {
   switch (action.type) {
@@ -101,6 +105,7 @@ export function layoutReducer(state: LayoutState, action: LayoutAction): LayoutS
     case 'setBottomExpanded': return { ...state, bottomExpanded: action.expanded };
     case 'openTab': return state.openTabs.includes(action.path) ? state : { ...state, openTabs: [...state.openTabs, action.path] };
     case 'closeTab': return { ...state, openTabs: state.openTabs.filter((p) => p !== action.path) };
+    case 'setTabs': return { ...state, openTabs: [...action.paths] };
     case 'syncTabs': {
       const keep = state.openTabs.filter((p) => action.paths.includes(p));
       return keep.length === state.openTabs.length ? state : { ...state, openTabs: keep };
@@ -142,13 +147,19 @@ export function parseLayout(raw: unknown): LayoutState {
 export interface LayoutStore {
   load(projectId: string): LayoutState | null;
   save(projectId: string, layout: LayoutState): void;
+  /** Removes a project's layout (project deleted, or the unsaved key after the first save). */
+  remove(projectId: string): void;
+  /** Deletes layouts whose project is not in `projectIds` (the unsaved key is kept). Returns the removed ids. */
+  sweep(projectIds: Iterable<string>): string[];
 }
 
 export const LAYOUT_KEY_PREFIX = 'eui-studio-layout:';
 /** The last layout used by a project that was never saved (the starter has a new id on every load). */
 export const UNSAVED_PROJECT_KEY = '__unsaved__';
 
-export function localLayoutStore(storage: Pick<Storage, 'getItem' | 'setItem'> | null = typeof localStorage === 'undefined' ? null : localStorage): LayoutStore {
+type LayoutStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem' | 'key' | 'length'>;
+
+export function localLayoutStore(storage: LayoutStorage | null = typeof localStorage === 'undefined' ? null : localStorage): LayoutStore {
   return {
     load(projectId) {
       try {
@@ -158,6 +169,23 @@ export function localLayoutStore(storage: Pick<Storage, 'getItem' | 'setItem'> |
     },
     save(projectId, layout) {
       try { storage?.setItem(LAYOUT_KEY_PREFIX + projectId, JSON.stringify(layout)); } catch { /* private mode / quota */ }
+    },
+    remove(projectId) {
+      try { storage?.removeItem(LAYOUT_KEY_PREFIX + projectId); } catch { /* private mode */ }
+    },
+    sweep(projectIds) {
+      if (!storage) return [];
+      const keep = new Set([...projectIds, UNSAVED_PROJECT_KEY]);
+      const removed: string[] = [];
+      try {
+        const keys: string[] = [];
+        for (let i = 0; i < storage.length; i++) { const k = storage.key(i); if (k?.startsWith(LAYOUT_KEY_PREFIX)) keys.push(k); }
+        for (const k of keys) {
+          const id = k.slice(LAYOUT_KEY_PREFIX.length);
+          if (!keep.has(id)) { storage.removeItem(k); removed.push(id); }
+        }
+      } catch { /* private mode */ }
+      return removed;
     },
   };
 }

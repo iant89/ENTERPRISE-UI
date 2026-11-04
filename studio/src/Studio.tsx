@@ -20,17 +20,18 @@ import {
   type AttrInput, type StudioNode,
 } from './model/jsx';
 import { acceptsChildren, defaultSnippet } from './model/catalog';
-import { loadProject, saveProject, StorageBlockedError } from './storage';
+import { listProjects, loadProject, saveProject, StorageBlockedError } from './storage';
 import { defaultPersistenceDeps, useProjectPersistence } from './persistence';
 import { STARTER } from './template';
 import styles from './Studio.module.css';
 import { CodeWorkspace } from './app/workspace/CodeWorkspace';
 import { MenuBar, type MenuItems } from './app/workspace/MenuBar';
 import { WorkspaceSwitch } from './app/workspace/WorkspaceSwitch';
+import { useBreakpoint } from './app/workspace/useBreakpoint';
 import { PreviewPane, type StaleInfo } from './preview/PreviewPane';
 import type { Problem } from './panels/bottom/BottomPanel';
 import {
-  breakpointFor, DEFAULT_LAYOUT, UNSAVED_PROJECT_KEY, errorLine, layoutReducer, localLayoutStore, type Breakpoint, type LayoutState, type ViewportId, type Workspace,
+  DEFAULT_LAYOUT, UNSAVED_PROJECT_KEY, errorLine, layoutReducer, localLayoutStore, type LayoutState, type ViewportId, type Workspace,
 } from './app/workspace/layout';
 
 const CodeEditor = lazy(() => import('./editor/CodeEditor').then((m) => ({ default: m.CodeEditor })));
@@ -61,15 +62,6 @@ const readKey = <T extends string>(key: string, allowed: readonly string[], fall
 const writeKey = (key: string, value: string) => { try { localStorage.setItem(key, value); } catch { /* private mode */ } };
 const layoutStore = localLayoutStore();
 
-function useBreakpoint(): Breakpoint {
-  const [bp, setBp] = useState<Breakpoint>(() => breakpointFor(typeof window === 'undefined' ? 1440 : window.innerWidth));
-  useEffect(() => {
-    const on = () => setBp(breakpointFor(window.innerWidth));
-    window.addEventListener('resize', on);
-    return () => window.removeEventListener('resize', on);
-  }, []);
-  return bp;
-}
 
 const indexOf = (id: string) => Number(id.slice(id.lastIndexOf('.') + 1));
 
@@ -163,27 +155,39 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   const layoutFor = useRef<{ id: string; layout: LayoutState } | null>(null);
   useEffect(() => {
     if (!loaded) return;
-    const stored = layoutStore.load(project.id) ?? (freshStart.current ? layoutStore.load(UNSAVED_PROJECT_KEY) : null);
+    // A fresh starter (never saved) gets a new id on every load: its layout lives only under the fixed key.
+    const stored = freshStart.current ? layoutStore.load(UNSAVED_PROJECT_KEY) : layoutStore.load(project.id);
     const next = stored ?? layout;
     layoutFor.current = { id: project.id, layout: next };
-    if (stored) dispatchLayout({ type: 'load', layout: stored });
+    firstSaved.current = persistence.savedProject;
+    if (stored) {
+      dispatchLayout({ type: 'load', layout: stored });
+      if (stored.openTabs.length) dispatch({ type: 'setTabs', paths: stored.openTabs });
+    }
+    // Sweep layouts whose project is gone (C2 follow-up 2).
+    void listProjects().then((list) => layoutStore.sweep(list.map((p) => p.id))).catch(() => undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only when the project changes.
   }, [loaded, project.id]);
+  const keyFor = () => (freshStart.current ? UNSAVED_PROJECT_KEY : project.id);
   useEffect(() => {
     const at = layoutFor.current;
     if (!at || at.id !== project.id || at.layout === layout) return;
     at.layout = layout;
-    layoutStore.save(project.id, layout);
-    // Until the starter is first saved, its layout also lives under the fixed key.
-    if (freshStart.current) layoutStore.save(UNSAVED_PROJECT_KEY, layout);
+    layoutStore.save(keyFor(), layout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyFor reads refs.
   }, [layout, project.id]);
-  useEffect(() => { dispatchLayout({ type: 'openTab', path: activePath }); }, [activePath]);
-  const fileList = useMemo(() => Object.keys(project.files), [project.files]);
-  useEffect(() => { dispatchLayout({ type: 'syncTabs', paths: fileList }); }, [fileList]);
-  const tabs = useMemo(() => {
-    const open = layout.openTabs.filter((p) => Object.hasOwn(project.files, p));
-    return open.includes(activePath) ? open : [...open, activePath];
-  }, [layout.openTabs, project.files, activePath]);
+  // First real save of a fresh starter: move its layout from the unsaved key to the project's id.
+  const firstSaved = useRef<Project | null>(null);
+  useEffect(() => {
+    const sp = persistence.savedProject;
+    if (!freshStart.current || !sp || sp === firstSaved.current || sp.id !== project.id || !layoutFor.current) return;
+    freshStart.current = false;
+    layoutStore.save(project.id, layoutFor.current.layout);
+    layoutStore.remove(UNSAVED_PROJECT_KEY);
+  }, [persistence.savedProject, project.id]);
+  // Open tabs live in the store (they follow renames and undo); the layout persists them.
+  const tabs = state.openTabs;
+  useEffect(() => { if (layout.openTabs.join('\n') !== tabs.join('\n')) dispatchLayout({ type: 'setTabs', paths: tabs }); }, [tabs, layout.openTabs]);
   // TODO(UX-7, M3-04/M3-09): open `openProjectChannel` only after load resolves, keyed by the loaded
   // `project.id` (never the starter's random id), and re-key it when the id changes (docs example).
 
@@ -227,16 +231,8 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
   useEffect(() => {
     if (pendingLine.current && editorHandle.current && workspace === 'code') { editorHandle.current.revealLine(pendingLine.current); pendingLine.current = null; }
   }, [activePath, workspace]);
-  const openTabFile = (path: string) => { dispatch({ type: 'openFile', path }); dispatchLayout({ type: 'openTab', path }); };
-  const closeTab = (path: string) => {
-    if (path === activePath) {
-      const i = tabs.indexOf(path);
-      const next = tabs[i + 1] ?? tabs[i - 1] ?? entry;
-      if (next === path) return;
-      dispatch({ type: 'openFile', path: next });
-    }
-    dispatchLayout({ type: 'closeTab', path });
-  };
+  const openTabFile = (path: string) => dispatch({ type: 'openFile', path });
+  const closeTab = (path: string) => dispatch({ type: 'closeTab', path });
   const setWorkspace = (w: Workspace) => {
     if (w === 'code' && !layoutFor.current && loaded) layoutFor.current = { id: project.id, layout };
     dispatchLayout({ type: 'setWorkspace', workspace: w });

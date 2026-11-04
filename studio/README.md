@@ -115,7 +115,7 @@ localStorage behind the `LayoutStore` interface (`studio/src/app/workspace/layou
 
 ### Keyboard
 - Splitters: Tab to focus, arrow keys resize (Shift for bigger steps), Home/End go to min/max.
-- Ctrl/Cmd+B toggles the sidebar and Ctrl/Cmd+J toggles the bottom panel (in Code Studio). Ctrl/Cmd+S saves, Shift+Alt+F formats.
+- Ctrl/Cmd+S saves, Shift+Alt+F formats.
 - Activity, bottom-panel and editor tabs move with Left/Right arrows. Delete on an editor tab closes it.
 
 ### Breakpoints
@@ -124,4 +124,42 @@ localStorage behind the `LayoutStore` interface (`studio/src/app/workspace/layou
 - **Mobile (<768 px):** four full-screen tabs (Files / Code / Preview / Panel, with a dot on Code while anything is unsaved), menus behind ☰, short switch labels.
 
 ### Stubbed until C2–C7
-Search (C2), multi-model editing (C3; one Monaco instance switches files for now), compiler, console logs and preview events (C4; stale is currently driven by parse and preview errors), Components and Docs content (C5), Tests (C6) and Settings (C7).
+Search, Quick Open and Recent files UI (logic shipped in C2; UI pending mockups), multi-model editing (C3; one Monaco instance switches files for now), compiler, console logs and preview events (C4; stale is currently driven by parse and preview errors), Components and Docs content (C5), Tests (C6) and Settings (C7).
+
+### Shortcuts
+
+| Shortcut | Where | Action |
+|---|---|---|
+| Ctrl/Cmd+B | Code Studio, everywhere including the editor | Toggle the sidebar. Overrides Monaco's default for this key. |
+| Ctrl/Cmd+J | Code Studio, everywhere including the editor | Toggle the bottom panel. Overrides Monaco's default and the browser's Downloads shortcut (Ctrl+J). |
+| Ctrl/Cmd+S | Studio | Save now |
+| Shift+Alt+F | Studio | Format code |
+| F2 | Explorer item | Rename |
+| Delete | Explorer item | Delete (a non-empty folder asks first) |
+| Shift+F10 / Menu key | Explorer item | Open the context menu |
+| Alt+N / Alt+Shift+N | Explorer | New file / new folder |
+| Arrow keys, Home/End | Splitters, tabs | Resize / move between tabs |
+
+## Multi-file VFS (C2)
+
+### Explorer file operations
+New file, new folder, rename (F2), move (drag-and-drop or **Move to…**), duplicate (`Name-copy.tsx`, then `Name-copy-2.tsx`) and delete, from the context menu or the keyboard. A new folder can be empty: it shows in the Explorer until you add a file to it or leave the page, and it is never saved, because folders only exist through their files. Deleting a non-empty folder asks for confirmation with the file count. The entry file, and any folder holding it, can't be deleted.
+
+### Path rules
+Paths are relative to the project root, use `/`, and have no `.`/`..` segments or duplicate slashes. Names use letters, digits, `.`, `_` and `-`, with an allowed extension (`.tsx .ts .jsx .js .css .json .md`). Paths that would leave the project (`../x`), exact duplicates and names that differ only in letter case are rejected with an announced message. See `studio/src/core/vfs/paths.ts`.
+
+### Import rewriting
+Renaming or moving a file or folder rewrites relative specifiers in every importer and in the moved files themselves: `import`/`export … from`, `import()`, `require()` and CSS `@import`. Only the specifier text changes, and the extension style (`./A` or `./A.tsx`, folder `index` imports) is kept. Limits:
+- Bare and package imports are never touched.
+- Template-literal specifiers (`` import(`./x`) ``) are not rewritten.
+- A script that doesn't parse is skipped and reported, and so is a relative specifier that didn't resolve before the move. Nothing is guessed.
+- Files nothing changed in stay byte-identical.
+
+### Undo
+Every operation, including its import rewrites, is one undo step labelled "Rename file", "Move folder", "Duplicate file" and so on. Undo and redo restore the files and the open tabs and switch to the file the step touched. Open tabs and the active file follow renames and moves, and deleting an open file closes its tab.
+
+### Search, Quick Open and Recent files
+The logic ships in `core/vfs/search.ts` (literal or regex, case, whole word, result cap, line/column ranges), `core/vfs/fuzzy.ts` (Quick Open ranking) and the store's `recent` list (most recent first, 20 entries, pruned on delete, following renames). Their UI is waiting for mockups, so the Search activity keeps its placeholder.
+
+### Layout storage
+Layouts stay in localStorage behind `LayoutStore`. A never-saved starter uses only the `eui-studio-layout:__unsaved__` key. On its first save the layout moves to the project's id and the unsaved key is removed. Deleting a project removes its layout, and orphaned layout keys are swept on start.

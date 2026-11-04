@@ -1,4 +1,6 @@
-import { createFile, deleteFile, deleteFolder, renameFile, renameFolder, writeFile, type FilePath, type Project } from './project';
+import { createFile, writeFile, type FilePath, type Project } from './project';
+import * as vfs from '../core/vfs/ops';
+import { pruneRecent, renameRecent, touchRecent } from '../core/vfs/recent';
 
 /**
  * Minimal M3-04 slice: the project-wide store with snapshot undo, as far as the file tree (UX-4)
@@ -11,13 +13,17 @@ import { createFile, deleteFile, deleteFolder, renameFile, renameFolder, writeFi
  * One history step. `project`/`activePath` are the state on the other side of the step;
  * `before`/`after` are the file the step touched on each side, so undo and redo can switch to it (§6, UX-8).
  */
-export interface Step { project: Project; activePath: FilePath; label: string; before?: FilePath; after?: FilePath }
+export interface Step { project: Project; activePath: FilePath; label: string; before?: FilePath; after?: FilePath; /** Open tabs on that side of the step (C2). */ openTabs?: FilePath[] }
 
 export interface StoreState {
   project: Project;
   activePath: FilePath;
   past: Step[];
   future: Step[];
+  /** Open editor tabs (C2: follow renames/moves, close on delete, restored by undo/redo). */
+  openTabs: FilePath[];
+  /** Recently opened files, most recent first, capped at 20. Not part of undo. */
+  recent: FilePath[];
   lastEdit?: { path: FilePath; time: number };
 }
 
@@ -31,21 +37,41 @@ export type StoreAction =
   | { type: 'deleteFile'; path: FilePath }
   | { type: 'deleteFolder'; path: FilePath }
   | { type: 'setEntry'; path: FilePath }
+  | { type: 'duplicateFile'; path: FilePath }
+  | { type: 'moveTo'; from: FilePath; folder: FilePath }
+  | { type: 'closeTab'; path: FilePath }
+  | { type: 'setTabs'; paths: FilePath[] }
   | { type: 'undo' }
   | { type: 'redo' };
 
 export const HISTORY_LIMIT = 200;
 const GROUP_MS = 1000;
 
-export const createStore = (project: Project): StoreState => ({ project, activePath: project.entry, past: [], future: [] });
+export const createStore = (project: Project): StoreState => ({ project, activePath: project.entry, past: [], future: [], openTabs: [project.entry], recent: [project.entry] });
 
 const has = (project: Project, path: FilePath) => Object.hasOwn(project.files, path);
 const fix = (project: Project, path: FilePath) => (has(project, path) ? path : project.entry);
 
-function record(state: StoreState, project: Project, touched: FilePath, label: string, activePath = touched, lastEdit?: StoreState['lastEdit'], before: FilePath = touched): StoreState {
+const withTab = (tabs: readonly FilePath[], path: FilePath) => (tabs.includes(path) ? [...tabs] : [...tabs, path]);
+
+function record(state: StoreState, project: Project, touched: FilePath, label: string, activePath = touched, lastEdit?: StoreState['lastEdit'], before: FilePath = touched, moves?: ReadonlyMap<FilePath, FilePath>): StoreState {
   if (project === state.project) return state;
-  const past = [...state.past, { project: state.project, activePath: state.activePath, label, before, after: touched }].slice(-HISTORY_LIMIT);
-  return { project, activePath: fix(project, activePath), past, future: [], lastEdit };
+  const past = [...state.past, { project: state.project, activePath: state.activePath, label, before, after: touched, openTabs: state.openTabs }].slice(-HISTORY_LIMIT);
+  const active = fix(project, activePath);
+  const tabs = withTab(state.openTabs.map((p) => moves?.get(p) ?? p).filter((p) => has(project, p)), active);
+  const recent = pruneRecent(renameRecent(state.recent, moves ?? new Map()), project.files);
+  return { ...state, project, activePath: active, past, future: [], lastEdit, openTabs: tabs, recent };
+}
+
+/** Applies a VFS change as one labelled undo step (its import rewrites included). Errors throw. */
+function applyVfs(state: StoreState, r: vfs.VfsResult, touched: (c: vfs.VfsChange) => FilePath, active: (c: vfs.VfsChange) => FilePath, before: FilePath): StoreState {
+  if (!r.ok) throw vfs.toProjectError(r.error);
+  const files = r.files;
+  const unchanged = Object.keys(files).length === Object.keys(state.project.files).length && Object.entries(files).every(([p, t]) => state.project.files[p] === t);
+  if (unchanged) return state;
+  const entry = r.moves.get(state.project.entry) ?? state.project.entry;
+  const project = { ...state.project, files, entry: Object.hasOwn(files, entry) ? entry : state.project.entry, updatedAt: Date.now() };
+  return record(state, project, touched(r), r.label, active(r), undefined, before, r.label.startsWith('Duplicate') ? undefined : r.moves);
 }
 
 const under = (folder: FilePath, p: FilePath) => p.startsWith(`${folder}/`);
@@ -55,7 +81,7 @@ export function storeReducer(state: StoreState, action: StoreAction): StoreState
   const { project } = state;
   switch (action.type) {
     case 'loadProject': return createStore(action.project);
-    case 'openFile': return has(project, action.path) && action.path !== state.activePath ? { ...state, activePath: action.path, lastEdit: undefined } : state;
+    case 'openFile': return has(project, action.path) && action.path !== state.activePath ? { ...state, activePath: action.path, lastEdit: undefined, openTabs: withTab(state.openTabs, action.path), recent: touchRecent(state.recent, action.path) } : state;
     case 'editFile': {
       // An unchanged text is a no-op. This makes the editor's onChange echo after undo/redo harmless,
       // so redo survives. Note: Ctrl+Z *inside Monaco* uses Monaco's per-model undo; the resulting
@@ -69,24 +95,43 @@ export function storeReducer(state: StoreState, action: StoreAction): StoreState
       }
       return record(state, next, action.path, `Edit ${action.path}`, keep, action.source === 'editor' ? { path: action.path, time: now } : undefined);
     }
-    case 'createFile': return record(state, createFile(project, action.path, action.text), action.path, `Create ${action.path}`);
-    case 'renameFile': {
-      const next = renameFile(project, action.from, action.to);
-      const active = state.activePath === action.from ? action.to : state.activePath;
-      return record(state, next, action.to, `Rename ${action.from}`, active, undefined, action.from);
+    case 'createFile': {
+      const next = createFile(project, action.path, action.text);
+      const r = record(state, next, action.path, 'Create file');
+      return r === state ? r : { ...r, recent: touchRecent(r.recent, action.path) };
     }
+    case 'renameFile':
     case 'renameFolder': {
-      const next = renameFolder(project, action.from, action.to);
-      const active = under(action.from, state.activePath) ? action.to + state.activePath.slice(action.from.length) : state.activePath;
-      return record(state, next, active, `Rename ${action.from}/`, active, undefined, state.activePath);
+      const folder = action.type === 'renameFolder';
+      const mapped = (c: vfs.VfsChange) => c.moves.get(state.activePath) ?? state.activePath;
+      return applyVfs(state, vfs.rename(project.files, action.from, action.to), folder ? mapped : (c) => c.moves.get(action.from) ?? action.to, mapped, folder ? state.activePath : action.from);
     }
-    case 'deleteFile': return record(state, deleteFile(project, action.path), state.activePath, `Delete ${action.path}`, state.activePath, undefined, action.path);
+    case 'moveTo': {
+      const mapped = (c: vfs.VfsChange) => c.moves.get(state.activePath) ?? state.activePath;
+      const isFile = has(project, action.from);
+      return applyVfs(state, vfs.move(project.files, action.from, action.folder), isFile ? (c) => c.moves.get(action.from)! : mapped, mapped, isFile ? action.from : state.activePath);
+    }
+    case 'duplicateFile': {
+      const r = vfs.duplicate(project.files, action.path);
+      const next = applyVfs(state, r, (c) => c.moves.get(action.path)!, (c) => c.moves.get(action.path)!, action.path);
+      return r.ok && next !== state ? { ...next, recent: touchRecent(next.recent, r.moves.get(action.path)!) } : next;
+    }
+    case 'deleteFile': return applyVfs(state, vfs.remove(project.files, action.path, project.entry), () => state.activePath, () => state.activePath, action.path);
     case 'deleteFolder': {
       // Undo switches into the restored folder: the active file if it was inside, else its first file.
       const inside = Object.keys(project.files).filter((p) => under(action.path, p)).sort();
-      const before = under(action.path, state.activePath) ? state.activePath : inside[0];
-      return record(state, deleteFolder(project, action.path), state.activePath, `Delete ${action.path}/`, state.activePath, undefined, before);
+      const before = under(action.path, state.activePath) ? state.activePath : state.openTabs.find((p) => under(action.path, p)) ?? inside[0];
+      return applyVfs(state, vfs.remove(project.files, action.path, project.entry), () => state.activePath, () => state.activePath, before);
     }
+    case 'closeTab': {
+      if (!state.openTabs.includes(action.path)) return state;
+      const i = state.openTabs.indexOf(action.path);
+      const tabs = state.openTabs.filter((p) => p !== action.path);
+      if (action.path !== state.activePath) return { ...state, openTabs: tabs };
+      const next = tabs[i] ?? tabs[i - 1] ?? project.entry;
+      return { ...state, openTabs: withTab(tabs, next), activePath: next, lastEdit: undefined };
+    }
+    case 'setTabs': return { ...state, openTabs: withTab(action.paths.filter((p) => has(project, p)), state.activePath) };
     case 'setEntry': {
       if (!has(project, action.path) || project.entry === action.path) return state;
       return record(state, { ...project, entry: action.path, updatedAt: Date.now() }, action.path, 'Set entry', state.activePath);
@@ -95,13 +140,15 @@ export function storeReducer(state: StoreState, action: StoreAction): StoreState
       const step = state.past.at(-1);
       if (!step) return state;
       const to = step.before && step.before in step.project.files ? step.before : fix(step.project, step.activePath);
-      return { project: step.project, activePath: to, past: state.past.slice(0, -1), future: [{ ...step, project, activePath: state.activePath }, ...state.future] };
+      const tabs = withTab((step.openTabs ?? state.openTabs).filter((p) => has(step.project, p)), to);
+      return { ...state, lastEdit: undefined, project: step.project, activePath: to, openTabs: tabs, recent: pruneRecent(state.recent, step.project.files), past: state.past.slice(0, -1), future: [{ ...step, project, activePath: state.activePath, openTabs: state.openTabs }, ...state.future] };
     }
     case 'redo': {
       const step = state.future[0];
       if (!step) return state;
       const to = step.after && step.after in step.project.files ? step.after : fix(step.project, step.activePath);
-      return { project: step.project, activePath: to, past: [...state.past, { ...step, project, activePath: state.activePath }], future: state.future.slice(1) };
+      const tabs = withTab((step.openTabs ?? state.openTabs).filter((p) => has(step.project, p)), to);
+      return { ...state, lastEdit: undefined, project: step.project, activePath: to, openTabs: tabs, recent: pruneRecent(state.recent, step.project.files), past: [...state.past, { ...step, project, activePath: state.activePath, openTabs: state.openTabs }], future: state.future.slice(1) };
     }
   }
 }

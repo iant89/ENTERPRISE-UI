@@ -5,7 +5,10 @@ import {
 
 const memory = () => {
   const map = new Map<string, string>();
-  return { getItem: (k: string) => map.get(k) ?? null, setItem: (k: string, v: string) => void map.set(k, v), map };
+  return {
+    getItem: (k: string) => map.get(k) ?? null, setItem: (k: string, v: string) => void map.set(k, v), removeItem: (k: string) => void map.delete(k),
+    key: (i: number) => [...map.keys()][i] ?? null, get length() { return map.size; }, map,
+  };
 };
 
 describe('layout reducer', () => {

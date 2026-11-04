@@ -100,7 +100,7 @@ describe('FileTree', () => {
     await user.keyboard('{Alt>}{Shift>}n{/Shift}{/Alt}');
     const input = screen.getByRole('textbox', { name: 'New folder name' });
     expect(input).toHaveValue('components/Component.tsx');
-    expect(screen.getByText('Folders need at least one file.')).toBeInTheDocument();
+    expect(screen.getByText('Type a folder name, or folder/File.tsx to add a file too.')).toBeInTheDocument();
     await user.keyboard('pages{Enter}');
     expect(latest.project.files['src/pages/Component.tsx']).toBeDefined();
   });

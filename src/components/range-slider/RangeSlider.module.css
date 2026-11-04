@@ -1,7 +1,147 @@
 .root { border: 0; margin: 0; padding: 0; min-inline-size: 10rem; display: grid; grid-template-columns: 1fr auto; gap: var(--eui-space-1); }
 .legend { float: inline-start; font-size: var(--eui-font-size-sm); color: var(--eui-color-text-secondary); padding: 0; }
 .value { justify-self: end; font-size: var(--eui-font-size-sm); font-variant-numeric: tabular-nums; }
-.track { grid-column: 1 / -1; display: grid; gap: var(--eui-space-1); }
-.input { inline-size: 100%; margin: 0; accent-color: var(--eui-color-primary); min-block-size: var(--eui-touch-target-min); }
-.input:focus-visible { outline: var(--eui-focus-width) solid var(--eui-color-focus); outline-offset: var(--eui-focus-offset); }
-.root:disabled { opacity: var(--eui-disabled-opacity); }
+
+/* One shared track. Handle centres travel between --handle-w / 2 from each end, like native thumbs. */
+.slider {
+  --handle-w: 1.375rem;
+  --handle-h: 1.125rem;
+  --rail-h: 0.1875rem;
+  --selection-h: 0.25rem;
+  --dot: 0.5rem;
+  grid-column: 1 / -1;
+  position: relative;
+  block-size: max(var(--eui-touch-target-min), 2rem);
+}
+.withLabels { margin-block-end: 1.25rem; }
+
+.rail {
+  position: absolute;
+  inset-inline: calc(var(--dot) / 2);
+  inset-block-start: 50%;
+  block-size: var(--rail-h);
+  transform: translateY(-50%);
+  background: var(--eui-color-border);
+  border-radius: var(--eui-radius-full);
+}
+.endDot {
+  position: absolute;
+  inset-block-start: 50%;
+  inline-size: var(--dot);
+  block-size: var(--dot);
+  border-radius: 50%;
+  background: var(--eui-color-text-secondary);
+  transform: translateY(-50%);
+}
+.dotStart { inset-inline-start: calc(var(--dot) / -2); }
+.dotEnd { inset-inline-end: calc(var(--dot) / -2); }
+
+/* Value positions: 0% is the centre of a handle at min, 100% at max. */
+.scale {
+  position: absolute;
+  inset-inline: calc(var(--handle-w) / 2);
+  inset-block: 0;
+  pointer-events: none;
+}
+.selection {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: var(--range-start);
+  inline-size: calc(var(--range-end) - var(--range-start));
+  block-size: var(--selection-h);
+  transform: translateY(-50%);
+  background: var(--eui-color-primary);
+}
+.tick {
+  position: absolute;
+  inset-block-start: 50%;
+  inline-size: 1px;
+  block-size: 0.5rem;
+  background: var(--eui-color-text-secondary);
+  transform: translate(-50%, -50%);
+}
+[dir='rtl'] .tick { transform: translate(50%, -50%); }
+.tickLabel {
+  position: absolute;
+  inset-block-start: calc(100% + 0.625rem);
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: var(--eui-font-size-sm);
+  color: var(--eui-color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+[dir='rtl'] .tickLabel { transform: translateX(50%); }
+
+/* Visual handle: white rounded pill with a light primary border and ◀▶ arrows. */
+.handle {
+  position: absolute;
+  inset-block-start: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inset-inline-start: calc(var(--handle-w) / 2 + (100% - var(--handle-w)) * var(--pos));
+  inline-size: var(--handle-w);
+  block-size: var(--handle-h);
+  transform: translate(-50%, -50%);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-primary);
+  border: var(--eui-border-width) solid color-mix(in srgb, var(--eui-color-primary) 45%, transparent);
+  border-radius: var(--eui-radius-md);
+  box-shadow: var(--eui-shadow-level-0);
+  pointer-events: none;
+  transition: border-color var(--eui-duration-fast) var(--eui-easing-standard), background var(--eui-duration-fast) var(--eui-easing-standard);
+}
+[dir='rtl'] .handle { transform: translate(50%, -50%); }
+.handle svg { inline-size: 0.75rem; block-size: 0.75rem; }
+
+/* Native inputs give keyboard, pointer and screen reader support; only their thumbs take pointer input. */
+.input {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  pointer-events: none;
+  outline: none;
+}
+.input::-webkit-slider-runnable-track { background: transparent; border: 0; block-size: 100%; }
+.input::-moz-range-track { background: transparent; border: 0; }
+.input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  inline-size: var(--handle-w);
+  block-size: max(var(--eui-touch-target-min), 2rem);
+  background: transparent;
+  border: 0;
+  cursor: grab;
+  pointer-events: auto;
+}
+.input::-moz-range-thumb {
+  inline-size: var(--handle-w);
+  block-size: max(var(--eui-touch-target-min), 2rem);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  cursor: grab;
+  pointer-events: auto;
+}
+.input:active::-webkit-slider-thumb { cursor: grabbing; }
+.input.onTop { z-index: 1; }
+
+.input:hover + .handle { background: var(--eui-color-surface-hover); border-color: var(--eui-color-primary); }
+.input:focus-visible + .handle {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+  border-color: var(--eui-color-primary);
+}
+
+.disabled { opacity: var(--eui-disabled-opacity); }
+.disabled .input::-webkit-slider-thumb { cursor: var(--eui-disabled-cursor); }
+.disabled .input::-moz-range-thumb { cursor: var(--eui-disabled-cursor); }
+
+@media (prefers-reduced-motion: reduce) {
+  .handle { transition: none; }
+}

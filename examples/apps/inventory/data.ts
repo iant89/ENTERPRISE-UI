@@ -81,7 +81,7 @@ export const stockMovements: StockMovement[] = [
   { id: 'M-9007', type: 'Issue', product: 'USB-C Hub 8-in-1', quantity: -12, date: '2026-10-27', reference: 'SO-50216' },
 ];
 /** Movements newer than this date count as unread in the navigation badge. */
-export const MOVEMENTS_SEEN_BEFORE = '2026-11-01';
+export const MOVEMENTS_SEEN_BEFORE = '2026-11-02';
 
 export type InvoiceStatus = 'Paid' | 'Open' | 'Overdue';
 export interface Invoice {

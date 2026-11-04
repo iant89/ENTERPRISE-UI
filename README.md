@@ -289,7 +289,7 @@ Each of the 64 component pages has:
 - the keyboard model;
 - accessibility notes.
 
-Open `#/demo` to see a complete inventory application built only from library components.
+Open `#/demo` to see a complete inventory application built only from library components: Overview, Products (create, edit, bulk actions, CSV export, detail panel), Categories, Stock movements, Purchase orders, Suppliers, Invoices, Reports with charts, Settings (all 7 themes and density) and Help. Each page has its own route (`#/demo/products`, `#/demo/reports`, …). The source is in `examples/apps/inventory/`, one file per page.
 
 ## Development
 

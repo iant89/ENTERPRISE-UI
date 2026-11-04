@@ -55,7 +55,8 @@ const lineCol = (text: string, offset: number) => {
 const isRelative = (s: string) => s === '.' || s === '..' || s.startsWith('./') || s.startsWith('../');
 const TYPE_ONLY = /(?:^|[;\s])(?:import|export)\s+type\s[^;]*?from\s*$/;
 
-function scan(files: Record<FilePath, string>, path: FilePath): ModuleNode {
+/** One file's node (hash + resolved imports). Exported for the C6 catalog cache. */
+export function scan(files: Record<FilePath, string>, path: FilePath, opts?: { /** Keep type-only imports (the catalog needs them; the compiler doesn't). */ includeTypes?: boolean }): ModuleNode {
   const text = files[path] ?? '';
   const hash = hashText(text);
   if (path.endsWith('.css') || path.endsWith('.json')) return { path, hash, imports: [], parseError: false };
@@ -64,7 +65,7 @@ function scan(files: Record<FilePath, string>, path: FilePath): ModuleNode {
   const imports: ResolvedImport[] = [];
   for (const s of specs) {
     // Type-only imports are erased by the transform.
-    if (TYPE_ONLY.test(text.slice(Math.max(0, s.start - 200), s.start))) continue;
+    if (!opts?.includeTypes && TYPE_ONLY.test(text.slice(Math.max(0, s.start - 200), s.start))) continue;
     const { line, column } = lineCol(text, s.start);
     const specifier = s.value;
     if (isRelative(specifier)) {

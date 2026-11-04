@@ -239,3 +239,27 @@ Creates a new component folder from the §6.2 templates as **one atomic undo ste
   the write goes through the store's `applyEdits` (`create: true`), which applies every file or throws, so a
   failure leaves no files and no undo step. One undo removes all files and closes their tabs; redo restores them.
   After create the `.tsx` opens in the focused group and is revealed in the Explorer.
+
+## Component catalog (Code Studio C6)
+
+The Components activity lists every component discovered in the project plus the read-only Enterprise UI library.
+
+- **Discovery:** a **fast pass** (Babel, sync, per `.tsx`/`.jsx` file) finds exported PascalCase functions or arrows that return JSX:
+  named exports, `export default`, and `export { X as Y }`. Re-exports (such as `index.ts`) are not listed again, so each component appears once,
+  at its source. Props come from a same-file interface or type alias (JSDoc descriptions, `?` optional) and destructuring defaults.
+  Test and example files are skipped. Nothing is invented: missing values stay empty.
+- **TS pass (async):** resolves props types imported from other files, following one re-export hop, and merges the result over the fast pass
+  (defaults are kept). It runs through a `TypeResolver` seam (`components/catalog/discover.ts`); the default resolver reads the VFS using the
+  module graph's import resolution. Fast-pass results show immediately.
+- **Associations:** `Name.css`/`Name.module.css`, `Name.test.tsx`, `Name.docs.md` and `Name.example.tsx` in the same folder (the C5 layout).
+- **Cache:** keyed by path + content hash (`hashText`). An edited file invalidates itself plus its dependents through the module graph
+  (type-only imports included), so editing a props interface in `types.ts` refreshes its components. Updates are debounced by 300 ms.
+  The catalog is never persisted; it is rebuilt from source on load.
+- **Panel:** a filter (by name or prop name); **Project** (name, file, a one-line props signature with defaults, and a "No docs" badge);
+  **Enterprise UI library** (from api.json via `model/catalog.ts`; read-only, shows the version, collapsed by default, grouped by category,
+  count capped at "99+"). The lists are listboxes: arrows/Home/End move, Enter opens Docs. The selected item's actions are Docs / Source / Insert.
+- **Docs** opens the Docs activity on the component through the `openComponentDocs` seam (placeholder heading until C7).
+  **Source** opens the file at the export. **Insert** puts a snippet at the editor cursor (library: `defaultSnippet`; project: required props
+  as placeholders) and adds the import if it's missing (relative path, via the folder `index` when it exists), as one "Insert Name" undo step.
+  It is disabled unless the active file is `.tsx`/`.jsx`.
+- **Deferred:** drag to editor, the §6.4 detail view and §8 edit modes (C8), docs content (C7), and the command palette (C14).

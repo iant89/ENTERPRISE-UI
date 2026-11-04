@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { envelope, hostBridge, type FrameMessages } from '../../studio/src/preview/bridge';
+import { envelope, frameNonceGate, hostBridge, type FrameMessages } from '../../studio/src/preview/bridge';
 
 describe('bridge nonce (QA 6)', () => {
   let dispose = () => {};
@@ -46,5 +46,23 @@ describe('bridge nonce (QA 6)', () => {
     b.post('init', {});
     b.post('scroll', { deltaY: 1 });
     expect((sent[1] as { nonce?: string }).nonce).toBeUndefined();
+  });
+});
+
+describe('frame nonce gate', () => {
+  const parent = {};
+  it('accepts init only from window.parent', () => {
+    const g = frameNonceGate(parent);
+    expect(g.init({}, { nonce: 'evil' })).toBe(false);
+    expect(g.init(null, { nonce: 'evil' })).toBe(false);
+    expect(g.get()).toBeUndefined();
+    expect(g.init(parent, { nonce: 'n1' })).toBe(true);
+    expect(g.get()).toBe('n1');
+  });
+  it('keeps the first nonce per load and ignores later inits', () => {
+    const g = frameNonceGate(parent);
+    g.init(parent, { nonce: 'n1' });
+    g.init(parent, { nonce: 'n2' });
+    expect(g.get()).toBe('n1');
   });
 });

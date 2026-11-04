@@ -54,6 +54,10 @@ export interface CodeWorkspaceProps {
   onCreateComponent?: () => void;
   /** C5 decision 5a: actions at the end of the editor tab row (single-row layouts). */
   tabActions?: ReactNode;
+  /** C6: the Components activity (catalog). */
+  components?: ReactNode;
+  /** C6 seam for C7: the component whose docs page is open (placeholder heading until C7). */
+  docsTitle?: string | null;
 }
 
 const MOBILE_TABS: { id: MobileTab; label: string; icon: ReactNode }[] = [
@@ -70,7 +74,7 @@ const TABLET_LAYOUTS: { id: TabletLayout; label: string; icon: ReactNode }[] = [
 /** Keeps focus where it is (the editor) when a control is clicked (decision 3). */
 const keepFocus = (e: { preventDefault(): void }) => e.preventDefault();
 
-function DocsPanel({ pinned, onPin }: { pinned: boolean; onPin: (pinned: boolean) => void }) {
+function DocsPanel({ pinned, onPin, title }: { pinned: boolean; onPin: (pinned: boolean) => void; title?: string | null }) {
   return (
     <div className={styles.docs} data-testid={pinned ? 'docs-pinned' : 'docs-sidebar'}>
       <div className={styles.docsHead}>
@@ -78,17 +82,19 @@ function DocsPanel({ pinned, onPin }: { pinned: boolean; onPin: (pinned: boolean
         <IconButton size="sm" variant="tertiary" icon={pinned ? <PinOff /> : <Pin />} label={pinned ? 'Unpin Docs' : 'Pin Docs beside the editor'}
           aria-pressed={pinned} onMouseDown={keepFocus} onClick={() => onPin(!pinned)} />
       </div>
-      <p className={styles.empty}>Component documentation appears here: search, live examples and props for the component under the cursor (C5).</p>
+      {title && <h3 className={styles.docsPage} data-testid="docs-page-title">{title}</h3>}
+      <p className={styles.empty}>{title ? 'The documentation page arrives in C7.' : 'Component documentation appears here: search, live examples and props for the component under the cursor (C7).'}</p>
     </div>
   );
 }
 
-function SidebarBody({ activity, explorer, search, docsPinned, onPin, onCreateComponent }: { activity: Activity; explorer: ReactNode; search?: ReactNode; docsPinned: boolean; onPin: (p: boolean) => void; onCreateComponent?: () => void }) {
+function SidebarBody({ activity, explorer, search, docsPinned, onPin, onCreateComponent, components, docsTitle }: { activity: Activity; explorer: ReactNode; search?: ReactNode; docsPinned: boolean; onPin: (p: boolean) => void; onCreateComponent?: () => void; components?: ReactNode; docsTitle?: string | null }) {
   return (
     <div role="tabpanel" id={ACTIVITY_PANEL_ID} aria-labelledby={activityTabId(activity)} className={styles.sidebarBody}>
       {activity === 'explorer' && explorer}
       {activity === 'search' && (search ?? <p className={styles.empty}>Search is unavailable.</p>)}
-      {activity === 'components' && (
+      {activity === 'components' && components}
+      {activity === 'components' && !components && (
         <div className={styles.docs} data-testid="components-panel">
           <div className={styles.docsHead}>
             <h2 className={styles.paneTitle}>Components</h2>
@@ -99,13 +105,13 @@ function SidebarBody({ activity, explorer, search, docsPinned, onPin, onCreateCo
       )}
       {activity === 'docs' && (docsPinned
         ? <div className={styles.docs}><p className={styles.empty}>Docs is pinned beside the editor.</p><Button size="sm" onMouseDown={keepFocus} onClick={() => onPin(false)}>Unpin Docs</Button></div>
-        : <DocsPanel pinned={false} onPin={onPin} />)}
+        : <DocsPanel pinned={false} onPin={onPin} title={docsTitle} />)}
     </div>
   );
 }
 
 export function CodeWorkspace(props: CodeWorkspaceProps) {
-  const { breakpoint, layout, dispatchLayout: d, menuBar, strips, explorer, search, overlays, editor, groupsEditor, references, onOpenReference, onClearReferences, preview, tabs, activePath, dirty, onSelectTab, onCloseTab, problems, onGoToProblem, consoleEntries, onClearConsole, consoleDropped, onOpenSource, status, onCreateComponent, tabActions } = props;
+  const { breakpoint, layout, dispatchLayout: d, menuBar, strips, explorer, search, overlays, editor, groupsEditor, references, onOpenReference, onClearReferences, preview, tabs, activePath, dirty, onSelectTab, onCloseTab, problems, onGoToProblem, consoleEntries, onClearConsole, consoleDropped, onOpenSource, status, onCreateComponent, tabActions, components, docsTitle } = props;
   const [overlay, setOverlay] = useState(false);
   const desktop = breakpoint === 'desktop';
   const tablet = breakpoint === 'tablet';
@@ -174,7 +180,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
                 {mobile && <ActivityTabs value={layout.activity} onChange={onActivity} compact />}
               </div>
             )}
-            <SidebarBody activity={layout.activity} explorer={explorer} search={search} docsPinned={docsColumn} onPin={pin} onCreateComponent={onCreateComponent} />
+            <SidebarBody activity={layout.activity} explorer={explorer} search={search} docsPinned={docsColumn} onPin={pin} onCreateComponent={onCreateComponent} components={components} docsTitle={docsTitle} />
           </aside>
         )}
         {desktop && showSidebar && (
@@ -205,7 +211,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
           <>
             <Splitter label="Resize Docs" orientation="vertical" direction={-1} value={sizes.docs} min={SIZE_LIMITS.docs[0]} max={SIZE_LIMITS.docs[1]}
               onChange={(size) => d({ type: 'resize', key: 'docs', size })} />
-            <aside className={styles.docsColumn} aria-label="Docs"><DocsPanel pinned onPin={pin} /></aside>
+            <aside className={styles.docsColumn} aria-label="Docs"><DocsPanel pinned onPin={pin} title={docsTitle} /></aside>
           </>
         )}
         {desktop && showPreview && (

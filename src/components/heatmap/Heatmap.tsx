@@ -117,7 +117,7 @@ export const Heatmap = forwardRef<HTMLDivElement, HeatmapProps>(function Heatmap
                       onFocus={() => setFocus([r, c])}
                       onClick={onCellClick ? () => onCellClick({ row: r, column: c, value: has ? v : null }) : undefined}
                     >
-                      {showValues && has ? <span aria-hidden="true">{formatValue(v)}</span> : null}
+                      {showValues && has ? <span className={styles.value} aria-hidden="true">{formatValue(v)}</span> : null}
                       <span className="eui-visually-hidden">{text}</span>
                     </td>
                   );

@@ -53,6 +53,16 @@
   color: var(--eui-color-text-inverse);
 }
 
+/* Mid-ramp fills give neither text nor inverse text 4.5:1, so values sit on a surface chip. */
+.value {
+  display: inline-block;
+  padding: 0 2px;
+  border-radius: var(--eui-radius-xs);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+  line-height: 1.3;
+}
+
 .missing {
   background: repeating-linear-gradient(135deg, var(--eui-color-surface-sunken) 0 4px, var(--eui-color-surface) 4px 8px);
   box-shadow: inset 0 0 0 1px var(--eui-color-border-subtle);

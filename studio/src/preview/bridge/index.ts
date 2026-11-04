@@ -82,6 +82,24 @@ export function validate<M>(data: unknown, validators: Validators<M>, maxBytes: 
 export const envelope = <M, K extends keyof M>(type: K, payload: M[K], nonce?: string): Envelope<M, K> =>
   (nonce === undefined ? { source: BRIDGE_SOURCE, v: BRIDGE_VERSION, type, payload } : { source: BRIDGE_SOURCE, v: BRIDGE_VERSION, type, payload, nonce });
 
+/**
+ * Frame side: holds the bridge nonce for one frame load. Only an `init` from `parent` is accepted and only
+ * the first nonce sticks; a later init (e.g. forged by user code via a same-window postMessage) is ignored.
+ */
+export function frameNonceGate(parent: unknown) {
+  let nonce: string | undefined;
+  return {
+    get: () => nonce,
+    /** Returns true when the init was accepted (from `parent`); the nonce is kept only if none is set yet. */
+    init(source: unknown, data: unknown): boolean {
+      if (source !== parent) return false;
+      const n = data && typeof data === 'object' ? (data as { nonce?: unknown }).nonce : undefined;
+      if (nonce === undefined && typeof n === 'string' && n) nonce = n;
+      return true;
+    },
+  };
+}
+
 const newNonce = () => (globalThis.crypto?.randomUUID?.() ?? `${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`);
 
 /**

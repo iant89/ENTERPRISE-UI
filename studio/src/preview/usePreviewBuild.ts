@@ -22,12 +22,19 @@ export interface PreviewBuild {
 let compilerPromise: Promise<CompilerAdapter> | null = null;
 const loadCompiler = () => (compilerPromise ??= import('./compiler').then((m) => m.createCompiler()));
 
-export function usePreviewBuild(files: Record<FilePath, string>, entry: FilePath, { paused = false, debounceMs = 300, enabled = true } = {}): PreviewBuild {
+export function usePreviewBuild(files: Record<FilePath, string>, entry: FilePath, { paused = false, debounceMs = 300, enabled = true, projectKey }: { paused?: boolean; debounceMs?: number; enabled?: boolean; /** C4 review: a new project resets the build, so a failed first build never shows the previous project's preview. */ projectKey?: string } = {}): PreviewBuild {
   const [state, setState] = useState<Omit<PreviewBuild, 'recompile'>>({ artifact: null, diagnostics: [], failed: false, transformed: [] });
   const [tick, setTick] = useState(0);
   const latest = useRef({ files, entry });
   latest.current = { files, entry };
   const first = useRef(true);
+  const [key, setKey] = useState(projectKey);
+  if (key !== projectKey) {
+    // Reset during render (React's derived-state pattern) so no frame shows the old artifact.
+    setKey(projectKey);
+    setState({ artifact: null, diagnostics: [], failed: false, transformed: [] });
+    first.current = true;
+  }
   useEffect(() => {
     if (paused || !enabled) return;
     let cancelled = false;
@@ -45,7 +52,7 @@ export function usePreviewBuild(files: Record<FilePath, string>, entry: FilePath
     if (first.current) { first.current = false; run(); return () => { cancelled = true; }; }
     const t = setTimeout(run, debounceMs);
     return () => { cancelled = true; clearTimeout(t); };
-  }, [files, entry, paused, enabled, debounceMs, tick]);
+  }, [files, entry, paused, enabled, debounceMs, tick, key]);
   const recompile = useCallback(() => setTick((t) => t + 1), []);
   return { ...state, recompile };
 }

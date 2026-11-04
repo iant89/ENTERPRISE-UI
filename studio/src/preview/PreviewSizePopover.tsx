@@ -57,7 +57,7 @@ export function PreviewSizePopover({ size, fit, onApply, onReset }: PreviewSizeP
       open={open}
       onOpenChange={onOpenChange}
       title="Custom size"
-      width={280}
+      width={340}
       placement="bottom-end"
       trigger={
         <button type="button" id={triggerId} className={styles.fitLabel} data-testid="preview-size" aria-haspopup="dialog" aria-expanded={open} title="Change preview size">

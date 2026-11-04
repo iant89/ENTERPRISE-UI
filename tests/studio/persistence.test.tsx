@@ -134,3 +134,22 @@ describe('useProjectPersistence', () => {
     expect(r).toBe('unavailable');
   });
 });
+
+describe('QA 7: pending autosave is flushed when the page goes away', () => {
+  it.each(['pagehide', 'visibilitychange'])('flushes on %s', async (kind) => {
+    const d = deps();
+    const { rerender } = setup(d);
+    await flush();
+    const edited = { ...stored, files: { ...stored.files, 'src/App.tsx': 'edited' } };
+    rerender({ project: edited });
+    await act(async () => { vi.advanceTimersByTime(100); });
+    expect(d.save).not.toHaveBeenCalled();
+    const vis = vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('hidden');
+    await act(async () => { if (kind === 'pagehide') window.dispatchEvent(new Event('pagehide')); else document.dispatchEvent(new Event('visibilitychange')); });
+    vis.mockRestore();
+    expect(d.save).toHaveBeenCalledTimes(1);
+    expect(d.save).toHaveBeenCalledWith(edited);
+    await act(async () => { vi.advanceTimersByTime(1000); });
+    expect(d.save).toHaveBeenCalledTimes(1);
+  });
+});

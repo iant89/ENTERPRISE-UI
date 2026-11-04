@@ -50,3 +50,56 @@ test('"Back to my project" leaves the example without a reload', async ({ page }
   await expect(preview(page).getByRole('heading', { name: 'MY WORK' })).toBeVisible();
   await expect(page.getByText('This example is a separate project')).toHaveCount(0);
 });
+
+// C4 review follow-ups (3): layout persistence for saved projects and across a project switch.
+async function toCode(page: Page) {
+  const radio = page.getByRole('radio', { name: 'Code Studio' });
+  if ((await radio.getAttribute('aria-checked')) !== 'true') await radio.click();
+  await expect(page.getByTestId('preview-size')).toBeVisible();
+}
+async function setSize(page: Page, w: string, h: string) {
+  await page.getByTestId('preview-size').click();
+  const dialog = page.getByRole('dialog', { name: 'Custom size' });
+  await dialog.getByLabel('Width').fill(w);
+  await dialog.getByLabel('Height').fill(h);
+  await page.keyboard.press('Enter');
+  await expect(page.getByTestId('preview-size')).toContainText(`${w} × ${h}`);
+}
+const storedLayout = (page: Page, id: string) => page.evaluate((key) => new Promise<unknown>((res) => {
+  const q = indexedDB.open('eui-studio'); q.onsuccess = () => { const g = q.result.transaction('projects').objectStore('projects').get(key); g.onsuccess = () => { q.result.close(); res((g.result as { layout?: unknown } | undefined)?.layout); }; };
+}), id);
+
+test('a saved project keeps its custom preview size across a reload', async ({ page, isMobile }) => {
+  test.skip(!!isMobile, 'Desktop layout');
+  await seed(page);
+  await page.goto('/studio/');
+  await toCode(page);
+  await setSize(page, '800', '600');
+  await expect.poll(async () => JSON.stringify(await storedLayout(page, 'mine-1'))).toContain('800');
+  await page.reload();
+  await toCode(page);
+  await expect(page.getByTestId('preview-size')).toContainText('800 × 600');
+});
+
+test('switching projects while a layout save is pending keeps each project its own layout', async ({ page, isMobile }) => {
+  test.skip(!!isMobile, 'Desktop layout');
+  await seed(page);
+  await page.goto('/studio/');
+  await toCode(page);
+  await setSize(page, '800', '600');
+  await expect.poll(async () => JSON.stringify(await storedLayout(page, 'mine-1'))).toContain('800');
+  await page.goto('/#/components/badge');
+  await page.getByRole('button', { name: 'Open in Studio' }).first().click();
+  await toCode(page);
+  await setSize(page, '900', '700');
+  // Switch at once, inside the 150 ms layout-save window.
+  await page.getByRole('button', { name: 'Back to my project' }).click();
+  await expect(preview(page).getByRole('heading', { name: 'MY WORK' })).toBeVisible();
+  await toCode(page);
+  await expect(page.getByTestId('preview-size')).toContainText('800 × 600');
+  await page.waitForTimeout(400);
+  expect(JSON.stringify(await storedLayout(page, 'mine-1'))).not.toContain('900');
+  await page.reload();
+  await toCode(page);
+  await expect(page.getByTestId('preview-size')).toContainText('800 × 600');
+});

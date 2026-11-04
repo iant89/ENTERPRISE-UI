@@ -65,7 +65,7 @@ export type StoreAction =
   | { type: 'closeGroup'; group: number }
   | { type: 'moveTab'; path: FilePath; from: number; to: number; index: number }
   | { type: 'setGroups'; groups: EditorGroup[]; focused: number }
-  | { type: 'applyEdits'; files: Record<FilePath, string>; label: string; touched: FilePath }
+  | { type: 'applyEdits'; files: Record<FilePath, string>; label: string; touched: FilePath; /** C5: create paths that don't exist (else they are skipped). Any failure throws, so nothing is written. */ create?: boolean; /** C5: open `touched` in the focused group. */ open?: boolean }
   | { type: 'editFile'; path: FilePath; text: string; source?: 'visual' | 'editor'; now?: number }
   | { type: 'createFile'; path: FilePath; text: string }
   | { type: 'renameFile'; from: FilePath; to: FilePath }
@@ -262,8 +262,12 @@ export function storeReducer(state: StoreState, action: StoreAction): StoreState
     }
     case 'applyEdits': {
       let next = project;
-      for (const [path, text] of Object.entries(action.files)) if (has(next, path)) next = writeFile(next, path, text);
-      return record(state, next, action.touched, action.label, state.activePath);
+      for (const [path, text] of Object.entries(action.files)) {
+        if (has(next, path)) next = writeFile(next, path, text);
+        else if (action.create) next = createFile(next, path, text);
+      }
+      const opened = record(state, next, action.touched, action.label, action.open ? action.touched : state.activePath);
+      return action.open && action.touched in next.files ? { ...opened, recent: touchRecent(opened.recent, action.touched) } : opened;
     }
     case 'editFile': {
       // An unchanged text is a no-op. This makes the editor's onChange echo after undo/redo harmless,

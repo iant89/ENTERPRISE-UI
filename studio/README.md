@@ -217,3 +217,25 @@ move through them, Enter opens one, and **Clear** empties the list. The editor t
 - **Console tab**: `console.log/info/warn/error`, uncaught errors and unhandled rejections from the preview, with level filter, Clear, a count badge and `path:line` links. Capped at 500 entries; cleared on each successful reload.
 - **Stale / last good** (§9.6): a failed build keeps the previous artifact running, dims it with a dashed outline and shows the "Preview is stale" strip (Go to error, Retry). The next successful build returns to Live. A runtime error after a good build shows an overlay with a source link and keeps the artifact.
 - **Custom size**: the "W × H · Fit (n%)" label opens a popover: Width and Height (320–3840 × 320–2160 px, validated inline; Apply is disabled when invalid), an aspect-ratio lock, Zoom (Fit/50/75/100%), Reset to Desktop and Apply. Enter applies, Esc closes without changes, and focus returns to the label. The last custom size and zoom are kept per project in the layout (`previewSize`).
+
+## Create Component (Code Studio C5)
+
+Creates a new component folder from the §6.2 templates as **one atomic undo step**.
+
+- **Entry points:** Explorer context menu "Create component…" (destination = that folder, or a file's folder);
+  the icon at the end of the editor tab row (destination = the active file's folder when it is under
+  `src/components/`, otherwise `src/components/`); the "+" in the Components activity header. The command
+  palette entry is deferred to C14.
+- **Options and defaults:** Name (required, PascalCase, not a JS keyword/reserved global), Destination
+  `src/components/`, Generate tests/docs/index on and example off, Advanced: Language TypeScript, Export Named,
+  Styling CSS file. Advanced starts expanded; its open/closed state is a Studio preference
+  (`localStorage` key `eui-studio:create-component-advanced`), not per project.
+- **Layout:** always `Dest/Name/` with `Name.tsx`, `Name.css`, `Name.test.tsx`, `Name.docs.md`, `index.ts`
+  (`.jsx`/`index.js` for JavaScript). An existing folder or file at `Dest/Name/` is an inline error on Name;
+  there is no auto-suffix.
+- **Example file convention (spec gap):** `Name.example.tsx` exports a default `Example` component that renders
+  `Name` with sample props. C6/C7 can discover examples by this name.
+- **Atomic/undo:** everything is validated and the full file map built before writing (`generator/generate.ts`);
+  the write goes through the store's `applyEdits` (`create: true`), which applies every file or throws, so a
+  failure leaves no files and no undo step. One undo removes all files and closes their tabs; redo restores them.
+  After create the `.tsx` opens in the focused group and is revealed in the Explorer.

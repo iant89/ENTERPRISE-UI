@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { ChevronDown, ChevronUp, PanelBottomClose } from 'lucide-react';
 import { Button, IconButton, Link, SegmentedButton } from '@enterprise-ui/react';
-import { filterConsole, type ConsoleEntry, type ConsoleFilter } from '../../preview/console';
+import { CONSOLE_CAP, filterConsole, type ConsoleEntry, type ConsoleFilter } from '../../preview/console';
 import { BOTTOM_TABS, type BottomTab } from '../../app/workspace/layout';
 import { ReferencesPanel, type ReferenceSet } from './ReferencesPanel';
 import styles from '../../app/workspace/CodeWorkspace.module.css';
@@ -29,6 +29,8 @@ export interface BottomPanelProps {
   /** C4: preview console entries. */
   consoleEntries?: readonly ConsoleEntry[];
   onClearConsole?: () => void;
+  /** Messages dropped by the console cap (shown as a marker). */
+  consoleDropped?: number;
   onOpenSource?: (path: string, line: number | null, column: number | null) => void;
 }
 
@@ -43,7 +45,7 @@ const EMPTY: Record<BottomTab, ReactNode> = {
 };
 
 /** Problems, Console, Tests, Component Docs, Output, Preview Events. Empty states until C4–C6. */
-export function BottomPanel({ tab, onTab, problems, onGoTo, onCollapse, summary, expanded, onExpanded, references = null, onOpenReference, onClearReferences, consoleEntries = [], onClearConsole, onOpenSource }: BottomPanelProps) {
+export function BottomPanel({ tab, onTab, problems, onGoTo, onCollapse, summary, expanded, onExpanded, references = null, onOpenReference, onClearReferences, consoleEntries = [], onClearConsole, onOpenSource, consoleDropped = 0 }: BottomPanelProps) {
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
   const grouped = useMemo(() => groupProblems(problems), [problems]);
   if (summary && !expanded) {
@@ -103,7 +105,7 @@ export function BottomPanel({ tab, onTab, problems, onGoTo, onCollapse, summary,
             ))}
           </div>
         ) : tab === 'console' ? (
-          <ConsoleView entries={consoleEntries} onClear={() => onClearConsole?.()} onOpen={(p, l, c) => onOpenSource?.(p, l, c)} />
+          <ConsoleView entries={consoleEntries} dropped={consoleDropped} onClear={() => onClearConsole?.()} onOpen={(p, l, c) => onOpenSource?.(p, l, c)} />
         ) : <p className={styles.empty}>{EMPTY[tab]}</p>}
       </div>
     </section>
@@ -124,7 +126,7 @@ const FILTERS: { value: ConsoleFilter; label: string }[] = [
   { value: 'all', label: 'All' }, { value: 'error', label: 'Errors' }, { value: 'warn', label: 'Warnings' }, { value: 'info', label: 'Info' }, { value: 'log', label: 'Logs' },
 ];
 
-function ConsoleView({ entries, onClear, onOpen }: { entries: readonly ConsoleEntry[]; onClear: () => void; onOpen: (path: string, line: number | null, column: number | null) => void }) {
+function ConsoleView({ entries, dropped = 0, onClear, onOpen }: { entries: readonly ConsoleEntry[]; dropped?: number; onClear: () => void; onOpen: (path: string, line: number | null, column: number | null) => void }) {
   const [filter, setFilter] = useState<ConsoleFilter>('all');
   const shown = filterConsole(entries, filter);
   return (
@@ -134,6 +136,7 @@ function ConsoleView({ entries, onClear, onOpen }: { entries: readonly ConsoleEn
         <span className={styles.toolbarGrow} />
         <Button size="sm" variant="tertiary" onClick={onClear} disabled={!entries.length}>Clear console</Button>
       </div>
+      {dropped > 0 && <p className={styles.consoleDropped} data-testid="console-dropped">{dropped.toLocaleString('en-US')} earlier {dropped === 1 ? 'message' : 'messages'} dropped (showing the last {CONSOLE_CAP})</p>}
       {shown.length ? (
         <ul className={styles.consoleList} aria-label="Console output">
           {shown.map((e) => (

@@ -54,6 +54,9 @@ export function libraryPage(name: string): DocsPage | null {
   if (!c) return null;
   const doc = registry.find((d) => d.components.includes(name));
   const props = c.props.map((p): PageProp => ({ name: p.name, type: p.type, required: !!p.required, default: p.default, description: p.description || undefined, descriptionFrom: p.description ? 'api' : undefined }));
+  // The default snippet's text content (e.g. `<Button>Button</Button>`) seeds `children`, so the live example has an accessible name.
+  const text = defaultSnippet(name).match(new RegExp(`^<${name}[^>]*>([^<{]+)</${name}>$`))?.[1];
+  if (text && !props.some((p) => p.name === 'children')) props.push({ name: 'children', type: 'ReactNode', required: false, default: JSON.stringify(text), description: 'Content (label text).' });
   const css = (c.cssVariables ?? []).map((v) => (typeof v === 'string' ? v : v.name));
   return {
     id: `library:${name}`, kind: 'library', name,

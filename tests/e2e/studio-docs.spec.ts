@@ -69,13 +69,14 @@ test('docs from Components: markdown, live example (source unchanged), search, b
   await docs(page).getByTestId('docs-hit').filter({ hasText: /^Button/ }).first().click();
   await expect(docs(page).getByTestId('docs-page-title')).toHaveText('Button');
   await expect(docs(page).getByText('Triggers an action.')).toBeVisible();
+  await expect(page.frameLocator('iframe[title="Button example"]').getByRole('button', { name: 'Button' })).toBeVisible();
   await docs(page).getByRole('button', { name: 'Back (Alt+Left)' }).click();
   await expect(docs(page).getByTestId('docs-page-title')).toHaveText('ExampleCard');
   await docs(page).getByRole('button', { name: 'Forward (Alt+Right)' }).focus();
   await page.keyboard.press('Alt+ArrowRight');
   await expect(docs(page).getByTestId('docs-page-title')).toHaveText('Button');
 
-  const axe = await new AxeBuilder({ page: page as never }).include('[data-testid="docs-sidebar"]').exclude('iframe').analyze();
+  const axe = await new AxeBuilder({ page: page as never }).include('[data-testid="docs-sidebar"]').analyze();
   expect(axe.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical')).toEqual([]);
 
   await docs(page).getByRole('button', { name: 'Pin Docs beside the editor' }).click();
@@ -131,5 +132,11 @@ test('bottom tab follows the cursor with focus kept; Add documentation is one un
   await page.getByRole('radio', { name: 'Design Studio' }).click();
   await page.locator('[data-palette="Button"]').hover();
   await page.getByRole('button', { name: 'Button docs', exact: true }).click();
+  await expect(page.getByTestId('docs-sidebar').getByTestId('docs-page-title')).toHaveText('Button');
+
+  // Inspector → Docs for the selected element.
+  await page.getByRole('radio', { name: 'Design Studio' }).click();
+  await page.getByRole('tree', { name: 'Page outline' }).getByRole('treeitem', { name: /^Button/ }).first().click();
+  await page.getByRole('group', { name: 'Element actions' }).getByRole('button', { name: 'Docs', exact: true }).click();
   await expect(page.getByTestId('docs-sidebar').getByTestId('docs-page-title')).toHaveText('Button');
 });

@@ -82,7 +82,7 @@ export function GettingStarted() {
     <Page title="Getting started" subtitle="Install the package, load the stylesheet, wrap your app and start composing." breadcrumbs={[{ label: 'Docs', href: '#/' }, { label: 'Getting started' }]} width="contained">
       <div className="prose">
         <h2>1. Install</h2>
-        <p>The library ships as ES modules with TypeScript declarations. React and React DOM (18.2 or newer) are peer dependencies; icons come from Lucide.</p>
+        <p>The library ships as ES modules with TypeScript declarations. React and React DOM (18.2 or newer) are peer dependencies; icons come from the bundled SAP icon set (see Foundations › Icons).</p>
       </div>
       <CodeBlock code={install} language="shell" label="Installation commands" />
 

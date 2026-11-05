@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
-import { Card, EmptyState, Icon, Page, SearchField, Select, Stack, Table, Text, Tag, iconUsage, icons, type IconDefinition, type TableColumn } from '@enterprise-ui/react';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { Card, EmptyState, Icon, IconButton, Page, SearchField, Select, Stack, Table, Text, Tag, iconUsage, icons, useAnnouncer, type IconDefinition, type TableColumn } from '@enterprise-ui/react';
 import { CodeBlock } from '../components/CodeBlock';
 import styles from './Icons.module.css';
 
@@ -151,6 +151,53 @@ const providerColumns: TableColumn<(typeof providerRows)[number]>[] = [
 
 const hex = (code?: number) => (code ? `&#x${code.toString(16)};` : '');
 
+const FAVORITES_KEY = 'eui-docs-icon-favorites';
+
+/** Favorite icon URIs, kept in this browser's local storage. */
+function useFavoriteIcons() {
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    try {
+      const stored: unknown = JSON.parse(localStorage.getItem(FAVORITES_KEY) ?? '[]');
+      return Array.isArray(stored) ? stored.filter((uri): uri is string => typeof uri === 'string') : [];
+    } catch {
+      return [];
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+    } catch {
+      /* storage unavailable: favorites last for this visit only */
+    }
+  }, [favorites]);
+  const toggle = useCallback((uri: string) => setFavorites((all) => (all.includes(uri) ? all.filter((u) => u !== uri) : [...all, uri])), []);
+  return { favorites, toggle };
+}
+
+/** Copies an icon name, announces the result and briefly marks the tile's copy button as done. */
+function useCopyIconName() {
+  const announce = useAnnouncer();
+  const [copied, setCopied] = useState<string | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(timer.current), []);
+  const copy = useCallback(
+    async (definition: IconDefinition) => {
+      try {
+        if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+        await navigator.clipboard.writeText(definition.name);
+        announce(`Copied ${definition.name}`, 'polite');
+        setCopied(definition.uri);
+        clearTimeout(timer.current);
+        timer.current = setTimeout(() => setCopied(null), 1500);
+      } catch {
+        announce(`Couldn’t copy ${definition.name}. Copy it from the icon details instead.`, 'assertive');
+      }
+    },
+    [announce],
+  );
+  return { copied, copy };
+}
+
 function useIcons() {
   useSyncExternalStore(icons.subscribe.bind(icons), () => icons.getVersion());
   useEffect(() => { void icons.preload('enterprise', { metadata: true }); }, []);
@@ -163,11 +210,15 @@ export function IconsPage() {
   const [collection, setCollection] = useState('');
   const [category, setCategory] = useState('');
   const [selected, setSelected] = useState<IconDefinition | null>(null);
+  const { favorites, toggle: toggleFavorite } = useFavoriteIcons();
+  const { copied, copy } = useCopyIconName();
   const collections = icons.listCollections();
   const all = icons.list({ collection: collection || undefined });
   const categories = useMemo(() => [...new Set(all.map((d) => d.metadata.category).filter(Boolean) as string[])].sort(), [all]);
-  const matches = (query.trim() ? icons.search(query, { collection: collection || undefined, limit: Infinity }) : all)
+  const filtered = (query.trim() ? icons.search(query, { collection: collection || undefined, limit: Infinity }) : all)
     .filter((d) => !category || d.metadata.category === category);
+  // Favorites come first; otherwise the order (alphabetical, or search rank) is kept.
+  const matches = [...filtered.filter((d) => favorites.includes(d.uri)), ...filtered.filter((d) => !favorites.includes(d.uri))];
   const current = selected ?? icons.get('enterprise://edit') ?? null;
   const usage = current ? iconUsage(current) : null;
 
@@ -279,7 +330,10 @@ export function IconsPage() {
 
       <div className="prose">
         <h2>Browse icons</h2>
-        <p>Search by name, alias, keyword or code point, or filter by collection and category. Select an icon for its details and code.</p>
+        <p>
+          Search by name, alias, keyword or code point, or filter by collection and category. Select an icon for its details and code. The star
+          marks an icon as a favorite, listed first and remembered in this browser; the copy button copies the icon name.
+        </p>
       </div>
       {current && usage && (
         <Card title={current.name} headingLevel={3} flat>
@@ -313,15 +367,35 @@ export function IconsPage() {
         <EmptyState title="No icons match" description="Try another name, keyword or category." icon="search" />
       ) : (
         <ul className={styles.grid} aria-label="Icons">
-          {matches.map((definition) => (
-            <li key={definition.uri}>
-              <button type="button" className={styles.tile} aria-pressed={current?.uri === definition.uri} title={[definition.uri, ...definition.aliases].join(', ')} onClick={() => setSelected(definition)}>
-                <Icon name={definition.uri} size="xl" />
-                <span className={styles.name}>{definition.name}</span>
-                {definition.metadata.codePoint !== undefined && <span className={styles.code}>{hex(definition.metadata.codePoint)}</span>}
-              </button>
-            </li>
-          ))}
+          {matches.map((definition) => {
+            const favorite = favorites.includes(definition.uri);
+            return (
+              <li key={definition.uri} className={styles.item}>
+                <button type="button" className={styles.tile} aria-pressed={current?.uri === definition.uri} title={[definition.uri, ...definition.aliases].join(', ')} onClick={() => setSelected(definition)}>
+                  <Icon name={definition.uri} size="xl" />
+                  <span className={styles.name}>{definition.name}</span>
+                  {definition.metadata.codePoint !== undefined && <span className={styles.code}>{hex(definition.metadata.codePoint)}</span>}
+                </button>
+                <IconButton
+                  className={`${styles.corner} ${styles.favorite}`}
+                  icon={favorite ? 'enterprise://favorite' : 'enterprise://unfavorite'}
+                  label={`Favorite ${definition.name}`}
+                  aria-pressed={favorite}
+                  size="sm"
+                  neutral
+                  onClick={() => toggleFavorite(definition.uri)}
+                />
+                <IconButton
+                  className={`${styles.corner} ${styles.copy}`}
+                  icon={copied === definition.uri ? 'enterprise://accept' : 'enterprise://copy'}
+                  label={`Copy ${definition.name}`}
+                  size="sm"
+                  neutral
+                  onClick={() => void copy(definition)}
+                />
+              </li>
+            );
+          })}
         </ul>
       )}
     </Page>

@@ -23,8 +23,9 @@
   align-items: center;
   gap: var(--eui-space-1);
   inline-size: 100%;
-  min-block-size: 6rem;
-  padding: var(--eui-space-3) var(--eui-space-2);
+  min-block-size: 7.5rem;
+  /* Room at the bottom for the favorite and copy buttons. */
+  padding: var(--eui-space-3) var(--eui-space-2) calc(var(--eui-space-2) + 1.75rem);
   border: var(--eui-border-width) solid var(--eui-color-border-subtle);
   border-radius: var(--eui-radius-md);
   background: var(--eui-color-surface);
@@ -92,4 +93,25 @@
 .tile[aria-pressed='true'] {
   border-color: var(--eui-color-primary);
   background: var(--eui-color-surface-selected);
+}
+
+.item {
+  position: relative;
+}
+
+.corner {
+  position: absolute;
+  inset-block-end: var(--eui-space-1);
+}
+
+.favorite {
+  inset-inline-start: var(--eui-space-1);
+}
+
+.copy {
+  inset-inline-end: var(--eui-space-1);
+}
+
+.favorite[aria-pressed='true'] {
+  color: var(--eui-color-warning-text);
 }

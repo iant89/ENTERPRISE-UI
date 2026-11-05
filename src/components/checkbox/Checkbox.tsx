@@ -1,10 +1,12 @@
 import { forwardRef, useEffect, useRef, type InputHTMLAttributes, type ReactNode } from 'react';
-import { Check, Minus } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { useMergedRefs } from '../../utilities/refs';
 import { useId } from '../../hooks/useId';
 import { useControllableState } from '../../hooks/useControllableState';
 import styles from './Checkbox.module.css';
+import acceptSvg from '../../assets/icons/accept.svg?raw';
+import lessSvg from '../../assets/icons/less.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'checked' | 'defaultChecked'> {
   /** Label rendered next to the box. */
@@ -62,7 +64,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
             {...rest}
           />
           <span className={styles.mark} aria-hidden="true">
-            {indeterminate ? <Minus /> : isChecked ? <Check /> : null}
+            {indeterminate ? svgIcon(lessSvg, 'less') : isChecked ? svgIcon(acceptSvg, 'accept') : null}
           </span>
         </span>
         {(label || description) && (

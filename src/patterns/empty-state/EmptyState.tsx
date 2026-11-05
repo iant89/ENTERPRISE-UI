@@ -1,7 +1,9 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { Inbox } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import styles from './EmptyState.module.css';
+import inboxSvg from '../../assets/icons/inbox.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 export interface EmptyStateProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   /** Headline that states what is empty. */
@@ -9,7 +11,7 @@ export interface EmptyStateProps extends Omit<HTMLAttributes<HTMLDivElement>, 't
   /** Explains why it is empty and what the user can do next. */
   description?: ReactNode;
   /** Icon or illustration. @default Inbox icon */
-  icon?: ReactNode;
+  icon?: IconSource;
   /** Actions that help the user move forward (e.g. Create, Clear filters). */
   actions?: ReactNode;
   /** @default 'md' */
@@ -28,7 +30,7 @@ export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(function E
   return (
     <div ref={ref} className={cx(styles.empty, size === 'sm' && styles.sm, className)} {...rest}>
       <div className={styles.illustration} aria-hidden="true">
-        {icon ?? <Inbox />}
+        {icon != null ? renderIconSource(icon) : svgIcon(inboxSvg, 'inbox')}
       </div>
       <Heading className={styles.title}>{title}</Heading>
       {description && <p className={styles.description}>{description}</p>}

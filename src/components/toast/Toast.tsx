@@ -1,5 +1,4 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { AlertTriangle, CheckCircle2, Info, X, XCircle } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { Portal } from '../../utilities/Portal';
 import { useAnnouncer } from '../../themes/ThemeProvider';
@@ -7,6 +6,14 @@ import type { Tone } from '../../utilities/types';
 import { Button } from '../button';
 import { IconButton } from '../icon-button';
 import styles from './Toast.module.css';
+import declineSvg from '../../assets/icons/decline.svg?raw';
+import messageErrorSvg from '../../assets/icons/message-error.svg?raw';
+import messageInformationSvg from '../../assets/icons/message-information.svg?raw';
+import messageSuccessSvg from '../../assets/icons/message-success.svg?raw';
+import warning2Svg from '../../assets/icons/warning2.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+
+const ICON_SVGS: Record<string, string> = { 'message-error': messageErrorSvg, 'message-information': messageInformationSvg, 'message-success': messageSuccessSvg, 'warning2': warning2Svg };
 
 export interface ToastOptions {
   title: ReactNode;
@@ -44,7 +51,7 @@ export interface ToastProviderProps {
   limit?: number;
 }
 
-const ICONS = { neutral: Info, information: Info, success: CheckCircle2, warning: AlertTriangle, error: XCircle } as const;
+const ICONS = { neutral: 'message-information', information: 'message-information', success: 'message-success', warning: 'warning2', error: 'message-error' } as const;
 
 function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: string) => void }) {
   const tone = toast.tone ?? 'neutral';
@@ -76,7 +83,7 @@ function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: s
       onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocused(false); }}
     >
       <span className={styles.icon} aria-hidden="true">
-        <Icon />
+        {svgIcon(ICON_SVGS[Icon], Icon)}
       </span>
       <div className={styles.content}>
         <span className={styles.title}>{toast.title}</span>
@@ -95,7 +102,7 @@ function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: s
           </Button>
         )}
       </div>
-      <IconButton className={styles.close} icon={<X />} label="Dismiss notification" size="sm" neutral onClick={() => onDismiss(toast.id)} />
+      <IconButton className={styles.close} icon={svgIcon(declineSvg, 'decline')} label="Dismiss notification" size="sm" neutral onClick={() => onDismiss(toast.id)} />
     </li>
   );
 }

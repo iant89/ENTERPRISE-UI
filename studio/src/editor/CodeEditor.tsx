@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { BusyIndicator, IconButton } from '@enterprise-ui/react';
-import { Pin } from 'lucide-react';
 import type * as Monaco from 'monaco-editor/editor/editor.api.js';
 import styles from '../Studio.module.css';
 import type { EditorAdapter, EditorEvents, EditorRange, FormatResult } from './EditorAdapter';
 import type { ReferenceSet } from '../panels/bottom/ReferencesPanel';
 import type { RenamePlan } from './navigationModel';
 import type { ModelRegistry } from './monaco/models';
+import pushpinOnSvg from '../../../src/assets/icons/pushpin-on.svg?raw';
+import { svgIcon } from '../../../src/icons/svgIcon';
 
 /** C1 name for the adapter; kept so existing callers compile. */
 export type CodeEditorHandle = EditorAdapter;
@@ -272,7 +273,7 @@ export function CodeEditor({
       {loading && <div className={styles.editorLoading}><BusyIndicator active text="Loading code editor" /></div>}
       <div ref={host} className={styles.editor} data-testid="code-editor" data-group={group} />
       {peekSlot && onPinReferences && createPortal(
-        <IconButton size="sm" variant="tertiary" icon={<Pin />} label="Pin references to the References panel" onClick={() => { void pin(); }} />,
+        <IconButton size="sm" variant="tertiary" icon={svgIcon(pushpinOnSvg, 'pushpin-on')} label="Pin references to the References panel" onClick={() => { void pin(); }} />,
         peekSlot,
       )}
       {rename && (

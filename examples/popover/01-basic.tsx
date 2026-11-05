@@ -1,5 +1,4 @@
-import { SlidersHorizontal } from 'lucide-react';
-import { Button, Checkbox, Popover, Stack } from '@enterprise-ui/react';
+import { Button, Checkbox, Popover, Stack, Icon } from '@enterprise-ui/react';
 
 export const title = 'Popover';
 export const description = 'A non-modal dialog anchored to its trigger: focus moves in, and Escape or clicking outside returns focus.';
@@ -8,7 +7,7 @@ export default function PopoverBasic() {
   return (
     <Popover
       title="Table settings"
-      trigger={<Button icon={<SlidersHorizontal />}>Settings</Button>}
+      trigger={<Button icon={<Icon name="customize" />}>Settings</Button>}
       width="18rem"
     >
       {(close) => (

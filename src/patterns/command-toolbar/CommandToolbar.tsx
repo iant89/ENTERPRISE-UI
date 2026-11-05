@@ -1,16 +1,18 @@
 import { useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { MoreHorizontal } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { getNavigationIndex } from '../../utilities/keyboard';
 import { Button, type ButtonVariant } from '../../components/button';
 import { DropdownMenu } from '../../components/dropdown-menu';
 import { IconButton } from '../../components/icon-button';
 import styles from './CommandToolbar.module.css';
+import overflowSvg from '../../assets/icons/overflow.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+import { type IconSource } from '../../icons/IconSource';
 
 export interface CommandAction {
   id: string;
   label: string;
-  icon?: ReactNode;
+  icon?: IconSource;
   onClick?: () => void;
   /** @default 'tertiary' */
   variant?: ButtonVariant;
@@ -123,14 +125,14 @@ export function CommandToolbar({ title, start, actions, 'aria-label': ariaLabel,
             placement="bottom-end"
             aria-label="More actions"
             items={overflow.map((a) => ({ id: a.id, label: a.label, icon: a.icon, disabled: a.disabled, destructive: a.variant === 'destructive', onSelect: a.onClick }))}
-            trigger={<IconButton icon={<MoreHorizontal />} label="More actions" />}
+            trigger={<IconButton icon={svgIcon(overflowSvg, 'overflow')} label="More actions" />}
           />
         )}
       </div>
       <div ref={measureRef} className={styles.measure} aria-hidden="true" inert>
         {actions.map((a) => renderAction(a, true))}
         <span data-overflow="">
-          <IconButton icon={<MoreHorizontal />} label="More" tabIndex={-1} />
+          <IconButton icon={svgIcon(overflowSvg, 'overflow')} label="More" tabIndex={-1} />
         </span>
       </div>
     </div>

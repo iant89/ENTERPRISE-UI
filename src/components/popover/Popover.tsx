@@ -1,5 +1,4 @@
 import { useRef, type CSSProperties, type ReactElement, type ReactNode } from 'react';
-import { X } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { cloneTrigger } from '../../utilities/cloneTrigger';
 import { Portal } from '../../utilities/Portal';
@@ -13,6 +12,8 @@ import { useIsoLayoutEffect } from '../../hooks/useEventCallback';
 import { IconButton } from '../icon-button';
 import floating from './Floating.module.css';
 import styles from './Popover.module.css';
+import declineSvg from '../../assets/icons/decline.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface PopoverProps {
   /** The element that toggles the popover. Must accept a ref and `onClick`. */
@@ -129,7 +130,7 @@ export function Popover({
                   {title}
                 </h2>
                 {(showClose ?? true) && (
-                  <IconButton icon={<X />} label="Close" size="sm" onClick={() => close()} data-eui-popover-close="true" />
+                  <IconButton icon={svgIcon(declineSvg, 'decline')} label="Close" size="sm" onClick={() => close()} data-eui-popover-close="true" />
                 )}
               </div>
             )}

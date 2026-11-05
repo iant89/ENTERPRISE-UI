@@ -1,0 +1,95 @@
+.search {
+  flex: 1 1 18rem;
+  min-inline-size: 0;
+}
+
+.count {
+  margin-inline-start: auto;
+  color: var(--eui-color-text-secondary);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  gap: var(--eui-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--eui-space-1);
+  inline-size: 100%;
+  min-block-size: 6rem;
+  padding: var(--eui-space-3) var(--eui-space-2);
+  border: var(--eui-border-width) solid var(--eui-color-border-subtle);
+  border-radius: var(--eui-radius-md);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.tile svg {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  margin-block-end: var(--eui-space-1);
+}
+
+.tile:hover {
+  background: var(--eui-color-surface-hover);
+  border-color: var(--eui-color-border-hover);
+}
+
+.tile:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+}
+
+.name {
+  max-inline-size: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--eui-font-size-sm);
+}
+
+.code {
+  font-family: var(--eui-font-family-mono, monospace);
+  font-size: var(--eui-font-size-xs, 0.75rem);
+  color: var(--eui-color-text-secondary);
+}
+
+.detail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--eui-space-6);
+  margin-block-end: var(--eui-space-3);
+}
+
+.preview {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--eui-space-4);
+  color: var(--eui-color-primary);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--eui-space-1) var(--eui-space-3);
+  margin: 0;
+  font-size: var(--eui-font-size-sm);
+}
+
+.facts dt { color: var(--eui-color-text-secondary); }
+.facts dd { margin: 0; }
+
+.tile[aria-pressed='true'] {
+  border-color: var(--eui-color-primary);
+  background: var(--eui-color-surface-selected);
+}

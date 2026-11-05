@@ -1,0 +1,168 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--eui-z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--eui-space-4);
+  background: var(--eui-color-overlay);
+  animation: eui-fade-in var(--eui-duration-normal) var(--eui-easing-standard);
+}
+
+/* Centered container that shrinks to the image; never wider or taller than the screen. */
+.container {
+  --lightbox-footer: 4rem;
+  display: flex;
+  flex-direction: column;
+  max-inline-size: 100%;
+  max-block-size: 100%;
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+  border-radius: var(--eui-radius-lg);
+  box-shadow: var(--eui-shadow-level-3);
+  overflow: hidden;
+  outline: none;
+  animation: eui-scale-in var(--eui-duration-normal) var(--eui-easing-emphasized);
+}
+
+.pending {
+  min-inline-size: min(20rem, 100%);
+}
+
+.media {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 0;
+  background: var(--eui-color-surface-alt);
+}
+
+.pending .media {
+  min-block-size: 12rem;
+}
+
+/* Original size unless larger than the screen; then scaled down proportionally. Never enlarged. */
+.image {
+  display: block;
+  max-inline-size: calc(100vw - 2 * var(--eui-space-4));
+  max-block-size: calc(100vh - 2 * var(--eui-space-4) - var(--lightbox-footer));
+  max-block-size: calc(100dvh - 2 * var(--eui-space-4) - var(--lightbox-footer));
+  inline-size: auto;
+  block-size: auto;
+  object-fit: contain;
+}
+
+.hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+}
+
+.busy {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error {
+  padding: var(--eui-space-4);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: var(--eui-space-3);
+  min-block-size: var(--lightbox-footer);
+  padding: var(--eui-space-2) var(--eui-space-2) var(--eui-space-2) var(--eui-space-4);
+  border-block-start: var(--eui-border-width) solid var(--eui-color-border-subtle);
+}
+
+.text {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.title {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--eui-font-size-md);
+  font-weight: var(--eui-font-weight-bold);
+}
+
+.subtitle {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--eui-font-size-sm);
+  color: var(--eui-color-text-secondary);
+}
+
+/* Thumbnail trigger */
+.thumb {
+  position: relative;
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  border-radius: var(--eui-radius-sm);
+  line-height: 0;
+}
+
+.thumb:not(.static) {
+  cursor: zoom-in;
+}
+
+.thumb:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+  outline-offset: var(--eui-focus-offset);
+}
+
+.thumbImage {
+  display: block;
+  max-inline-size: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+.zoom {
+  position: absolute;
+  inset-block-end: var(--eui-space-1);
+  inset-inline-end: var(--eui-space-1);
+  display: inline-flex;
+  padding: var(--eui-space-1);
+  background: var(--eui-color-surface);
+  color: var(--eui-color-primary);
+  border-radius: var(--eui-radius-sm);
+  box-shadow: var(--eui-shadow-level-1);
+}
+
+.zoom svg {
+  inline-size: var(--eui-icon-size);
+  block-size: var(--eui-icon-size);
+}
+
+@media (max-width: 599.98px) {
+  .overlay {
+    padding: var(--eui-space-2);
+  }
+
+  .image {
+    max-inline-size: calc(100vw - 2 * var(--eui-space-2));
+    max-block-size: calc(100dvh - 2 * var(--eui-space-2) - var(--lightbox-footer));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .container {
+    animation: none;
+  }
+}

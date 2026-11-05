@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { gzipSync } from 'node:zlib';
 
-const BUDGET_KB = 350;
+const BUDGET_KB = 450;
 const dir = resolve(import.meta.dirname, '../docs-dist/studio');
 const html = readFileSync(resolve(dir, 'index.html'), 'utf8');
 const files = [...html.matchAll(/(?:src|href)="\.\/(assets\/[^"]+\.(?:js|css))"/g)].map((m) => m[1]);

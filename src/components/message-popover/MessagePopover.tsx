@@ -1,9 +1,17 @@
 import { useMemo, useState, type ReactNode } from 'react';
-import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { Button } from '../button';
 import { Popover } from '../popover';
 import styles from './MessagePopover.module.css';
+import errorSvg from '../../assets/icons/error.svg?raw';
+import messageErrorSvg from '../../assets/icons/message-error.svg?raw';
+import messageInformationSvg from '../../assets/icons/message-information.svg?raw';
+import messageSuccessSvg from '../../assets/icons/message-success.svg?raw';
+import warningSvg from '../../assets/icons/warning.svg?raw';
+import warning2Svg from '../../assets/icons/warning2.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+
+const ICON_SVGS: Record<string, string> = { 'error': errorSvg, 'message-error': messageErrorSvg, 'message-information': messageInformationSvg, 'message-success': messageSuccessSvg, 'warning': warningSvg, 'warning2': warning2Svg };
 
 export type MessageType = 'error' | 'warning' | 'information' | 'success';
 
@@ -45,7 +53,7 @@ export interface MessagePopoverProps {
   className?: string;
 }
 
-const ICONS = { error: XCircle, warning: AlertTriangle, information: Info, success: CheckCircle2 } as const;
+const ICONS = { error: 'message-error', warning: 'warning2', information: 'message-information', success: 'message-success' } as const;
 const ORDER: MessageType[] = ['error', 'warning', 'information', 'success'];
 
 const defaultLabels: MessagePopoverLabels = {
@@ -97,7 +105,7 @@ export function MessagePopover({ messages, onMessageSelect, open, onOpenChange, 
       placement="top-start"
       width="24rem"
       trigger={
-        <Button variant={messages.length ? 'secondary' : 'tertiary'} size="sm" className={cx(styles.trigger, styles[worst], className)} icon={<TriggerIcon />}>
+        <Button variant={messages.length ? 'secondary' : 'tertiary'} size="sm" className={cx(styles.trigger, styles[worst], className)} icon={svgIcon(ICON_SVGS[TriggerIcon], TriggerIcon)}>
           {labels.trigger(counts)}
         </Button>
       }
@@ -122,7 +130,7 @@ export function MessagePopover({ messages, onMessageSelect, open, onOpenChange, 
                 return (
                   <li key={m.id}>
                     <button type="button" className={styles.item} onClick={() => choose(m, close)}>
-                      <Icon aria-hidden="true" className={cx(styles.icon, styles[m.type])} />
+                      {svgIcon(ICON_SVGS[Icon], Icon, { 'aria-hidden': 'true', className: cx(styles.icon, styles[m.type]) })}
                       <span className={styles.text}>
                         <span className="eui-visually-hidden">{labels.types[m.type]}: </span>
                         <span className={styles.itemTitle}>{m.title}</span>

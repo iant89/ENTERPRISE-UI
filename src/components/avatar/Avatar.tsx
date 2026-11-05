@@ -2,6 +2,7 @@ import { forwardRef, useState, type CSSProperties, type HTMLAttributes, type Rea
 import { cx } from '../../utilities/cx';
 import { getInitials, hashString } from '../../utilities/format';
 import styles from './Avatar.module.css';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 export interface AvatarProps extends HTMLAttributes<HTMLSpanElement> {
   /** Person or object name — used for initials, color and the accessible name. */
@@ -9,7 +10,7 @@ export interface AvatarProps extends HTMLAttributes<HTMLSpanElement> {
   /** Image URL. Falls back to initials if it fails to load. */
   src?: string;
   /** Icon shown when there is no image or name. */
-  icon?: ReactNode;
+  icon?: IconSource;
   /** @default 'md' */
   /** Size of the avatar. */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -55,7 +56,7 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
         <span className={styles.initials} data-initials={getInitials(name)} aria-hidden="true" />
       ) : (
         <span className={styles.icon} aria-hidden="true">
-          {icon}
+          {renderIconSource(icon)}
         </span>
       )}
       {presence && <span className={cx(styles.status, styles[presence], badge && styles.statusWithBadge)} aria-hidden="true" />}

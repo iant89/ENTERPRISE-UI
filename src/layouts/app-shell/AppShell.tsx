@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
-import { X } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { breakpoints } from '../../tokens';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
@@ -10,6 +9,8 @@ import { useId } from '../../hooks/useId';
 import { IconButton } from '../../components/icon-button';
 import { AppShellContext, type AppShellContextValue } from './AppShellContext';
 import styles from './AppShell.module.css';
+import declineSvg from '../../assets/icons/decline.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface AppShellProps extends HTMLAttributes<HTMLDivElement> {
   /** The application header, usually an ApplicationHeader. */
@@ -118,7 +119,7 @@ export function AppShell({
             >
               <div className={styles.drawerHeader}>
                 <span>{drawerTitle}</span>
-                <IconButton icon={<X />} label="Close navigation" neutral onClick={() => setMobileNavOpen(false)} />
+                <IconButton icon={svgIcon(declineSvg, 'decline')} label="Close navigation" neutral onClick={() => setMobileNavOpen(false)} />
               </div>
               {navigation}
             </div>

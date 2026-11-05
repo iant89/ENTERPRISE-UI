@@ -1,12 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type Dispatch, type DragEvent as ReactDragEvent, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type ReactNode } from 'react';
-import {
-  AlertDialog, Badge, Button, Dialog, IconButton, Input, Link, Menu, OverflowMenu, Skeleton, Tooltip, Tree, VisuallyHidden, useAnnouncer, useToast,
-  type MenuEntry,
-} from '@enterprise-ui/react';
-import {
-  ChevronsDownUp, CircleAlert, Copy, FileCode, FileCode2, FileJson, FilePlus, FileText, FileType, FlaskConical, Folder, FolderInput, FolderOpen, FolderPlus,
-  Pencil, Star, Trash2, Unlink, ClipboardCopy, FileOutput, Columns2, Boxes,
-} from 'lucide-react';
+import { AlertDialog, Badge, Button, Dialog, IconButton, Input, Link, Menu, OverflowMenu, Skeleton, Tooltip, Tree, VisuallyHidden, useAnnouncer, useToast, type MenuEntry } from '@enterprise-ui/react';
 import { basename, dirname, extname, type FilePath } from '../model/project';
 import { storeReducer, type StoreAction, type StoreState } from '../model/store';
 import {
@@ -15,6 +8,26 @@ import {
 } from './fileTreeModel';
 import { createFolder } from '../core/vfs/ops';
 import styles from './FileTree.module.css';
+import addDocumentSvg from '../../../src/assets/icons/add-document.svg?raw';
+import addFolderSvg from '../../../src/assets/icons/add-folder.svg?raw';
+import attachmentTextFileSvg from '../../../src/assets/icons/attachment-text-file.svg?raw';
+import brokenLinkSvg from '../../../src/assets/icons/broken-link.svg?raw';
+import browseFolderSvg from '../../../src/assets/icons/browse-folder.svg?raw';
+import collapseAllSvg from '../../../src/assets/icons/collapse-all.svg?raw';
+import copySvg from '../../../src/assets/icons/copy.svg?raw';
+import deleteSvg from '../../../src/assets/icons/delete.svg?raw';
+import documentTextSvg from '../../../src/assets/icons/document-text.svg?raw';
+import editSvg from '../../../src/assets/icons/edit.svg?raw';
+import favoriteSvg from '../../../src/assets/icons/favorite.svg?raw';
+import folderBlankSvg from '../../../src/assets/icons/folder-blank.svg?raw';
+import highPrioritySvg from '../../../src/assets/icons/high-priority.svg?raw';
+import labSvg from '../../../src/assets/icons/lab.svg?raw';
+import openFolderSvg from '../../../src/assets/icons/open-folder.svg?raw';
+import outboxSvg from '../../../src/assets/icons/outbox.svg?raw';
+import sapBoxSvg from '../../../src/assets/icons/sap-box.svg?raw';
+import screenSplitTwoSvg from '../../../src/assets/icons/screen-split-two.svg?raw';
+import sourceCodeSvg from '../../../src/assets/icons/source-code.svg?raw';
+import { svgIcon } from '../../../src/icons/svgIcon';
 
 /**
  * The Files pane (UX-4 / M3-08). It composes the EUI `Tree`; the context menu, inline create and
@@ -23,7 +36,7 @@ import styles from './FileTree.module.css';
  */
 
 const ICONS: Record<FileIconName, ReactNode> = {
-  FileCode: <FileCode />, FileCode2: <FileCode2 />, FlaskConical: <FlaskConical />, FileType: <FileType />, FileJson: <FileJson />, FileText: <FileText />,
+  FileCode: svgIcon(sourceCodeSvg, 'source-code'), FileCode2: svgIcon(sourceCodeSvg, 'source-code'), FlaskConical: svgIcon(labSvg, 'lab'), FileType: svgIcon(attachmentTextFileSvg, 'attachment-text-file'), FileJson: svgIcon(documentTextSvg, 'document-text'), FileText: svgIcon(documentTextSvg, 'document-text'),
 };
 const NEW_ID = '__new__';
 const DRAG_TYPE = 'application/x-eui-studio-path';
@@ -113,7 +126,7 @@ export function FileTree({ state, dispatch, onOpen, onOpenToSide, errorPaths, di
   const baseNodes = useMemo(() => buildTreeNodes(files, entry, livePending), [files, entry, livePending]);
   const nodes = useMemo(() => {
     const decorate = (list: FileNode[]): FileNode[] => list.map((n) => {
-      if (n.folder) return { ...n, icon: expanded.includes(n.id) ? <FolderOpen /> : <Folder />, children: decorate(n.children ?? []) };
+      if (n.folder) return { ...n, icon: expanded.includes(n.id) ? svgIcon(openFolderSvg, 'open-folder') : svgIcon(folderBlankSvg, 'folder-blank'), children: decorate(n.children ?? []) };
       const isEntry = n.path === entry;
       const unused = !used.has(n.path);
       const broken = errors.has(n.path);
@@ -121,8 +134,8 @@ export function FileTree({ state, dispatch, onOpen, onOpenToSide, errorPaths, di
       const trailing = (isEntry || unused || broken || unsaved) ? (
         <span className={styles.marker}>
           {isEntry && <Badge id={markerId(n.id, 'entry')} tone="neutral" aria-hidden="true">Entry</Badge>}
-          {unused && <span id={markerId(n.id, 'unused')} title="Not used by the entry page" aria-hidden="true"><Unlink className={styles.unused} /><VisuallyHidden>Not used by the entry page</VisuallyHidden></span>}
-          {broken && <span id={markerId(n.id, 'error')} aria-hidden="true"><CircleAlert className={styles.errorIcon} /><VisuallyHidden>Has an error</VisuallyHidden></span>}
+          {unused && <span id={markerId(n.id, 'unused')} title="Not used by the entry page" aria-hidden="true">{svgIcon(brokenLinkSvg, 'broken-link', { className: styles.unused })}<VisuallyHidden>Not used by the entry page</VisuallyHidden></span>}
+          {broken && <span id={markerId(n.id, 'error')} aria-hidden="true">{svgIcon(highPrioritySvg, 'high-priority', { className: styles.errorIcon })}<VisuallyHidden>Has an error</VisuallyHidden></span>}
           {unsaved && <span id={markerId(n.id, 'dirty')} className={styles.dirty} data-dirty="" aria-hidden="true"><VisuallyHidden>Unsaved changes</VisuallyHidden></span>}
         </span>
       ) : undefined;
@@ -373,35 +386,35 @@ export function FileTree({ state, dispatch, onOpen, onOpenToSide, errorPaths, di
     if (!menu) return [];
     if (menu.id === null) {
       return [
-        { id: 'new-file', label: 'New file…', icon: <FilePlus />, shortcut: 'Alt+N' },
-        { id: 'new-folder', label: 'New folder…', icon: <FolderPlus />, shortcut: 'Alt+Shift+N' },
-        { id: 'import', label: 'Import ZIP…', icon: <FolderInput />, disabled: true, description: 'Arrives with project import' },
+        { id: 'new-file', label: 'New file…', icon: svgIcon(addDocumentSvg, 'add-document'), shortcut: 'Alt+N' },
+        { id: 'new-folder', label: 'New folder…', icon: svgIcon(addFolderSvg, 'add-folder'), shortcut: 'Alt+Shift+N' },
+        { id: 'import', label: 'Import ZIP…', icon: svgIcon(browseFolderSvg, 'browse-folder'), disabled: true, description: 'Arrives with project import' },
       ];
     }
     const blocked = deleteBlocked(menu.id);
-    const del: MenuEntry = { id: 'delete', label: 'Delete', icon: <Trash2 />, shortcut: 'Del', destructive: true, disabled: !!blocked, description: blocked ?? undefined };
+    const del: MenuEntry = { id: 'delete', label: 'Delete', icon: svgIcon(deleteSvg, 'delete'), shortcut: 'Del', destructive: true, disabled: !!blocked, description: blocked ?? undefined };
     if (isFolderId(menu.id)) {
       return [
-        { id: 'new-file', label: 'New file…', icon: <FilePlus /> },
-        { id: 'new-folder', label: 'New folder…', icon: <FolderPlus /> },
-        ...(onCreateComponent ? [{ id: 'create-component', label: 'Create component…', icon: <Boxes /> }] : []),
-        { id: 'rename', label: 'Rename', icon: <Pencil />, shortcut: 'F2' },
-        { id: 'move', label: 'Move to…', icon: <FileOutput /> },
-        { id: 'copy-path', label: 'Copy path', icon: <ClipboardCopy /> },
+        { id: 'new-file', label: 'New file…', icon: svgIcon(addDocumentSvg, 'add-document') },
+        { id: 'new-folder', label: 'New folder…', icon: svgIcon(addFolderSvg, 'add-folder') },
+        ...(onCreateComponent ? [{ id: 'create-component', label: 'Create component…', icon: svgIcon(sapBoxSvg, 'sap-box') }] : []),
+        { id: 'rename', label: 'Rename', icon: svgIcon(editSvg, 'edit'), shortcut: 'F2' },
+        { id: 'move', label: 'Move to…', icon: svgIcon(outboxSvg, 'outbox') },
+        { id: 'copy-path', label: 'Copy path', icon: svgIcon(copySvg, 'copy') },
         { type: 'separator' },
         del,
       ];
     }
     const isTsx = extname(menu.id) === '.tsx';
     return [
-      { id: 'open', label: 'Open', icon: <FileCode /> },
-      ...(onOpenToSide ? [{ id: 'open-side', label: 'Open to the side', icon: <Columns2 />, shortcut: 'Ctrl+Enter' }] : []),
-      { id: 'rename', label: 'Rename', icon: <Pencil />, shortcut: 'F2' },
-      { id: 'move', label: 'Move to…', icon: <FileOutput /> },
-      { id: 'duplicate', label: 'Duplicate', icon: <Copy /> },
-      ...(onCreateComponent ? [{ id: 'create-component', label: 'Create component…', icon: <Boxes /> }] : []),
-      { id: 'copy-path', label: 'Copy path', icon: <ClipboardCopy /> },
-      ...(isTsx ? [{ id: 'entry', label: 'Set as entry', icon: <Star />, disabled: menu.id === entry }] : []),
+      { id: 'open', label: 'Open', icon: svgIcon(sourceCodeSvg, 'source-code') },
+      ...(onOpenToSide ? [{ id: 'open-side', label: 'Open to the side', icon: svgIcon(screenSplitTwoSvg, 'screen-split-two'), shortcut: 'Ctrl+Enter' }] : []),
+      { id: 'rename', label: 'Rename', icon: svgIcon(editSvg, 'edit'), shortcut: 'F2' },
+      { id: 'move', label: 'Move to…', icon: svgIcon(outboxSvg, 'outbox') },
+      { id: 'duplicate', label: 'Duplicate', icon: svgIcon(copySvg, 'copy') },
+      ...(onCreateComponent ? [{ id: 'create-component', label: 'Create component…', icon: svgIcon(sapBoxSvg, 'sap-box') }] : []),
+      { id: 'copy-path', label: 'Copy path', icon: svgIcon(copySvg, 'copy') },
+      ...(isTsx ? [{ id: 'entry', label: 'Set as entry', icon: svgIcon(favoriteSvg, 'favorite'), disabled: menu.id === entry }] : []),
       { type: 'separator' },
       del,
     ];
@@ -589,13 +602,13 @@ export function FileTree({ state, dispatch, onOpen, onOpenToSide, errorPaths, di
         </h2>
         <span className={styles.actions}>
           <Tooltip content={fileCount >= 200 ? MESSAGES.files : 'New file (Alt+N)'}>
-            <IconButton size="sm" variant="tertiary" icon={<FilePlus />} label="New file" hideTitle aria-disabled={fileCount >= 200 || undefined} onClick={() => startCreate('file')} />
+            <IconButton size="sm" variant="tertiary" icon={svgIcon(addDocumentSvg, 'add-document')} label="New file" hideTitle aria-disabled={fileCount >= 200 || undefined} onClick={() => startCreate('file')} />
           </Tooltip>
           <Tooltip content="New folder (Alt+Shift+N)">
-            <IconButton size="sm" variant="tertiary" icon={<FolderPlus />} label="New folder" hideTitle onClick={() => startCreate('folder')} />
+            <IconButton size="sm" variant="tertiary" icon={svgIcon(addFolderSvg, 'add-folder')} label="New folder" hideTitle onClick={() => startCreate('folder')} />
           </Tooltip>
           <Tooltip content="Collapse all">
-            <IconButton size="sm" variant="tertiary" icon={<ChevronsDownUp />} label="Collapse all" hideTitle onClick={collapseAll} />
+            <IconButton size="sm" variant="tertiary" icon={svgIcon(collapseAllSvg, 'collapse-all')} label="Collapse all" hideTitle onClick={collapseAll} />
           </Tooltip>
           <OverflowMenu
             label="More file actions"
@@ -760,7 +773,7 @@ function MoveDialog({ id, files, onClose, onMove, announce }: MoveDialogProps) {
   const from = pathOf(id);
   const name = basename(from);
   const folderNodes = useMemo(() => {
-    const strip = (list: FileNode[]): FileNode[] => list.filter((n) => n.folder).map((n) => ({ ...n, icon: <Folder />, children: strip(n.children ?? []) }));
+    const strip = (list: FileNode[]): FileNode[] => list.filter((n) => n.folder).map((n) => ({ ...n, icon: svgIcon(folderBlankSvg, 'folder-blank'), children: strip(n.children ?? []) }));
     return strip(buildTreeNodes(files, ''));
   }, [files]);
   const [target, setTarget] = useState<FilePath>(dirname(from) || 'src');

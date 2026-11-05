@@ -39,9 +39,10 @@ describe('Form and FormItem', () => {
 });
 describe('Icon', () => {
   it('exposes informative icons and hides decorative ones', () => {
-    const { rerender } = renderWithTheme(<Icon label="Alert"><svg /></Icon>);
-    expect(screen.getByRole('img', { name: 'Alert' })).toBeInTheDocument();
-    rerender(<Icon><svg /></Icon>); expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    const { rerender, container } = renderWithTheme(<Icon name="alert" label="Alert" />);
+    expect(screen.getByRole('img', { name: 'Alert' }).tagName.toLowerCase()).toBe('svg');
+    rerender(<Icon name="alert" />); expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    expect(container.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
   });
 });
 describe('InputIcon', () => {

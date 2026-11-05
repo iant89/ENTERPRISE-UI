@@ -1,15 +1,17 @@
-import { forwardRef, type ReactNode } from 'react';
-import { Sparkles } from 'lucide-react';
+import { forwardRef } from 'react';
 import { cx } from '../../utilities/cx';
 import { Button, type ButtonProps } from '../button';
 import styles from './AIButton.module.css';
+import aiSvg from '../../assets/icons/ai.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+import { type IconSource } from '../../icons/IconSource';
 
 /** A named visual state of an AIButton (replaces UI5 `ButtonState`). */
 export interface AIButtonState {
   name: string;
   label: string;
-  icon?: ReactNode;
-  endIcon?: ReactNode;
+  icon?: IconSource;
+  endIcon?: IconSource;
   /** Marks a working state: the button is announced as busy. */
   busy?: boolean;
 }
@@ -30,7 +32,7 @@ export const AIButton = forwardRef<HTMLButtonElement, AIButtonProps>(function AI
         ref={ref}
         variant={variant}
         className={cx(styles.button, current?.busy && styles.busy, className)}
-        icon={current?.icon ?? <Sparkles />}
+        icon={current?.icon ?? svgIcon(aiSvg, 'ai')}
         iconEnd={current?.endIcon}
         aria-busy={current?.busy || undefined}
         {...rest}

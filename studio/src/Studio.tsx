@@ -1,10 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import {
-  ApplicationHeader, BusyIndicator, VisuallyHidden, Button, IconButton, MessageStrip, SegmentedButton, Select, ThemeProvider, THEMES, ToastProvider, useAnnouncer, useToast,
-  type Density, type ThemeName, type ThemePreference,
-} from '@enterprise-ui/react';
+import { ApplicationHeader, BusyIndicator, VisuallyHidden, Button, IconButton, MessageStrip, SegmentedButton, Select, ThemeProvider, THEMES, ToastProvider, useAnnouncer, useToast, type Density, type ThemeName, type ThemePreference } from '@enterprise-ui/react';
 import { cx } from '../../src/utilities/cx';
-import { BookOpen, Boxes, ChevronDown, Pin, PinOff, ChevronRight, Download, FilePlus2, Redo2, Sparkles, Undo2 } from 'lucide-react';
 import { useDocsSettings } from '../../docs/src/settings';
 import { decodePlaygroundCode, playgroundCodeParam } from '../../docs/src/playgroundLink';
 import { Canvas, type DropTarget } from './Canvas';
@@ -59,6 +55,18 @@ import type { Problem } from './panels/bottom/BottomPanel';
 import {
   DEFAULT_LAYOUT, UNSAVED_PROJECT_KEY, errorLine, layoutReducer, recordLayoutStore, type LayoutState, type ViewportId, type Workspace,
 } from './app/workspace/layout';
+import addDocumentSvg from '../../src/assets/icons/add-document.svg?raw';
+import aiSvg from '../../src/assets/icons/ai.svg?raw';
+import courseBookSvg from '../../src/assets/icons/course-book.svg?raw';
+import downloadSvg from '../../src/assets/icons/download.svg?raw';
+import pushpinOffSvg from '../../src/assets/icons/pushpin-off.svg?raw';
+import pushpinOnSvg from '../../src/assets/icons/pushpin-on.svg?raw';
+import redoSvg from '../../src/assets/icons/redo.svg?raw';
+import sapBoxSvg from '../../src/assets/icons/sap-box.svg?raw';
+import slimArrowDownSvg from '../../src/assets/icons/slim-arrow-down.svg?raw';
+import slimArrowRightSvg from '../../src/assets/icons/slim-arrow-right.svg?raw';
+import undoSvg from '../../src/assets/icons/undo.svg?raw';
+import { svgIcon } from '../../src/icons/svgIcon';
 
 const CodeEditor = lazy(() => import('./editor/CodeEditor').then((m) => ({ default: m.CodeEditor })));
 
@@ -497,7 +505,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     <IconButton
       size="sm"
       variant="tertiary"
-      icon={collapsed[pane] ? <ChevronRight /> : <ChevronDown />}
+      icon={collapsed[pane] ? svgIcon(slimArrowRightSvg, 'slim-arrow-right') : svgIcon(slimArrowDownSvg, 'slim-arrow-down')}
       label={`${collapsed[pane] ? 'Expand' : 'Collapse'} ${title}`}
       aria-expanded={!collapsed[pane]}
       aria-controls={`${pane}-body`}
@@ -605,7 +613,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
       <div>
         <div className={styles.docsBottomBar}>
           <span data-testid="component-docs-mode">{bottomDocsPin ? `Pinned · ${bottomPage?.name ?? ''}` : bottomPage ? `Follows cursor · ${bottomPage.name} (${activePath.split('/').pop()}:${cursor.line})` : 'Follows cursor'}</span>
-          {bottomPage && <IconButton size="sm" variant="tertiary" icon={bottomDocsPin ? <PinOff /> : <Pin />} label={bottomDocsPin ? 'Unpin component docs' : 'Pin component docs'} aria-pressed={!!bottomDocsPin}
+          {bottomPage && <IconButton size="sm" variant="tertiary" icon={bottomDocsPin ? svgIcon(pushpinOffSvg, 'pushpin-off') : svgIcon(pushpinOnSvg, 'pushpin-on')} label={bottomDocsPin ? 'Unpin component docs' : 'Pin component docs'} aria-pressed={!!bottomDocsPin}
             onMouseDown={(e) => e.preventDefault()} onClick={() => setBottomDocsPin(bottomDocsPin ? null : bottomPage.id)} />}
         </div>
         {bottomPage ? pageView(bottomPage, true) : <p className={styles.docsBottomEmpty}>Place the cursor on a component in the editor to see its documentation.</p>}
@@ -621,7 +629,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
     };
     /** C5 decision 5a: Create component at the end of the tab row. */
     const createComponentButton = (
-      <IconButton size="sm" variant="tertiary" icon={<Boxes />} label="Create component" data-testid="tab-create-component"
+      <IconButton size="sm" variant="tertiary" icon={svgIcon(sapBoxSvg, 'sap-box')} label="Create component" data-testid="tab-create-component"
         onClick={(e) => setCreateDest(destinationFromActive(activePath, project.files), e.currentTarget)} />
     );
     const themeLabel = THEMES.find((t) => t.name === resolved)?.label ?? resolved;
@@ -790,13 +798,15 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
       <ApplicationHeader
         productName="Enterprise UI Studio"
         homeHref="./"
+        user={{ name: 'Guest' }}
+        onHelpClick={() => { window.location.href = '../'; }}
         actions={(
           <div className={styles.headerActions}>
-            <IconButton size="sm" variant="tertiary" icon={<Undo2 />} label="Undo" disabled={!state.past.length} onClick={() => dispatch({ type: 'undo' })} />
-            <IconButton size="sm" variant="tertiary" icon={<Redo2 />} label="Redo" disabled={!state.future.length} onClick={() => dispatch({ type: 'redo' })} />
-            <IconButton size="sm" variant="tertiary" icon={<Sparkles />} label="Format code" onClick={() => void format()} />
-            <IconButton size="sm" variant="tertiary" icon={<FilePlus2 />} label="New page" onClick={() => { commitEntry(STARTER); setSelectedId(null); }} />
-            <IconButton size="sm" variant="tertiary" icon={<Download />} label="Download App.tsx" onClick={download} />
+            <IconButton size="sm" variant="tertiary" icon={svgIcon(undoSvg, 'undo')} label="Undo" disabled={!state.past.length} onClick={() => dispatch({ type: 'undo' })} />
+            <IconButton size="sm" variant="tertiary" icon={svgIcon(redoSvg, 'redo')} label="Redo" disabled={!state.future.length} onClick={() => dispatch({ type: 'redo' })} />
+            <IconButton size="sm" variant="tertiary" icon={svgIcon(aiSvg, 'ai')} label="Format code" onClick={() => void format()} />
+            <IconButton size="sm" variant="tertiary" icon={svgIcon(addDocumentSvg, 'add-document')} label="New page" onClick={() => { commitEntry(STARTER); setSelectedId(null); }} />
+            <IconButton size="sm" variant="tertiary" icon={svgIcon(downloadSvg, 'download')} label="Download App.tsx" onClick={download} />
             <Select
               size="sm"
               label="Theme"
@@ -805,7 +815,7 @@ function StudioApp({ theme, setTheme, density }: StudioAppProps) {
               onChange={(v) => v && setTheme(v as ThemePreference)}
               options={[{ value: 'system', label: 'System theme' }, ...THEMES.map((t) => ({ value: t.name, label: t.label }))]}
             />
-            <Button size="sm" variant="tertiary" icon={<BookOpen />} onClick={() => { window.location.href = '../'; }}>Docs</Button>
+            <Button size="sm" variant="tertiary" icon={svgIcon(courseBookSvg, 'course-book')} onClick={() => { window.location.href = '../'; }}>Docs</Button>
           </div>
         )}
       />

@@ -1,10 +1,11 @@
 import { useEffect, useRef, type ReactNode } from 'react';
-import { ArrowLeft } from 'lucide-react';
 import { breakpoints } from '../../tokens';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { Button } from '../../components/button';
 import { SplitView } from '../../layouts/split-view';
 import styles from './MasterDetail.module.css';
+import arrowLeftSvg from '../../assets/icons/arrow-left.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface MasterDetailProps {
   /** The list of objects (master). */
@@ -69,7 +70,7 @@ export function MasterDetail({
           <section ref={pane} tabIndex={-1} className={styles.pane} aria-label={detailLabel}>
             {onBack && (
               <div className={styles.backBar}>
-                <Button ref={back} variant="tertiary" icon={<ArrowLeft />} onClick={onBack}>
+                <Button ref={back} variant="tertiary" icon={svgIcon(arrowLeftSvg, 'arrow-left')} onClick={onBack}>
                   {backLabel}
                 </Button>
               </div>

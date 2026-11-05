@@ -1,5 +1,4 @@
-import { ExternalLink } from 'lucide-react';
-import { Card, Grid, List, MessageStrip, Page, Table, ThemeProvider } from '@enterprise-ui/react';
+import { Card, Grid, List, MessageStrip, Page, Table, ThemeProvider, Icon } from '@enterprise-ui/react';
 import { docs } from '../registry';
 import { href } from '../router';
 import InventoryApp from '../../../examples/apps/InventoryApp';
@@ -20,7 +19,7 @@ export function Layouts() {
       breadcrumbs={[{ label: 'Docs', href: '#/' }, { label: 'Guides' }, { label: 'Layouts' }]}
       actions={
         <a href={href('/demo')} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}>
-          Open demo full screen <ExternalLink size={14} aria-hidden="true" />
+          Open demo full screen <Icon name="action" size={14} aria-hidden="true" />
           <span className="eui-visually-hidden">(opens in a new tab)</span>
         </a>
       }

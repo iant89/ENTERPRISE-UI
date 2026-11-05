@@ -2,6 +2,7 @@ import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
 import { cx } from '../../utilities/cx';
 import type { Tone } from '../../utilities/types';
 import styles from './Badge.module.css';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   /** Badge text. Omit and set `count` for a numeric counter. */
@@ -19,7 +20,7 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   /** Render only a small dot (requires `aria-label` for meaning). @default false */
   dot?: boolean;
   /** Icon shown before the badge text. */
-  icon?: ReactNode;
+  icon?: IconSource;
 }
 
 /** Compact label or counter for status, categories and notification counts. */
@@ -36,7 +37,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       className={cx(styles.badge, styles[tone], (solid || isCount || dot) && styles.solid, isCount && styles.count, dot && styles.dot, className)}
       {...rest}
     >
-      {!dot && icon && <span aria-hidden="true">{icon}</span>}
+      {!dot && icon && <span aria-hidden="true">{renderIconSource(icon)}</span>}
       {!dot && (isCount ? (count > max ? `${max}+` : count) : <span className={styles.label}>{children}</span>)}
     </span>
   );

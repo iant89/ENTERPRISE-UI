@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { hostBridge, type FrameMessages } from '../../../studio/src/preview/bridge';
-import { Check, ChevronLeft, Copy, RotateCcw } from 'lucide-react';
-import { Button } from '@enterprise-ui/react';
+import { Button, Icon } from '@enterprise-ui/react';
 import type { Density, ThemePreference } from '@enterprise-ui/react';
 import { playgrounds } from '../playgrounds';
 import { docsBySlug } from '../registry';
@@ -59,7 +58,7 @@ export function PlaygroundPage({ initialSlug, theme, density }: { initialSlug: s
   };
   return <main className={styles.page}>
     <header className={styles.header}>
-      <a className={styles.back} href={href(`/components/${slug}`)}><ChevronLeft size={16} /> Documentation</a>
+      <a className={styles.back} href={href(`/components/${slug}`)}><Icon name="slim-arrow-left" size={16} /> Documentation</a>
       <div className={styles.heading}><span className={styles.eyebrow}>ENTERPRISE UI / WORKSPACE</span><h1>Component playground</h1></div>
       <div className={styles.headerRight}><span className={styles.live}><span /> Live preview</span><a className={styles.allLink} href={href('/components')}>All components ↗</a></div>
     </header>
@@ -70,7 +69,7 @@ export function PlaygroundPage({ initialSlug, theme, density }: { initialSlug: s
         <div className={styles.panelFoot}><span><span className={styles.dot} /> {error ? 'Preview needs attention' : ready ? 'Preview is ready' : 'Starting preview…'}</span><span>ISOLATED RENDER</span></div>
       </section>
       <section className={styles.panel} aria-labelledby="editor-heading">
-        <div className={styles.panelBar}><div><span className={styles.panelIndex}>02 / SOURCE</span><h2 id="editor-heading">Editor</h2></div><div className={styles.actions}><Button size="sm" icon={<RotateCcw />} onClick={() => { setCode(initialCode ?? defaultsFor(slug)); setError(''); }}>Reset</Button><Button size="sm" variant="primary" icon={copied ? <Check /> : <Copy />} onClick={() => void copy()}>{copied ? 'Copied' : 'Copy code'}</Button></div></div>
+        <div className={styles.panelBar}><div><span className={styles.panelIndex}>02 / SOURCE</span><h2 id="editor-heading">Editor</h2></div><div className={styles.actions}><Button size="sm" icon={<Icon name="reset" />} onClick={() => { setCode(initialCode ?? defaultsFor(slug)); setError(''); }}>Reset</Button><Button size="sm" variant="primary" icon={copied ? <Icon name="accept" /> : <Icon name="copy" />} onClick={() => void copy()}>{copied ? 'Copied' : 'Copy code'}</Button></div></div>
         <div className={styles.fileBar}><span className={styles.fileIcon}>✳</span><span>Example.tsx</span><span className={styles.fileMeta}>TSX</span></div>
         <div className={styles.editorWrap}><textarea className={styles.editor} aria-label={`${name} playground code`} spellCheck={false} value={code} onChange={(event) => setCode(event.target.value)} /></div>
         {error && <div className={styles.error} role="alert"><strong>Preview error</strong><span>{error}</span></div>}

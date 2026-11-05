@@ -1,14 +1,20 @@
 import { useRef, type KeyboardEvent, type ReactNode } from 'react';
-import { BookOpen, Boxes, Files, Search } from 'lucide-react';
 import { cx } from '../../../../src/utilities/cx';
 import { ACTIVITIES, type Activity } from './layout';
 import styles from './CodeWorkspace.module.css';
+import courseBookSvg from '../../../../src/assets/icons/course-book.svg?raw';
+import documentsSvg from '../../../../src/assets/icons/documents.svg?raw';
+import gridSvg from '../../../../src/assets/icons/grid.svg?raw';
+import sapBoxSvg from '../../../../src/assets/icons/sap-box.svg?raw';
+import searchSvg from '../../../../src/assets/icons/search.svg?raw';
+import { svgIcon } from '../../../../src/icons/svgIcon';
 
 export const ACTIVITY_META: Record<Activity, { label: string; icon: ReactNode }> = {
-  explorer: { label: 'Explorer', icon: <Files aria-hidden="true" /> },
-  search: { label: 'Search', icon: <Search aria-hidden="true" /> },
-  components: { label: 'Components', icon: <Boxes aria-hidden="true" /> },
-  docs: { label: 'Docs', icon: <BookOpen aria-hidden="true" /> },
+  explorer: { label: 'Explorer', icon: svgIcon(documentsSvg, 'documents', { 'aria-hidden': "true" }) },
+  search: { label: 'Search', icon: svgIcon(searchSvg, 'search', { 'aria-hidden': "true" }) },
+  components: { label: 'Components', icon: svgIcon(sapBoxSvg, 'sap-box', { 'aria-hidden': "true" }) },
+  icons: { label: 'Icons', icon: svgIcon(gridSvg, 'grid', { 'aria-hidden': "true" }) },
+  docs: { label: 'Docs', icon: svgIcon(courseBookSvg, 'course-book', { 'aria-hidden': "true" }) },
 };
 
 export const activityTabId = (a: Activity) => `activity-tab-${a}`;

@@ -1,14 +1,16 @@
 import { useMemo, useRef, useState, type KeyboardEvent, type ReactNode, type CSSProperties } from 'react';
-import { ChevronRight } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { findTypeaheadIndex } from '../../utilities/keyboard';
 import { useControllableState } from '../../hooks/useControllableState';
 import styles from './Tree.module.css';
+import slimArrowRightSvg from '../../assets/icons/slim-arrow-right.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 export interface TreeNode {
   id: string;
   label: string;
-  icon?: ReactNode;
+  icon?: IconSource;
   /** Trailing content (badge, count). */
   trailing?: ReactNode;
   children?: TreeNode[];
@@ -169,9 +171,9 @@ export function Tree({ nodes, 'aria-label': ariaLabel, expandedIds, defaultExpan
             }}
           >
             <span className={styles.toggle} aria-hidden="true">
-              {hasChildren && <ChevronRight />}
+              {hasChildren && svgIcon(slimArrowRightSvg, 'slim-arrow-right')}
             </span>
-            {node.icon && <span className={styles.icon} aria-hidden="true">{node.icon}</span>}
+            {node.icon && <span className={styles.icon} aria-hidden="true">{renderIconSource(node.icon)}</span>}
             <span className={styles.label}>{node.label}</span>
             {node.trailing && <span className={styles.trailing}>{node.trailing}</span>}
           </div>

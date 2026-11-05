@@ -1,5 +1,4 @@
-import { Download, Plus } from 'lucide-react';
-import { Button, DataGrid, ObjectIdentifier, StatusIndicator, type DataGridColumn } from '@enterprise-ui/react';
+import { Button, DataGrid, ObjectIdentifier, StatusIndicator, type DataGridColumn, Icon } from '@enterprise-ui/react';
 import { categoryOptions, currency, products, statusTone, type Product } from '../data';
 
 export const title = 'Product inventory';
@@ -32,8 +31,8 @@ export default function DataGridBasic() {
       pageSizeOptions={[8, 16, 24]}
       toolbarActions={
         <>
-          <Button size="sm" icon={<Download />} variant="tertiary">Export</Button>
-          <Button size="sm" icon={<Plus />} variant="primary">Create</Button>
+          <Button size="sm" icon={<Icon name="download" />} variant="tertiary">Export</Button>
+          <Button size="sm" icon={<Icon name="add" />} variant="primary">Create</Button>
         </>
       }
       selectionActions={(ids) => (

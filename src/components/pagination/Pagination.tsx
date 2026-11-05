@@ -1,10 +1,14 @@
 import { forwardRef, type HTMLAttributes } from 'react';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { Button } from '../button';
 import { IconButton } from '../icon-button';
 import { Select } from '../select';
 import styles from './Pagination.module.css';
+import closeCommandFieldSvg from '../../assets/icons/close-command-field.svg?raw';
+import openCommandFieldSvg from '../../assets/icons/open-command-field.svg?raw';
+import slimArrowLeftSvg from '../../assets/icons/slim-arrow-left.svg?raw';
+import slimArrowRightSvg from '../../assets/icons/slim-arrow-right.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 /** Override visible and accessible pagination text; format numeric values with the host locale. */
 export interface PaginationMessages {
@@ -103,11 +107,11 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagi
         <ul className={styles.list}>
           {showFirstLast && (
             <li>
-              <IconButton icon={<ChevronsLeft />} label={text.firstPage} size="sm" disabled={current === 1} onClick={() => go(1)} />
+              <IconButton icon={svgIcon(closeCommandFieldSvg, 'close-command-field')} label={text.firstPage} size="sm" disabled={current === 1} onClick={() => go(1)} />
             </li>
           )}
           <li>
-            <IconButton icon={<ChevronLeft />} label={text.previousPage} size="sm" disabled={current === 1} onClick={() => go(current - 1)} />
+            <IconButton icon={svgIcon(slimArrowLeftSvg, 'slim-arrow-left')} label={text.previousPage} size="sm" disabled={current === 1} onClick={() => go(current - 1)} />
           </li>
           <li className={styles.pages}>
             {getPageRange(current, pageCount, siblingCount).map((p, i) =>
@@ -134,11 +138,11 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagi
             {text.compactPage(current, pageCount)}
           </li>
           <li>
-            <IconButton icon={<ChevronRight />} label={text.nextPage} size="sm" disabled={current === pageCount} onClick={() => go(current + 1)} />
+            <IconButton icon={svgIcon(slimArrowRightSvg, 'slim-arrow-right')} label={text.nextPage} size="sm" disabled={current === pageCount} onClick={() => go(current + 1)} />
           </li>
           {showFirstLast && (
             <li>
-              <IconButton icon={<ChevronsRight />} label={text.lastPage} size="sm" disabled={current === pageCount} onClick={() => go(pageCount)} />
+              <IconButton icon={svgIcon(openCommandFieldSvg, 'open-command-field')} label={text.lastPage} size="sm" disabled={current === pageCount} onClick={() => go(pageCount)} />
             </li>
           )}
         </ul>

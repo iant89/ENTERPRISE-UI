@@ -1,11 +1,13 @@
 import { Fragment, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { Check, ChevronRight } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { findTypeaheadIndex, getNavigationIndex } from '../../utilities/keyboard';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useId } from '../../hooks/useId';
 import { listHighlightLabel, readListItems, type ListItemHighlight } from './items';
 import styles from './List.module.css';
+import acceptSvg from '../../assets/icons/accept.svg?raw';
+import slimArrowRightSvg from '../../assets/icons/slim-arrow-right.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface ListItemData {
   id: string;
@@ -93,7 +95,7 @@ export function List({
     <>
       {selectionMode === 'multiple' && (
         <span className={styles.check} aria-hidden="true">
-          {selected.includes(item.id) && <Check />}
+          {selected.includes(item.id) && svgIcon(acceptSvg, 'accept')}
         </span>
       )}
       {item.leading && <span className={styles.leading}>{item.leading}</span>}
@@ -110,7 +112,7 @@ export function List({
       )}
       {showChevron && (
         <span className={styles.chevron} aria-hidden="true">
-          <ChevronRight />
+          {svgIcon(slimArrowRightSvg, 'slim-arrow-right')}
         </span>
       )}
     </>

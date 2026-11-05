@@ -1,7 +1,7 @@
 import { Button, Card, MessageStrip, Page, Stack } from '@enterprise-ui/react';
 import { CodeBlock } from '../components/CodeBlock';
 
-const install = `npm install @enterprise-ui/react lucide-react
+const install = `npm install @enterprise-ui/react
 # peer dependencies
 npm install react react-dom`;
 
@@ -34,9 +34,8 @@ export function Dashboard() {
   );
 }`;
 
-const shell = `import { Home, Package } from 'lucide-react';
-import {
-  AppShell, ApplicationHeader, SideNavigation, NavigationItem, Page, Button,
+const shell = `import {
+  AppShell, Icon, ApplicationHeader, SideNavigation, NavigationItem, Page, Button,
 } from '@enterprise-ui/react';
 
 export function App() {
@@ -45,8 +44,8 @@ export function App() {
       header={<ApplicationHeader productName="Northwind" user={{ name: 'Ada Lovelace' }} />}
       navigation={
         <SideNavigation activeId="products">
-          <NavigationItem id="home" label="Home" icon={<Home />} href="/" />
-          <NavigationItem id="products" label="Products" icon={<Package />} href="/products" />
+          <NavigationItem id="home" label="Home" icon={<Icon name="home" />} href="/" />
+          <NavigationItem id="products" label="Products" icon={<Icon name="product" />} href="/products" />
         </SideNavigation>
       }
     >
@@ -83,7 +82,7 @@ export function GettingStarted() {
     <Page title="Getting started" subtitle="Install the package, load the stylesheet, wrap your app and start composing." breadcrumbs={[{ label: 'Docs', href: '#/' }, { label: 'Getting started' }]} width="contained">
       <div className="prose">
         <h2>1. Install</h2>
-        <p>The library ships as ES modules with TypeScript declarations. React and React DOM (18.2 or newer) are peer dependencies; icons come from Lucide.</p>
+        <p>The library ships as ES modules with TypeScript declarations. React and React DOM (18.2 or newer) are peer dependencies; icons come from the bundled SAP icon set (see Foundations › Icons).</p>
       </div>
       <CodeBlock code={install} language="shell" label="Installation commands" />
 

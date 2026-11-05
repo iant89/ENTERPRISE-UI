@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react';
 import { Button, IconButton, SearchField, Text } from '@enterprise-ui/react';
-import { BookOpen, Plus } from 'lucide-react';
 import { catalog, categories } from './model/catalog';
 import { COMPONENT_MIME } from './Canvas';
 import styles from './Studio.module.css';
+import addSvg from '../../src/assets/icons/add.svg?raw';
+import courseBookSvg from '../../src/assets/icons/course-book.svg?raw';
+import { svgIcon } from '../../src/icons/svgIcon';
 
 export interface PaletteProps {
   /** Inserts the component at the current selection (keyboard alternative to dragging). */
@@ -35,7 +37,7 @@ export function Palette({ onInsert, onDocs }: PaletteProps) {
                   <Button
                     size="sm"
                     variant="tertiary"
-                    icon={<Plus />}
+                    icon={svgIcon(addSvg, 'add')}
                     className={styles.paletteItem}
                     draggable
                     title={item.summary}
@@ -46,7 +48,7 @@ export function Palette({ onInsert, onDocs }: PaletteProps) {
                   >
                     {item.name}
                   </Button>
-                  {onDocs && <IconButton size="sm" variant="tertiary" icon={<BookOpen />} label={`${item.name} docs`} className={styles.paletteDocs} onClick={() => onDocs(item.name)} />}
+                  {onDocs && <IconButton size="sm" variant="tertiary" icon={svgIcon(courseBookSvg, 'course-book')} label={`${item.name} docs`} className={styles.paletteDocs} onClick={() => onDocs(item.name)} />}
                 </li>
               ))}
             </ul>

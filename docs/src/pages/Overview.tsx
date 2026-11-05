@@ -1,7 +1,4 @@
-import { ArrowRight, Accessibility, Boxes, Code2, MonitorSmartphone, Palette, Rows3, SwatchBook } from 'lucide-react';
-import {
-  Badge, Button, Card, Grid, Input, List, MetricCard, ObjectIdentifier, Select, Stack, StatusIndicator, Table, THEMES, ThemeProvider,
-} from '@enterprise-ui/react';
+import { Badge, Button, Card, Grid, Input, List, MetricCard, ObjectIdentifier, Select, Stack, StatusIndicator, Table, THEMES, ThemeProvider, Icon } from '@enterprise-ui/react';
 import { categories, docs } from '../registry';
 
 /** Distinct components documented across all pages (one page can cover several, e.g. Tabs + Tab). */
@@ -11,12 +8,12 @@ import { products, statusTone, currency } from '../../../examples/data';
 import styles from './Pages.module.css';
 
 const features = [
-  { icon: <SwatchBook />, title: 'Design tokens', text: 'One token system for color, spacing, typography, radii, shadows, motion and density — as CSS custom properties.', path: '/tokens' },
-  { icon: <Palette />, title: 'Light, dark, high contrast & SAP', text: `${THEMES.length} themes — Light, Dark and High contrast, plus SAP Morning Horizon, Evening Horizon, Quartz Light and Quartz Dark. Each passes axe contrast checks, switches at runtime and can be scoped per subtree.`, path: '/themes' },
-  { icon: <Accessibility />, title: 'Accessible by default', text: 'Semantic HTML, WAI-ARIA patterns, keyboard support, focus management and live announcements.', path: '/accessibility' },
-  { icon: <MonitorSmartphone />, title: 'Responsive', text: 'Shell, tables, forms and patterns adapt from desktop to tablet and phone with touch-friendly targets.', path: '/layouts' },
-  { icon: <Rows3 />, title: 'Enterprise patterns', text: 'List reports, object pages, master–detail, wizards and dashboards composed from the same parts.', path: '/patterns' },
-  { icon: <Code2 />, title: 'Typed & tree-shakeable', text: 'Strict TypeScript APIs, ESM per component, React as a peer dependency, one importable stylesheet.', path: '/getting-started' },
+  { icon: <Icon name="palette" />, title: 'Design tokens', text: 'One token system for color, spacing, typography, radii, shadows, motion and density — as CSS custom properties.', path: '/tokens' },
+  { icon: <Icon name="palette" />, title: 'Light, dark, high contrast & SAP', text: `${THEMES.length} themes — Light, Dark and High contrast, plus SAP Morning Horizon, Evening Horizon, Quartz Light and Quartz Dark. Each passes axe contrast checks, switches at runtime and can be scoped per subtree.`, path: '/themes' },
+  { icon: <Icon name="accessibility" />, title: 'Accessible by default', text: 'Semantic HTML, WAI-ARIA patterns, keyboard support, focus management and live announcements.', path: '/accessibility' },
+  { icon: <Icon name="desktop-mobile" />, title: 'Responsive', text: 'Shell, tables, forms and patterns adapt from desktop to tablet and phone with touch-friendly targets.', path: '/layouts' },
+  { icon: <Icon name="table-row" />, title: 'Enterprise patterns', text: 'List reports, object pages, master–detail, wizards and dashboards composed from the same parts.', path: '/patterns' },
+  { icon: <Icon name="source-code" />, title: 'Typed & tree-shakeable', text: 'Strict TypeScript APIs, ESM per component, React as a peer dependency, one importable stylesheet.', path: '/getting-started' },
 ];
 
 function HeroPreview() {
@@ -58,10 +55,10 @@ export function Overview() {
             </p>
             <div className={styles.heroActions}>
               <a className={styles.heroButtonPrimary} href={href('/getting-started')}>
-                Get started <ArrowRight size={16} aria-hidden="true" />
+                Get started <Icon name="arrow-right" size={16} aria-hidden="true" />
               </a>
               <a className={styles.heroButtonSecondary} href={href('/demo')}>
-                <Boxes size={16} aria-hidden="true" /> Open the demo app
+                <Icon name="sap-box" size={16} aria-hidden="true" /> Open the demo app
               </a>
             </div>
             <div className={styles.stats}>

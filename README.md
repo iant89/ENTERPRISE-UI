@@ -2,7 +2,7 @@
 
 A React + TypeScript component library for building business applications that look and behave like modern SAP Fiori software, without depending on SAPUI5.
 
-`@enterprise-ui/react` is meant for dashboards, admin panels, ERP, inventory, fleet management and other data-heavy screens. It has its own implementation, design tokens and component APIs. It uses only one runtime dependency, `lucide-react`, for icons.
+`@enterprise-ui/react` is meant for dashboards, admin panels, ERP, inventory, fleet management and other data-heavy screens. It has its own implementation, design tokens and component APIs. Icons go through a pluggable icon system (registry, resolver and providers; see `docs/icon-system.md`): `<Icon name="edit" />` and `<Button icon="enterprise://save">` use the bundled SAP icon set by default, and Font Awesome, Material or your own icons can be registered. `lucide-react` is still listed as a dependency, but the library no longer imports it.
 
 ![Inventory management app built with Enterprise UI Kit: application header, side navigation, filter bar and data grid](docs/screenshots/demo-app.png)
 
@@ -69,13 +69,13 @@ npm run build:lib
 npm pack                      # creates enterprise-ui-react-0.1.0.tgz
 
 # in your application
-npm install /path/to/enterprise-ui-react-0.1.0.tgz lucide-react
+npm install /path/to/enterprise-ui-react-0.1.0.tgz
 ```
 
 Once it is published, this becomes:
 
 ```bash
-npm install @enterprise-ui/react lucide-react
+npm install @enterprise-ui/react
 ```
 
 ## Quick start
@@ -158,8 +158,7 @@ Components are controlled when you pass `value`, `checked` or `open`. Without th
 ### Application shell
 
 ```tsx
-import { Home, Package } from 'lucide-react';
-import { AppShell, ApplicationHeader, Button, NavigationItem, Page, SideNavigation } from '@enterprise-ui/react';
+import { AppShell, ApplicationHeader, Button, Icon, NavigationItem, Page, SideNavigation } from '@enterprise-ui/react';
 
 <AppShell
   header={<ApplicationHeader productName="Northwind" user={{ name: 'Ada Lovelace' }} notificationCount={3} />}
@@ -171,8 +170,8 @@ import { AppShell, ApplicationHeader, Button, NavigationItem, Page, SideNavigati
         router.push(id);
       }}
     >
-      <NavigationItem id="home" label="Home" icon={<Home />} href="/" />
-      <NavigationItem id="catalog" label="Catalog" icon={<Package />}>
+      <NavigationItem id="home" label="Home" icon={<Icon name="home" />} href="/" />
+      <NavigationItem id="catalog" label="Catalog" icon={<Icon name="product" />}>
         <NavigationItem id="products" label="Products" href="/products" />
       </NavigationItem>
     </SideNavigation>

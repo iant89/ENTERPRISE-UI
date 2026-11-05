@@ -9,13 +9,15 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react';
-import { ChevronDown } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { useAppShell } from '../../layouts/app-shell/AppShellContext';
 import { Badge } from '../badge';
 import { DropdownMenu } from '../dropdown-menu';
 import { Tooltip } from '../tooltip';
 import styles from './SideNavigation.module.css';
+import slimArrowDownSvg from '../../assets/icons/slim-arrow-down.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 interface SideNavContextValue {
   activeId?: string;
@@ -90,7 +92,7 @@ export interface NavigationItemProps {
   /** Visible label of the navigation item. Also used as its accessible name. */
   label: string;
   /** Icon shown before the label. It remains visible when the navigation is collapsed. */
-  icon?: ReactNode;
+  icon?: IconSource;
   /** Link target. Items without `href` render as buttons. */
   href?: string;
   /** Count shown as a badge (a dot in collapsed mode). */
@@ -117,7 +119,7 @@ export function NavigationItem({ id, label, icon, href, badge, children, default
 
   const inner = (
     <>
-      {icon && <span className={styles.icon} aria-hidden="true">{icon}</span>}
+      {icon && <span className={styles.icon} aria-hidden="true">{renderIconSource(icon)}</span>}
       <span className={styles.label}>{label}</span>
       {badge !== undefined && badge > 0 && (
         <>
@@ -126,7 +128,7 @@ export function NavigationItem({ id, label, icon, href, badge, children, default
         </>
       )}
       {badge !== undefined && badge > 0 && <span className={styles.dotBadge} aria-hidden="true" />}
-      {hasChildren && <span className={styles.chevron} aria-hidden="true"><ChevronDown /></span>}
+      {hasChildren && <span className={styles.chevron} aria-hidden="true">{svgIcon(slimArrowDownSvg, 'slim-arrow-down')}</span>}
     </>
   );
 

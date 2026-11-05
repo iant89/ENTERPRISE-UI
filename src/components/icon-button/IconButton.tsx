@@ -1,12 +1,13 @@
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import { cx } from '../../utilities/cx';
 import { Spinner } from '../spinner';
 import type { ButtonSize, ButtonVariant } from '../button';
 import styles from '../button/Button.module.css';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   /** The icon to display. */
-  icon: ReactNode;
+  icon: IconSource;
   /** Accessible name — required because the button has no visible text. Also shown as a native tooltip. */
   label: string;
   /** @default 'tertiary' */
@@ -40,7 +41,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
       {...rest}
     >
       <span className={styles.icon} aria-hidden="true">
-        {loading ? <Spinner size="sm" decorative inheritColor /> : icon}
+        {loading ? <Spinner size="sm" decorative inheritColor /> : renderIconSource(icon)}
       </span>
     </button>
   );

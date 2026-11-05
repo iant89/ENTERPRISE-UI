@@ -1,11 +1,15 @@
 import { useEffect, useMemo, useRef, useState, type ClipboardEvent, type HTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
-import { AlertCircle, Copy, Plus, Trash2 } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { useId } from '../../hooks/useId';
 import { useControllableState } from '../../hooks/useControllableState';
 import { formatLocaleNumber, parseLocaleNumber } from '../../utilities/number';
 import { Button } from '../button';
 import styles from './EditableGrid.module.css';
+import addSvg from '../../assets/icons/add.svg?raw';
+import copySvg from '../../assets/icons/copy.svg?raw';
+import deleteSvg from '../../assets/icons/delete.svg?raw';
+import highPrioritySvg from '../../assets/icons/high-priority.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export type EditableCellType = 'text' | 'number' | 'select' | 'checkbox' | 'date';
 
@@ -526,7 +530,7 @@ export function EditableGrid<T extends { id: string }>({
                           title={isDelete ? labels.deleteRow(r + 1) : labels.duplicateRow(r + 1)}
                           onClick={() => (isDelete ? deleteRow(r) : addRow(r, row))}
                         >
-                          {isDelete ? <Trash2 aria-hidden="true" /> : <Copy aria-hidden="true" />}
+                          {isDelete ? svgIcon(deleteSvg, 'delete', { 'aria-hidden': "true" }) : svgIcon(copySvg, 'copy', { 'aria-hidden': "true" })}
                         </button>
                       </td>
                     );
@@ -559,7 +563,7 @@ export function EditableGrid<T extends { id: string }>({
                       ) : (
                         <span className={styles.value}>{column.format ? column.format(value, row) : displayText(column, value)}</span>
                       )}
-                      {shownError && !(editing && focused) && <AlertCircle className={styles.errorIcon} aria-hidden="true" />}
+                      {shownError && !(editing && focused) && svgIcon(highPrioritySvg, 'high-priority', { className: styles.errorIcon, 'aria-hidden': "true" })}
                       {shownError && <span className="eui-visually-hidden">, {shownError}</span>}
                     </td>
                   );
@@ -571,14 +575,14 @@ export function EditableGrid<T extends { id: string }>({
       </div>
       <div className={styles.footer}>
         {createRow && !readOnly && (
-          <Button size="sm" variant="tertiary" icon={<Plus />} onClick={() => addRow()}>
+          <Button size="sm" variant="tertiary" icon={svgIcon(addSvg, 'add')} onClick={() => addRow()}>
             {labels.addRow}
           </Button>
         )}
         <p className={cx(styles.messageBar, focusedError && styles.messageError)} aria-live="polite">
           {focusedError && focusedSlot?.kind === 'data' && (
             <>
-              <AlertCircle aria-hidden="true" />
+              {svgIcon(highPrioritySvg, 'high-priority', { 'aria-hidden': "true" })}
               {labels.location(focus.row + 1, focusedSlot.column.header)}: {focusedError}
             </>
           )}

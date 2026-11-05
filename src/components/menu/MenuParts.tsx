@@ -1,4 +1,5 @@
 import type { MouseEvent, ReactNode } from 'react';
+import { type IconSource } from '../../icons/IconSource';
 
 export interface MenuItemProps {
   /** Id passed to Menu `onAction`. */
@@ -6,7 +7,7 @@ export interface MenuItemProps {
   /** Visible label. */
   label: string;
   /** Icon shown before the text. */
-  icon?: ReactNode;
+  icon?: IconSource;
   /** Secondary text shown below the main text. */
   description?: string;
   /** Keyboard shortcut hint. Display only. */

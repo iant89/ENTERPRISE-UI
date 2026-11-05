@@ -1,11 +1,13 @@
 import { forwardRef, useRef, type InputHTMLAttributes } from 'react';
-import { Search, X } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { useMergedRefs } from '../../utilities/refs';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useFormControl, type FieldProps } from '../form-field';
 import styles from '../input/InputBox.module.css';
 import { Spinner } from '../spinner';
+import declineSvg from '../../assets/icons/decline.svg?raw';
+import searchSvg from '../../assets/icons/search.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface SearchFieldProps
   extends FieldProps,
@@ -59,7 +61,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
       className={cx(styles.box, styles.withStart, size !== 'md' && styles[size], control.status !== 'none' && styles[control.status], control.disabled && styles.disabled)}
     >
       <span className={cx(styles.adornment, styles.startAdornment)} aria-hidden="true">
-        <Search />
+        {svgIcon(searchSvg, 'search')}
       </span>
       <input
         ref={merged}
@@ -89,7 +91,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
       {loading && <Spinner size="sm" label={loadingLabel} />}
       {text && !control.disabled && (
         <button type="button" className={styles.fieldButton} aria-label={clearLabel} onClick={clear}>
-          <X aria-hidden="true" />
+          {svgIcon(declineSvg, 'decline', { 'aria-hidden': "true" })}
         </button>
       )}
     </div>,

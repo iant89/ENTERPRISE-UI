@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { DeclineIcon, MessageErrorIcon, MessageInformationIcon, MessageSuccessIcon, Warning2Icon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { Portal } from '../../utilities/Portal';
 import { useAnnouncer } from '../../themes/ThemeProvider';
@@ -44,7 +44,7 @@ export interface ToastProviderProps {
   limit?: number;
 }
 
-const ICONS = { neutral: MessageInformationIcon, information: MessageInformationIcon, success: MessageSuccessIcon, warning: Warning2Icon, error: MessageErrorIcon } as const;
+const ICONS = { neutral: 'message-information', information: 'message-information', success: 'message-success', warning: 'warning2', error: 'message-error' } as const;
 
 function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: string) => void }) {
   const tone = toast.tone ?? 'neutral';
@@ -76,7 +76,7 @@ function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: s
       onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocused(false); }}
     >
       <span className={styles.icon} aria-hidden="true">
-        <Icon />
+        {IconProvider.getIcon(Icon)}
       </span>
       <div className={styles.content}>
         <span className={styles.title}>{toast.title}</span>
@@ -95,7 +95,7 @@ function ToastItem({ toast, onDismiss }: { toast: ToastRecord; onDismiss: (id: s
           </Button>
         )}
       </div>
-      <IconButton className={styles.close} icon={<DeclineIcon />} label="Dismiss notification" size="sm" neutral onClick={() => onDismiss(toast.id)} />
+      <IconButton className={styles.close} icon={IconProvider.getIcon('decline')} label="Dismiss notification" size="sm" neutral onClick={() => onDismiss(toast.id)} />
     </li>
   );
 }

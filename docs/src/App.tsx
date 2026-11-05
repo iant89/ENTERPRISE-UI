@@ -1,8 +1,5 @@
 import { useEffect, useMemo, useRef, type ReactElement } from 'react';
-import {
-  AppShell, ApplicationHeader, ComboBox, DropdownMenu, IconButton, NavigationGroup, NavigationItem, SideNavigation, ThemeProvider,
-  ToastProvider, ToggleButton, Tooltip, type ThemePreference, AccessibilityIcon, BeginIcon, ColorFillIcon, CourseBookIcon, CursorArrowIcon, DarkModeIcon, DrawRectangleIcon, FormIcon, GridIcon, HeaderIcon, LightModeIcon, LocateMeIcon, MessageWarningIcon, PaletteIcon, ProcessIcon, PuzzleIcon, SapBoxIcon, ScreenSplitOneIcon, ScreenSplitThreeIcon, SourceCodeIcon, SysMonitorIcon, TableRowIcon, TableViewIcon, VerticalBarChart2Icon,
-} from '@enterprise-ui/react';
+import { AppShell, ApplicationHeader, ComboBox, DropdownMenu, IconButton, NavigationGroup, NavigationItem, SideNavigation, ThemeProvider, ToastProvider, ToggleButton, Tooltip, type ThemePreference, IconProvider } from '@enterprise-ui/react';
 import { categories, docs } from './registry';
 import { href, navigate, usePath } from './router';
 import { useDocsSettings } from './settings';
@@ -13,6 +10,7 @@ import { Themes } from './pages/Themes';
 import { ComponentsIndex } from './pages/ComponentsIndex';
 import { ComponentPage } from './pages/ComponentPage';
 import { Gallery } from './pages/Gallery';
+import { IconsPage } from './pages/Icons';
 import { Layouts } from './pages/Layouts';
 import { Patterns } from './pages/Patterns';
 import { AccessibilityPage } from './pages/Accessibility';
@@ -22,27 +20,28 @@ import { PlaygroundPage } from './pages/PlaygroundPage';
 import InventoryApp from '../../examples/apps/InventoryApp';
 
 const PAGES = [
-  { path: '/', label: 'Overview', icon: <CourseBookIcon /> },
-  { path: '/getting-started', label: 'Getting started', icon: <BeginIcon /> },
-  { path: '/tokens', label: 'Design tokens', icon: <PaletteIcon /> },
-  { path: '/themes', label: 'Themes', icon: <PaletteIcon /> },
-  { path: '/components', label: 'Components', icon: <PuzzleIcon /> },
-  { path: '/gallery', label: 'Component gallery', icon: <GridIcon /> },
-  { path: '/layouts', label: 'Layouts', icon: <ScreenSplitOneIcon /> },
-  { path: '/patterns', label: 'Enterprise patterns', icon: <ProcessIcon /> },
-  { path: '/accessibility', label: 'Accessibility', icon: <AccessibilityIcon /> },
-  { path: '/api', label: 'API reference', icon: <SourceCodeIcon /> },
+  { path: '/', label: 'Overview', icon: IconProvider.getIcon('course-book') },
+  { path: '/getting-started', label: 'Getting started', icon: IconProvider.getIcon('begin') },
+  { path: '/tokens', label: 'Design tokens', icon: IconProvider.getIcon('palette') },
+  { path: '/themes', label: 'Themes', icon: IconProvider.getIcon('palette') },
+  { path: '/icons', label: 'Icons', icon: IconProvider.getIcon('grid') },
+  { path: '/components', label: 'Components', icon: IconProvider.getIcon('puzzle') },
+  { path: '/gallery', label: 'Component gallery', icon: IconProvider.getIcon('grid') },
+  { path: '/layouts', label: 'Layouts', icon: IconProvider.getIcon('screen-split-one') },
+  { path: '/patterns', label: 'Enterprise patterns', icon: IconProvider.getIcon('process') },
+  { path: '/accessibility', label: 'Accessibility', icon: IconProvider.getIcon('accessibility') },
+  { path: '/api', label: 'API reference', icon: IconProvider.getIcon('source-code') },
 ];
 
 const THEME_ICONS: Record<ThemePreference, ReactElement> = {
-  light: <LightModeIcon />,
-  dark: <DarkModeIcon />,
-  'high-contrast': <ColorFillIcon />,
-  'sap-horizon': <LightModeIcon />,
-  'sap-horizon-dark': <DarkModeIcon />,
-  'sap-fiori-3': <LightModeIcon />,
-  'sap-fiori-3-dark': <DarkModeIcon />,
-  system: <SysMonitorIcon />,
+  light: IconProvider.getIcon('light-mode'),
+  dark: IconProvider.getIcon('dark-mode'),
+  'high-contrast': IconProvider.getIcon('color-fill'),
+  'sap-horizon': IconProvider.getIcon('light-mode'),
+  'sap-horizon-dark': IconProvider.getIcon('dark-mode'),
+  'sap-fiori-3': IconProvider.getIcon('light-mode'),
+  'sap-fiori-3-dark': IconProvider.getIcon('dark-mode'),
+  system: IconProvider.getIcon('sys-monitor'),
 };
 
 function renderPage(path: string) {
@@ -50,6 +49,7 @@ function renderPage(path: string) {
   if (path === '/getting-started') return <GettingStarted />;
   if (path === '/tokens') return <Tokens />;
   if (path === '/themes') return <Themes />;
+  if (path === '/icons') return <IconsPage />;
   if (path === '/components') return <ComponentsIndex />;
   if (path.startsWith('/components/')) return <ComponentPage slug={path.slice('/components/'.length)} />;
   if (path === '/gallery') return <Gallery />;
@@ -129,7 +129,7 @@ export function App() {
             <ApplicationHeader
               productName="Enterprise UI Kit"
               secondaryTitle="v0.1"
-              logo={<SapBoxIcon color="var(--eui-color-primary)" />}
+              logo={IconProvider.getIcon('sap-box', { color: "var(--eui-color-primary)" })}
               homeHref={href('/')}
               user={{ name: 'Guest' }}
               userMenuItems={[{ id: '/getting-started', label: 'Getting started' }, { id: 'studio', label: 'Open Studio' }]}
@@ -153,7 +153,7 @@ export function App() {
                     <ToggleButton
                       variant="tertiary"
                       aria-label="Compact density"
-                      icon={<TableRowIcon />}
+                      icon={IconProvider.getIcon('table-row')}
                       pressed={density === 'compact'}
                       onPressedChange={(on) => setDensity(on ? 'compact' : 'cozy')}
                     />
@@ -164,17 +164,17 @@ export function App() {
                     onAction={(id) => setTheme(id as ThemePreference)}
                     items={[
                       { type: 'label', label: 'Theme' },
-                      { id: 'light', label: 'Light', icon: <LightModeIcon />, checked: theme === 'light' },
-                      { id: 'dark', label: 'Dark', icon: <DarkModeIcon />, checked: theme === 'dark' },
-                      { id: 'high-contrast', label: 'High contrast', icon: <ColorFillIcon />, checked: theme === 'high-contrast' },
+                      { id: 'light', label: 'Light', icon: IconProvider.getIcon('light-mode'), checked: theme === 'light' },
+                      { id: 'dark', label: 'Dark', icon: IconProvider.getIcon('dark-mode'), checked: theme === 'dark' },
+                      { id: 'high-contrast', label: 'High contrast', icon: IconProvider.getIcon('color-fill'), checked: theme === 'high-contrast' },
                       { type: 'separator' },
                       { type: 'label', label: 'SAP Fiori' },
-                      { id: 'sap-horizon', label: 'Morning Horizon', icon: <LightModeIcon />, checked: theme === 'sap-horizon' },
-                      { id: 'sap-horizon-dark', label: 'Evening Horizon', icon: <DarkModeIcon />, checked: theme === 'sap-horizon-dark' },
-                      { id: 'sap-fiori-3', label: 'Quartz Light', icon: <LightModeIcon />, checked: theme === 'sap-fiori-3' },
-                      { id: 'sap-fiori-3-dark', label: 'Quartz Dark', icon: <DarkModeIcon />, checked: theme === 'sap-fiori-3-dark' },
+                      { id: 'sap-horizon', label: 'Morning Horizon', icon: IconProvider.getIcon('light-mode'), checked: theme === 'sap-horizon' },
+                      { id: 'sap-horizon-dark', label: 'Evening Horizon', icon: IconProvider.getIcon('dark-mode'), checked: theme === 'sap-horizon-dark' },
+                      { id: 'sap-fiori-3', label: 'Quartz Light', icon: IconProvider.getIcon('light-mode'), checked: theme === 'sap-fiori-3' },
+                      { id: 'sap-fiori-3-dark', label: 'Quartz Dark', icon: IconProvider.getIcon('dark-mode'), checked: theme === 'sap-fiori-3-dark' },
                       { type: 'separator' },
-                      { id: 'system', label: 'Match system', icon: <SysMonitorIcon />, checked: theme === 'system' },
+                      { id: 'system', label: 'Match system', icon: IconProvider.getIcon('sys-monitor'), checked: theme === 'system' },
                     ]}
                     trigger={<IconButton icon={THEME_ICONS[theme]} label="Change theme" neutral hideTitle />}
                   />
@@ -188,16 +188,16 @@ export function App() {
                 <NavigationItem key={p.path} id={p.path} label={p.label} icon={p.icon} href={href(p.path)} />
               ))}
               <NavigationGroup label="Foundations">
-                {PAGES.slice(2, 4).map((p) => (
+                {PAGES.slice(2, 5).map((p) => (
                   <NavigationItem key={p.path} id={p.path} label={p.label} icon={p.icon} href={href(p.path)} />
                 ))}
-                <NavigationItem id="/accessibility" label="Accessibility" icon={<AccessibilityIcon />} href={href('/accessibility')} />
+                <NavigationItem id="/accessibility" label="Accessibility" icon={IconProvider.getIcon('accessibility')} href={href('/accessibility')} />
               </NavigationGroup>
               <NavigationGroup label="Components">
-                <NavigationItem id="/components" label="All components" icon={<PuzzleIcon />} href={href('/components')} />
-                <NavigationItem id="/playground" label="Playground" icon={<SourceCodeIcon />} href={href('/playground')} />
-                <NavigationItem id="studio" label="Studio" icon={<DrawRectangleIcon />} href="studio/" />
-                <NavigationItem id="/gallery" label="Gallery" icon={<GridIcon />} href={href('/gallery')} />
+                <NavigationItem id="/components" label="All components" icon={IconProvider.getIcon('puzzle')} href={href('/components')} />
+                <NavigationItem id="/playground" label="Playground" icon={IconProvider.getIcon('source-code')} href={href('/playground')} />
+                <NavigationItem id="studio" label="Studio" icon={IconProvider.getIcon('draw-rectangle')} href="studio/" />
+                <NavigationItem id="/gallery" label="Gallery" icon={IconProvider.getIcon('grid')} href={href('/gallery')} />
                 {categories.map((c) => (
                   <NavigationItem key={c.id} id={`cat-${c.id}`} label={c.id} icon={CATEGORY_ICONS[c.id]}>
                     {docs
@@ -209,9 +209,9 @@ export function App() {
                 ))}
               </NavigationGroup>
               <NavigationGroup label="Guides">
-                <NavigationItem id="/layouts" label="Layouts" icon={<ScreenSplitOneIcon />} href={href('/layouts')} />
-                <NavigationItem id="/patterns" label="Enterprise patterns" icon={<ProcessIcon />} href={href('/patterns')} />
-                <NavigationItem id="/api" label="API reference" icon={<SourceCodeIcon />} href={href('/api')} />
+                <NavigationItem id="/layouts" label="Layouts" icon={IconProvider.getIcon('screen-split-one')} href={href('/layouts')} />
+                <NavigationItem id="/patterns" label="Enterprise patterns" icon={IconProvider.getIcon('process')} href={href('/patterns')} />
+                <NavigationItem id="/api" label="API reference" icon={IconProvider.getIcon('source-code')} href={href('/api')} />
               </NavigationGroup>
             </SideNavigation>
           }
@@ -224,13 +224,13 @@ export function App() {
 }
 
 const CATEGORY_ICONS = {
-  Layout: <HeaderIcon />,
-  Navigation: <LocateMeIcon />,
-  Buttons: <CursorArrowIcon />,
-  Forms: <FormIcon />,
-  'Data display': <TableViewIcon />,
-  Charts: <VerticalBarChart2Icon />,
-  Feedback: <MessageWarningIcon />,
-  Patterns: <ScreenSplitThreeIcon />,
+  Layout: IconProvider.getIcon('header'),
+  Navigation: IconProvider.getIcon('locate-me'),
+  Buttons: IconProvider.getIcon('cursor-arrow'),
+  Forms: IconProvider.getIcon('form'),
+  'Data display': IconProvider.getIcon('table-view'),
+  Charts: IconProvider.getIcon('vertical-bar-chart-2'),
+  Feedback: IconProvider.getIcon('message-warning'),
+  Patterns: IconProvider.getIcon('screen-split-three'),
 } as const;
 

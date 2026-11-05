@@ -1,5 +1,5 @@
 import { forwardRef, useState, type HTMLAttributes, type ReactNode } from 'react';
-import { DeclineIcon, MessageErrorIcon, MessageInformationIcon, MessageSuccessIcon, Warning2Icon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import type { Tone } from '../../utilities/types';
 import { IconButton } from '../icon-button';
@@ -29,7 +29,7 @@ export interface MessageStripProps extends Omit<HTMLAttributes<HTMLDivElement>, 
   announce?: 'off' | 'polite' | 'assertive';
 }
 
-const ICONS = { neutral: MessageInformationIcon, information: MessageInformationIcon, success: MessageSuccessIcon, warning: Warning2Icon, error: MessageErrorIcon } as const;
+const ICONS = { neutral: 'message-information', information: 'message-information', success: 'message-success', warning: 'warning2', error: 'message-error' } as const;
 const PREFIX: Record<Tone, string> = { neutral: '', information: 'Information', success: 'Success', warning: 'Warning', error: 'Error' };
 
 /** Inline message about the current page or section. */
@@ -45,7 +45,7 @@ export const MessageStrip = forwardRef<HTMLDivElement, MessageStripProps>(functi
     <div ref={ref} role={role} className={cx(styles.strip, styles[tone], className)} {...rest}>
       {!hideIcon && (
         <span className={styles.icon} aria-hidden="true">
-          <Icon />
+          {IconProvider.getIcon(Icon)}
         </span>
       )}
       <div className={styles.content}>
@@ -58,7 +58,7 @@ export const MessageStrip = forwardRef<HTMLDivElement, MessageStripProps>(functi
       {dismissible && (
         <IconButton
           className={styles.close}
-          icon={<DeclineIcon />}
+          icon={IconProvider.getIcon('decline')}
           label="Dismiss message"
           size="sm"
           neutral

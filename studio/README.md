@@ -93,7 +93,7 @@ Deleting the `eui-studio` database removes all saved projects and both copies of
   catalog), `tests/studio/storage.test.ts` (storage v2, migration, project list, tab channel).
 - End-to-end: `tests/e2e/studio.spec.ts`.
 - Size: `npm run test:studio-size` (after `npm run build:docs`) fails if the initial download goes
-  over 350 kB gzip, or if Monaco, the TypeScript worker or Prettier end up in it. Measured at
+  over 450 kB gzip (raised from 350 kB when the full SAP icon set was bundled), or if Monaco, the TypeScript worker or Prettier end up in it. Measured at
   `64fcbd0`: 237.1 kB gzip.
 
 ## Code Studio (C1: IDE shell)

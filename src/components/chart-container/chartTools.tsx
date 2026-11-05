@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
-import { AttachmentPhotoIcon, DownloadIcon, ExcelAttachmentIcon, ExitFullScreenIcon, FullScreenIcon, ListIcon, TableViewIcon, VerticalBarChart2Icon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { useControllableState } from '../../hooks/useControllableState';
 import type { ChartTable } from '../chart-core/ChartFrame';
 import type { ChartRegistration, ChartToolsContextValue } from '../chart-core/ChartToolsContext';
@@ -202,24 +202,24 @@ export function ChartToolbar({ state, tools, labels }: { state: ChartToolsState;
           size="sm"
           aria-label={labels.toolbar}
           items={[
-            { value: 'chart', label: <VerticalBarChart2Icon aria-hidden="true" />, ariaLabel: labels.chartView },
-            { value: 'table', label: <TableViewIcon aria-hidden="true" />, ariaLabel: labels.tableView },
+            { value: 'chart', label: IconProvider.getIcon('vertical-bar-chart-2', { 'aria-hidden': "true" }), ariaLabel: labels.chartView },
+            { value: 'table', label: IconProvider.getIcon('table-view', { 'aria-hidden': "true" }), ariaLabel: labels.tableView },
           ]}
           value={[state.view]}
           onChange={(v) => v[0] && state.setView(v[0] as 'chart' | 'table')}
         />
       )}
       {legend && state.view === 'chart' && (
-        <IconButton icon={<ListIcon />} label={labels.legend} size="sm" aria-pressed={state.showLegend} onClick={() => state.setShowLegend(!state.showLegend)} />
+        <IconButton icon={IconProvider.getIcon('list')} label={labels.legend} size="sm" aria-pressed={state.showLegend} onClick={() => state.setShowLegend(!state.showLegend)} />
       )}
       {formats.length > 0 && (
         <DropdownMenu
-          trigger={<IconButton icon={<DownloadIcon />} label={labels.download} size="sm" disabled={!state.hasData} />}
+          trigger={<IconButton icon={IconProvider.getIcon('download')} label={labels.download} size="sm" disabled={!state.hasData} />}
           placement="bottom-end"
           items={formats.map((f) => ({
             id: f,
             label: f === 'png' ? labels.downloadPng : f === 'jpeg' ? labels.downloadJpeg : labels.downloadCsv,
-            icon: f === 'csv' ? <ExcelAttachmentIcon /> : <AttachmentPhotoIcon />,
+            icon: f === 'csv' ? IconProvider.getIcon('excel-attachment') : IconProvider.getIcon('attachment-photo'),
             // Images need the plot, which the table view does not render.
             disabled: f !== 'csv' && state.view === 'table',
           }))}
@@ -228,7 +228,7 @@ export function ChartToolbar({ state, tools, labels }: { state: ChartToolsState;
       )}
       {fullscreen && (
         <IconButton
-          icon={state.fullscreen ? <ExitFullScreenIcon /> : <FullScreenIcon />}
+          icon={state.fullscreen ? IconProvider.getIcon('exit-full-screen') : IconProvider.getIcon('full-screen')}
           label={state.fullscreen ? labels.exitFullscreen : labels.enterFullscreen}
           size="sm"
           onClick={() => void state.toggleFullscreen()}

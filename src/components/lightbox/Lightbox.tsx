@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useRef, useState, type ButtonHTMLAttributes, type ImgHTMLAttributes } from 'react';
-import { PictureIcon, ZoomInIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { Portal } from '../../utilities/Portal';
 import { useId } from '../../hooks/useId';
@@ -123,7 +123,7 @@ export function Lightbox({ open, onClose, src, alt, title, subtitle, busyDelay =
             )}
             {state === 'loading' && <BusyIndicator active delay={busyDelay} text={text.loading} className={styles.busy} />}
             {state === 'error' && (
-              <EmptyState size="sm" icon={<PictureIcon />} title={text.errorTitle} description={text.errorDescription} headingLevel={3} className={styles.error} />
+              <EmptyState size="sm" icon={IconProvider.getIcon('picture')} title={text.errorTitle} description={text.errorDescription} headingLevel={3} className={styles.error} />
             )}
           </div>
           <div className={styles.footer}>
@@ -184,7 +184,7 @@ export const LightboxImage = forwardRef<HTMLButtonElement, LightboxImageProps>(f
         {...rest}
       >
         {thumbnail}
-        <span className={styles.zoom} aria-hidden="true"><ZoomInIcon /></span>
+        <span className={styles.zoom} aria-hidden="true">{IconProvider.getIcon('zoom-in')}</span>
       </button>
       <Lightbox open={isOpen} onClose={() => setOpen(false)} src={src} alt={alt} title={title} subtitle={subtitle} busyDelay={busyDelay} loadTimeout={loadTimeout} labels={labels} />
     </>

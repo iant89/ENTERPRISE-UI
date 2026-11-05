@@ -1,5 +1,5 @@
 import { forwardRef, useMemo, useRef, useState, type InputHTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
-import { DeclineIcon, SlimArrowDownIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { getNavigationIndex } from '../../utilities/keyboard';
 import { useMergedRefs } from '../../utilities/refs';
@@ -212,7 +212,7 @@ export const ComboBox = forwardRef<HTMLInputElement, ComboBoxProps>(function Com
               inputRef.current?.focus();
             }}
           >
-            <DeclineIcon aria-hidden="true" />
+            {IconProvider.getIcon('decline', { 'aria-hidden': "true" })}
           </button>
         )}
         <button
@@ -231,7 +231,7 @@ export const ComboBox = forwardRef<HTMLInputElement, ComboBoxProps>(function Com
             inputRef.current?.focus();
           }}
         >
-          <SlimArrowDownIcon aria-hidden="true" />
+          {IconProvider.getIcon('slim-arrow-down', { 'aria-hidden': "true" })}
         </button>
       </div>
       {open && (

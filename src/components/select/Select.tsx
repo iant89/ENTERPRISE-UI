@@ -1,5 +1,5 @@
 import { forwardRef, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { SlimArrowDownIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { findTypeaheadIndex, getNavigationIndex } from '../../utilities/keyboard';
 import { useMergedRefs } from '../../utilities/refs';
@@ -196,7 +196,7 @@ function SelectInner<V extends string = string>(
           {selectedOption ? (renderValue ? renderValue(selectedOption) : selectedOption.label) : placeholder}
         </span>
         <span className={styles.chevron} aria-hidden="true">
-          <SlimArrowDownIcon />
+          {IconProvider.getIcon('slim-arrow-down')}
         </span>
       </div>
       {name && <input type="hidden" name={name} value={selected ?? ''} />}

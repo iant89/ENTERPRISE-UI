@@ -1,5 +1,5 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { ArrowRightIcon, TrendDownIcon, TrendUpIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useId } from '../../hooks/useId';
 import type { Tone } from '../../utilities/types';
@@ -65,7 +65,7 @@ export const AnalyticalCard = forwardRef<HTMLElement, AnalyticalCardProps>(funct
   const labels = { ...defaultLabels, ...labelOverrides };
   const titleId = useId(undefined, 'analytical-card');
   const Heading = `h${headingLevel}` as const;
-  const TrendIcon = trend?.direction === 'up' ? TrendUpIcon : trend?.direction === 'down' ? TrendDownIcon : ArrowRightIcon;
+  const TrendIcon = trend?.direction === 'up' ? 'trend-up' : trend?.direction === 'down' ? 'trend-down' : 'arrow-right';
   const good = trend && trend.direction !== 'flat' ? (trend.direction === 'up') === (trend.upIsGood ?? true) : null;
 
   return (
@@ -97,7 +97,7 @@ export const AnalyticalCard = forwardRef<HTMLElement, AnalyticalCardProps>(funct
                   <span className={cx(styles.value, valueTone && styles[valueTone])}>{value}</span>
                   {trend && (
                     <span className={cx(styles.trend, good === null ? styles.flat : good ? styles.good : styles.bad)}>
-                      <TrendIcon aria-hidden="true" />
+                      {IconProvider.getIcon(TrendIcon, { 'aria-hidden': 'true' })}
                       <span className="eui-visually-hidden">{labels[trend.direction]}</span>
                     </span>
                   )}

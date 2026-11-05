@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react';
-import { SlimArrowDownIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useFormControl, type FieldProps } from '../form-field';
@@ -111,7 +111,7 @@ export function TreeSelect({
           <span id={`${control.id}-value`} className={styles.value}>
             {display}
           </span>
-          <SlimArrowDownIcon aria-hidden="true" className={styles.chevron} />
+          {IconProvider.getIcon('slim-arrow-down', { 'aria-hidden': "true", className: styles.chevron })}
         </button>
       }
     >

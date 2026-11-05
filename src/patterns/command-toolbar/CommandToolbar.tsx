@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { OverflowIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { getNavigationIndex } from '../../utilities/keyboard';
 import { Button, type ButtonVariant } from '../../components/button';
@@ -123,14 +123,14 @@ export function CommandToolbar({ title, start, actions, 'aria-label': ariaLabel,
             placement="bottom-end"
             aria-label="More actions"
             items={overflow.map((a) => ({ id: a.id, label: a.label, icon: a.icon, disabled: a.disabled, destructive: a.variant === 'destructive', onSelect: a.onClick }))}
-            trigger={<IconButton icon={<OverflowIcon />} label="More actions" />}
+            trigger={<IconButton icon={IconProvider.getIcon('overflow')} label="More actions" />}
           />
         )}
       </div>
       <div ref={measureRef} className={styles.measure} aria-hidden="true" inert>
         {actions.map((a) => renderAction(a, true))}
         <span data-overflow="">
-          <IconButton icon={<OverflowIcon />} label="More" tabIndex={-1} />
+          <IconButton icon={IconProvider.getIcon('overflow')} label="More" tabIndex={-1} />
         </span>
       </div>
     </div>

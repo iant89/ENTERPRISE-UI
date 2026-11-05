@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { BusyIndicator, IconButton, PushpinOnIcon } from '@enterprise-ui/react';
+import { BusyIndicator, IconButton, IconProvider } from '@enterprise-ui/react';
 import type * as Monaco from 'monaco-editor/editor/editor.api.js';
 import styles from '../Studio.module.css';
 import type { EditorAdapter, EditorEvents, EditorRange, FormatResult } from './EditorAdapter';
@@ -271,7 +271,7 @@ export function CodeEditor({
       {loading && <div className={styles.editorLoading}><BusyIndicator active text="Loading code editor" /></div>}
       <div ref={host} className={styles.editor} data-testid="code-editor" data-group={group} />
       {peekSlot && onPinReferences && createPortal(
-        <IconButton size="sm" variant="tertiary" icon={<PushpinOnIcon />} label="Pin references to the References panel" onClick={() => { void pin(); }} />,
+        <IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('pushpin-on')} label="Pin references to the References panel" onClick={() => { void pin(); }} />,
         peekSlot,
       )}
       {rename && (

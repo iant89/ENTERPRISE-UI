@@ -1,5 +1,5 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { MessageErrorIcon, MessageInformationIcon, MessageSuccessIcon, SysMinusIcon, Warning2Icon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import type { Tone } from '../../utilities/types';
 import styles from './StatusIndicator.module.css';
@@ -24,12 +24,12 @@ export interface StatusIndicatorProps extends HTMLAttributes<HTMLSpanElement> {
   size?: 'sm' | 'md';
 }
 
-const ICONS: Record<Tone, typeof MessageInformationIcon> = {
-  neutral: SysMinusIcon,
-  information: MessageInformationIcon,
-  success: MessageSuccessIcon,
-  warning: Warning2Icon,
-  error: MessageErrorIcon,
+const ICONS: Record<Tone, string> = {
+  neutral: 'sys-minus',
+  information: 'message-information',
+  success: 'message-success',
+  warning: 'warning2',
+  error: 'message-error',
 };
 
 /** Shows the status of an object (e.g. "Approved", "Overdue") with color, icon and text. */
@@ -40,7 +40,7 @@ export const StatusIndicator = forwardRef<HTMLSpanElement, StatusIndicatorProps>
   const Icon = ICONS[tone];
   return (
     <span ref={ref} className={cx(styles.status, styles[tone], inverted && styles.inverted, size === 'sm' && styles.small, className)} {...rest}>
-      {indicator === 'icon' && <span className={styles.icon} aria-hidden="true">{icon ?? <Icon />}</span>}
+      {indicator === 'icon' && <span className={styles.icon} aria-hidden="true">{icon ?? IconProvider.getIcon(Icon)}</span>}
       {indicator === 'dot' && <span className={styles.dotMark} aria-hidden="true" />}
       <span>{children}</span>
     </span>

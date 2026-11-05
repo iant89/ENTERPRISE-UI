@@ -1,5 +1,5 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { ArrowRightIcon, TrendDownIcon, TrendUpIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import type { Tone } from '../../utilities/types';
 import { Skeleton } from '../skeleton';
@@ -69,7 +69,7 @@ export const MetricCard = forwardRef<HTMLElement, MetricCardProps>(function Metr
   ref,
 ) {
   const Heading = `h${headingLevel}` as const;
-  const TrendIcon = trend?.direction === 'up' ? TrendUpIcon : trend?.direction === 'down' ? TrendDownIcon : ArrowRightIcon;
+  const TrendIcon = trend?.direction === 'up' ? 'trend-up' : trend?.direction === 'down' ? 'trend-down' : 'arrow-right';
   const good = trend && trend.direction !== 'flat' ? (trend.direction === 'up') === (trend.upIsGood ?? true) : null;
   return (
     <article ref={ref} className={cx(styles.card, tone && styles[tone], onClick && styles.interactive, className)} aria-busy={loading || undefined} {...rest}>
@@ -99,7 +99,7 @@ export const MetricCard = forwardRef<HTMLElement, MetricCardProps>(function Metr
             </div>
             {trend && (
               <div className={cx(styles.trend, good === null ? styles.flat : good ? styles.good : styles.bad)}>
-                <TrendIcon aria-hidden="true" />
+                {IconProvider.getIcon(TrendIcon, { 'aria-hidden': 'true' })}
                 <span>
                   <span className="eui-visually-hidden">{trend.direction === 'up' ? 'Up' : trend.direction === 'down' ? 'Down' : 'Unchanged'}</span>{' '}
                   {trend.value}

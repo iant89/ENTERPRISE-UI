@@ -1,4 +1,4 @@
-import { Badge, IconButton, Select, THEMES, type Density, type ThemeName, FullScreenIcon, IpadIcon, IphoneIcon, MediaPauseIcon, MediaPlayIcon, RefreshIcon, SysMonitorIcon } from '@enterprise-ui/react';
+import { Badge, IconButton, Select, THEMES, type Density, type ThemeName, IconProvider } from '@enterprise-ui/react';
 import { cx } from '../../../src/utilities/cx';
 import { VIEWPORTS, type PreviewSize, type PreviewZoom, type ViewportId } from '../app/workspace/layout';
 import { PreviewSizePopover } from './PreviewSizePopover';
@@ -24,7 +24,7 @@ export interface PreviewToolbarProps {
   onCustomSize?: (size: PreviewSize | null) => void;
 }
 
-const ICONS: Record<ViewportId, typeof SysMonitorIcon> = { desktop: SysMonitorIcon, tablet: IpadIcon, mobile: IphoneIcon };
+const ICONS: Record<ViewportId, string> = { desktop: 'sys-monitor', tablet: 'ipad', mobile: 'iphone' };
 
 /**
  * Decision 4: the preview theme Select changes only the iframe (all seven themes), independent of
@@ -42,7 +42,7 @@ export function PreviewToolbar({ viewport, onViewport, scale, theme, onTheme, de
             return (
               <button key={id} type="button" aria-pressed={viewport === id && !shown.custom} aria-label={`${VIEWPORTS[id].label} viewport`} title={VIEWPORTS[id].label}
                 className={cx(styles.viewportButton, viewport === id && !shown.custom && styles.viewportOn)} onClick={() => { if (shown.custom) onCustomSize?.(null); onViewport(id); }}>
-                <Icon aria-hidden="true" />
+                {IconProvider.getIcon(Icon, { 'aria-hidden': 'true' })}
               </button>
             );
           })}
@@ -55,9 +55,9 @@ export function PreviewToolbar({ viewport, onViewport, scale, theme, onTheme, de
           <span className={styles.densityField}><Select size="sm" label="Preview density" hideLabel value={density} onChange={(v) => v && onDensity(v as Density)}
             options={[{ value: 'cozy', label: 'Cozy' }, { value: 'compact', label: 'Compact' }]} /></span>
         )}
-        <IconButton size="sm" variant="tertiary" icon={<RefreshIcon />} label="Refresh preview" onClick={onRefresh} />
-        <IconButton size="sm" variant="tertiary" icon={paused ? <MediaPlayIcon /> : <MediaPauseIcon />} label={paused ? 'Resume preview' : 'Pause preview'} aria-pressed={paused} onClick={onPause} />
-        {!compact && <IconButton size="sm" variant="tertiary" icon={<FullScreenIcon />} label="Fullscreen preview" onClick={onFullscreen} />}
+        <IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('refresh')} label="Refresh preview" onClick={onRefresh} />
+        <IconButton size="sm" variant="tertiary" icon={paused ? IconProvider.getIcon('media-play') : IconProvider.getIcon('media-pause')} label={paused ? 'Resume preview' : 'Pause preview'} aria-pressed={paused} onClick={onPause} />
+        {!compact && <IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('full-screen')} label="Fullscreen preview" onClick={onFullscreen} />}
       </div>
       {onCustomSize
         ? <PreviewSizePopover size={shown} fit={scale} onApply={onCustomSize} onReset={() => { onCustomSize(null); onViewport('desktop'); }} />

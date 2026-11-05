@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useRef, type InputHTMLAttributes, type ReactNode } from 'react';
-import { AcceptIcon, LessIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useMergedRefs } from '../../utilities/refs';
 import { useId } from '../../hooks/useId';
@@ -62,7 +62,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
             {...rest}
           />
           <span className={styles.mark} aria-hidden="true">
-            {indeterminate ? <LessIcon /> : isChecked ? <AcceptIcon /> : null}
+            {indeterminate ? IconProvider.getIcon('less') : isChecked ? IconProvider.getIcon('accept') : null}
           </span>
         </span>
         {(label || description) && (

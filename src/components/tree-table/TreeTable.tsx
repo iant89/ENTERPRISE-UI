@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
-import { SlimArrowRightIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import type { TableColumn, TableDensity } from '../table';
@@ -155,7 +155,7 @@ export function TreeTable<T>({
                               focusRow(flat.id);
                             }}
                           >
-                            <SlimArrowRightIcon aria-hidden="true" />
+                            {IconProvider.getIcon('slim-arrow-right', { 'aria-hidden': "true" })}
                           </button>
                         ) : (
                           <span className={styles.spacer} />

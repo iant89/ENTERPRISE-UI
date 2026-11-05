@@ -1,5 +1,5 @@
 import { forwardRef, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { DeclineIcon, SlimArrowDownIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { getNavigationIndex } from '../../utilities/keyboard';
 import { useMergedRefs } from '../../utilities/refs';
@@ -164,7 +164,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
                 <span className={styles.tokenLabel}>{option.label}</span>
                 {!control.disabled && (
                   <button type="button" tabIndex={-1} className={styles.tokenRemove} aria-label={`Remove ${option.label}`} onClick={() => remove(option.value)}>
-                    <DeclineIcon aria-hidden="true" />
+                    {IconProvider.getIcon('decline', { 'aria-hidden': "true" })}
                   </button>
                 )}
               </li>
@@ -217,7 +217,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
             inputRef.current?.focus();
           }}
         >
-          <SlimArrowDownIcon aria-hidden="true" />
+          {IconProvider.getIcon('slim-arrow-down', { 'aria-hidden': "true" })}
         </button>
       </div>
       {name && selected.map((v) => <input key={v} type="hidden" name={name} value={v} />)}

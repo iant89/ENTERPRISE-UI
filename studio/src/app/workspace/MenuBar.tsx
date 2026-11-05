@@ -1,4 +1,4 @@
-import { Button, DropdownMenu, IconButton, Select, THEMES, type MenuEntry, type ThemePreference, DownloadIcon, Menu2Icon, RedoIcon, SettingsIcon, UndoIcon } from '@enterprise-ui/react';
+import { Button, DropdownMenu, IconButton, Select, THEMES, type MenuEntry, type ThemePreference, IconProvider } from '@enterprise-ui/react';
 import { WorkspaceSwitch } from './WorkspaceSwitch';
 import type { Breakpoint, Workspace } from './layout';
 import styles from './CodeWorkspace.module.css';
@@ -28,7 +28,7 @@ export function MenuBar({ breakpoint, workspace, onWorkspace, menus, onAction, c
   return (
     <header className={styles.menuBar}>
       <div className={styles.menuStart}>
-        {mobile && <DropdownMenu aria-label="Menu" trigger={<IconButton size="sm" variant="tertiary" icon={<Menu2Icon />} label="Menu" />} items={all} onAction={onAction} />}
+        {mobile && <DropdownMenu aria-label="Menu" trigger={<IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('menu2')} label="Menu" />} items={all} onAction={onAction} />}
         <span className={styles.product}>Enterprise UI Studio</span>
         {!mobile && (
           <nav aria-label="Main menu" className={styles.menus}>
@@ -42,9 +42,9 @@ export function MenuBar({ breakpoint, workspace, onWorkspace, menus, onAction, c
       <div className={styles.menuEnd}>
         {!mobile && (
           <>
-            <IconButton size="sm" variant="tertiary" icon={<UndoIcon />} label="Undo" disabled={!canUndo} onClick={() => onAction('undo')} />
-            <IconButton size="sm" variant="tertiary" icon={<RedoIcon />} label="Redo" disabled={!canRedo} onClick={() => onAction('redo')} />
-            <IconButton size="sm" variant="tertiary" icon={<DownloadIcon />} label="Download project" onClick={() => onAction('download')} />
+            <IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('undo')} label="Undo" disabled={!canUndo} onClick={() => onAction('undo')} />
+            <IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('redo')} label="Redo" disabled={!canRedo} onClick={() => onAction('redo')} />
+            <IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('download')} label="Download project" onClick={() => onAction('download')} />
             <span className={styles.saveState}>{saveState}</span>
             <Select
               size="sm"
@@ -56,7 +56,7 @@ export function MenuBar({ breakpoint, workspace, onWorkspace, menus, onAction, c
             />
           </>
         )}
-        <IconButton size="sm" variant="tertiary" icon={<SettingsIcon />} label="Settings" onClick={() => onAction('settings')} />
+        <IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('settings')} label="Settings" onClick={() => onAction('settings')} />
       </div>
     </header>
   );

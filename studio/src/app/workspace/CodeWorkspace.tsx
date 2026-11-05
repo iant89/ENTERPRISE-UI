@@ -1,5 +1,5 @@
 import { useEffect, useState, type Dispatch, type ReactNode } from 'react';
-import { Button, IconButton, AddIcon, CloseCommandFieldIcon, CommandLineInterfacesIcon, DocumentsIcon, OpenCommandFieldIcon, PushpinOffIcon, PushpinOnIcon, ScreenSplitTwoIcon, ShowIcon, SourceCodeIcon, ToasterUpIcon } from '@enterprise-ui/react';
+import { Button, IconButton, IconProvider } from '@enterprise-ui/react';
 import { cx } from '../../../../src/utilities/cx';
 import { ActivityTabs, ACTIVITY_META, ACTIVITY_PANEL_ID, activityTabId } from './ActivityTabs';
 import { EditorTabs } from './EditorTabs';
@@ -64,15 +64,15 @@ export interface CodeWorkspaceProps {
 }
 
 const MOBILE_TABS: { id: MobileTab; label: string; icon: ReactNode }[] = [
-  { id: 'files', label: 'Files', icon: <DocumentsIcon aria-hidden="true" /> },
-  { id: 'code', label: 'Code', icon: <SourceCodeIcon aria-hidden="true" /> },
-  { id: 'preview', label: 'Preview', icon: <ShowIcon aria-hidden="true" /> },
-  { id: 'panel', label: 'Panel', icon: <CommandLineInterfacesIcon aria-hidden="true" /> },
+  { id: 'files', label: 'Files', icon: IconProvider.getIcon('documents', { 'aria-hidden': "true" }) },
+  { id: 'code', label: 'Code', icon: IconProvider.getIcon('source-code', { 'aria-hidden': "true" }) },
+  { id: 'preview', label: 'Preview', icon: IconProvider.getIcon('show', { 'aria-hidden': "true" }) },
+  { id: 'panel', label: 'Panel', icon: IconProvider.getIcon('command-line-interfaces', { 'aria-hidden': "true" }) },
 ];
 const TABLET_LAYOUTS: { id: TabletLayout; label: string; icon: ReactNode }[] = [
-  { id: 'split', label: 'Split', icon: <ScreenSplitTwoIcon aria-hidden="true" /> },
-  { id: 'editor', label: 'Editor', icon: <SourceCodeIcon aria-hidden="true" /> },
-  { id: 'preview', label: 'Preview', icon: <ShowIcon aria-hidden="true" /> },
+  { id: 'split', label: 'Split', icon: IconProvider.getIcon('screen-split-two', { 'aria-hidden': "true" }) },
+  { id: 'editor', label: 'Editor', icon: IconProvider.getIcon('source-code', { 'aria-hidden': "true" }) },
+  { id: 'preview', label: 'Preview', icon: IconProvider.getIcon('show', { 'aria-hidden': "true" }) },
 ];
 /** Keeps focus where it is (the editor) when a control is clicked (decision 3). */
 const keepFocus = (e: { preventDefault(): void }) => e.preventDefault();
@@ -82,7 +82,7 @@ function DocsPanel({ pinned, onPin, title }: { pinned: boolean; onPin: (pinned: 
     <div className={styles.docs} data-testid={pinned ? 'docs-pinned' : 'docs-sidebar'}>
       <div className={styles.docsHead}>
         <h2 className={styles.paneTitle}>Docs</h2>
-        <IconButton size="sm" variant="tertiary" icon={pinned ? <PushpinOffIcon /> : <PushpinOnIcon />} label={pinned ? 'Unpin Docs' : 'Pin Docs beside the editor'}
+        <IconButton size="sm" variant="tertiary" icon={pinned ? IconProvider.getIcon('pushpin-off') : IconProvider.getIcon('pushpin-on')} label={pinned ? 'Unpin Docs' : 'Pin Docs beside the editor'}
           aria-pressed={pinned} onMouseDown={keepFocus} onClick={() => onPin(!pinned)} />
       </div>
       {title && <h3 className={styles.docsPage} data-testid="docs-page-title">{title}</h3>}
@@ -101,7 +101,7 @@ function SidebarBody({ activity, explorer, search, docsPinned, onPin, onCreateCo
         <div className={styles.docs} data-testid="components-panel">
           <div className={styles.docsHead}>
             <h2 className={styles.paneTitle}>Components</h2>
-            {onCreateComponent && <IconButton size="sm" variant="tertiary" icon={<AddIcon />} label="Create component" onClick={onCreateComponent} />}
+            {onCreateComponent && <IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('add')} label="Create component" onClick={onCreateComponent} />}
           </div>
           <p className={styles.empty}>The component catalog arrives in C6.</p>
         </div>
@@ -193,19 +193,19 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
         <main className={styles.editorCol} aria-label="Editor" hidden={!showEditor}>
           {!tablet && !(desktop && groupsEditor) && (
             <div className={styles.tabRow}>
-              {desktop && <IconButton size="sm" variant="tertiary" icon={collapsed.sidebar ? <OpenCommandFieldIcon /> : <CloseCommandFieldIcon />} label={collapsed.sidebar ? 'Show sidebar' : 'Hide sidebar'} onClick={() => d({ type: 'toggle', panel: 'sidebar' })} />}
+              {desktop && <IconButton size="sm" variant="tertiary" icon={collapsed.sidebar ? IconProvider.getIcon('open-command-field') : IconProvider.getIcon('close-command-field')} label={collapsed.sidebar ? 'Show sidebar' : 'Hide sidebar'} onClick={() => d({ type: 'toggle', panel: 'sidebar' })} />}
               <EditorTabs tabs={tabs} active={activePath} dirty={dirty} onSelect={onSelectTab} onClose={onCloseTab} maxVisible={mobile ? 2 : undefined} />
               {tabActions}
               {!mobile && <span className={styles.breadcrumb}>{activePath.split('/').join(' › ')}</span>}
-              {desktop && collapsed.preview && <IconButton size="sm" variant="tertiary" icon={<CloseCommandFieldIcon />} label="Show preview" onClick={() => d({ type: 'toggle', panel: 'preview', collapsed: false })} />}
+              {desktop && collapsed.preview && <IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('close-command-field')} label="Show preview" onClick={() => d({ type: 'toggle', panel: 'preview', collapsed: false })} />}
             </div>
           )}
           {strips}
           <div className={styles.editorBody}>
             {desktop && groupsEditor
               ? groupsEditor({
-                leading: <IconButton size="sm" variant="tertiary" icon={collapsed.sidebar ? <OpenCommandFieldIcon /> : <CloseCommandFieldIcon />} label={collapsed.sidebar ? 'Show sidebar' : 'Hide sidebar'} onClick={() => d({ type: 'toggle', panel: 'sidebar' })} />,
-                trailing: collapsed.preview ? <IconButton size="sm" variant="tertiary" icon={<CloseCommandFieldIcon />} label="Show preview" onClick={() => d({ type: 'toggle', panel: 'preview', collapsed: false })} /> : null,
+                leading: <IconButton size="sm" variant="tertiary" icon={collapsed.sidebar ? IconProvider.getIcon('open-command-field') : IconProvider.getIcon('close-command-field')} label={collapsed.sidebar ? 'Show sidebar' : 'Hide sidebar'} onClick={() => d({ type: 'toggle', panel: 'sidebar' })} />,
+                trailing: collapsed.preview ? <IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('close-command-field')} label="Show preview" onClick={() => d({ type: 'toggle', panel: 'preview', collapsed: false })} /> : null,
               })
               : editor}
           </div>
@@ -222,7 +222,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
             onChange={(size) => d({ type: 'resize', key: 'preview', size })} />
         )}
         <div className={styles.previewCol} hidden={!showPreview}>
-          {desktop && <IconButton className={styles.previewHide} size="sm" variant="tertiary" icon={<OpenCommandFieldIcon />} label="Hide preview" onClick={() => d({ type: 'toggle', panel: 'preview', collapsed: true })} />}
+          {desktop && <IconButton className={styles.previewHide} size="sm" variant="tertiary" icon={IconProvider.getIcon('open-command-field')} label="Hide preview" onClick={() => d({ type: 'toggle', panel: 'preview', collapsed: true })} />}
           {preview}
         </div>
       </div>
@@ -245,7 +245,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
       )}
       {desktop && collapsed.bottom && (
         <div className={styles.bottomRestore}>
-          <Button size="sm" variant="tertiary" icon={<ToasterUpIcon />} onClick={() => d({ type: 'toggle', panel: 'bottom', collapsed: false })}>Show panel</Button>
+          <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('toaster-up')} onClick={() => d({ type: 'toggle', panel: 'bottom', collapsed: false })}>Show panel</Button>
         </div>
       )}
       {!mobile && <StatusBar {...status} />}

@@ -1,8 +1,5 @@
 import { useMemo, useState } from 'react';
-import {
-  AlertDialog, Button, DataGrid, DescriptionList, FilterBar, FlexibleColumnLayout, IconButton, MultiSelect, ObjectIdentifier, OverflowMenu, Page,
-  Select, StatusIndicator, Title, useToast, type DataGridColumn, AddIcon, DeclineIcon, DeleteIcon, DownloadIcon, EditIcon,
-} from '@enterprise-ui/react';
+import { AlertDialog, Button, DataGrid, DescriptionList, FilterBar, FlexibleColumnLayout, IconButton, MultiSelect, ObjectIdentifier, OverflowMenu, Page, Select, StatusIndicator, Title, useToast, type DataGridColumn, IconProvider } from '@enterprise-ui/react';
 import { categoryOptions, currency, statusTone, supplierOptions, type Product, type ProductStatus } from '../../../data';
 import { useInventory } from '../store';
 import { crumbs } from '../crumbs';
@@ -104,11 +101,11 @@ export function Products() {
           <OverflowMenu
             label={`Actions for ${p.name}`}
             items={[
-              { id: 'edit', label: 'Edit', icon: <EditIcon /> },
+              { id: 'edit', label: 'Edit', icon: IconProvider.getIcon('edit') },
               { id: 'duplicate', label: 'Duplicate' },
               { id: 'discontinue', label: 'Mark discontinued', disabled: p.status === 'Discontinued' },
               { type: 'separator' },
-              { id: 'delete', label: 'Delete', icon: <DeleteIcon />, destructive: true },
+              { id: 'delete', label: 'Delete', icon: IconProvider.getIcon('delete'), destructive: true },
             ]}
             onAction={(id) => rowAction(p, id)}
           />
@@ -142,8 +139,8 @@ export function Products() {
               toast.show({ title: `Set ${ids.length} ${ids.length === 1 ? 'product' : 'products'} to ${status}`, tone: 'success' });
             }}
           />
-          <Button size="sm" icon={<DownloadIcon />} onClick={() => exportRows(byId(ids), 'Selected rows')}>Export selected</Button>
-          <Button size="sm" variant="destructive" icon={<DeleteIcon />} onClick={() => setPendingDelete(ids)}>Delete</Button>
+          <Button size="sm" icon={IconProvider.getIcon('download')} onClick={() => exportRows(byId(ids), 'Selected rows')}>Export selected</Button>
+          <Button size="sm" variant="destructive" icon={IconProvider.getIcon('delete')} onClick={() => setPendingDelete(ids)}>Delete</Button>
         </>
       )}
     />
@@ -153,8 +150,8 @@ export function Products() {
     <div style={{ padding: 'var(--eui-space-4, 1rem)', display: 'grid', gap: 'var(--eui-space-4, 1rem)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <Title level={2} size="md" style={{ flex: 1, margin: 0 }}>{detail.name}</Title>
-        <Button size="sm" icon={<EditIcon />} onClick={() => setDialog({ open: true, product: detail })}>Edit</Button>
-        <IconButton icon={<DeclineIcon />} label="Close details" size="sm" onClick={() => setDetailId(null)} />
+        <Button size="sm" icon={IconProvider.getIcon('edit')} onClick={() => setDialog({ open: true, product: detail })}>Edit</Button>
+        <IconButton icon={IconProvider.getIcon('decline')} label="Close details" size="sm" onClick={() => setDetailId(null)} />
       </div>
       <DescriptionList
         columns={1}
@@ -182,8 +179,8 @@ export function Products() {
       breadcrumbs={crumbs(navigate, ['Home', 'home'], ['Catalog', 'categories'], 'Products')}
       actions={
         <>
-          <Button icon={<DownloadIcon />} onClick={() => exportRows(filtered, 'Current filters')}>Export</Button>
-          <Button variant="primary" icon={<AddIcon />} onClick={() => setDialog({ open: true, product: null })}>Create product</Button>
+          <Button icon={IconProvider.getIcon('download')} onClick={() => exportRows(filtered, 'Current filters')}>Export</Button>
+          <Button variant="primary" icon={IconProvider.getIcon('add')} onClick={() => setDialog({ open: true, product: null })}>Create product</Button>
         </>
       }
       toolbar={

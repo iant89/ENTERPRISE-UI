@@ -21,9 +21,7 @@ const RESERVED = new Set(('break case catch class const continue debugger defaul
  * api.json (already in the bundle; non-component exports listed by hand) rather than the library namespace, which would pull the whole library into the
  * initial chunk; a unit test checks it covers every PascalCase runtime export.
  */
-const LIBRARY_EXPORTS = new Set([...Object.keys(api.components), ...Object.keys(api.hooks ?? {}), 'ObjectSaveError', 'IconRegistry']);
-/** The library exports one `<Name>Icon` component per SAP icon (700+), so every `…Icon` name is reserved. */
-const ICON_EXPORT = /^[A-Z][A-Za-z0-9]*Icon$/;
+const LIBRARY_EXPORTS = new Set([...Object.keys(api.components), ...Object.keys(api.hooks ?? {}), 'ObjectSaveError', 'IconProvider']);
 
 /** Rejects (never rewrites) destinations outside the project tree. */
 export function destinationError(raw: string): string | undefined {
@@ -42,7 +40,7 @@ export function validateName(name: string): string | undefined {
   const n = name.trim();
   if (!n) return 'Enter a component name.';
   if (!NAME_PATTERN.test(n)) return 'Use PascalCase: start with a capital letter, letters and digits only (for example ExampleCard).';
-  if (RESERVED.has(n) || LIBRARY_EXPORTS.has(n) || ICON_EXPORT.test(n)) return `"${n}" is a reserved name. Choose another.`;
+  if (RESERVED.has(n) || LIBRARY_EXPORTS.has(n)) return `"${n}" is a reserved name. Choose another.`;
   return undefined;
 }
 

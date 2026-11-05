@@ -1,5 +1,5 @@
 import { forwardRef, useRef, type InputHTMLAttributes } from 'react';
-import { DeclineIcon, SearchIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useMergedRefs } from '../../utilities/refs';
 import { useControllableState } from '../../hooks/useControllableState';
@@ -59,7 +59,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
       className={cx(styles.box, styles.withStart, size !== 'md' && styles[size], control.status !== 'none' && styles[control.status], control.disabled && styles.disabled)}
     >
       <span className={cx(styles.adornment, styles.startAdornment)} aria-hidden="true">
-        <SearchIcon />
+        {IconProvider.getIcon('search')}
       </span>
       <input
         ref={merged}
@@ -89,7 +89,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
       {loading && <Spinner size="sm" label={loadingLabel} />}
       {text && !control.disabled && (
         <button type="button" className={styles.fieldButton} aria-label={clearLabel} onClick={clear}>
-          <DeclineIcon aria-hidden="true" />
+          {IconProvider.getIcon('decline', { 'aria-hidden': "true" })}
         </button>
       )}
     </div>,

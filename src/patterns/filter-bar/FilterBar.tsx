@@ -1,5 +1,5 @@
 import { forwardRef, type FormEvent, type HTMLAttributes, type ReactNode } from 'react';
-import { FilterIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useId } from '../../hooks/useId';
@@ -50,7 +50,7 @@ export const FilterBar = forwardRef<HTMLFormElement, FilterBarProps>(function Fi
     <>
       {actions}
       {children && (
-        <Button variant="tertiary" icon={<FilterIcon />} aria-expanded={isExpanded} aria-controls={filtersId} onClick={() => setExpanded(!isExpanded)}>
+        <Button variant="tertiary" icon={IconProvider.getIcon('filter')} aria-expanded={isExpanded} aria-controls={filtersId} onClick={() => setExpanded(!isExpanded)}>
           {isExpanded ? 'Hide filters' : 'Show filters'}
           {activeCount > 0 && ` (${activeCount})`}
         </Button>

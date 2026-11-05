@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
-import { SlimArrowRightIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useId } from '../../hooks/useId';
 import type { TreeNode, TreeProps } from '../tree';
@@ -82,7 +82,7 @@ export function VirtualTree({ nodes, 'aria-label': label, expandedIds, defaultEx
       {visible.slice(start, end).map((entry, offset) => {
         const index = start + offset; const { node, level, position, setsize } = entry;
         return <div role="treeitem" id={optionId(index)} key={node.id} aria-level={level} aria-posinset={position} aria-setsize={setsize} aria-expanded={node.children?.length ? expandedSet.has(node.id) : undefined} aria-selected={selected === node.id} aria-disabled={node.disabled || undefined} data-active={activeVisible && index === activeIndex || undefined} className={styles.item} style={{ height: rowHeight, paddingInlineStart: `${(level - 1) * 1.25 + 0.5}rem`, ...(virtualized ? { position: 'absolute', top: index * rowHeight, left: 0, right: 0 } : {}) }} onClick={() => { move(index); tree.current?.focus(); if (node.children?.length) toggle(node, !expandedSet.has(node.id)); select(node); }}>
-          <span aria-hidden="true" className={styles.toggle}>{node.children?.length ? <SlimArrowRightIcon className={expandedSet.has(node.id) ? styles.expanded : undefined} /> : null}</span>{node.icon && <span aria-hidden="true">{node.icon}</span>}<span className={styles.label}>{node.label}</span>{node.trailing && <span>{node.trailing}</span>}
+          <span aria-hidden="true" className={styles.toggle}>{node.children?.length ? IconProvider.getIcon('slim-arrow-right', { className: expandedSet.has(node.id) ? styles.expanded : undefined }) : null}</span>{node.icon && <span aria-hidden="true">{node.icon}</span>}<span className={styles.label}>{node.label}</span>{node.trailing && <span>{node.trailing}</span>}
         </div>;
       })}
     </div>

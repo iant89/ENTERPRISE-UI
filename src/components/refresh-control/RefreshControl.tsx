@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useRef, useState, type HTMLAttributes } from 'react';
-import { RefreshIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { formatRelativeTime, useNow } from '../../hooks/useRelativeTime';
@@ -111,7 +111,7 @@ export const RefreshControl = forwardRef<HTMLDivElement, RefreshControlProps>(fu
           {labels.updated(formatRelativeTime(lastUpdated, now, locale))}
         </time>
       )}
-      <IconButton icon={<RefreshIcon className={cx(refreshing && styles.spinning)} />} label={labels.refresh} size="sm" aria-busy={refreshing || undefined} onClick={() => void run(true)} />
+      <IconButton icon={IconProvider.getIcon('refresh', { className: cx(refreshing && styles.spinning) })} label={labels.refresh} size="sm" aria-busy={refreshing || undefined} onClick={() => void run(true)} />
       {intervals.length > 0 && (
         <Select
           size="sm"

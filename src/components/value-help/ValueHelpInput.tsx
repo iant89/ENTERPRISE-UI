@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FilterFieldsIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { useControllableState } from '../../hooks/useControllableState';
 import { Input, type InputProps } from '../input';
 import { Tokenizer } from '../token';
@@ -56,7 +56,7 @@ export function ValueHelpInput<T>({
         }}
         endAdornment={
           <button type="button" className={styles.openButton} aria-label={openLabel ?? title} title={`${openLabel ?? title} (F4)`} disabled={disabled || readOnly} onClick={() => setOpen(true)}>
-            <FilterFieldsIcon aria-hidden="true" />
+            {IconProvider.getIcon('filter-fields', { 'aria-hidden': "true" })}
           </button>
         }
       />

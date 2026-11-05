@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { SlimArrowLeftIcon, SlimArrowRightIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { addDays, addMonths, isOutOfRange, isSameDay, isSameMonth, startOfDay, startOfMonth, startOfWeek } from '../../utilities/date';
 import { useId } from '../../hooks/useId';
@@ -104,11 +104,11 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calen
   return (
     <div ref={ref} className={cx(styles.calendar, className)}>
       <div className={styles.header}>
-        <IconButton icon={<SlimArrowLeftIcon />} label="Previous month" size="sm" onClick={() => setFocused(addMonths(focused, -1))} />
+        <IconButton icon={IconProvider.getIcon('slim-arrow-left')} label="Previous month" size="sm" onClick={() => setFocused(addMonths(focused, -1))} />
         <h2 id={titleId} className={styles.title} aria-live="polite">
           {monthFormatter.format(focused)}
         </h2>
-        <IconButton icon={<SlimArrowRightIcon />} label="Next month" size="sm" onClick={() => setFocused(addMonths(focused, 1))} />
+        <IconButton icon={IconProvider.getIcon('slim-arrow-right')} label="Next month" size="sm" onClick={() => setFocused(addMonths(focused, 1))} />
       </div>
       <table ref={gridRef} role="grid" aria-labelledby={titleId} className={styles.grid} onKeyDown={onKeyDown}>
         <thead>

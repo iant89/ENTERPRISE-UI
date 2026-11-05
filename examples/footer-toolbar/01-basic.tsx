@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DeleteIcon, DraftIndicator, FooterToolbar, MessagePopover, Stack, TextArea, useAutosave } from '@enterprise-ui/react';
+import { DraftIndicator, FooterToolbar, MessagePopover, Stack, TextArea, useAutosave, IconProvider } from '@enterprise-ui/react';
 
 export const title = 'Edit page footer';
 export const description = 'Floats at the bottom of the page and never scrolls away. Actions are text-only or icon-only, right-aligned and sorted from most to least used, so Delete moves into the overflow first. It only appears while there are actions, messages or a draft.';
@@ -20,7 +20,7 @@ export default function FooterToolbarBasic() {
         actions={editing ? [
           { id: 'save', label: 'Save', variant: 'primary', onClick: () => setEditing(false) },
           { id: 'cancel', label: 'Cancel', onClick: () => setEditing(false) },
-          { id: 'delete', label: 'Delete', display: 'icon', icon: <DeleteIcon />, variant: 'destructive' },
+          { id: 'delete', label: 'Delete', display: 'icon', icon: IconProvider.getIcon('delete'), variant: 'destructive' },
         ] : []}
       />
     </div>

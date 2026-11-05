@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ClipboardEvent, type KeyboardEvent, type ReactNode } from 'react';
-import { BoldTextIcon, ChainLinkIcon, ClearAllIcon, ItalicTextIcon, ListIcon, NumberedTextIcon, UnderlineTextIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useFormControl, type FieldProps } from '../form-field';
 import { richTextToPlain, safeHref, sanitizeRichText } from './sanitize';
@@ -70,11 +70,11 @@ const defaultLabels: RichTextEditorLabels = {
 };
 
 const COMMANDS: { command: Command; icon: ReactNode; key: keyof RichTextEditorLabels; shortcut?: string }[] = [
-  { command: 'bold', icon: <BoldTextIcon />, key: 'bold', shortcut: 'Control+B' },
-  { command: 'italic', icon: <ItalicTextIcon />, key: 'italic', shortcut: 'Control+I' },
-  { command: 'underline', icon: <UnderlineTextIcon />, key: 'underline', shortcut: 'Control+U' },
-  { command: 'insertUnorderedList', icon: <ListIcon />, key: 'bulletList' },
-  { command: 'insertOrderedList', icon: <NumberedTextIcon />, key: 'numberedList' },
+  { command: 'bold', icon: IconProvider.getIcon('bold-text'), key: 'bold', shortcut: 'Control+B' },
+  { command: 'italic', icon: IconProvider.getIcon('italic-text'), key: 'italic', shortcut: 'Control+I' },
+  { command: 'underline', icon: IconProvider.getIcon('underline-text'), key: 'underline', shortcut: 'Control+U' },
+  { command: 'insertUnorderedList', icon: IconProvider.getIcon('list'), key: 'bulletList' },
+  { command: 'insertOrderedList', icon: IconProvider.getIcon('numbered-text'), key: 'numberedList' },
 ];
 
 const run = (command: string, arg?: string) => {
@@ -223,10 +223,10 @@ export function RichTextEditor({
           ))}
           <span className={styles.divider} aria-hidden="true" />
           <button type="button" className={styles.tool} aria-label={labels.link} title={`${labels.link} (Ctrl+K)`} aria-keyshortcuts="Control+K" aria-expanded={linkOpen} onMouseDown={(e) => e.preventDefault()} onClick={openLink}>
-            <ChainLinkIcon />
+            {IconProvider.getIcon('chain-link')}
           </button>
           <button type="button" className={styles.tool} aria-label={labels.clear} title={labels.clear} onMouseDown={(e) => e.preventDefault()} onClick={() => exec('removeFormat')}>
-            <ClearAllIcon />
+            {IconProvider.getIcon('clear-all')}
           </button>
         </div>
       )}

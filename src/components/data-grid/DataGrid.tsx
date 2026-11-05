@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { ActionSettingsIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useId } from '../../hooks/useId';
@@ -271,7 +271,7 @@ export function DataGrid<T>({
                   onVisibleColumnIdsChange?.(next);
                 }
             }}
-            trigger={<IconButton icon={<ActionSettingsIcon />} label={text.viewSettings} size="sm" />}
+            trigger={<IconButton icon={IconProvider.getIcon('action-settings')} label={text.viewSettings} size="sm" />}
           />
         </div>
       </div>

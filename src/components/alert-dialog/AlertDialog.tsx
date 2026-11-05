@@ -1,5 +1,5 @@
 import { useRef, useState, type ReactNode } from 'react';
-import { MessageErrorIcon, MessageInformationIcon, MessageSuccessIcon, Warning2Icon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { Button } from '../button';
 import { Dialog } from '../dialog';
 
@@ -28,7 +28,7 @@ export interface AlertDialogProps {
   lang?: string;
 }
 
-const ICONS = { information: MessageInformationIcon, success: MessageSuccessIcon, warning: Warning2Icon, error: MessageErrorIcon } as const;
+const ICONS = { information: 'message-information', success: 'message-success', warning: 'warning2', error: 'message-error' } as const;
 
 /**
  * Interrupts the user to confirm an important or destructive action
@@ -58,7 +58,7 @@ export function AlertDialog({ open, onCancel, onConfirm, title, children, confir
       role="alertdialog"
       tone={tone}
       size="sm"
-      icon={<Icon />}
+      icon={IconProvider.getIcon(Icon)}
       showClose={false}
       closeOnOverlayClick={false}
       initialFocusRef={cancelRef}

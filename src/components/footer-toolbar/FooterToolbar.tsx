@@ -1,5 +1,5 @@
 import { forwardRef, useLayoutEffect, useRef, useState, type HTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
-import { OverflowIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { getNavigationIndex } from '../../utilities/keyboard';
 import { Button, type ButtonVariant } from '../button';
@@ -143,14 +143,14 @@ export const FooterToolbar = forwardRef<HTMLDivElement, FooterToolbarProps>(func
             placement="top-end"
             aria-label={text.more}
             items={overflow.map((a) => ({ id: a.id, label: a.label, disabled: a.disabled, destructive: a.variant === 'destructive', onSelect: a.onClick }))}
-            trigger={<IconButton icon={<OverflowIcon />} label={text.more} />}
+            trigger={<IconButton icon={IconProvider.getIcon('overflow')} label={text.more} />}
           />
         )}
       </div>
       <div ref={measureRef} className={styles.measure} aria-hidden="true" inert>
         {actions.map((a) => renderAction(a, true))}
         <span data-overflow="">
-          <IconButton icon={<OverflowIcon />} label={text.more} tabIndex={-1} />
+          <IconButton icon={IconProvider.getIcon('overflow')} label={text.more} tabIndex={-1} />
         </span>
       </div>
     </div>

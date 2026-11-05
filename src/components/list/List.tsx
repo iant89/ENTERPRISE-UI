@@ -1,5 +1,5 @@
 import { Fragment, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { AcceptIcon, SlimArrowRightIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { findTypeaheadIndex, getNavigationIndex } from '../../utilities/keyboard';
 import { useControllableState } from '../../hooks/useControllableState';
@@ -93,7 +93,7 @@ export function List({
     <>
       {selectionMode === 'multiple' && (
         <span className={styles.check} aria-hidden="true">
-          {selected.includes(item.id) && <AcceptIcon />}
+          {selected.includes(item.id) && IconProvider.getIcon('accept')}
         </span>
       )}
       {item.leading && <span className={styles.leading}>{item.leading}</span>}
@@ -110,7 +110,7 @@ export function List({
       )}
       {showChevron && (
         <span className={styles.chevron} aria-hidden="true">
-          <SlimArrowRightIcon />
+          {IconProvider.getIcon('slim-arrow-right')}
         </span>
       )}
     </>

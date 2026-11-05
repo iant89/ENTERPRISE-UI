@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState, type KeyboardEvent, type ReactNode, type CSSProperties } from 'react';
-import { SlimArrowRightIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { findTypeaheadIndex } from '../../utilities/keyboard';
 import { useControllableState } from '../../hooks/useControllableState';
@@ -169,7 +169,7 @@ export function Tree({ nodes, 'aria-label': ariaLabel, expandedIds, defaultExpan
             }}
           >
             <span className={styles.toggle} aria-hidden="true">
-              {hasChildren && <SlimArrowRightIcon />}
+              {hasChildren && IconProvider.getIcon('slim-arrow-right')}
             </span>
             {node.icon && <span className={styles.icon} aria-hidden="true">{node.icon}</span>}
             <span className={styles.label}>{node.label}</span>

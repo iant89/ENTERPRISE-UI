@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { screen } from '@testing-library/react';
-import { MessageInformationIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { renderWithTheme } from '../../../tests/utils';
 import { Tooltip } from './Tooltip';
 import { IconButton } from '../icon-button';
@@ -15,7 +15,7 @@ describe('Tooltip', () => {
   it('shows on focus, describes the trigger and hides on Escape', async () => {
     const { user } = renderWithTheme(
       <Tooltip content="More information">
-        <IconButton icon={<MessageInformationIcon />} label="Info" hideTitle />
+        <IconButton icon={IconProvider.getIcon('message-information')} label="Info" hideTitle />
       </Tooltip>,
     );
     await user.tab();

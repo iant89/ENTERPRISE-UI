@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react';
-import { ArrowLeftIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { breakpoints } from '../../tokens';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { Button } from '../../components/button';
@@ -69,7 +69,7 @@ export function MasterDetail({
           <section ref={pane} tabIndex={-1} className={styles.pane} aria-label={detailLabel}>
             {onBack && (
               <div className={styles.backBar}>
-                <Button ref={back} variant="tertiary" icon={<ArrowLeftIcon />} onClick={onBack}>
+                <Button ref={back} variant="tertiary" icon={IconProvider.getIcon('arrow-left')} onClick={onBack}>
                   {backLabel}
                 </Button>
               </div>

@@ -1,4 +1,4 @@
-import { Button, DataGrid, ObjectIdentifier, StatusIndicator, type DataGridColumn, AddIcon, DownloadIcon } from '@enterprise-ui/react';
+import { Button, DataGrid, ObjectIdentifier, StatusIndicator, type DataGridColumn, IconProvider } from '@enterprise-ui/react';
 import { categoryOptions, currency, products, statusTone, type Product } from '../data';
 
 export const title = 'Product inventory';
@@ -31,8 +31,8 @@ export default function DataGridBasic() {
       pageSizeOptions={[8, 16, 24]}
       toolbarActions={
         <>
-          <Button size="sm" icon={<DownloadIcon />} variant="tertiary">Export</Button>
-          <Button size="sm" icon={<AddIcon />} variant="primary">Create</Button>
+          <Button size="sm" icon={IconProvider.getIcon('download')} variant="tertiary">Export</Button>
+          <Button size="sm" icon={IconProvider.getIcon('add')} variant="primary">Create</Button>
         </>
       }
       selectionActions={(ids) => (

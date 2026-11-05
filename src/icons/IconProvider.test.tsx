@@ -1,75 +1,60 @@
 import { describe, expect, it } from 'vitest';
 import { render } from '@testing-library/react';
 import { Icon } from '../components/icon';
-import { BarCodeIcon, BellIcon } from './sap-icons.generated';
-import { IconRegistry } from './IconRegistry';
-import { IconProvider, useIcon } from './IconProvider';
-
-describe('IconRegistry', () => {
-  const sap = IconRegistry.sap();
-
-  it('holds every SAP icon and resolves names, URIs and code points', () => {
-    expect(sap.size).toBeGreaterThanOrEqual(700);
-    for (const ref of ['bar-code', 'Bar-Code', 'sap-icon://bar-code', 0xe08d, '&#xe08d;', '&#xE08D', '&#57485;', 'U+E08D', '0xe08d', '']) {
-      expect(sap.get(ref)).toBe(BarCodeIcon);
-    }
-    expect(sap.codeOf('bar-code')).toBe(0xe08d);
-    expect(sap.get('no-such-icon')).toBeUndefined();
-    expect(sap.has('bell')).toBe(true);
-  });
-
-  it('resolves aliases', () => {
-    expect(sap.get('status-completed')).toBeDefined();
-  });
-
-  it('registers components and SVG paths, and extend() leaves the original unchanged', () => {
-    const custom = sap.extend({ 'my-glyph': 'M0 0h16v16H0z' });
-    custom.register('bell', BarCodeIcon);
-    expect(custom.get('my-glyph')).toBeDefined();
-    expect(custom.get('bell')).toBe(BarCodeIcon);
-    expect(sap.get('bell')).toBe(BellIcon);
-    expect(sap.has('my-glyph')).toBe(false);
-    expect(custom.unregister('my-glyph')).toBe(true);
-    expect(custom.has('my-glyph')).toBe(false);
-  });
-
-  it('can start empty', () => {
-    const r = new IconRegistry({ logo: { icon: 'M1 1h14v14H1z', code: 0xf000 } });
-    expect(r.names).toEqual(['logo']);
-    expect(r.get(0xf000)).toBe(r.get('logo'));
-  });
-});
+import { IconProvider } from './IconProvider';
 
 describe('IconProvider', () => {
-  it('lets <Icon name> render icons by name or code point', () => {
-    const { container } = render(
-      <IconProvider>
-        <Icon name="bar-code" label="Barcode" />
-        <Icon name="&#xe08d;" />
-      </IconProvider>,
-    );
-    expect(container.querySelectorAll('svg[data-icon="bar-code"]')).toHaveLength(2);
-    expect(container.querySelector('[role="img"]')).toHaveAttribute('aria-label', 'Barcode');
+  it('lists every icon from src/assets/icons, sorted', () => {
+    const names = IconProvider.getIconNames();
+    expect(names.length).toBeGreaterThanOrEqual(704);
+    expect(names).toContain('bar-code');
+    expect(names).toContain('status-completed');
+    expect([...names].sort()).toEqual(names);
   });
 
-  it('renders nothing outside a provider or for unknown names', () => {
-    const { container } = render(<><Icon name="bar-code" /><IconProvider><Icon name="nope" /></IconProvider></>);
-    expect(container.querySelector('svg')).toBeNull();
+  it('returns an svg element for a name', () => {
+    const { container } = render(IconProvider.getIcon('bar-code', { size: 32, className: 'x' }));
+    const svg = container.querySelector('svg')!;
+    expect(svg).toHaveAttribute('data-icon', 'bar-code');
+    expect(svg).toHaveAttribute('width', '32');
+    expect(svg).toHaveAttribute('aria-hidden', 'true');
+    expect(svg.getAttribute('class')).toContain('x');
+    expect(svg.querySelector('path')!.getAttribute('d')).toMatch(/^M/);
   });
 
-  it('nested providers add or override icons for their subtree', () => {
-    function Probe() { const I = useIcon('bell'); return I ? <I data-testid="probe" /> : null; }
-    const { getByTestId } = render(
-      <IconProvider>
-        <IconProvider icons={{ bell: 'M0 0h8v8H0z' }}><Probe /></IconProvider>
-      </IconProvider>,
-    );
-    expect(getByTestId('probe').getAttribute('data-icon')).toBe('bell');
-    expect(getByTestId('probe').querySelector('path')).toHaveAttribute('d', 'M0 0h8v8H0z');
+  it('resolves URIs and code points', () => {
+    for (const ref of ['Bar-Code', 'sap-icon://bar-code', 0xe08d, '&#xe08d;', '&#57485;', 'U+E08D', '0xe08d', '']) {
+      expect(IconProvider.resolveName(ref)).toBe('bar-code');
+    }
+    expect(IconProvider.getCodePoint('bar-code')).toBe(0xe08d);
   });
 
-  it('children still take precedence over name', () => {
-    const { container } = render(<IconProvider><Icon name="bell"><BarCodeIcon /></Icon></IconProvider>);
-    expect(container.querySelector('svg')).toHaveAttribute('data-icon', 'bar-code');
+  it('labels the icon when given a title', () => {
+    const { container } = render(IconProvider.getIcon('bell', { title: 'Notifications' }));
+    expect(container.querySelector('svg')).toHaveAttribute('role', 'img');
+    expect(container.querySelector('title')).toHaveTextContent('Notifications');
+  });
+
+  it('marks direction-dependent icons for mirroring', () => {
+    const { container } = render(IconProvider.getIcon('nav-back'));
+    expect(container.querySelector('svg')!.getAttribute('class')).toContain('eui-icon-rtl-flip');
+  });
+
+  it('returns the fallback icon for unknown names', () => {
+    expect(IconProvider.hasIcon('no-such-icon')).toBe(false);
+    const { container } = render(IconProvider.getIcon('no-such-icon'));
+    expect(container.querySelector('svg')).toHaveAttribute('data-icon', 'fallback');
+  });
+
+  it('registers custom icons', () => {
+    IconProvider.registerIcon('company-logo', 'M0 0h16v16H0z', { code: 0xf8f0 });
+    expect(IconProvider.getIconNames()).toContain('company-logo');
+    const { container } = render(IconProvider.getIcon(0xf8f0));
+    expect(container.querySelector('path')).toHaveAttribute('d', 'M0 0h16v16H0z');
+  });
+
+  it('powers <Icon name>', () => {
+    const { container } = render(<Icon name="sap-icon://bell" label="Bell" />);
+    expect(container.querySelector('svg')).toHaveAttribute('data-icon', 'bell');
   });
 });

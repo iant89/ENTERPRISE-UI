@@ -1,14 +1,14 @@
 import { useRef, type KeyboardEvent, type ReactNode } from 'react';
-import { CourseBookIcon, DocumentsIcon, SapBoxIcon, SearchIcon } from '@enterprise-ui/react';
+import { IconProvider } from '@enterprise-ui/react';
 import { cx } from '../../../../src/utilities/cx';
 import { ACTIVITIES, type Activity } from './layout';
 import styles from './CodeWorkspace.module.css';
 
 export const ACTIVITY_META: Record<Activity, { label: string; icon: ReactNode }> = {
-  explorer: { label: 'Explorer', icon: <DocumentsIcon aria-hidden="true" /> },
-  search: { label: 'Search', icon: <SearchIcon aria-hidden="true" /> },
-  components: { label: 'Components', icon: <SapBoxIcon aria-hidden="true" /> },
-  docs: { label: 'Docs', icon: <CourseBookIcon aria-hidden="true" /> },
+  explorer: { label: 'Explorer', icon: IconProvider.getIcon('documents', { 'aria-hidden': "true" }) },
+  search: { label: 'Search', icon: IconProvider.getIcon('search', { 'aria-hidden': "true" }) },
+  components: { label: 'Components', icon: IconProvider.getIcon('sap-box', { 'aria-hidden': "true" }) },
+  docs: { label: 'Docs', icon: IconProvider.getIcon('course-book', { 'aria-hidden': "true" }) },
 };
 
 export const activityTabId = (a: Activity) => `activity-tab-${a}`;

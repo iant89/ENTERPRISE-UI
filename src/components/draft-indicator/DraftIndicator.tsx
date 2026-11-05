@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useEffect, useRef, useState, type HTMLAttributes } from 'react';
-import { AcceptIcon, HighPriorityIcon, UploadToCloudIcon, WriteNewIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { formatRelativeTime, useNow } from '../../hooks/useRelativeTime';
 import styles from './DraftIndicator.module.css';
@@ -42,14 +42,14 @@ export const DraftIndicator = forwardRef<HTMLDivElement, DraftIndicatorProps>(fu
 ) {
   const labels = { ...defaultLabels, ...labelOverrides };
   const now = useNow(15_000, status === 'saved' && !!lastSaved);
-  const Icon = status === 'saving' ? UploadToCloudIcon : status === 'saved' ? AcceptIcon : status === 'error' ? HighPriorityIcon : WriteNewIcon;
+  const Icon = status === 'saving' ? 'upload-to-cloud' : status === 'saved' ? 'accept' : status === 'error' ? 'high-priority' : 'write-new';
   const text =
     status === 'saving' ? labels.saving : status === 'saved' ? labels.saved(lastSaved ? formatRelativeTime(lastSaved, now, locale) : null) : status === 'error' ? labels.error : status === 'unsaved' ? labels.unsaved : '';
   return (
     <div ref={ref} className={cx(styles.root, styles[status], className)} {...rest}>
       {/* Only the outcome is announced, not every keystroke-driven "Saving…". */}
       <span className={styles.text} role="status" aria-live="polite">
-        {status !== 'idle' && <Icon aria-hidden="true" />}
+        {status !== 'idle' && IconProvider.getIcon(Icon, { 'aria-hidden': 'true' })}
         <span aria-hidden={status === 'saving' || status === 'unsaved' ? true : undefined}>{text}</span>
       </span>
       {status === 'error' && onRetry && (

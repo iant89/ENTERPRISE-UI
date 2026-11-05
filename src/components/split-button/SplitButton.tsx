@@ -1,5 +1,5 @@
 import { forwardRef, type ReactNode } from 'react';
-import { SlimArrowDownIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { ButtonGroup } from '../button-group';
 import { Button, type ButtonSize } from '../button';
 import { IconButton } from '../icon-button';
@@ -46,7 +46,7 @@ export const SplitButton = forwardRef<HTMLDivElement, SplitButtonProps>(function
         placement="bottom-end"
         items={items}
         onAction={onAction}
-        trigger={<IconButton icon={<SlimArrowDownIcon />} label={menuLabel} variant={variant} size={size} disabled={disabled} />}
+        trigger={<IconButton icon={IconProvider.getIcon('slim-arrow-down')} label={menuLabel} variant={variant} size={size} disabled={disabled} />}
       />
     </ButtonGroup>
   );

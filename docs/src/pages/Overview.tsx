@@ -1,6 +1,4 @@
-import {
-  Badge, Button, Card, Grid, Input, List, MetricCard, ObjectIdentifier, Select, Stack, StatusIndicator, Table, THEMES, ThemeProvider, AccessibilityIcon, ArrowRightIcon, DesktopMobileIcon, PaletteIcon, SapBoxIcon, SourceCodeIcon, TableRowIcon,
-} from '@enterprise-ui/react';
+import { Badge, Button, Card, Grid, Input, List, MetricCard, ObjectIdentifier, Select, Stack, StatusIndicator, Table, THEMES, ThemeProvider, IconProvider } from '@enterprise-ui/react';
 import { categories, docs } from '../registry';
 
 /** Distinct components documented across all pages (one page can cover several, e.g. Tabs + Tab). */
@@ -10,12 +8,12 @@ import { products, statusTone, currency } from '../../../examples/data';
 import styles from './Pages.module.css';
 
 const features = [
-  { icon: <PaletteIcon />, title: 'Design tokens', text: 'One token system for color, spacing, typography, radii, shadows, motion and density — as CSS custom properties.', path: '/tokens' },
-  { icon: <PaletteIcon />, title: 'Light, dark, high contrast & SAP', text: `${THEMES.length} themes — Light, Dark and High contrast, plus SAP Morning Horizon, Evening Horizon, Quartz Light and Quartz Dark. Each passes axe contrast checks, switches at runtime and can be scoped per subtree.`, path: '/themes' },
-  { icon: <AccessibilityIcon />, title: 'Accessible by default', text: 'Semantic HTML, WAI-ARIA patterns, keyboard support, focus management and live announcements.', path: '/accessibility' },
-  { icon: <DesktopMobileIcon />, title: 'Responsive', text: 'Shell, tables, forms and patterns adapt from desktop to tablet and phone with touch-friendly targets.', path: '/layouts' },
-  { icon: <TableRowIcon />, title: 'Enterprise patterns', text: 'List reports, object pages, master–detail, wizards and dashboards composed from the same parts.', path: '/patterns' },
-  { icon: <SourceCodeIcon />, title: 'Typed & tree-shakeable', text: 'Strict TypeScript APIs, ESM per component, React as a peer dependency, one importable stylesheet.', path: '/getting-started' },
+  { icon: IconProvider.getIcon('palette'), title: 'Design tokens', text: 'One token system for color, spacing, typography, radii, shadows, motion and density — as CSS custom properties.', path: '/tokens' },
+  { icon: IconProvider.getIcon('palette'), title: 'Light, dark, high contrast & SAP', text: `${THEMES.length} themes — Light, Dark and High contrast, plus SAP Morning Horizon, Evening Horizon, Quartz Light and Quartz Dark. Each passes axe contrast checks, switches at runtime and can be scoped per subtree.`, path: '/themes' },
+  { icon: IconProvider.getIcon('accessibility'), title: 'Accessible by default', text: 'Semantic HTML, WAI-ARIA patterns, keyboard support, focus management and live announcements.', path: '/accessibility' },
+  { icon: IconProvider.getIcon('desktop-mobile'), title: 'Responsive', text: 'Shell, tables, forms and patterns adapt from desktop to tablet and phone with touch-friendly targets.', path: '/layouts' },
+  { icon: IconProvider.getIcon('table-row'), title: 'Enterprise patterns', text: 'List reports, object pages, master–detail, wizards and dashboards composed from the same parts.', path: '/patterns' },
+  { icon: IconProvider.getIcon('source-code'), title: 'Typed & tree-shakeable', text: 'Strict TypeScript APIs, ESM per component, React as a peer dependency, one importable stylesheet.', path: '/getting-started' },
 ];
 
 function HeroPreview() {
@@ -57,10 +55,10 @@ export function Overview() {
             </p>
             <div className={styles.heroActions}>
               <a className={styles.heroButtonPrimary} href={href('/getting-started')}>
-                Get started <ArrowRightIcon size={16} aria-hidden="true" />
+                Get started {IconProvider.getIcon('arrow-right', { size: 16, 'aria-hidden': "true" })}
               </a>
               <a className={styles.heroButtonSecondary} href={href('/demo')}>
-                <SapBoxIcon size={16} aria-hidden="true" /> Open the demo app
+                {IconProvider.getIcon('sap-box', { size: 16, 'aria-hidden': "true" })} Open the demo app
               </a>
             </div>
             <div className={styles.stats}>

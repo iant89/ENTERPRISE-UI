@@ -1,5 +1,5 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { DeclineIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import styles from './Token.module.css';
 
@@ -28,7 +28,7 @@ export const Token = forwardRef<HTMLSpanElement, TokenProps>(function Token({ te
       <span className={styles.text}>{text}</span>
       {removable && (
         <button type="button" className={styles.remove} disabled={disabled} aria-label={deleteLabel ?? `Remove ${typeof text === 'string' ? text : 'token'}`} onClick={onDelete}>
-          <DeclineIcon aria-hidden="true" />
+          {IconProvider.getIcon('decline', { 'aria-hidden': "true" })}
         </button>
       )}
     </span>

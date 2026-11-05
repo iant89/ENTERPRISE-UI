@@ -1,5 +1,5 @@
 import { createContext, forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
-import { SlimArrowRightIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { FilterTokenGroup } from '../../components/filter-token';
@@ -171,7 +171,7 @@ export const DashboardFilterBar = forwardRef<HTMLDivElement, DashboardFilterBarP
               const current = i === api.drillPath.length - 1;
               return (
                 <li key={`${step.level}-${i}`}>
-                  <SlimArrowRightIcon aria-hidden="true" className={styles.separator} />
+                  {IconProvider.getIcon('slim-arrow-right', { 'aria-hidden': "true", className: styles.separator })}
                   {current ? (
                     <span className={styles.current} aria-current="location">
                       {step.value}

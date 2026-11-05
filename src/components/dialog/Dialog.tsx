@@ -1,5 +1,5 @@
 import { useRef, type ReactNode, type RefObject } from 'react';
-import { DeclineIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { Portal } from '../../utilities/Portal';
 import { useId } from '../../hooks/useId';
@@ -120,7 +120,7 @@ export function Dialog({
             <h2 id={titleId} className={styles.title}>
               {title}
             </h2>
-            {showClose && <IconButton icon={<DeclineIcon />} label={closeLabel} neutral onClick={onClose} />}
+            {showClose && <IconButton icon={IconProvider.getIcon('decline')} label={closeLabel} neutral onClick={onClose} />}
           </div>
           <div id={bodyId} className={styles.body}>
             {children}

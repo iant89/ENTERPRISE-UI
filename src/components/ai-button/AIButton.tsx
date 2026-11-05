@@ -1,5 +1,5 @@
 import { forwardRef, type ReactNode } from 'react';
-import { AiIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { Button, type ButtonProps } from '../button';
 import styles from './AIButton.module.css';
@@ -30,7 +30,7 @@ export const AIButton = forwardRef<HTMLButtonElement, AIButtonProps>(function AI
         ref={ref}
         variant={variant}
         className={cx(styles.button, current?.busy && styles.busy, className)}
-        icon={current?.icon ?? <AiIcon />}
+        icon={current?.icon ?? IconProvider.getIcon('ai')}
         iconEnd={current?.endIcon}
         aria-busy={current?.busy || undefined}
         {...rest}

@@ -1,5 +1,5 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { ArrowLeftIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { IconButton } from '../../components/icon-button';
 import { Breadcrumbs, type BreadcrumbItem } from '../../components/breadcrumbs';
@@ -47,7 +47,7 @@ export const Page = forwardRef<HTMLDivElement, PageProps>(function Page(
           {breadcrumbs && (Array.isArray(breadcrumbs) ? <Breadcrumbs items={breadcrumbs} /> : breadcrumbs)}
           <div className={styles.titleRow}>
             <div className={styles.titleBlock}>
-              {onBack && <IconButton icon={<ArrowLeftIcon />} label="Back" onClick={onBack} />}
+              {onBack && <IconButton icon={IconProvider.getIcon('arrow-left')} label="Back" onClick={onBack} />}
               {avatar}
               <div className={styles.titleText}>
                 <h1 className={styles.title}>

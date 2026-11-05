@@ -9,7 +9,7 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react';
-import { SlimArrowDownIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useAppShell } from '../../layouts/app-shell/AppShellContext';
 import { Badge } from '../badge';
@@ -126,7 +126,7 @@ export function NavigationItem({ id, label, icon, href, badge, children, default
         </>
       )}
       {badge !== undefined && badge > 0 && <span className={styles.dotBadge} aria-hidden="true" />}
-      {hasChildren && <span className={styles.chevron} aria-hidden="true"><SlimArrowDownIcon /></span>}
+      {hasChildren && <span className={styles.chevron} aria-hidden="true">{IconProvider.getIcon('slim-arrow-down')}</span>}
     </>
   );
 

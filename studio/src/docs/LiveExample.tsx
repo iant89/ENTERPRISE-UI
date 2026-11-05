@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button, Input, NumberInput, Select, Switch, type Density, type ThemeName, CopyIcon, ResetIcon, SourceCodeIcon } from '@enterprise-ui/react';
+import { Button, Input, NumberInput, Select, Switch, type Density, type ThemeName, IconProvider } from '@enterprise-ui/react';
 import { usePreviewBuild } from '../preview/usePreviewBuild';
 import { CodePreviewFrame } from '../preview/CodePreviewFrame';
 import { relative } from '../core/vfs/paths';
@@ -55,9 +55,9 @@ export function LiveExample({ page, files, theme, density, onShowSource, copy }:
         </div>
       )}
       <div className={styles.exampleActions}>
-        <Button size="sm" variant="tertiary" icon={<CopyIcon />} onClick={() => copy(jsx, 'Example code')}>Copy code</Button>
-        {onShowSource && <Button size="sm" variant="tertiary" icon={<SourceCodeIcon />} onClick={onShowSource}>Show source</Button>}
-        <Button size="sm" variant="tertiary" icon={<ResetIcon />} onClick={() => setValues(defaults)}>Reset</Button>
+        <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('copy')} onClick={() => copy(jsx, 'Example code')}>Copy code</Button>
+        {onShowSource && <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('source-code')} onClick={onShowSource}>Show source</Button>}
+        <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('reset')} onClick={() => setValues(defaults)}>Reset</Button>
       </div>
     </div>
   );

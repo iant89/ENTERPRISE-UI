@@ -1,5 +1,5 @@
 import { forwardRef, useState } from 'react';
-import { BarCodeIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { IconButton, type IconButtonProps } from '../icon-button';
 import { BarcodeScannerDialog, type BarcodeScannerDialogProps } from '../barcode-scanner-dialog';
 import type { BarcodeFormat } from '../barcode-scanner-dialog';
@@ -36,7 +36,7 @@ export const BarcodeScannerButton = forwardRef<HTMLButtonElement, BarcodeScanner
     <>
       <IconButton
         ref={ref}
-        icon={<BarCodeIcon />}
+        icon={IconProvider.getIcon('bar-code')}
         label={label}
         aria-haspopup="dialog"
         aria-expanded={open}

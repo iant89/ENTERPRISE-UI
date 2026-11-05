@@ -1,4 +1,4 @@
-import { OverflowIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { DropdownMenu, type DropdownMenuProps } from '../dropdown-menu';
 import { IconButton } from '../icon-button';
 export interface OverflowMenuProps extends Omit<DropdownMenuProps, 'trigger'> {
@@ -7,5 +7,5 @@ export interface OverflowMenuProps extends Omit<DropdownMenuProps, 'trigger'> {
 }
 /** Standard compact trigger for a DropdownMenu of secondary actions. */
 export function OverflowMenu({ label = 'More actions', ...props }: OverflowMenuProps) {
-  return <DropdownMenu {...props} aria-label={props['aria-label'] ?? label} trigger={<IconButton icon={<OverflowIcon />} label={label} />} />;
+  return <DropdownMenu {...props} aria-label={props['aria-label'] ?? label} trigger={<IconButton icon={IconProvider.getIcon('overflow')} label={label} />} />;
 }

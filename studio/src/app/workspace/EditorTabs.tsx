@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState, type DragEvent, type KeyboardEvent, type ReactNode } from 'react';
-import { DeclineIcon, OverflowIcon, ScreenSplitTwoIcon, SlimArrowDownIcon } from '@enterprise-ui/react';
+import { IconProvider } from '@enterprise-ui/react';
 import { cx } from '../../../../src/utilities/cx';
 import styles from './CodeWorkspace.module.css';
 
@@ -220,7 +220,7 @@ export function EditorTabs({
                 </button>
                 {isDirty && <span className={styles.tabDot} data-testid="dirty-dot" aria-hidden="true" />}
                 <button type="button" className={styles.tabClose} aria-label={`Close ${name}`} title={`Close ${name}`} onClick={() => onClose(path)}>
-                  <DeclineIcon aria-hidden="true" />
+                  {IconProvider.getIcon('decline', { 'aria-hidden': "true" })}
                 </button>
               </div>
             );
@@ -234,7 +234,7 @@ export function EditorTabs({
             <button type="button" className={styles.overflowButton} aria-haspopup="menu" aria-expanded={menu === 'overflow'}
               aria-label={`${hidden.length} more open ${hidden.length === 1 ? 'file' : 'files'}`} title="More open files"
               onClick={() => setMenu((m) => (m === 'overflow' ? null : 'overflow'))}>
-              <SlimArrowDownIcon aria-hidden="true" />+{hidden.length}
+              {IconProvider.getIcon('slim-arrow-down', { 'aria-hidden': "true" })}+{hidden.length}
             </button>
             {menu === 'overflow' && (
               <StripMenu label="More open files" onClose={() => setMenu(null)} items={[
@@ -246,14 +246,14 @@ export function EditorTabs({
         )}
         {onSplit && (
           <button type="button" className={styles.overflowButton} aria-label="Split editor right" title="Split editor right (Ctrl+\)" onClick={onSplit}>
-            <ScreenSplitTwoIcon aria-hidden="true" />
+            {IconProvider.getIcon('screen-split-two', { 'aria-hidden': "true" })}
           </button>
         )}
         {onCloseAll && (
           <>
             <button type="button" className={styles.overflowButton} aria-haspopup="menu" aria-expanded={menu === 'actions'} aria-label={split ? `Group ${group + 1} actions` : 'Editor actions'}
               title="Group actions" onClick={() => setMenu((m) => (m === 'actions' ? null : 'actions'))}>
-              <OverflowIcon aria-hidden="true" />
+              {IconProvider.getIcon('overflow', { 'aria-hidden': "true" })}
             </button>
             {menu === 'actions' && (
               <StripMenu label={split ? `Group ${group + 1} actions` : 'Editor actions'} onClose={() => setMenu(null)} items={[

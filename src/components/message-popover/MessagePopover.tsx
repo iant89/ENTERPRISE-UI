@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react';
-import { MessageErrorIcon, MessageInformationIcon, MessageSuccessIcon, Warning2Icon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { Button } from '../button';
 import { Popover } from '../popover';
@@ -45,7 +45,7 @@ export interface MessagePopoverProps {
   className?: string;
 }
 
-const ICONS = { error: MessageErrorIcon, warning: Warning2Icon, information: MessageInformationIcon, success: MessageSuccessIcon } as const;
+const ICONS = { error: 'message-error', warning: 'warning2', information: 'message-information', success: 'message-success' } as const;
 const ORDER: MessageType[] = ['error', 'warning', 'information', 'success'];
 
 const defaultLabels: MessagePopoverLabels = {
@@ -97,7 +97,7 @@ export function MessagePopover({ messages, onMessageSelect, open, onOpenChange, 
       placement="top-start"
       width="24rem"
       trigger={
-        <Button variant={messages.length ? 'secondary' : 'tertiary'} size="sm" className={cx(styles.trigger, styles[worst], className)} icon={<TriggerIcon />}>
+        <Button variant={messages.length ? 'secondary' : 'tertiary'} size="sm" className={cx(styles.trigger, styles[worst], className)} icon={IconProvider.getIcon(TriggerIcon)}>
           {labels.trigger(counts)}
         </Button>
       }
@@ -122,7 +122,7 @@ export function MessagePopover({ messages, onMessageSelect, open, onOpenChange, 
                 return (
                   <li key={m.id}>
                     <button type="button" className={styles.item} onClick={() => choose(m, close)}>
-                      <Icon aria-hidden="true" className={cx(styles.icon, styles[m.type])} />
+                      {IconProvider.getIcon(Icon, { 'aria-hidden': 'true', className: cx(styles.icon, styles[m.type]) })}
                       <span className={styles.text}>
                         <span className="eui-visually-hidden">{labels.types[m.type]}: </span>
                         <span className={styles.itemTitle}>{m.title}</span>

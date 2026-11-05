@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, DropdownMenu, Grid, IconButton, ProgressBar, StatusIndicator, Stack, OverflowIcon, ShippingStatusIcon } from '@enterprise-ui/react';
+import { Avatar, Button, Card, DropdownMenu, Grid, IconButton, ProgressBar, StatusIndicator, Stack, IconProvider } from '@enterprise-ui/react';
 
 export const title = 'Cards';
 export const description = 'Cards group information about one subject with an optional avatar, header actions and footer.';
@@ -17,7 +17,7 @@ export default function CardBasic() {
           <DropdownMenu
             placement="bottom-end"
             items={[{ id: 'edit', label: 'Edit' }, { id: 'block', label: 'Block supplier', destructive: true }]}
-            trigger={<IconButton icon={<OverflowIcon />} label="Supplier actions" size="sm" />}
+            trigger={<IconButton icon={IconProvider.getIcon('overflow')} label="Supplier actions" size="sm" />}
           />
         }
         footer={<Button size="sm" variant="tertiary">View supplier</Button>}
@@ -27,7 +27,7 @@ export default function CardBasic() {
           <ProgressBar label="Annual volume" value={68} />
         </Stack>
       </Card>
-      <Card title="Shipment 8812" subtitle="Hamburg → Rotterdam" avatar={<Avatar icon={<ShippingStatusIcon />} shape="square" accent={6} decorative />} onClick={() => {}} >
+      <Card title="Shipment 8812" subtitle="Hamburg → Rotterdam" avatar={<Avatar icon={IconProvider.getIcon('shipping-status')} shape="square" accent={6} decorative />} onClick={() => {}} >
         <StatusIndicator tone="information">In transit · ETA tomorrow</StatusIndicator>
       </Card>
     </Grid>

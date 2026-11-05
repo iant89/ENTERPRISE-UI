@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useEffect, useRef, useState, type HTMLAttributes, type PointerEvent, type ReactNode } from 'react';
-import { EraserIcon, UndoIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useId } from '../../hooks/useId';
 import { Button } from '../button';
@@ -206,7 +206,7 @@ export const SignaturePad = forwardRef<HTMLFieldSetElement, SignaturePadProps>(f
           <Button
             size="sm"
             variant="tertiary"
-            icon={<UndoIcon />}
+            icon={IconProvider.getIcon('undo')}
             disabled={!strokes.length}
             onClick={() => {
               const next = strokes.slice(0, -1);
@@ -220,7 +220,7 @@ export const SignaturePad = forwardRef<HTMLFieldSetElement, SignaturePadProps>(f
         <Button
           size="sm"
           variant="tertiary"
-          icon={<EraserIcon />}
+          icon={IconProvider.getIcon('eraser')}
           disabled={!signed}
           onClick={() => {
             setStrokes([]);

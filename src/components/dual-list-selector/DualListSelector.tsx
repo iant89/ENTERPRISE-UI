@@ -1,5 +1,5 @@
 import { forwardRef, useMemo, useState, type HTMLAttributes, type ReactNode } from 'react';
-import { ArrowBottomIcon, ArrowTopIcon, CloseCommandFieldIcon, OpenCommandFieldIcon, SlimArrowLeftIcon, SlimArrowRightIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useId } from '../../hooks/useId';
 import { useControllableState } from '../../hooks/useControllableState';
@@ -211,10 +211,10 @@ export const DualListSelector = forwardRef<HTMLDivElement, DualListSelectorProps
         labels={labels}
       />
       <div className={styles.actions}>
-        <IconButton icon={<SlimArrowRightIcon />} label={labels.add} variant="secondary" disabled={disabled || !checkedAvail.length} onClick={() => add(checkedAvail)} />
-        <IconButton icon={<OpenCommandFieldIcon />} label={labels.addAll} variant="tertiary" disabled={disabled || !movable(available).length} onClick={() => add(movable(available))} />
-        <IconButton icon={<SlimArrowLeftIcon />} label={labels.remove} variant="secondary" disabled={disabled || !checkedSel.length} onClick={() => remove(checkedSel)} />
-        <IconButton icon={<CloseCommandFieldIcon />} label={labels.removeAll} variant="tertiary" disabled={disabled || !movable(chosenItems).length} onClick={() => remove(movable(chosenItems))} />
+        <IconButton icon={IconProvider.getIcon('slim-arrow-right')} label={labels.add} variant="secondary" disabled={disabled || !checkedAvail.length} onClick={() => add(checkedAvail)} />
+        <IconButton icon={IconProvider.getIcon('open-command-field')} label={labels.addAll} variant="tertiary" disabled={disabled || !movable(available).length} onClick={() => add(movable(available))} />
+        <IconButton icon={IconProvider.getIcon('slim-arrow-left')} label={labels.remove} variant="secondary" disabled={disabled || !checkedSel.length} onClick={() => remove(checkedSel)} />
+        <IconButton icon={IconProvider.getIcon('close-command-field')} label={labels.removeAll} variant="tertiary" disabled={disabled || !movable(chosenItems).length} onClick={() => remove(movable(chosenItems))} />
       </div>
       <div className={styles.chosen}>
         <Pane
@@ -233,8 +233,8 @@ export const DualListSelector = forwardRef<HTMLDivElement, DualListSelectorProps
         />
         {reorderable && (
           <div className={styles.reorder}>
-            <IconButton icon={<ArrowTopIcon />} label={labels.moveUp} size="sm" disabled={disabled || !checkedSel.length} onClick={() => reorder(-1)} />
-            <IconButton icon={<ArrowBottomIcon />} label={labels.moveDown} size="sm" disabled={disabled || !checkedSel.length} onClick={() => reorder(1)} />
+            <IconButton icon={IconProvider.getIcon('arrow-top')} label={labels.moveUp} size="sm" disabled={disabled || !checkedSel.length} onClick={() => reorder(-1)} />
+            <IconButton icon={IconProvider.getIcon('arrow-bottom')} label={labels.moveDown} size="sm" disabled={disabled || !checkedSel.length} onClick={() => reorder(1)} />
           </div>
         )}
       </div>

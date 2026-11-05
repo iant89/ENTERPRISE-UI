@@ -1,4 +1,4 @@
-import { MessageErrorIcon, Warning2Icon } from '@enterprise-ui/react';
+import { IconProvider } from '@enterprise-ui/react';
 import styles from './CodeWorkspace.module.css';
 
 export interface StatusBarProps {
@@ -16,7 +16,7 @@ export interface StatusBarProps {
 export function StatusBar({ file, line, column, saveState, theme, errors, warnings, previewState }: StatusBarProps) {
   return (
     <footer className={styles.statusBar} aria-label="Status bar">
-      <span className={styles.statusCounts}><MessageErrorIcon aria-hidden="true" />{errors}<Warning2Icon aria-hidden="true" />{warnings}<span className={styles.srOnly}> errors and warnings</span></span>
+      <span className={styles.statusCounts}>{IconProvider.getIcon('message-error', { 'aria-hidden': "true" })}{errors}{IconProvider.getIcon('warning2', { 'aria-hidden': "true" })}{warnings}<span className={styles.srOnly}> errors and warnings</span></span>
       <span>{file}</span>
       <span>Ln {line}, Col {column}</span>
       <span className={styles.statusGrow}>{/\.tsx?$/.test(file) ? 'TypeScript JSX' : file.split('.').pop()?.toUpperCase()}</span>

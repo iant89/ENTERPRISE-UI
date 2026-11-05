@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useRef, useState, type InputHTMLAttributes } from 'react';
-import { CalendarIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { parseISODate, toISODate, isOutOfRange } from '../../utilities/date';
 import { focusElement } from '../../utilities/focus';
@@ -151,7 +151,7 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(function
           disabled={!interactive}
           onClick={() => (open ? close() : setOpen(true))}
         >
-          <CalendarIcon aria-hidden="true" />
+          {IconProvider.getIcon('calendar', { 'aria-hidden': "true" })}
         </button>
       </div>
       {open && (

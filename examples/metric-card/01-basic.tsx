@@ -1,4 +1,4 @@
-import { Grid, MetricCard, CartIcon, CurrencyIcon, FobWatchIcon, ProductIcon } from '@enterprise-ui/react';
+import { Grid, MetricCard, IconProvider } from '@enterprise-ui/react';
 
 export const title = 'KPI tiles';
 export const description = 'Headline value, unit, trend (with screen-reader text for direction) and an optional sparkline. `tone` colours the value semantically.';
@@ -6,10 +6,10 @@ export const description = 'Headline value, unit, trend (with screen-reader text
 export default function MetricCardBasic() {
   return (
     <Grid columns={{ base: 1, sm: 2, md: 4 }} gap={4}>
-      <MetricCard title="Revenue" subtitle="Month to date" value="1.24" unit="M USD" icon={<CurrencyIcon />} trend={{ direction: 'up', value: '+8.2%', label: 'vs. last month' }} sparkline={[8, 9, 7, 10, 11, 10, 12, 13]} />
-      <MetricCard title="Open orders" value="342" icon={<CartIcon />} trend={{ direction: 'down', value: '−3.1%', label: 'vs. last week' }} sparkline={[40, 38, 41, 37, 36, 35, 34]} />
-      <MetricCard title="Stock-outs" value="7" tone="error" icon={<ProductIcon />} trend={{ direction: 'up', value: '+2', upIsGood: false }} footer="3 critical items" onClick={() => {}} />
-      <MetricCard title="Avg. lead time" value="4.6" unit="days" tone="success" icon={<FobWatchIcon />} trend={{ direction: 'flat', value: '±0' }} loading={false} />
+      <MetricCard title="Revenue" subtitle="Month to date" value="1.24" unit="M USD" icon={IconProvider.getIcon('currency')} trend={{ direction: 'up', value: '+8.2%', label: 'vs. last month' }} sparkline={[8, 9, 7, 10, 11, 10, 12, 13]} />
+      <MetricCard title="Open orders" value="342" icon={IconProvider.getIcon('cart')} trend={{ direction: 'down', value: '−3.1%', label: 'vs. last week' }} sparkline={[40, 38, 41, 37, 36, 35, 34]} />
+      <MetricCard title="Stock-outs" value="7" tone="error" icon={IconProvider.getIcon('product')} trend={{ direction: 'up', value: '+2', upIsGood: false }} footer="3 critical items" onClick={() => {}} />
+      <MetricCard title="Avg. lead time" value="4.6" unit="days" tone="success" icon={IconProvider.getIcon('fob-watch')} trend={{ direction: 'flat', value: '±0' }} loading={false} />
     </Grid>
   );
 }

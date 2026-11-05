@@ -1,5 +1,5 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { MessageErrorIcon, MessageInformationIcon, MessageSuccessIcon, Warning2Icon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import type { ValidationStatus } from '../../utilities/types';
 import { useId } from '../../hooks/useId';
@@ -36,7 +36,7 @@ export interface FormFieldProps extends FieldProps, Omit<HTMLAttributes<HTMLDivE
   children: ReactNode;
 }
 
-const STATUS_ICON = { error: MessageErrorIcon, warning: Warning2Icon, success: MessageSuccessIcon, information: MessageInformationIcon } as const;
+const STATUS_ICON = { error: 'message-error', warning: 'warning2', success: 'message-success', information: 'message-information' } as const;
 
 /** Resolves the effective status and message from {@link FieldProps}. */
 export function resolveStatus(status: ValidationStatus | undefined, error: ReactNode, statusMessage: ReactNode) {
@@ -108,7 +108,7 @@ export const FormField = forwardRef<HTMLDivElement, FormFieldProps>(function For
           <div id={messageId} className={cx(styles.message, status !== 'none' && styles[status])} aria-live="polite">
             {hasMessage && (
               <>
-                {Icon && <Icon aria-hidden="true" />}
+                {Icon && IconProvider.getIcon(Icon, { 'aria-hidden': 'true' })}
                 <span>
                   {status === 'error' && <span className="eui-visually-hidden">Error:</span>}
                   {status === 'error' && ' '}

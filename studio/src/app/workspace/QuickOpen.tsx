@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { DeclineIcon, HistoryIcon } from '@enterprise-ui/react';
+import { IconProvider } from '@enterprise-ui/react';
 import { cx } from '../../../../src/utilities/cx';
 import { rankPaths, type FuzzyMatch } from '../../core/vfs/fuzzy';
 import styles from './CodeWorkspace.module.css';
@@ -64,7 +64,7 @@ export function QuickOpen({ paths, recent, current, onOpen, onRemoveRecent, onCl
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={onKey}
         />
-        {empty && <div className={styles.quickSection}><HistoryIcon aria-hidden="true" /> Recently opened</div>}
+        {empty && <div className={styles.quickSection}>{IconProvider.getIcon('history', { 'aria-hidden': "true" })} Recently opened</div>}
         <ul id="quick-open-list" role="listbox" aria-label={empty ? 'Recently opened' : 'Matching files'} className={styles.quickList}>
           {items.map((m, i) => (
             <li key={m.path} id={optionId(i)} role="option" aria-selected={i === active} className={cx(styles.quickItem, i === active && styles.quickActive)}
@@ -73,7 +73,7 @@ export function QuickOpen({ paths, recent, current, onOpen, onRemoveRecent, onCl
               {empty && m.path === current && <span className={styles.quickTag}>current</span>}
               {empty && m.path !== current && (
                 <button type="button" className={styles.quickRemove} aria-label={`Remove ${m.path} from recently opened`} tabIndex={-1}
-                  onClick={(e) => { e.stopPropagation(); onRemoveRecent(m.path); }}><DeclineIcon aria-hidden="true" /></button>
+                  onClick={(e) => { e.stopPropagation(); onRemoveRecent(m.path); }}>{IconProvider.getIcon('decline', { 'aria-hidden': "true" })}</button>
               )}
             </li>
           ))}

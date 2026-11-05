@@ -1,5 +1,5 @@
 import { forwardRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { PaperPlaneIcon, StopIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { IconButton } from '../icon-button';
@@ -70,8 +70,8 @@ export const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(fun
         />
         <div className={styles.action}>
           {generating
-            ? <IconButton icon={<StopIcon />} label={labels.stop} onClick={onStop} />
-            : <IconButton icon={<PaperPlaneIcon />} label={labels.send} variant="primary" disabled={disabled || !text.trim()} onClick={submit} />}
+            ? <IconButton icon={IconProvider.getIcon('stop')} label={labels.stop} onClick={onStop} />
+            : <IconButton icon={IconProvider.getIcon('paper-plane')} label={labels.send} variant="primary" disabled={disabled || !text.trim()} onClick={submit} />}
         </div>
       </div>
       {footnote && <p className={styles.footnote}>{footnote}</p>}

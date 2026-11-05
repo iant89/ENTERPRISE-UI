@@ -1,5 +1,5 @@
 import { forwardRef, useId, type HTMLAttributes, type ReactNode } from 'react';
-import { PushpinOffIcon, PushpinOnIcon, SlimArrowDownIcon, SlimArrowUpIcon } from '../../icons';
+import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { IconButton } from '../icon-button';
@@ -73,9 +73,9 @@ export const DynamicPage = forwardRef<HTMLDivElement, DynamicPageProps>(function
           <>
             <div id={headerId} className={styles.headerContent} hidden={!expanded}>{headerContent}</div>
             <div className={styles.headerControls}>
-              <IconButton size="sm" icon={expanded ? <SlimArrowUpIcon /> : <SlimArrowDownIcon />} label={expanded ? labels.collapse : labels.expand} aria-expanded={expanded} aria-controls={headerId} onClick={() => setExpanded(!expanded)} />
+              <IconButton size="sm" icon={expanded ? IconProvider.getIcon('slim-arrow-up') : IconProvider.getIcon('slim-arrow-down')} label={expanded ? labels.collapse : labels.expand} aria-expanded={expanded} aria-controls={headerId} onClick={() => setExpanded(!expanded)} />
               {!hidePinButton && expanded && (
-                <IconButton size="sm" icon={pinned ? <PushpinOffIcon /> : <PushpinOnIcon />} label={pinned ? labels.unpin : labels.pin} aria-pressed={pinned} onClick={() => setPinned(!pinned)} />
+                <IconButton size="sm" icon={pinned ? IconProvider.getIcon('pushpin-off') : IconProvider.getIcon('pushpin-on')} label={pinned ? labels.unpin : labels.pin} aria-pressed={pinned} onClick={() => setPinned(!pinned)} />
               )}
             </div>
           </>

@@ -196,3 +196,6 @@ export * from './components/notification-center';
 export * from './components/app-breadcrumb-bar';
 export * from './components/permission-gate';
 export * from './components/virtual-tree';
+
+// Metadata engine and Smart components
+export * from './metadata';

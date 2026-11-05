@@ -1,6 +1,6 @@
 /** Documentation metadata for every component page. API reference tables come from docs/generated/api.json. */
 
-export type Category = 'Layout' | 'Navigation' | 'Buttons' | 'Forms' | 'Data display' | 'Charts' | 'Feedback' | 'Patterns';
+export type Category = 'Layout' | 'Navigation' | 'Buttons' | 'Forms' | 'Data display' | 'Charts' | 'Feedback' | 'Patterns' | 'Metadata';
 
 export const categories: { id: Category; description: string }[] = [
   { id: 'Layout', description: 'Application frame and layout primitives.' },
@@ -11,6 +11,7 @@ export const categories: { id: Category; description: string }[] = [
   { id: 'Charts', description: 'Dependency-free SVG charts and micro charts with keyboard access and data-table views.' },
   { id: 'Feedback', description: 'Dialogs, messages and progress.' },
   { id: 'Patterns', description: 'Higher-level enterprise floorplans composed from components.' },
+  { id: 'Metadata', description: 'Describe an entity once and generate fields, forms, filter bars, tables and charts from it.' },
 ];
 
 export interface KeyboardRow {
@@ -530,6 +531,48 @@ export const docs: ComponentDoc[] = [
     related: ['activity-feed', 'object-page'],
   },
   { slug: 'empty-state', name: 'EmptyState', category: 'Patterns', components: ['EmptyState'], summary: 'Explains missing content and offers next steps.', a11y: ['The illustration is decorative; the title is a heading at a configurable level.'] },
+  // Metadata engine
+  {
+    slug: 'metadata-engine', name: 'Metadata engine', category: 'Metadata', components: ['MetadataProvider', 'FieldRenderer'],
+    summary: 'A schema of field names, data types, labels, required and read-only flags, defaults, validation rules and display formats that drives every Smart component.',
+    a11y: ['Labels, required markers and validation messages come from the schema, so every generated control is labelled and announces its errors.', 'Booleans are shown as text (Yes/No or custom labels), never by color alone.', 'All engine strings can be replaced through `MetadataProvider` `messages`; numbers, currencies and dates follow its `locale`.', 'Custom renderers registered per data type receive the label, error and required state and must keep them on the control.'],
+    related: ['smart-field', 'smart-form', 'smart-filter-bar', 'smart-table', 'smart-chart'],
+  },
+  {
+    slug: 'smart-field', name: 'SmartField', category: 'Metadata', components: ['SmartField'],
+    summary: 'One field rendered from its metadata: the right control for its data type in edit mode, or its formatted value in display mode.',
+    keyboard: [k('Tab', 'Moves to the control; leaving it runs the field’s validation rules')],
+    a11y: ['Uses the library control for the type, with its own label, description and `aria-invalid` wiring.', 'Display mode renders a description list (`dt`/`dd`) pairing the label and the value.', 'Read-only switches and checkboxes are disabled, because native checkboxes ignore `readOnly`.'],
+    related: ['metadata-engine', 'smart-form'],
+  },
+  {
+    slug: 'smart-form', name: 'SmartForm', category: 'Metadata', components: ['SmartForm'],
+    summary: 'A create, edit or display form generated from a schema, with sections, schema-driven validation, an error summary and Save / Reset.',
+    keyboard: [k('Enter (submit)', 'Validates; focus moves to the error summary when there are errors'), k('Enter (summary link)', 'Moves focus to the field')],
+    a11y: ['Built on useForm and FormErrorSummary: after a failed submit the summary takes focus and links to each field.', 'Sections are fieldsets with legends.', 'Server errors returned from `onSubmit` are shown on their fields.'],
+    related: ['form-validation', 'smart-field', 'object-editor'],
+  },
+  {
+    slug: 'smart-filter-bar', name: 'SmartFilterBar', category: 'Metadata', components: ['SmartFilterBar'],
+    summary: 'A filter bar generated from a schema, with a condition control per field type, free-text search, an active-filter count and Go / Clear.',
+    keyboard: [k('Enter', 'Applies the filters (Go)')],
+    a11y: ['A labelled `search` form built on FilterBar.', 'Number ranges are fieldsets whose From and To inputs are named after the field.', 'Use `filterRecords` on the client or translate the typed conditions for your backend.'],
+    related: ['filter-bar', 'smart-table', 'list-report'],
+  },
+  {
+    slug: 'smart-table', name: 'SmartTable', category: 'Metadata', components: ['SmartTable'],
+    summary: 'A table generated from a schema, with labelled headers, cells formatted by type, type-aware sorting and the title field as row header.',
+    keyboard: [k('Enter / Space (sortable header)', 'Sorts by the column')],
+    a11y: ['Built on Table: the `titleField` column is the row header and the schema label is the caption.', 'Formatted text is used for every cell, so values never rely on color.'],
+    related: ['table', 'smart-filter-bar', 'smart-chart'],
+  },
+  {
+    slug: 'smart-chart', name: 'SmartChart', category: 'Metadata', components: ['SmartChart'],
+    summary: 'A bar, line or donut chart that groups records by a dimension field and aggregates measure fields, labelled and formatted from the schema.',
+    keyboard: [k('← / →', 'Move between categories'), k('Enter / Space', 'Select the category')],
+    a11y: ['Built on the library charts, which provide keyboard access and a data table.', 'The default name, "<measures> by <dimension>", comes from the field labels; pass `label` for a better title.'],
+    related: ['bar-chart', 'line-chart', 'donut-chart', 'smart-table'],
+  },
 ];
 
 export const docsBySlug = new Map(docs.map((d) => [d.slug, d]));

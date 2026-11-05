@@ -21,7 +21,7 @@ const RESERVED = new Set(('break case catch class const continue debugger defaul
  * api.json (already in the bundle; non-component exports listed by hand) rather than the library namespace, which would pull the whole library into the
  * initial chunk; a unit test checks it covers every PascalCase runtime export.
  */
-const LIBRARY_EXPORTS = new Set([...Object.keys(api.components), ...Object.keys(api.hooks ?? {}), 'ObjectSaveError']);
+const LIBRARY_EXPORTS = new Set([...Object.keys(api.components), ...Object.keys(api.hooks ?? {}), 'ObjectSaveError', 'SchemaError']);
 
 /** Rejects (never rewrites) destinations outside the project tree. */
 export function destinationError(raw: string): string | undefined {

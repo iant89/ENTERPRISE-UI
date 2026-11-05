@@ -1,10 +1,11 @@
 import { useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
-import { ChevronRight } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import type { TableColumn, TableDensity } from '../table';
 import tableStyles from '../table/Table.module.css';
 import styles from './TreeTable.module.css';
+import slimArrowRightSvg from '../../assets/icons/slim-arrow-right.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface TreeTableProps<T> {
   /** Column definitions. */
@@ -155,7 +156,7 @@ export function TreeTable<T>({
                               focusRow(flat.id);
                             }}
                           >
-                            <ChevronRight aria-hidden="true" />
+                            {svgIcon(slimArrowRightSvg, 'slim-arrow-right', { 'aria-hidden': "true" })}
                           </button>
                         ) : (
                           <span className={styles.spacer} />

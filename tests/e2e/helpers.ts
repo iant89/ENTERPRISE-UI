@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page } from '@playwright/test';
 
-export const pages = ['/', '/getting-started', '/tokens', '/themes', '/components', '/gallery', '/layouts', '/patterns', '/accessibility', '/api'];
+export const pages = ['/', '/getting-started', '/tokens', '/themes', '/icons', '/components', '/gallery', '/layouts', '/patterns', '/accessibility', '/api'];
 
 export async function open(page: Page, path: string, theme = 'light', density = 'cozy') {
   await page.addInitScript(

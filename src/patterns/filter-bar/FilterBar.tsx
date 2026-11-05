@@ -1,10 +1,11 @@
 import { forwardRef, type FormEvent, type HTMLAttributes, type ReactNode } from 'react';
-import { Filter } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useId } from '../../hooks/useId';
 import { Button } from '../../components/button';
 import styles from './FilterBar.module.css';
+import filterSvg from '../../assets/icons/filter.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface FilterBarProps extends Omit<HTMLAttributes<HTMLFormElement>, 'onSubmit' | 'title'> {
   /** Filter controls — typically Select, ComboBox, DatePicker etc. with labels. */
@@ -50,7 +51,7 @@ export const FilterBar = forwardRef<HTMLFormElement, FilterBarProps>(function Fi
     <>
       {actions}
       {children && (
-        <Button variant="tertiary" icon={<Filter />} aria-expanded={isExpanded} aria-controls={filtersId} onClick={() => setExpanded(!isExpanded)}>
+        <Button variant="tertiary" icon={svgIcon(filterSvg, 'filter')} aria-expanded={isExpanded} aria-controls={filtersId} onClick={() => setExpanded(!isExpanded)}>
           {isExpanded ? 'Hide filters' : 'Show filters'}
           {activeCount > 0 && ` (${activeCount})`}
         </Button>

@@ -1,11 +1,16 @@
 import { forwardRef, useState, type HTMLAttributes } from 'react';
-import { AlertTriangle, CheckCircle2, Info, X, XCircle } from 'lucide-react';
 import { Button } from '../../components/button';
 import { IconButton } from '../../components/icon-button';
 import type { MessageType } from '../../components/message-popover';
 import { cx } from '../../utilities/cx';
 import { compareMessages, countMessages, type AppMessage, type MessageSource } from '../MessageStore';
 import styles from './MessageView.module.css';
+import declineSvg from '../../assets/icons/decline.svg?raw';
+import messageErrorSvg from '../../assets/icons/message-error.svg?raw';
+import messageInformationSvg from '../../assets/icons/message-information.svg?raw';
+import messageSuccessSvg from '../../assets/icons/message-success.svg?raw';
+import warning2Svg from '../../assets/icons/warning2.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 /** Strings of MessageView. */
 export interface MessageViewLabels {
@@ -38,7 +43,12 @@ const defaultLabels: MessageViewLabels = {
   technicalDetails: 'Technical details',
 };
 
-const ICONS = { error: XCircle, warning: AlertTriangle, information: Info, success: CheckCircle2 } as const;
+const ICONS: Record<MessageType, [string, string]> = {
+  error: [messageErrorSvg, 'message-error'],
+  warning: [warning2Svg, 'warning2'],
+  information: [messageInformationSvg, 'message-information'],
+  success: [messageSuccessSvg, 'message-success'],
+};
 const ORDER: MessageType[] = ['error', 'warning', 'information', 'success'];
 
 export interface MessageViewProps extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
@@ -113,7 +123,7 @@ export const MessageView = forwardRef<HTMLElement, MessageViewProps>(function Me
       ) : (
         <ul className={styles.list}>
           {shown.map((m) => {
-            const Icon = ICONS[m.type];
+            const [iconSvg, iconName] = ICONS[m.type];
             const title = (
               <>
                 <span className="eui-visually-hidden">{labels.types[m.type]}:</span> {m.title}
@@ -121,7 +131,7 @@ export const MessageView = forwardRef<HTMLElement, MessageViewProps>(function Me
             );
             return (
               <li key={m.id} className={cx(styles.item, styles[m.type], !m.read && styles.unread)}>
-                <Icon aria-hidden="true" className={styles.icon} />
+                {svgIcon(iconSvg, iconName, { 'aria-hidden': 'true', className: styles.icon })}
                 <div className={styles.body}>
                   {navigable(m) ? (
                     <button type="button" className={styles.titleButton} onClick={() => select(m)}>
@@ -146,7 +156,7 @@ export const MessageView = forwardRef<HTMLElement, MessageViewProps>(function Me
                     </details>
                   )}
                 </div>
-                {onDismiss && <IconButton className={styles.dismiss} icon={<X />} label={labels.dismiss(m.title)} size="sm" neutral onClick={() => onDismiss(m)} />}
+                {onDismiss && <IconButton className={styles.dismiss} icon={svgIcon(declineSvg, 'decline')} label={labels.dismiss(m.title)} size="sm" neutral onClick={() => onDismiss(m)} />}
               </li>
             );
           })}

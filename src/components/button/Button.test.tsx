@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createRef } from 'react';
-import { Plus } from 'lucide-react';
 import { renderWithTheme, axeViolations } from '../../../tests/utils';
 import { screen } from '@testing-library/react';
 import { Button } from './Button';
@@ -48,7 +47,7 @@ describe('Button', () => {
     const { container } = renderWithTheme(
       <ButtonGroup aria-label="Actions">
         <Button variant="primary">Save</Button>
-        <IconButton icon={<Plus />} label="Add" />
+        <IconButton icon="add" label="Add" />
       </ButtonGroup>,
     );
     expect(await axeViolations(container)).toEqual([]);
@@ -57,7 +56,7 @@ describe('Button', () => {
 
 describe('IconButton', () => {
   it('uses label as the accessible name', () => {
-    renderWithTheme(<IconButton icon={<Plus />} label="Add item" />);
+    renderWithTheme(<IconButton icon="add" label="Add item" />);
     expect(screen.getByRole('button', { name: 'Add item' })).toBeInTheDocument();
   });
 });

@@ -1,4 +1,5 @@
 .header {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--eui-space-2);
@@ -90,6 +91,22 @@ a.brand:focus-visible {
   max-width: 32rem;
 }
 
+/* Collapsed search opens as a row under the bar. */
+.searchFloating {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  padding: var(--eui-space-2);
+  background: var(--eui-color-shell);
+  box-shadow: var(--eui-shadow-md);
+}
+
+.searchFloating > * {
+  max-width: none;
+}
+
 .end {
   display: flex;
   align-items: center;
@@ -98,29 +115,54 @@ a.brand:focus-visible {
   flex-shrink: 0;
 }
 
-.searchToggle {
+/* Additional context area: product-wide elements in a start and an end container. */
+.context {
+  display: flex;
+  align-items: center;
+  gap: var(--eui-space-2);
+  min-width: 0;
+  margin-inline-start: var(--eui-space-2);
+}
+
+.contextEnd {
+  margin-inline: 0 var(--eui-space-2);
+}
+
+.contextItem {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.hidden {
   display: none;
 }
 
-@media (max-width: 1023px) {
-  .search {
-    display: none;
-  }
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 
-  .searchOpen .search {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    display: flex;
-    padding: var(--eui-space-2);
-    background: var(--eui-color-shell);
-    box-shadow: var(--eui-shadow-md);
-  }
+.measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  gap: var(--eui-space-1);
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: nowrap;
+}
 
-  .searchToggle {
-    display: inline-flex;
-  }
+.measure > * {
+  flex-shrink: 0;
 }
 
 .notification {
@@ -132,6 +174,13 @@ a.brand:focus-visible {
   position: absolute;
   top: 2px;
   right: 0;
+  pointer-events: none;
+}
+
+.notification .dotBadge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
   pointer-events: none;
 }
 
@@ -174,14 +223,4 @@ a.brand:focus-visible {
 .userMeta {
   color: var(--eui-color-text-secondary);
   font-size: var(--eui-font-size-sm);
-}
-
-.hideMobile {
-  display: inline-flex;
-}
-
-@media (max-width: 599px) {
-  .hideMobile {
-    display: none;
-  }
 }

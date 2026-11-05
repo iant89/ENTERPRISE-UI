@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
 import { screen } from '@testing-library/react';
-import { Home, Package } from 'lucide-react';
 import { renderWithTheme, axeViolations } from '../../../tests/utils';
 import { AppShell } from './AppShell';
 import { ApplicationHeader } from '../../components/application-header';
@@ -25,9 +24,9 @@ function Shell({ onNavigate }: { onNavigate?: (id: string) => void }) {
       }
       navigation={
         <SideNavigation activeId="products" onNavigate={(id, e) => { e.preventDefault(); onNavigate?.(id); }}>
-          <NavigationItem id="home" label="Home" icon={<Home />} href="#home" />
+          <NavigationItem id="home" label="Home" icon="home" href="#home" />
           <NavigationGroup label="Catalog">
-            <NavigationItem id="catalog" label="Catalog" icon={<Package />}>
+            <NavigationItem id="catalog" label="Catalog" icon="product">
               <NavigationItem id="products" label="Products" href="#products" />
               <NavigationItem id="categories" label="Categories" href="#categories" />
             </NavigationItem>
@@ -108,7 +107,7 @@ describe('SideNavigation collapsed flyout', () => {
           events.push({ id, prevented: event.defaultPrevented });
         }}
       >
-        <NavigationItem id="catalog" label="Catalog" icon={<Package />}>
+        <NavigationItem id="catalog" label="Catalog" icon="product">
           <NavigationItem id="products" label="Products" href="#products" />
         </NavigationItem>
       </SideNavigation>,

@@ -1,9 +1,10 @@
 import { createContext, forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
-import { ChevronRight } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { FilterTokenGroup } from '../../components/filter-token';
 import styles from './DashboardFilters.module.css';
+import slimArrowRightSvg from '../../assets/icons/slim-arrow-right.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 /** One cross-filter, e.g. Region = EMEA, usually set by clicking a chart. */
 export interface DashboardFilter {
@@ -171,7 +172,7 @@ export const DashboardFilterBar = forwardRef<HTMLDivElement, DashboardFilterBarP
               const current = i === api.drillPath.length - 1;
               return (
                 <li key={`${step.level}-${i}`}>
-                  <ChevronRight aria-hidden="true" className={styles.separator} />
+                  {svgIcon(slimArrowRightSvg, 'slim-arrow-right', { 'aria-hidden': "true", className: styles.separator })}
                   {current ? (
                     <span className={styles.current} aria-current="location">
                       {step.value}

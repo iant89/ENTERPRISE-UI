@@ -1,5 +1,4 @@
-import { FileText, History, Package, Paperclip } from 'lucide-react';
-import { Tab, TabList, TabPanel, Tabs } from '@enterprise-ui/react';
+import { Tab, TabList, TabPanel, Tabs, Icon } from '@enterprise-ui/react';
 
 export const title = 'Tabs';
 export const description = 'Arrow keys move between tabs and select them (automatic activation). Only the selected tab is in the Tab order.';
@@ -8,10 +7,10 @@ export default function TabsBasic() {
   return (
     <Tabs defaultValue="items">
       <TabList aria-label="Purchase order">
-        <Tab value="general" icon={<FileText />}>General</Tab>
-        <Tab value="items" icon={<Package />} count={4}>Items</Tab>
-        <Tab value="attachments" icon={<Paperclip />} count={2}>Attachments</Tab>
-        <Tab value="history" icon={<History />}>History</Tab>
+        <Tab value="general" icon={<Icon name="document-text" />}>General</Tab>
+        <Tab value="items" icon={<Icon name="product" />} count={4}>Items</Tab>
+        <Tab value="attachments" icon={<Icon name="attachment" />} count={2}>Attachments</Tab>
+        <Tab value="history" icon={<Icon name="history" />}>History</Tab>
         <Tab value="approvals" disabled>Approvals</Tab>
       </TabList>
       <TabPanel value="general">Supplier, payment terms and delivery address.</TabPanel>

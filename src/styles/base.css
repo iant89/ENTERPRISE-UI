@@ -59,3 +59,34 @@
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
+
+/* Icons that point in a reading direction are mirrored in right-to-left layouts. */
+[dir="rtl"] .eui-icon-rtl-flip { transform: scaleX(-1); }
+
+/* Icons (see src/icons). Size classes map the semantic sizes to design tokens; icons inherit the text colour. */
+.eui-icon { flex-shrink: 0; vertical-align: middle; }
+.eui-icon-font,
+.eui-icon-placeholder { font-size: var(--eui-icon-size-xl); }
+/* Inside controls, font icons and placeholders match the 16px SVG icons those controls size. */
+:where(button, a, [role='menuitem'], [role='tab'], [role='treeitem'], [role='option']) :is(.eui-icon-font, .eui-icon-placeholder):not([class*='eui-icon-size-']) {
+  font-size: var(--eui-icon-size);
+}
+.eui-icon-font {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1em;
+  block-size: 1em;
+  overflow: hidden;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+}
+.eui-icon-placeholder { display: inline-block; inline-size: 1em; block-size: 1em; }
+.eui-icon-size-xs { inline-size: var(--eui-icon-size-xs); block-size: var(--eui-icon-size-xs); font-size: var(--eui-icon-size-xs); }
+.eui-icon-size-sm { inline-size: var(--eui-icon-size-sm); block-size: var(--eui-icon-size-sm); font-size: var(--eui-icon-size-sm); }
+.eui-icon-size-md { inline-size: var(--eui-icon-size); block-size: var(--eui-icon-size); font-size: var(--eui-icon-size); }
+.eui-icon-size-lg { inline-size: var(--eui-icon-size-lg); block-size: var(--eui-icon-size-lg); font-size: var(--eui-icon-size-lg); }
+.eui-icon-size-xl { inline-size: var(--eui-icon-size-xl); block-size: var(--eui-icon-size-xl); font-size: var(--eui-icon-size-xl); }
+.eui-icon-size-2xl { inline-size: var(--eui-icon-size-2xl); block-size: var(--eui-icon-size-2xl); font-size: var(--eui-icon-size-2xl); }
+.eui-icon-disabled { opacity: var(--eui-disabled-opacity); }

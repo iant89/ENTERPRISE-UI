@@ -2,6 +2,7 @@ import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
 import { cx } from '../../utilities/cx';
 import type { Tone } from '../../utilities/types';
 import styles from './Timeline.module.css';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 export interface TimelineItem {
   id: string;
@@ -9,7 +10,7 @@ export interface TimelineItem {
   /** Display time. Pass a Date to render a `<time>` element. */
   timestamp?: ReactNode | Date;
   description?: ReactNode;
-  icon?: ReactNode;
+  icon?: IconSource;
   tone?: Tone;
   /** Arbitrary content below the description (e.g. a comment Card). */
   content?: ReactNode;
@@ -30,7 +31,7 @@ export const Timeline = forwardRef<HTMLOListElement, TimelineProps>(function Tim
       {items.map((item) => (
         <li key={item.id} className={cx(styles.item, item.tone && styles[item.tone])}>
           <span className={styles.marker} aria-hidden="true">
-            {item.icon ?? <span className={styles.dot} />}
+            {item.icon != null ? renderIconSource(item.icon) : <span className={styles.dot} />}
           </span>
           <div className={styles.body}>
             <div className={styles.header}>

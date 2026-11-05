@@ -1,10 +1,12 @@
 import { forwardRef, type ReactNode } from 'react';
-import { ChevronDown } from 'lucide-react';
 import { ButtonGroup } from '../button-group';
 import { Button, type ButtonSize } from '../button';
 import { IconButton } from '../icon-button';
 import { DropdownMenu } from '../dropdown-menu';
 import type { MenuEntry } from '../menu';
+import slimArrowDownSvg from '../../assets/icons/slim-arrow-down.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+import { type IconSource } from '../../icons/IconSource';
 
 export interface SplitButtonProps {
   /** Label of the default action. */
@@ -22,7 +24,7 @@ export interface SplitButtonProps {
   /** Size of the split button. */
   size?: ButtonSize;
   /** Icon shown before the text. */
-  icon?: ReactNode;
+  icon?: IconSource;
   /** @default false */
   /** Disables the split button. A disabled control cannot be focused or changed. */
   disabled?: boolean;
@@ -46,7 +48,7 @@ export const SplitButton = forwardRef<HTMLDivElement, SplitButtonProps>(function
         placement="bottom-end"
         items={items}
         onAction={onAction}
-        trigger={<IconButton icon={<ChevronDown />} label={menuLabel} variant={variant} size={size} disabled={disabled} />}
+        trigger={<IconButton icon={svgIcon(slimArrowDownSvg, 'slim-arrow-down')} label={menuLabel} variant={variant} size={size} disabled={disabled} />}
       />
     </ButtonGroup>
   );

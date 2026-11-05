@@ -1,5 +1,4 @@
 import { forwardRef, useRef, type HTMLAttributes, type ReactNode } from 'react';
-import { AlertTriangle, Clock, Lock, RefreshCw } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { useMergedRefs } from '../../utilities/refs';
 import { useId } from '../../hooks/useId';
@@ -12,6 +11,11 @@ import {
   ChartToolbar, defaultToolbarLabels, useChartToolsState, type ChartToolbarLabels, type ChartToolOptions, type ChartToolsStateProps,
 } from '../../components/chart-container/chartTools';
 import styles from './DashboardCard.module.css';
+import lockedSvg from '../../assets/icons/locked.svg?raw';
+import pendingSvg from '../../assets/icons/pending.svg?raw';
+import refreshSvg from '../../assets/icons/refresh.svg?raw';
+import warning2Svg from '../../assets/icons/warning2.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export type DashboardCardStatus = 'ready' | 'loading' | 'error' | 'empty' | 'forbidden';
 
@@ -119,10 +123,10 @@ export const DashboardCard = forwardRef<HTMLElement, DashboardCardProps>(functio
   } else if (status === 'error') {
     body = (
       <div className={cx(styles.state, styles.error)} style={{ minHeight: bodyHeight }}>
-        <AlertTriangle aria-hidden="true" className={styles.stateIcon} />
+        {svgIcon(warning2Svg, 'warning2', { 'aria-hidden': "true", className: styles.stateIcon })}
         <p className={styles.stateText}>{error ?? labels.error}</p>
         {onRetry && (
-          <Button size="sm" variant="secondary" icon={<RefreshCw />} onClick={onRetry}>
+          <Button size="sm" variant="secondary" icon={svgIcon(refreshSvg, 'refresh')} onClick={onRetry}>
             {labels.retry}
           </Button>
         )}
@@ -137,7 +141,7 @@ export const DashboardCard = forwardRef<HTMLElement, DashboardCardProps>(functio
   } else if (status === 'forbidden') {
     body = (
       <div className={styles.state} style={{ minHeight: bodyHeight }}>
-        <Lock aria-hidden="true" className={styles.stateIcon} />
+        {svgIcon(lockedSvg, 'locked', { 'aria-hidden': "true", className: styles.stateIcon })}
         {forbiddenContent ?? <p className={styles.stateText}>{labels.forbidden}</p>}
       </div>
     );
@@ -169,7 +173,7 @@ export const DashboardCard = forwardRef<HTMLElement, DashboardCardProps>(functio
               )}
               {stale && (
                 <span className={styles.stale}>
-                  <Clock aria-hidden="true" />
+                  {svgIcon(pendingSvg, 'pending', { 'aria-hidden': "true" })}
                   {labels.stale}
                 </span>
               )}
@@ -180,7 +184,7 @@ export const DashboardCard = forwardRef<HTMLElement, DashboardCardProps>(functio
           {tools && status === 'ready' && <ChartToolbar state={state} tools={tools} labels={labels} />}
           {onRefresh && (
             <IconButton
-              icon={<RefreshCw className={cx(refreshing && styles.spinning)} />}
+              icon={svgIcon(refreshSvg, 'refresh', { className: cx(refreshing && styles.spinning) })}
               label={labels.refresh}
               size="sm"
               aria-busy={refreshing || undefined}

@@ -1,8 +1,14 @@
 import { forwardRef, useCallback, useEffect, useRef, useState, type HTMLAttributes } from 'react';
-import { AlertCircle, Check, CloudUpload, PencilLine } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { formatRelativeTime, useNow } from '../../hooks/useRelativeTime';
 import styles from './DraftIndicator.module.css';
+import acceptSvg from '../../assets/icons/accept.svg?raw';
+import highPrioritySvg from '../../assets/icons/high-priority.svg?raw';
+import uploadToCloudSvg from '../../assets/icons/upload-to-cloud.svg?raw';
+import writeNewSvg from '../../assets/icons/write-new.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+
+const ICON_SVGS: Record<string, string> = { 'accept': acceptSvg, 'high-priority': highPrioritySvg, 'upload-to-cloud': uploadToCloudSvg, 'write-new': writeNewSvg };
 
 export type DraftStatus = 'idle' | 'unsaved' | 'saving' | 'saved' | 'error';
 
@@ -42,14 +48,14 @@ export const DraftIndicator = forwardRef<HTMLDivElement, DraftIndicatorProps>(fu
 ) {
   const labels = { ...defaultLabels, ...labelOverrides };
   const now = useNow(15_000, status === 'saved' && !!lastSaved);
-  const Icon = status === 'saving' ? CloudUpload : status === 'saved' ? Check : status === 'error' ? AlertCircle : PencilLine;
+  const Icon = status === 'saving' ? 'upload-to-cloud' : status === 'saved' ? 'accept' : status === 'error' ? 'high-priority' : 'write-new';
   const text =
     status === 'saving' ? labels.saving : status === 'saved' ? labels.saved(lastSaved ? formatRelativeTime(lastSaved, now, locale) : null) : status === 'error' ? labels.error : status === 'unsaved' ? labels.unsaved : '';
   return (
     <div ref={ref} className={cx(styles.root, styles[status], className)} {...rest}>
       {/* Only the outcome is announced, not every keystroke-driven "Saving…". */}
       <span className={styles.text} role="status" aria-live="polite">
-        {status !== 'idle' && <Icon aria-hidden="true" />}
+        {status !== 'idle' && svgIcon(ICON_SVGS[Icon], Icon, { 'aria-hidden': 'true' })}
         <span aria-hidden={status === 'saving' || status === 'unsaved' ? true : undefined}>{text}</span>
       </span>
       {status === 'error' && onRetry && (

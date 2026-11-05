@@ -2,6 +2,7 @@ import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cx } from '../../utilities/cx';
 import { Spinner } from '../spinner';
 import styles from './Button.module.css';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'destructive';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -17,9 +18,9 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Size of the button. */
   size?: ButtonSize;
   /** Icon rendered before the label. */
-  icon?: ReactNode;
+  icon?: IconSource;
   /** Icon rendered after the label. */
-  iconEnd?: ReactNode;
+  iconEnd?: IconSource;
   /** Decorative badge; include meaningful badge information in the button accessible name. */
   badge?: ReactNode;
   /** Shows a spinner and marks the button busy; clicks are ignored. @default false */
@@ -76,7 +77,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       ) : (
         icon && (
           <span className={styles.icon} aria-hidden="true">
-            {icon}
+            {renderIconSource(icon)}
           </span>
         )
       )}
@@ -84,7 +85,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       {badge}
       {iconEnd && (
         <span className={styles.icon} aria-hidden="true">
-          {iconEnd}
+          {renderIconSource(iconEnd)}
         </span>
       )}
     </button>

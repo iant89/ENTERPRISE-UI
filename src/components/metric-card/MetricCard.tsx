@@ -1,9 +1,15 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { ArrowDownRight, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import type { Tone } from '../../utilities/types';
 import { Skeleton } from '../skeleton';
 import styles from './MetricCard.module.css';
+import arrowRightSvg from '../../assets/icons/arrow-right.svg?raw';
+import trendDownSvg from '../../assets/icons/trend-down.svg?raw';
+import trendUpSvg from '../../assets/icons/trend-up.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
+
+const ICON_SVGS: Record<string, string> = { 'arrow-right': arrowRightSvg, 'trend-down': trendDownSvg, 'trend-up': trendUpSvg };
 
 export interface MetricTrend {
   direction: 'up' | 'down' | 'flat';
@@ -29,7 +35,7 @@ export interface MetricCardProps extends Omit<HTMLAttributes<HTMLElement>, 'titl
   /** Color the value by status (Fiori semantic KPI coloring). */
   tone?: Exclude<Tone, 'neutral'>;
   /** Icon shown next to the title. */
-  icon?: ReactNode;
+  icon?: IconSource;
   /** Data points for a small trend line. */
   sparkline?: number[];
   /** Content shown in the footer. */
@@ -69,7 +75,7 @@ export const MetricCard = forwardRef<HTMLElement, MetricCardProps>(function Metr
   ref,
 ) {
   const Heading = `h${headingLevel}` as const;
-  const TrendIcon = trend?.direction === 'up' ? ArrowUpRight : trend?.direction === 'down' ? ArrowDownRight : ArrowRight;
+  const TrendIcon = trend?.direction === 'up' ? 'trend-up' : trend?.direction === 'down' ? 'trend-down' : 'arrow-right';
   const good = trend && trend.direction !== 'flat' ? (trend.direction === 'up') === (trend.upIsGood ?? true) : null;
   return (
     <article ref={ref} className={cx(styles.card, tone && styles[tone], onClick && styles.interactive, className)} aria-busy={loading || undefined} {...rest}>
@@ -86,7 +92,7 @@ export const MetricCard = forwardRef<HTMLElement, MetricCardProps>(function Metr
           </Heading>
           {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
         </div>
-        {icon && <span className={styles.icon} aria-hidden="true">{icon}</span>}
+        {icon && <span className={styles.icon} aria-hidden="true">{renderIconSource(icon)}</span>}
       </div>
       {loading ? (
         <Skeleton variant="rect" height={40} width="60%" />
@@ -99,7 +105,7 @@ export const MetricCard = forwardRef<HTMLElement, MetricCardProps>(function Metr
             </div>
             {trend && (
               <div className={cx(styles.trend, good === null ? styles.flat : good ? styles.good : styles.bad)}>
-                <TrendIcon aria-hidden="true" />
+                {svgIcon(ICON_SVGS[TrendIcon], TrendIcon, { 'aria-hidden': 'true' })}
                 <span>
                   <span className="eui-visually-hidden">{trend.direction === 'up' ? 'Up' : trend.direction === 'down' ? 'Down' : 'Unchanged'}</span>{' '}
                   {trend.value}

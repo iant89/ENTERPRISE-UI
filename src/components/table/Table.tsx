@@ -1,5 +1,4 @@
 import { Fragment, useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronRight } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import type { Tone } from '../../utilities/types';
 import { useControllableState } from '../../hooks/useControllableState';
@@ -7,6 +6,13 @@ import { useId } from '../../hooks/useId';
 import { Checkbox } from '../checkbox';
 import { Skeleton } from '../skeleton';
 import styles from './Table.module.css';
+import arrowBottomSvg from '../../assets/icons/arrow-bottom.svg?raw';
+import arrowTopSvg from '../../assets/icons/arrow-top.svg?raw';
+import slimArrowRightSvg from '../../assets/icons/slim-arrow-right.svg?raw';
+import sortSvg from '../../assets/icons/sort.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+
+const ICON_SVGS: Record<string, string> = { 'arrow-bottom': arrowBottomSvg, 'arrow-top': arrowTopSvg, 'sort': sortSvg };
 
 export type SortDirection = 'ascending' | 'descending';
 
@@ -291,7 +297,7 @@ export function Table<T>({
             )}
             {columns.map((column) => {
               const sorted = sortState?.columnId === column.id ? sortState.direction : undefined;
-              const SortIcon = sorted === 'ascending' ? ArrowUp : sorted === 'descending' ? ArrowDown : ArrowUpDown;
+              const ColumnSortIcon = sorted === 'ascending' ? 'arrow-top' : sorted === 'descending' ? 'arrow-bottom' : 'sort';
               return (
                 <th
                   key={column.id}
@@ -304,7 +310,7 @@ export function Table<T>({
                     <button type="button" className={styles.sortButton} onClick={() => toggleSort(column)}>
                       <span>{column.header}</span>
                       <span className={cx(styles.sortIcon, !sorted && styles.sortIdle)} aria-hidden="true">
-                        <SortIcon />
+                        {svgIcon(ICON_SVGS[ColumnSortIcon], ColumnSortIcon)}
                       </span>
                     </button>
                   ) : (
@@ -402,7 +408,7 @@ export function Table<T>({
                   })}
                   {onRowClick && (
                     <td className={cx(styles.td, styles.navCell)} aria-hidden="true">
-                      {virtual ? <div className={styles.virtualContent} style={{ height: rowHeight }}><ChevronRight /></div> : <ChevronRight />}
+                      {virtual ? <div className={styles.virtualContent} style={{ height: rowHeight }}>{svgIcon(slimArrowRightSvg, 'slim-arrow-right')}</div> : svgIcon(slimArrowRightSvg, 'slim-arrow-right')}
                     </td>
                   )}
                 </tr>

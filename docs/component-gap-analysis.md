@@ -47,7 +47,7 @@ Relevant findings:
 
 ### Chart design decisions
 
-- **No dependency.** The charts are SVG built from design tokens, which keeps the single runtime dependency (`lucide-react`). All of the chart code, styles included, is under 2,000 lines, while Recharts or ECharts would add several hundred kilobytes for features most business screens do not use.
+- **No dependency.** The charts are SVG built from design tokens, which keeps the library free of chart dependencies. All of the chart code, styles included, is under 2,000 lines, while Recharts or ECharts would add several hundred kilobytes for features most business screens do not use.
 - **Accessibility.**
   - Each chart is a focusable `group` with `aria-roledescription="chart"`.
   - The arrow keys move between data points and every move is announced politely.
@@ -131,9 +131,79 @@ The priority reflects how often each item is needed in ERP, inventory, fleet and
 | Statistic | Covered by `MetricCard`. |
 | Notification drawer | Covered by `NotificationCenter`. |
 | QRCode, Watermark, Mentions | Low reuse in data-heavy business screens; leave to applications. |
-| Rich text editor | Needs a large editing engine. Document an integration recipe instead of shipping one. |
+| Rich text editor | Covered by `RichTextEditor`. |
 | Radar and pie variants | Radar charts are hard to read; a pie is available through `DonutChart variant="pie"`. |
 | Network or org chart | Valuable but needs a layout engine; consider it only with a concrete consumer. |
+
+## Remaining gaps against SAPUI5
+
+This section compares the library with the SAPUI5 control catalog: sap.m, sap.f, sap.ui.table, sap.ui.layout, sap.ui.unified, the smart and MDC controls, sap.uxap, sap.tnt, the chart and micro chart libraries, sap.gantt, sap.suite.ui.commons, the overview-page cards and the floorplans. It was checked against the 203 exported components in November 2026. Controls that exist under another name count as covered: for example `MultiComboBox` is `MultiSelect`, `InfoLabel` is `Tag`, `MessageToast` is `ToastProvider`, `IllustratedMessage` is `EmptyState`, `ShellBar` is `ApplicationHeader`, `ToolPage` is `AppShell` and `VariantManagement` is `SavedViews`. Items already ranked in "Remaining gaps, ranked" above keep their priority there.
+
+### Missing: high value
+
+These are in the core control set of a Fiori-style library and have no equivalent yet.
+
+| UI5 control | What is missing |
+| --- | --- |
+| **ObjectNumber** | A number with unit and semantic colour (`1,250.00 EUR` in red). `Text` and `MetricCard` don't cover inline use in lists and tables. |
+| **ObjectMarker** | Favourite, flagged, draft, locked and unsaved markers. |
+| **ObjectListItem** | A list row with title, number, attributes and status. `List` has standard and custom items only. |
+| **Image** | A standalone image with lazy loading, a fallback and fit or shape options. Only `LightboxImage` and `MediaGallery` exist. |
+| **FormattedText** | A limited, sanitized set of HTML (bold, links, lists) for server-provided text. |
+| **QuickView / QuickViewCard** | A compact business-object card in a popover, for example a supplier's contact details. |
+| **ActionSheet** | A mobile bottom sheet of actions. `DropdownMenu` covers desktop only. |
+| **BusyDialog** | A modal "working…" dialog with an optional Cancel. |
+| **SelectDialog** | A searchable single or multi-select list dialog without columns. `ValueHelpDialog` covers the table version (TableSelectDialog). |
+| **TabContainer** | Document-style tabs that can be closed and added. `Tabs` has neither. |
+| **HeaderContainer** | A horizontally scrolling strip of KPI tiles with scroll buttons. |
+| **DataGrid: export, row actions, column menu, grouping** | Spreadsheet or CSV export, row actions, a column header menu, and grouping with aggregation (UI5 `AnalyticalTable`, `RowAction`, `ColumnMenu`). `EditableGrid` already covers the creation row. |
+
+### Missing: medium value
+
+| Area | UI5 controls | Notes |
+| --- | --- | --- |
+| Tiles | GenericTile (launch tile), SlideTile, ActionTile, NewsContent | `MetricCard` roughly covers NumericContent. |
+| Planning | PlanningCalendar, SinglePlanningCalendar, CalendarDateInterval | Already ranked P1 above (with Gantt); CalendarDateInterval is a week strip. |
+| Charts | Area, Pie, Scatter, Bubble, Combination, Radar, Waterfall, Treemap; ChartPopover | Line, bar/column, donut and heatmap exist. Pie is available as `DonutChart variant="pie"`. Scatter, Combination, Waterfall and Treemap are ranked above. ChartPopover is details for a selected data point. |
+| Micro charts | Comparison, Delta, Harvey Ball, InteractiveBarChart | Bullet, Radial, line, area and column (`Sparkline`) and stacked bar (`ProportionBar`) exist. |
+| Fiori layouts | GridContainer, GridList, BlockLayout | GridContainer is a card grid rearranged by dragging; `Dashboard` has a fixed grid. |
+| Floorplans | Worklist, Analytical List Page | `ListReport`, `ObjectPage`, `MasterDetail`, `Dashboard` and `FlexibleColumnLayout` exist. |
+| Overview-page cards | ListCard, TableCard, StackCard, LinkListCard | Only `AnalyticalCard` exists. |
+| Business controls | MicroProcessFlow, Note | MicroProcessFlow is inline step status; `ProcessFlow` is the full view. |
+| Display | Currency | A formatted, aligned amount for display. `AmountInput` is input only. |
+| Other | PDFViewer, CodeEditor, FeedInput, PullToRefresh, SelectionDetails | The Studio's Monaco editor is not exported as a component. |
+
+### Missing: specialised or large
+
+- **Gantt suite:** chart, rows, shapes and time axis (ranked P1 above).
+- **Maps:** GeoMap with spots, routes, regions and a legend. These need a map library.
+- **Larger tools:** NetworkGraph, ImageEditor and CalculationBuilder.
+- **Smart controls:** SmartField and SmartForm (fields and forms generated from a schema) and SmartChart (a chart generated from metadata).
+- **Shell and adaptation:** a launchpad with a tile catalog, and runtime adaptation (key-user UI editing).
+- **3D viewport** (sap.ui.vk).
+
+### Partly covered
+
+| UI5 | Closest Enterprise UI | Gap |
+| --- | --- | --- |
+| ObjectHeader | `ObjectPage` / `DynamicPage` header | Not usable on its own. |
+| ObjectAttribute | `DescriptionList`, ObjectPage `attributes` | No inline single attribute. |
+| MessageView | Inside `MessagePopover` | Not usable on its own. |
+| SemanticPage | `DynamicPage` + `FooterToolbar` | No semantic action slots. |
+| SmartTable / SmartFilterBar | `ListReport` with a data adapter, `FilterBar` | Not generated from metadata. |
+| TablePersoController | `visibleColumnIds`, `ViewSettingsDialog`, `SavedViews` | No column reordering or saved table layout. |
+| Integration card contents | `Card`, `DashboardCard` | No list, table, object or timeline content types. |
+| InputListItem | `ListItemCustom` | No built-in label + control row. |
+| SelectList | `List` with selection | No always-open option list. |
+| MessageManager | `useForm` + `MessagePopover` | No app-wide message store. |
+
+### Not applicable
+
+- **Framework infrastructure:** ManagedObject, Element, Control, Component, UIComponent, View, Fragment, Template, EventBus, CustomData, EnabledPropagator and TooltipBase. React components, context and props cover these.
+- **Routing:** App, NavContainer and SplitApp page stacks. Routing stays with the application by design; `AppShell` and `MasterDetail` cover the layout.
+- **Plain CSS layouts:** ScrollContainer and FixFlex are covered by `Stack` and `Flex`.
+- **Developer tooling:** the support assistant, test recorder and design-time overlays.
+- **Legacy libraries:** sap.ui.commons, sap.ui.ux3, sap.me and sap.makit.
 
 ## Follow-up verification
 

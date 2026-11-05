@@ -106,6 +106,8 @@ for (const symbol of exports) {
     continue;
   }
   if (!isPascal(name)) continue;
+  // The 700+ generated SAP icon components share one API (SapIconProps); listing each one would bloat the docs and Studio.
+  if (file.startsWith('src/icons/sap-icon')) continue;
   const propsSymbol = exportMap.get(`${name}Props`);
   let entry = { name, description: jsDoc(resolved), source: file, props: [], inheritsNative: false, cssVariables: cssVariablesFor(file) };
   if (propsSymbol) {

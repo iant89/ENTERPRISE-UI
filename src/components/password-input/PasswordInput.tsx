@@ -1,9 +1,13 @@
 import { forwardRef, useState, type ChangeEvent } from 'react';
 import { useId } from '../../hooks/useId';
-import { Check, Eye, EyeOff, X } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { Input, type InputProps } from '../input';
 import styles from './PasswordInput.module.css';
+import acceptSvg from '../../assets/icons/accept.svg?raw';
+import declineSvg from '../../assets/icons/decline.svg?raw';
+import hideSvg from '../../assets/icons/hide.svg?raw';
+import showSvg from '../../assets/icons/show.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface PasswordRequirement {
   /** Requirement text, e.g. "At least 12 characters". */
@@ -80,7 +84,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(fu
         }}
         endAdornment={
           <button type="button" className={styles.toggle} aria-pressed={visible} aria-label={visible ? labels.hide : labels.show} title={visible ? labels.hide : labels.show} onClick={() => setVisible((v) => !v)}>
-            {visible ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+            {visible ? svgIcon(hideSvg, 'hide', { 'aria-hidden': "true" }) : svgIcon(showSvg, 'show', { 'aria-hidden': "true" })}
           </button>
         }
       />
@@ -102,7 +106,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(fu
             const met = r.test(password);
             return (
               <li key={r.label} className={cx(styles.requirement, met && styles.met)}>
-                {met ? <Check aria-hidden="true" /> : <X aria-hidden="true" />}
+                {met ? svgIcon(acceptSvg, 'accept', { 'aria-hidden': "true" }) : svgIcon(declineSvg, 'decline', { 'aria-hidden': "true" })}
                 <span>{r.label}</span>
                 <span className="eui-visually-hidden">: {met ? labels.met : labels.notMet}</span>
               </li>

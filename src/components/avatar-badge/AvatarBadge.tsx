@@ -1,10 +1,11 @@
-import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
+import { forwardRef, type HTMLAttributes } from 'react';
 import { cx } from '../../utilities/cx';
 import styles from './AvatarBadge.module.css';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 export interface AvatarBadgeProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'children' | 'color' | 'tabIndex'> {
   /** Decorative icon to display. Do not pass interactive elements. */
-  icon: ReactNode;
+  icon: IconSource;
   /** Semantic appearance. The accent is used only for the neutral tone. @default 'neutral' */
   tone?: 'neutral' | 'success' | 'warning' | 'error' | 'information';
   /** Accent palette index for the neutral tone. @default 8 */
@@ -15,5 +16,5 @@ export interface AvatarBadgeProps extends Omit<HTMLAttributes<HTMLSpanElement>, 
 export const AvatarBadge = forwardRef<HTMLSpanElement, AvatarBadgeProps>(function AvatarBadge(
   { icon, tone = 'neutral', accent = 8, className, ...rest }, ref,
 ) {
-  return <span {...rest} ref={ref} tabIndex={undefined} aria-hidden="true" className={cx(styles.badge, styles[tone], tone === 'neutral' && styles[`accent${accent}`], className)}>{icon}</span>;
+  return <span {...rest} ref={ref} tabIndex={undefined} aria-hidden="true" className={cx(styles.badge, styles[tone], tone === 'neutral' && styles[`accent${accent}`], className)}>{renderIconSource(icon)}</span>;
 });

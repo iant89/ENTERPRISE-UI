@@ -1,9 +1,13 @@
 import { forwardRef, useRef, useState, type CSSProperties, type HTMLAttributes, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
-import { GripHorizontal, GripVertical } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { clamp } from '../../utilities/format';
 import { useControllableState } from '../../hooks/useControllableState';
 import styles from './ResizablePanel.module.css';
+import horizontalGripSvg from '../../assets/icons/horizontal-grip.svg?raw';
+import verticalGripSvg from '../../assets/icons/vertical-grip.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+
+const ICON_SVGS: Record<string, string> = { 'horizontal-grip': horizontalGripSvg, 'vertical-grip': verticalGripSvg };
 
 export interface ResizablePanelProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onResize'> {
   /** Controlled size in px (width for start/end handles, height for top/bottom). */
@@ -72,7 +76,7 @@ export const ResizablePanel = forwardRef<HTMLDivElement, ResizablePanelProps>(fu
     }
   };
 
-  const Grip = horizontal ? GripVertical : GripHorizontal;
+  const Grip = horizontal ? 'vertical-grip' : 'horizontal-grip';
   return (
     <div ref={ref} className={cx(styles.panel, className)} style={{ ...(horizontal ? { width: value } : { height: value }), ...style } as CSSProperties} {...rest}>
       <div className={styles.content} tabIndex={focusableContent ? 0 : undefined}>
@@ -94,7 +98,7 @@ export const ResizablePanel = forwardRef<HTMLDivElement, ResizablePanelProps>(fu
         onKeyDown={onKeyDown}
       >
         <span className={styles.grip} aria-hidden="true">
-          <Grip />
+          {svgIcon(ICON_SVGS[Grip], Grip)}
         </span>
       </div>
     </div>

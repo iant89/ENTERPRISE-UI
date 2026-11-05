@@ -1,9 +1,17 @@
 import { forwardRef, useState, type HTMLAttributes, type ReactNode } from 'react';
-import { AlertTriangle, CheckCircle2, Info, X, XCircle } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import type { Tone } from '../../utilities/types';
 import { IconButton } from '../icon-button';
 import styles from './MessageStrip.module.css';
+import alertSvg from '../../assets/icons/alert.svg?raw';
+import declineSvg from '../../assets/icons/decline.svg?raw';
+import messageErrorSvg from '../../assets/icons/message-error.svg?raw';
+import messageInformationSvg from '../../assets/icons/message-information.svg?raw';
+import messageSuccessSvg from '../../assets/icons/message-success.svg?raw';
+import warning2Svg from '../../assets/icons/warning2.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+
+const ICON_SVGS: Record<string, string> = { 'alert': alertSvg, 'message-error': messageErrorSvg, 'message-information': messageInformationSvg, 'message-success': messageSuccessSvg, 'warning2': warning2Svg };
 
 export interface MessageStripProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   /** @default 'information' */
@@ -29,7 +37,7 @@ export interface MessageStripProps extends Omit<HTMLAttributes<HTMLDivElement>, 
   announce?: 'off' | 'polite' | 'assertive';
 }
 
-const ICONS = { neutral: Info, information: Info, success: CheckCircle2, warning: AlertTriangle, error: XCircle } as const;
+const ICONS = { neutral: 'message-information', information: 'message-information', success: 'message-success', warning: 'warning2', error: 'message-error' } as const;
 const PREFIX: Record<Tone, string> = { neutral: '', information: 'Information', success: 'Success', warning: 'Warning', error: 'Error' };
 
 /** Inline message about the current page or section. */
@@ -45,7 +53,7 @@ export const MessageStrip = forwardRef<HTMLDivElement, MessageStripProps>(functi
     <div ref={ref} role={role} className={cx(styles.strip, styles[tone], className)} {...rest}>
       {!hideIcon && (
         <span className={styles.icon} aria-hidden="true">
-          <Icon />
+          {svgIcon(ICON_SVGS[Icon], Icon)}
         </span>
       )}
       <div className={styles.content}>
@@ -58,7 +66,7 @@ export const MessageStrip = forwardRef<HTMLDivElement, MessageStripProps>(functi
       {dismissible && (
         <IconButton
           className={styles.close}
-          icon={<X />}
+          icon={svgIcon(declineSvg, 'decline')}
           label="Dismiss message"
           size="sm"
           neutral

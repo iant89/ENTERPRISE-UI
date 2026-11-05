@@ -4,6 +4,7 @@ import { getNavigationIndex } from '../../utilities/keyboard';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useId } from '../../hooks/useId';
 import styles from './Tabs.module.css';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 interface TabsContextValue {
   value: string;
@@ -107,7 +108,7 @@ export interface TabProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 
   /** Unique value that identifies the tab and links it to its panel. */
   value: string;
   /** Icon shown before the text. */
-  icon?: ReactNode;
+  icon?: IconSource;
   /** Item count shown after the label, e.g. `(12)`. */
   count?: number;
   /** Content rendered inside the tab. */
@@ -134,7 +135,7 @@ export const Tab = forwardRef<HTMLButtonElement, TabProps>(function Tab({ value,
       }}
       {...rest}
     >
-      {icon && <span className={styles.icon} aria-hidden="true">{icon}</span>}
+      {icon && <span className={styles.icon} aria-hidden="true">{renderIconSource(icon)}</span>}
       <span>{children}</span>
       {count !== undefined && <span className={styles.count}>({count})</span>}
     </button>

@@ -5,7 +5,7 @@
 
 export type Workspace = 'design' | 'code';
 export type Breakpoint = 'mobile' | 'tablet' | 'desktop';
-export type Activity = 'explorer' | 'search' | 'components' | 'docs';
+export type Activity = 'explorer' | 'search' | 'components' | 'icons' | 'docs';
 export type BottomTab = 'problems' | 'console' | 'tests' | 'component-docs' | 'output' | 'preview-events' | 'references';
 export type TabletLayout = 'split' | 'editor' | 'preview';
 export type MobileTab = 'files' | 'code' | 'preview' | 'panel';
@@ -51,7 +51,7 @@ export function parsePreviewSize(raw: unknown): PreviewSize | null {
   return { width: w, height: h, zoom: PREVIEW_ZOOMS.includes(r.zoom as PreviewZoom) ? (r.zoom as PreviewZoom) : 'fit' };
 }
 
-export const ACTIVITIES: readonly Activity[] = ['explorer', 'search', 'components', 'docs'];
+export const ACTIVITIES: readonly Activity[] = ['explorer', 'search', 'components', 'icons', 'docs'];
 export const BOTTOM_TABS: readonly BottomTab[] = ['problems', 'console', 'tests', 'component-docs', 'output', 'preview-events', 'references'];
 
 /** Min / max for each resizable size, in px. */

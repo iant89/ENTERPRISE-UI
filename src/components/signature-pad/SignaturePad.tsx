@@ -1,10 +1,12 @@
 import { forwardRef, useCallback, useEffect, useRef, useState, type HTMLAttributes, type PointerEvent, type ReactNode } from 'react';
-import { Eraser, Undo2 } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { useId } from '../../hooks/useId';
 import { Button } from '../button';
 import { SegmentedButton } from '../segmented-button';
 import styles from './SignaturePad.module.css';
+import eraserSvg from '../../assets/icons/eraser.svg?raw';
+import undoSvg from '../../assets/icons/undo.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface SignatureValue {
   /** PNG data URL of the signature, or `null` when empty. */
@@ -206,7 +208,7 @@ export const SignaturePad = forwardRef<HTMLFieldSetElement, SignaturePadProps>(f
           <Button
             size="sm"
             variant="tertiary"
-            icon={<Undo2 />}
+            icon={svgIcon(undoSvg, 'undo')}
             disabled={!strokes.length}
             onClick={() => {
               const next = strokes.slice(0, -1);
@@ -220,7 +222,7 @@ export const SignaturePad = forwardRef<HTMLFieldSetElement, SignaturePadProps>(f
         <Button
           size="sm"
           variant="tertiary"
-          icon={<Eraser />}
+          icon={svgIcon(eraserSvg, 'eraser')}
           disabled={!signed}
           onClick={() => {
             setStrokes([]);

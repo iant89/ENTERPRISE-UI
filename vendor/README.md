@@ -7,7 +7,7 @@ These packages are kept in the repository so they don't need to be installed at 
 | `zxing-library/` | `@zxing/library` | 0.23.0 | Apache-2.0 (`zxing-library/LICENSE`) | https://github.com/zxing-js/library, npm tarball `esm/` build |
 | `ts-custom-error/` | `ts-custom-error` (runtime dependency of `@zxing/library`) | 3.3.1 | MIT (`ts-custom-error/LICENSE`) | https://github.com/adriengibrat/ts-custom-error, npm tarball `dist/custom-error.mjs` and `custom-error.d.ts` |
 
-Used only by `src/components/barcode-scanner-dialog/barcodeDecoder.ts`. It's loaded with a dynamic `import()`, so it stays a separate lazily loaded chunk that loads when a scan starts. It is the default decoder, and `decoder="native"` opts into the browser `BarcodeDetector` instead.
+`zxing-library` and `ts-custom-error` are used only by `src/components/barcode-scanner-dialog/barcodeDecoder.ts`. It's loaded with a dynamic `import()`, so it stays a separate lazily loaded chunk that loads when a scan starts. It is the default decoder, and `decoder="native"` opts into the browser `BarcodeDetector` instead.
 
 ## Local modifications
 
@@ -30,3 +30,5 @@ sed -i '/sourceMappingURL/d' vendor/ts-custom-error/custom-error.mjs
 ```
 
 Then update the versions in this file and run `npm run check && npm run build && npm run test:consumer`.
+
+The SAP icon set is no longer vendored here: the SVG files live in `src/assets/icons` (see the README there).

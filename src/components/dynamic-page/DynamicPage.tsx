@@ -1,9 +1,13 @@
 import { forwardRef, useId, type HTMLAttributes, type ReactNode } from 'react';
-import { ChevronDown, ChevronUp, Pin, PinOff } from 'lucide-react';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { IconButton } from '../icon-button';
 import styles from './DynamicPage.module.css';
+import pushpinOffSvg from '../../assets/icons/pushpin-off.svg?raw';
+import pushpinOnSvg from '../../assets/icons/pushpin-on.svg?raw';
+import slimArrowDownSvg from '../../assets/icons/slim-arrow-down.svg?raw';
+import slimArrowUpSvg from '../../assets/icons/slim-arrow-up.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface DynamicPageProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   /** Page heading (rendered as the page's `h1`). */
@@ -73,9 +77,9 @@ export const DynamicPage = forwardRef<HTMLDivElement, DynamicPageProps>(function
           <>
             <div id={headerId} className={styles.headerContent} hidden={!expanded}>{headerContent}</div>
             <div className={styles.headerControls}>
-              <IconButton size="sm" icon={expanded ? <ChevronUp /> : <ChevronDown />} label={expanded ? labels.collapse : labels.expand} aria-expanded={expanded} aria-controls={headerId} onClick={() => setExpanded(!expanded)} />
+              <IconButton size="sm" icon={expanded ? svgIcon(slimArrowUpSvg, 'slim-arrow-up') : svgIcon(slimArrowDownSvg, 'slim-arrow-down')} label={expanded ? labels.collapse : labels.expand} aria-expanded={expanded} aria-controls={headerId} onClick={() => setExpanded(!expanded)} />
               {!hidePinButton && expanded && (
-                <IconButton size="sm" icon={pinned ? <PinOff /> : <Pin />} label={pinned ? labels.unpin : labels.pin} aria-pressed={pinned} onClick={() => setPinned(!pinned)} />
+                <IconButton size="sm" icon={pinned ? svgIcon(pushpinOffSvg, 'pushpin-off') : svgIcon(pushpinOnSvg, 'pushpin-on')} label={pinned ? labels.unpin : labels.pin} aria-pressed={pinned} onClick={() => setPinned(!pinned)} />
               )}
             </div>
           </>

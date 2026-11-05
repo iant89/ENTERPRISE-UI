@@ -1,9 +1,16 @@
 import { useState } from 'react';
-import { Button, ButtonGroup, Input, NumberInput, Select, Switch, Tab, TabList, TabPanel, Tabs, Text, Title, IconProvider } from '@enterprise-ui/react';
+import { Button, ButtonGroup, Input, NumberInput, Select, Switch, Tab, TabList, TabPanel, Tabs, Text, Title } from '@enterprise-ui/react';
 import type { AttrInput, StudioNode } from './model/jsx';
 import { descriptionFor, propsFor } from './model/catalog';
 import { displayValue, groupInspectorProps, widgetFor, type PropMeta } from './model/inspector';
 import styles from './Studio.module.css';
+import arrowBottomSvg from '../../src/assets/icons/arrow-bottom.svg?raw';
+import arrowTopSvg from '../../src/assets/icons/arrow-top.svg?raw';
+import copySvg from '../../src/assets/icons/copy.svg?raw';
+import courseBookSvg from '../../src/assets/icons/course-book.svg?raw';
+import deleteSvg from '../../src/assets/icons/delete.svg?raw';
+import sourceCodeSvg from '../../src/assets/icons/source-code.svg?raw';
+import { svgIcon } from '../../src/icons/svgIcon';
 
 export interface InspectorProps {
   node: StudioNode | null;
@@ -31,7 +38,7 @@ function PropField({ prop, node, onSet, onCode }: { prop: PropMeta; node: Studio
       <div className={styles.codeProp}>
         <span className={styles.propName}>{prop.name}</span>
         <code className={styles.propValue}>{expression ? String(value) : attr ? String(value) : prop.type}</code>
-        <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('source-code')} onClick={onCode} aria-label={`Edit ${prop.name} in code`}>Code</Button>
+        <Button size="sm" variant="tertiary" icon={svgIcon(sourceCodeSvg, 'source-code')} onClick={onCode} aria-label={`Edit ${prop.name} in code`}>Code</Button>
       </div>
     );
   }
@@ -67,12 +74,12 @@ export function Inspector({ node, isRoot, canMoveUp, canMoveDown, onSetAttribute
         <Title level={2} size="sm">{name}</Title>
         {descriptionFor(node.name) && <Text size="sm" tone="secondary">{descriptionFor(node.name).split('\n')[0]}</Text>}
         <ButtonGroup aria-label="Element actions">
-          <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('arrow-top')} disabled={isRoot || !canMoveUp} onClick={() => onAction('up')}>Up</Button>
-          <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('arrow-bottom')} disabled={isRoot || !canMoveDown} onClick={() => onAction('down')}>Down</Button>
-          <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('copy')} disabled={isRoot} onClick={() => onAction('duplicate')}>Duplicate</Button>
-          <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('delete')} disabled={isRoot} onClick={() => onAction('delete')}>Delete</Button>
-          <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('source-code')} onClick={() => onAction('code')}>Code</Button>
-          {onDocs && known.length > 0 && <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('course-book')} onClick={() => onDocs(node.name)}>Docs</Button>}
+          <Button size="sm" variant="tertiary" icon={svgIcon(arrowTopSvg, 'arrow-top')} disabled={isRoot || !canMoveUp} onClick={() => onAction('up')}>Up</Button>
+          <Button size="sm" variant="tertiary" icon={svgIcon(arrowBottomSvg, 'arrow-bottom')} disabled={isRoot || !canMoveDown} onClick={() => onAction('down')}>Down</Button>
+          <Button size="sm" variant="tertiary" icon={svgIcon(copySvg, 'copy')} disabled={isRoot} onClick={() => onAction('duplicate')}>Duplicate</Button>
+          <Button size="sm" variant="tertiary" icon={svgIcon(deleteSvg, 'delete')} disabled={isRoot} onClick={() => onAction('delete')}>Delete</Button>
+          <Button size="sm" variant="tertiary" icon={svgIcon(sourceCodeSvg, 'source-code')} onClick={() => onAction('code')}>Code</Button>
+          {onDocs && known.length > 0 && <Button size="sm" variant="tertiary" icon={svgIcon(courseBookSvg, 'course-book')} onClick={() => onDocs(node.name)}>Docs</Button>}
         </ButtonGroup>
       </div>
       {node.text !== null && (
@@ -102,7 +109,7 @@ export function Inspector({ node, isRoot, canMoveUp, canMoveDown, onSetAttribute
                   <span className={styles.propName}>{p.name}</span>
                   <code className={styles.propValue}>{attr ? (attr.value.kind === 'expression' ? attr.value.text : '…') : p.type}</code>
                   {attr
-                    ? <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('source-code')} onClick={() => onAction('code')} aria-label={`Edit ${p.name} in code`}>Code</Button>
+                    ? <Button size="sm" variant="tertiary" icon={svgIcon(sourceCodeSvg, 'source-code')} onClick={() => onAction('code')} aria-label={`Edit ${p.name} in code`}>Code</Button>
                     : <Button size="sm" variant="tertiary" onClick={() => onSetAttribute(p.name, { expression: `(${/\(\)/.test(p.type) ? '' : '...args'}) => {}` })} aria-label={`Add ${p.name} handler`}>Add</Button>}
                 </div>
               );

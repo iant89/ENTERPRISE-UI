@@ -1,4 +1,4 @@
-import { SplitButton, useToast, IconProvider } from '@enterprise-ui/react';
+import { SplitButton, useToast, Icon } from '@enterprise-ui/react';
 
 export const title = 'Default action with alternatives';
 export const description = 'The main button runs the most common action; the arrow opens related alternatives.';
@@ -8,7 +8,7 @@ export default function SplitButtonBasic() {
   return (
     <SplitButton
       variant="primary"
-      icon={IconProvider.getIcon('save')}
+      icon={<Icon name="save" />}
       onClick={() => toast.show({ title: 'Order saved', tone: 'success' })}
       onAction={(id) => toast.show({ title: `Action: ${id}` })}
       items={[

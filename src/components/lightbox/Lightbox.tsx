@@ -1,5 +1,4 @@
 import { forwardRef, useEffect, useRef, useState, type ButtonHTMLAttributes, type ImgHTMLAttributes } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { Portal } from '../../utilities/Portal';
 import { useId } from '../../hooks/useId';
@@ -10,6 +9,9 @@ import { Button } from '../button';
 import { BusyIndicator } from '../busy-indicator';
 import { EmptyState } from '../../patterns/empty-state';
 import styles from './Lightbox.module.css';
+import pictureSvg from '../../assets/icons/picture.svg?raw';
+import zoomInSvg from '../../assets/icons/zoom-in.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface LightboxLabels {
   /** Close button text. */
@@ -123,7 +125,7 @@ export function Lightbox({ open, onClose, src, alt, title, subtitle, busyDelay =
             )}
             {state === 'loading' && <BusyIndicator active delay={busyDelay} text={text.loading} className={styles.busy} />}
             {state === 'error' && (
-              <EmptyState size="sm" icon={IconProvider.getIcon('picture')} title={text.errorTitle} description={text.errorDescription} headingLevel={3} className={styles.error} />
+              <EmptyState size="sm" icon={svgIcon(pictureSvg, 'picture')} title={text.errorTitle} description={text.errorDescription} headingLevel={3} className={styles.error} />
             )}
           </div>
           <div className={styles.footer}>
@@ -184,7 +186,7 @@ export const LightboxImage = forwardRef<HTMLButtonElement, LightboxImageProps>(f
         {...rest}
       >
         {thumbnail}
-        <span className={styles.zoom} aria-hidden="true">{IconProvider.getIcon('zoom-in')}</span>
+        <span className={styles.zoom} aria-hidden="true">{svgIcon(zoomInSvg, 'zoom-in')}</span>
       </button>
       <Lightbox open={isOpen} onClose={() => setOpen(false)} src={src} alt={alt} title={title} subtitle={subtitle} busyDelay={busyDelay} loadTimeout={loadTimeout} labels={labels} />
     </>

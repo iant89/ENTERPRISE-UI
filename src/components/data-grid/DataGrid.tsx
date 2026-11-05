@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useId } from '../../hooks/useId';
@@ -14,6 +13,8 @@ import { Select } from '../select';
 import type { SelectOption } from '../listbox';
 import { Table, getColumnText, sortRows, type SortState, type TableColumn, type TableDensity, type TableProps } from '../table';
 import styles from './DataGrid.module.css';
+import actionSettingsSvg from '../../assets/icons/action-settings.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface DataGridColumn<T> extends TableColumn<T> {
   /** Offer a filter for this column in the toolbar. Values are matched against the accessor. */
@@ -271,7 +272,7 @@ export function DataGrid<T>({
                   onVisibleColumnIdsChange?.(next);
                 }
             }}
-            trigger={<IconButton icon={IconProvider.getIcon('action-settings')} label={text.viewSettings} size="sm" />}
+            trigger={<IconButton icon={svgIcon(actionSettingsSvg, 'action-settings')} label={text.viewSettings} size="sm" />}
           />
         </div>
       </div>

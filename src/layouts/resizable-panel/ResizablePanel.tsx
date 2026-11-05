@@ -1,9 +1,13 @@
 import { forwardRef, useRef, useState, type CSSProperties, type HTMLAttributes, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { clamp } from '../../utilities/format';
 import { useControllableState } from '../../hooks/useControllableState';
 import styles from './ResizablePanel.module.css';
+import horizontalGripSvg from '../../assets/icons/horizontal-grip.svg?raw';
+import verticalGripSvg from '../../assets/icons/vertical-grip.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+
+const ICON_SVGS: Record<string, string> = { 'horizontal-grip': horizontalGripSvg, 'vertical-grip': verticalGripSvg };
 
 export interface ResizablePanelProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onResize'> {
   /** Controlled size in px (width for start/end handles, height for top/bottom). */
@@ -94,7 +98,7 @@ export const ResizablePanel = forwardRef<HTMLDivElement, ResizablePanelProps>(fu
         onKeyDown={onKeyDown}
       >
         <span className={styles.grip} aria-hidden="true">
-          {IconProvider.getIcon(Grip)}
+          {svgIcon(ICON_SVGS[Grip], Grip)}
         </span>
       </div>
     </div>

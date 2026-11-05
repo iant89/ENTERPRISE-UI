@@ -1,10 +1,12 @@
 import { forwardRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { IconButton } from '../icon-button';
 import { TextArea, type TextAreaProps } from '../text-area';
 import styles from './PromptInput.module.css';
+import paperPlaneSvg from '../../assets/icons/paper-plane.svg?raw';
+import stopSvg from '../../assets/icons/stop.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface PromptInputProps extends Omit<TextAreaProps, 'value' | 'defaultValue' | 'onChange' | 'onSubmit'> {
   /** The current value. Providing it makes the component controlled; update it from the change callback. */
@@ -70,8 +72,8 @@ export const PromptInput = forwardRef<HTMLTextAreaElement, PromptInputProps>(fun
         />
         <div className={styles.action}>
           {generating
-            ? <IconButton icon={IconProvider.getIcon('stop')} label={labels.stop} onClick={onStop} />
-            : <IconButton icon={IconProvider.getIcon('paper-plane')} label={labels.send} variant="primary" disabled={disabled || !text.trim()} onClick={submit} />}
+            ? <IconButton icon={svgIcon(stopSvg, 'stop')} label={labels.stop} onClick={onStop} />
+            : <IconButton icon={svgIcon(paperPlaneSvg, 'paper-plane')} label={labels.send} variant="primary" disabled={disabled || !text.trim()} onClick={submit} />}
         </div>
       </div>
       {footnote && <p className={styles.footnote}>{footnote}</p>}

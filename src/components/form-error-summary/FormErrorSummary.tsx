@@ -1,9 +1,10 @@
 import { forwardRef, useEffect, useRef, type HTMLAttributes, type MouseEvent } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useMergedRefs } from '../../utilities/refs';
 import { useId } from '../../hooks/useId';
 import styles from './FormErrorSummary.module.css';
+import messageErrorSvg from '../../assets/icons/message-error.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface FormErrorSummaryItem {
   /** Id of the field's control. */
@@ -58,7 +59,7 @@ export const FormErrorSummary = forwardRef<HTMLDivElement, FormErrorSummaryProps
   return (
     <div ref={merged} className={cx(styles.summary, className)} role="alert" aria-labelledby={titleId} tabIndex={-1} {...rest}>
       <Heading id={titleId} className={styles.title}>
-        {IconProvider.getIcon('message-error', { 'aria-hidden': "true" })}
+        {svgIcon(messageErrorSvg, 'message-error', { 'aria-hidden': "true" })}
         {typeof title === 'function' ? title(count) : title}
       </Heading>
       <ul className={styles.list}>

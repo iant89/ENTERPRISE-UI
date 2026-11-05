@@ -1,9 +1,10 @@
 import { forwardRef, type CSSProperties, type HTMLAttributes, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useId } from '../../hooks/useId';
 import { useControllableState } from '../../hooks/useControllableState';
 import styles from './RangeSlider.module.css';
+import directionArrowsSvg from '../../assets/icons/direction-arrows.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export type RangeValue = [start: number, end: number];
 
@@ -86,10 +87,10 @@ export const RangeSlider = forwardRef<HTMLFieldSetElement, RangeSliderProps>(fun
         </div>
         <input type="range" className={cx(styles.input, startOnTop && styles.onTop)} aria-label={labels.start} aria-valuetext={formatValue(start)} min={min} max={max} step={step} value={start}
           onChange={(e) => setRange([Math.min(Number(e.target.value), end), end])} />
-        <span className={styles.handle} style={{ '--pos': fraction(start) } as CSSProperties} aria-hidden="true">{IconProvider.getIcon('direction-arrows')}</span>
+        <span className={styles.handle} style={{ '--pos': fraction(start) } as CSSProperties} aria-hidden="true">{svgIcon(directionArrowsSvg, 'direction-arrows')}</span>
         <input type="range" className={styles.input} aria-label={labels.end} aria-valuetext={formatValue(end)} min={min} max={max} step={step} value={end}
           onChange={(e) => setRange([start, Math.max(Number(e.target.value), start)])} />
-        <span className={styles.handle} style={{ '--pos': fraction(end) } as CSSProperties} aria-hidden="true">{IconProvider.getIcon('direction-arrows')}</span>
+        <span className={styles.handle} style={{ '--pos': fraction(end) } as CSSProperties} aria-hidden="true">{svgIcon(directionArrowsSvg, 'direction-arrows')}</span>
       </div>
     </fieldset>
   );

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
-import { AppShell, ApplicationHeader, Button, DescriptionList, Dialog, List, NavigationGroup, NavigationItem, SearchField, SideNavigation, StatusIndicator, ThemeProvider, ToastProvider, useTheme, useToast, type Density, type ThemePreference, IconProvider } from '@enterprise-ui/react';
+import { AppShell, ApplicationHeader, Button, DescriptionList, Dialog, List, NavigationGroup, NavigationItem, SearchField, SideNavigation, StatusIndicator, ThemeProvider, ToastProvider, useTheme, useToast, type Density, type ThemePreference, Icon } from '@enterprise-ui/react';
 import { isPageId, type PageId } from './data';
 import { InventoryProvider, useInventory } from './store';
 import { Overview } from './pages/Overview';
@@ -71,7 +71,7 @@ function Shell({ fullHeight }: { fullHeight: boolean }) {
         <ApplicationHeader
           productName="Northwind"
           secondaryTitle="Inventory Management"
-          logo={IconProvider.getIcon('sap-box', { color: "var(--eui-color-primary)" })}
+          logo={<Icon name="sap-box" color="var(--eui-color-primary)" />}
           search={
             <SearchField
               aria-label="Search products"
@@ -136,25 +136,25 @@ function Shell({ fullHeight }: { fullHeight: boolean }) {
           }}
           footer={
             <>
-              <NavigationItem id="settings" label="Settings" icon={IconProvider.getIcon('settings')} href="#/demo/settings" />
-              <NavigationItem id="help" label="Help" icon={IconProvider.getIcon('headset')} href="#/demo/help" />
+              <NavigationItem id="settings" label="Settings" icon={<Icon name="settings" />} href="#/demo/settings" />
+              <NavigationItem id="help" label="Help" icon={<Icon name="headset" />} href="#/demo/help" />
             </>
           }
         >
-          <NavigationItem id="home" label="Overview" icon={IconProvider.getIcon('home')} href="#/demo/home" />
+          <NavigationItem id="home" label="Overview" icon={<Icon name="home" />} href="#/demo/home" />
           <NavigationGroup label="Inventory">
-            <NavigationItem id="catalog" label="Catalog" icon={IconProvider.getIcon('product')}>
+            <NavigationItem id="catalog" label="Catalog" icon={<Icon name="product" />}>
               <NavigationItem id="products" label="Products" href="#/demo/products" />
               <NavigationItem id="categories" label="Categories" href="#/demo/categories" />
             </NavigationItem>
-            <NavigationItem id="stock" label="Stock movements" icon={IconProvider.getIcon('shipping-status')} href="#/demo/stock" badge={unreadMovements || undefined} />
+            <NavigationItem id="stock" label="Stock movements" icon={<Icon name="shipping-status" />} href="#/demo/stock" badge={unreadMovements || undefined} />
           </NavigationGroup>
           <NavigationGroup label="Purchasing">
-            <NavigationItem id="orders" label="Purchase orders" icon={IconProvider.getIcon('cart')} href="#/demo/orders" />
-            <NavigationItem id="suppliers" label="Suppliers" icon={IconProvider.getIcon('group')} href="#/demo/suppliers" />
-            <NavigationItem id="invoices" label="Invoices" icon={IconProvider.getIcon('document-text')} href="#/demo/invoices" />
+            <NavigationItem id="orders" label="Purchase orders" icon={<Icon name="cart" />} href="#/demo/orders" />
+            <NavigationItem id="suppliers" label="Suppliers" icon={<Icon name="group" />} href="#/demo/suppliers" />
+            <NavigationItem id="invoices" label="Invoices" icon={<Icon name="document-text" />} href="#/demo/invoices" />
           </NavigationGroup>
-          <NavigationItem id="reports" label="Reports" icon={IconProvider.getIcon('vertical-bar-chart')} href="#/demo/reports" />
+          <NavigationItem id="reports" label="Reports" icon={<Icon name="vertical-bar-chart" />} href="#/demo/reports" />
         </SideNavigation>
       }
     >

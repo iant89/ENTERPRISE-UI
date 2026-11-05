@@ -1,6 +1,8 @@
 import { useRef, type KeyboardEvent } from 'react';
-import { Badge, IconButton, IconProvider } from '@enterprise-ui/react';
+import { Badge, IconButton } from '@enterprise-ui/react';
 import styles from '../../app/workspace/CodeWorkspace.module.css';
+import declineSvg from '../../../../src/assets/icons/decline.svg?raw';
+import { svgIcon } from '../../../../src/icons/svgIcon';
 
 /** One reference: 1-based line and columns, with the line's text for the preview. */
 export interface ReferenceItem { line: number; column: number; endColumn: number; preview: string }
@@ -35,7 +37,7 @@ export function ReferencesPanel({ references, onOpen, onClear }: ReferencesPanel
     <div className={styles.references}>
       <div className={styles.referencesHead}>
         <span role="status">{plural(total, 'reference')} to <code>{references.symbol}</code> in {plural(references.groups.length, 'file')}</span>
-        <IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('decline')} label="Clear references" onClick={onClear} />
+        <IconButton size="sm" variant="tertiary" icon={svgIcon(declineSvg, 'decline')} label="Clear references" onClick={onClear} />
       </div>
       <ul ref={listRef} className={styles.referenceList} aria-label={`References to ${references.symbol}`} onKeyDown={onKey}>
         {references.groups.map((g, gi) => (

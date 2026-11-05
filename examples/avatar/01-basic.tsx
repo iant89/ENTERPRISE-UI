@@ -1,4 +1,4 @@
-import { Avatar, Stack, IconProvider } from '@enterprise-ui/react';
+import { Avatar, Stack, Icon } from '@enterprise-ui/react';
 
 export const title = 'Avatars';
 export const description = 'Initials and colour derive from the name. Square avatars represent objects; presence dots show availability.';
@@ -15,7 +15,7 @@ export default function AvatarBasic() {
       </Stack>
       <Stack direction="horizontal" gap={3} align="center">
         <Avatar name="Contoso Ltd" shape="square" />
-        <Avatar icon={IconProvider.getIcon('product')} shape="square" accent={3} aria-label="Product" />
+        <Avatar icon={<Icon name="product" />} shape="square" accent={3} aria-label="Product" />
         <Avatar name="Broken image" src="/does-not-exist.png" />
       </Stack>
     </Stack>

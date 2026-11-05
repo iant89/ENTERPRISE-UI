@@ -1,5 +1,4 @@
 import { forwardRef, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { getNavigationIndex } from '../../utilities/keyboard';
 import { useMergedRefs } from '../../utilities/refs';
@@ -12,6 +11,9 @@ import inputBoxStyles from '../input/InputBox.module.css';
 import { ListboxPopup, optionId, type SelectOption } from '../listbox';
 import listboxStyles from '../listbox/Listbox.module.css';
 import styles from './MultiSelect.module.css';
+import declineSvg from '../../assets/icons/decline.svg?raw';
+import slimArrowDownSvg from '../../assets/icons/slim-arrow-down.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface MultiSelectProps extends FieldProps {
   /** Choices offered to the user. */
@@ -164,7 +166,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
                 <span className={styles.tokenLabel}>{option.label}</span>
                 {!control.disabled && (
                   <button type="button" tabIndex={-1} className={styles.tokenRemove} aria-label={`Remove ${option.label}`} onClick={() => remove(option.value)}>
-                    {IconProvider.getIcon('decline', { 'aria-hidden': "true" })}
+                    {svgIcon(declineSvg, 'decline', { 'aria-hidden': "true" })}
                   </button>
                 )}
               </li>
@@ -217,7 +219,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
             inputRef.current?.focus();
           }}
         >
-          {IconProvider.getIcon('slim-arrow-down', { 'aria-hidden': "true" })}
+          {svgIcon(slimArrowDownSvg, 'slim-arrow-down', { 'aria-hidden': "true" })}
         </button>
       </div>
       {name && selected.map((v) => <input key={v} type="hidden" name={name} value={v} />)}

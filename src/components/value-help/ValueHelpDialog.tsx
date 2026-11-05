@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useId } from '../../hooks/useId';
 import { Button } from '../button';
@@ -8,6 +7,8 @@ import { Input } from '../input';
 import { Spinner } from '../spinner';
 import { Tokenizer } from '../token';
 import styles from './ValueHelp.module.css';
+import searchSvg from '../../assets/icons/search.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface ValueHelpColumn<T> {
   key: keyof T & string;
@@ -201,7 +202,7 @@ export function ValueHelpDialog<T>({
             label={labels.search}
             hideLabel={filters.length === 0}
             placeholder={labels.search}
-            startAdornment={IconProvider.getIcon('search', { 'aria-hidden': "true" })}
+            startAdornment={svgIcon(searchSvg, 'search', { 'aria-hidden': "true" })}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => {

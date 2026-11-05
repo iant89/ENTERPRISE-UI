@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, type ReactElement } from 'react';
-import { AppShell, ApplicationHeader, ComboBox, DropdownMenu, IconButton, NavigationGroup, NavigationItem, SideNavigation, ThemeProvider, ToastProvider, ToggleButton, Tooltip, type ThemePreference, IconProvider } from '@enterprise-ui/react';
+import { AppShell, ApplicationHeader, ComboBox, DropdownMenu, IconButton, NavigationGroup, NavigationItem, SideNavigation, ThemeProvider, ToastProvider, ToggleButton, Tooltip, type ThemePreference, Icon } from '@enterprise-ui/react';
 import { categories, docs } from './registry';
 import { href, navigate, usePath } from './router';
 import { useDocsSettings } from './settings';
@@ -20,28 +20,28 @@ import { PlaygroundPage } from './pages/PlaygroundPage';
 import InventoryApp from '../../examples/apps/InventoryApp';
 
 const PAGES = [
-  { path: '/', label: 'Overview', icon: IconProvider.getIcon('course-book') },
-  { path: '/getting-started', label: 'Getting started', icon: IconProvider.getIcon('begin') },
-  { path: '/tokens', label: 'Design tokens', icon: IconProvider.getIcon('palette') },
-  { path: '/themes', label: 'Themes', icon: IconProvider.getIcon('palette') },
-  { path: '/icons', label: 'Icons', icon: IconProvider.getIcon('grid') },
-  { path: '/components', label: 'Components', icon: IconProvider.getIcon('puzzle') },
-  { path: '/gallery', label: 'Component gallery', icon: IconProvider.getIcon('grid') },
-  { path: '/layouts', label: 'Layouts', icon: IconProvider.getIcon('screen-split-one') },
-  { path: '/patterns', label: 'Enterprise patterns', icon: IconProvider.getIcon('process') },
-  { path: '/accessibility', label: 'Accessibility', icon: IconProvider.getIcon('accessibility') },
-  { path: '/api', label: 'API reference', icon: IconProvider.getIcon('source-code') },
+  { path: '/', label: 'Overview', icon: <Icon name="course-book" /> },
+  { path: '/getting-started', label: 'Getting started', icon: <Icon name="begin" /> },
+  { path: '/tokens', label: 'Design tokens', icon: <Icon name="palette" /> },
+  { path: '/themes', label: 'Themes', icon: <Icon name="palette" /> },
+  { path: '/icons', label: 'Icons', icon: <Icon name="grid" /> },
+  { path: '/components', label: 'Components', icon: <Icon name="puzzle" /> },
+  { path: '/gallery', label: 'Component gallery', icon: <Icon name="grid" /> },
+  { path: '/layouts', label: 'Layouts', icon: <Icon name="screen-split-one" /> },
+  { path: '/patterns', label: 'Enterprise patterns', icon: <Icon name="process" /> },
+  { path: '/accessibility', label: 'Accessibility', icon: <Icon name="accessibility" /> },
+  { path: '/api', label: 'API reference', icon: <Icon name="source-code" /> },
 ];
 
 const THEME_ICONS: Record<ThemePreference, ReactElement> = {
-  light: IconProvider.getIcon('light-mode'),
-  dark: IconProvider.getIcon('dark-mode'),
-  'high-contrast': IconProvider.getIcon('color-fill'),
-  'sap-horizon': IconProvider.getIcon('light-mode'),
-  'sap-horizon-dark': IconProvider.getIcon('dark-mode'),
-  'sap-fiori-3': IconProvider.getIcon('light-mode'),
-  'sap-fiori-3-dark': IconProvider.getIcon('dark-mode'),
-  system: IconProvider.getIcon('sys-monitor'),
+  light: <Icon name="light-mode" />,
+  dark: <Icon name="dark-mode" />,
+  'high-contrast': <Icon name="color-fill" />,
+  'sap-horizon': <Icon name="light-mode" />,
+  'sap-horizon-dark': <Icon name="dark-mode" />,
+  'sap-fiori-3': <Icon name="light-mode" />,
+  'sap-fiori-3-dark': <Icon name="dark-mode" />,
+  system: <Icon name="sys-monitor" />,
 };
 
 function renderPage(path: string) {
@@ -129,7 +129,7 @@ export function App() {
             <ApplicationHeader
               productName="Enterprise UI Kit"
               secondaryTitle="v0.1"
-              logo={IconProvider.getIcon('sap-box', { color: "var(--eui-color-primary)" })}
+              logo={<Icon name="sap-box" color="var(--eui-color-primary)" />}
               homeHref={href('/')}
               user={{ name: 'Guest' }}
               userMenuItems={[{ id: '/getting-started', label: 'Getting started' }, { id: 'studio', label: 'Open Studio' }]}
@@ -153,7 +153,7 @@ export function App() {
                     <ToggleButton
                       variant="tertiary"
                       aria-label="Compact density"
-                      icon={IconProvider.getIcon('table-row')}
+                      icon={<Icon name="table-row" />}
                       pressed={density === 'compact'}
                       onPressedChange={(on) => setDensity(on ? 'compact' : 'cozy')}
                     />
@@ -164,17 +164,17 @@ export function App() {
                     onAction={(id) => setTheme(id as ThemePreference)}
                     items={[
                       { type: 'label', label: 'Theme' },
-                      { id: 'light', label: 'Light', icon: IconProvider.getIcon('light-mode'), checked: theme === 'light' },
-                      { id: 'dark', label: 'Dark', icon: IconProvider.getIcon('dark-mode'), checked: theme === 'dark' },
-                      { id: 'high-contrast', label: 'High contrast', icon: IconProvider.getIcon('color-fill'), checked: theme === 'high-contrast' },
+                      { id: 'light', label: 'Light', icon: <Icon name="light-mode" />, checked: theme === 'light' },
+                      { id: 'dark', label: 'Dark', icon: <Icon name="dark-mode" />, checked: theme === 'dark' },
+                      { id: 'high-contrast', label: 'High contrast', icon: <Icon name="color-fill" />, checked: theme === 'high-contrast' },
                       { type: 'separator' },
                       { type: 'label', label: 'SAP Fiori' },
-                      { id: 'sap-horizon', label: 'Morning Horizon', icon: IconProvider.getIcon('light-mode'), checked: theme === 'sap-horizon' },
-                      { id: 'sap-horizon-dark', label: 'Evening Horizon', icon: IconProvider.getIcon('dark-mode'), checked: theme === 'sap-horizon-dark' },
-                      { id: 'sap-fiori-3', label: 'Quartz Light', icon: IconProvider.getIcon('light-mode'), checked: theme === 'sap-fiori-3' },
-                      { id: 'sap-fiori-3-dark', label: 'Quartz Dark', icon: IconProvider.getIcon('dark-mode'), checked: theme === 'sap-fiori-3-dark' },
+                      { id: 'sap-horizon', label: 'Morning Horizon', icon: <Icon name="light-mode" />, checked: theme === 'sap-horizon' },
+                      { id: 'sap-horizon-dark', label: 'Evening Horizon', icon: <Icon name="dark-mode" />, checked: theme === 'sap-horizon-dark' },
+                      { id: 'sap-fiori-3', label: 'Quartz Light', icon: <Icon name="light-mode" />, checked: theme === 'sap-fiori-3' },
+                      { id: 'sap-fiori-3-dark', label: 'Quartz Dark', icon: <Icon name="dark-mode" />, checked: theme === 'sap-fiori-3-dark' },
                       { type: 'separator' },
-                      { id: 'system', label: 'Match system', icon: IconProvider.getIcon('sys-monitor'), checked: theme === 'system' },
+                      { id: 'system', label: 'Match system', icon: <Icon name="sys-monitor" />, checked: theme === 'system' },
                     ]}
                     trigger={<IconButton icon={THEME_ICONS[theme]} label="Change theme" neutral hideTitle />}
                   />
@@ -191,13 +191,13 @@ export function App() {
                 {PAGES.slice(2, 5).map((p) => (
                   <NavigationItem key={p.path} id={p.path} label={p.label} icon={p.icon} href={href(p.path)} />
                 ))}
-                <NavigationItem id="/accessibility" label="Accessibility" icon={IconProvider.getIcon('accessibility')} href={href('/accessibility')} />
+                <NavigationItem id="/accessibility" label="Accessibility" icon={<Icon name="accessibility" />} href={href('/accessibility')} />
               </NavigationGroup>
               <NavigationGroup label="Components">
-                <NavigationItem id="/components" label="All components" icon={IconProvider.getIcon('puzzle')} href={href('/components')} />
-                <NavigationItem id="/playground" label="Playground" icon={IconProvider.getIcon('source-code')} href={href('/playground')} />
-                <NavigationItem id="studio" label="Studio" icon={IconProvider.getIcon('draw-rectangle')} href="studio/" />
-                <NavigationItem id="/gallery" label="Gallery" icon={IconProvider.getIcon('grid')} href={href('/gallery')} />
+                <NavigationItem id="/components" label="All components" icon={<Icon name="puzzle" />} href={href('/components')} />
+                <NavigationItem id="/playground" label="Playground" icon={<Icon name="source-code" />} href={href('/playground')} />
+                <NavigationItem id="studio" label="Studio" icon={<Icon name="draw-rectangle" />} href="studio/" />
+                <NavigationItem id="/gallery" label="Gallery" icon={<Icon name="grid" />} href={href('/gallery')} />
                 {categories.map((c) => (
                   <NavigationItem key={c.id} id={`cat-${c.id}`} label={c.id} icon={CATEGORY_ICONS[c.id]}>
                     {docs
@@ -209,9 +209,9 @@ export function App() {
                 ))}
               </NavigationGroup>
               <NavigationGroup label="Guides">
-                <NavigationItem id="/layouts" label="Layouts" icon={IconProvider.getIcon('screen-split-one')} href={href('/layouts')} />
-                <NavigationItem id="/patterns" label="Enterprise patterns" icon={IconProvider.getIcon('process')} href={href('/patterns')} />
-                <NavigationItem id="/api" label="API reference" icon={IconProvider.getIcon('source-code')} href={href('/api')} />
+                <NavigationItem id="/layouts" label="Layouts" icon={<Icon name="screen-split-one" />} href={href('/layouts')} />
+                <NavigationItem id="/patterns" label="Enterprise patterns" icon={<Icon name="process" />} href={href('/patterns')} />
+                <NavigationItem id="/api" label="API reference" icon={<Icon name="source-code" />} href={href('/api')} />
               </NavigationGroup>
             </SideNavigation>
           }
@@ -224,13 +224,13 @@ export function App() {
 }
 
 const CATEGORY_ICONS = {
-  Layout: IconProvider.getIcon('header'),
-  Navigation: IconProvider.getIcon('locate-me'),
-  Buttons: IconProvider.getIcon('cursor-arrow'),
-  Forms: IconProvider.getIcon('form'),
-  'Data display': IconProvider.getIcon('table-view'),
-  Charts: IconProvider.getIcon('vertical-bar-chart-2'),
-  Feedback: IconProvider.getIcon('message-warning'),
-  Patterns: IconProvider.getIcon('screen-split-three'),
+  Layout: <Icon name="header" />,
+  Navigation: <Icon name="locate-me" />,
+  Buttons: <Icon name="cursor-arrow" />,
+  Forms: <Icon name="form" />,
+  'Data display': <Icon name="table-view" />,
+  Charts: <Icon name="vertical-bar-chart-2" />,
+  Feedback: <Icon name="message-warning" />,
+  Patterns: <Icon name="screen-split-three" />,
 } as const;
 

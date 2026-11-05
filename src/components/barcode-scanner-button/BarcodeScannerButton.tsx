@@ -1,8 +1,9 @@
 import { forwardRef, useState } from 'react';
-import { IconProvider } from '../../icons';
 import { IconButton, type IconButtonProps } from '../icon-button';
 import { BarcodeScannerDialog, type BarcodeScannerDialogProps } from '../barcode-scanner-dialog';
 import type { BarcodeFormat } from '../barcode-scanner-dialog';
+import barCodeSvg from '../../assets/icons/bar-code.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface BarcodeScannerButtonProps
   extends Omit<IconButtonProps, 'icon' | 'label'>,
@@ -36,7 +37,7 @@ export const BarcodeScannerButton = forwardRef<HTMLButtonElement, BarcodeScanner
     <>
       <IconButton
         ref={ref}
-        icon={IconProvider.getIcon('bar-code')}
+        icon={svgIcon(barCodeSvg, 'bar-code')}
         label={label}
         aria-haspopup="dialog"
         aria-expanded={open}

@@ -1,10 +1,13 @@
 import { useState, type KeyboardEvent } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useFormControl, type FieldProps } from '../form-field';
 import { Popover } from '../popover';
 import styles from './PeriodPicker.module.css';
+import appointmentSvg from '../../assets/icons/appointment.svg?raw';
+import slimArrowLeftSvg from '../../assets/icons/slim-arrow-left.svg?raw';
+import slimArrowRightSvg from '../../assets/icons/slim-arrow-right.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export type PeriodGranularity = 'month' | 'quarter' | 'year' | 'fiscalPeriod' | 'week';
 
@@ -205,20 +208,20 @@ export function PeriodPicker({
           <span id={`${control.id}-value`} className={cx(styles.value, !selected && styles.placeholder)}>
             {selected ? describe(selected) : labels.placeholder}
           </span>
-          {IconProvider.getIcon('appointment', { 'aria-hidden': "true", className: styles.icon })}
+          {svgIcon(appointmentSvg, 'appointment', { 'aria-hidden': "true", className: styles.icon })}
         </button>
       }
     >
       <div className={styles.panel}>
         <div className={styles.header}>
           <button type="button" className={styles.nav} aria-label={granularity === 'year' ? labels.previousYears : labels.previousYear} onClick={() => setYear((y) => y - step)}>
-            {IconProvider.getIcon('slim-arrow-left', { 'aria-hidden': "true" })}
+            {svgIcon(slimArrowLeftSvg, 'slim-arrow-left', { 'aria-hidden': "true" })}
           </button>
           <span className={styles.year} aria-live="polite">
             {yearTitle}
           </span>
           <button type="button" className={styles.nav} aria-label={granularity === 'year' ? labels.nextYears : labels.nextYear} onClick={() => setYear((y) => y + step)}>
-            {IconProvider.getIcon('slim-arrow-right', { 'aria-hidden': "true" })}
+            {svgIcon(slimArrowRightSvg, 'slim-arrow-right', { 'aria-hidden': "true" })}
           </button>
         </div>
         <div className={styles.grid} style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }} role="group" aria-label={yearTitle} onKeyDown={onGridKey}>

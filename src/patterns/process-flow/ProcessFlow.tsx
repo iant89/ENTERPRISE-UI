@@ -1,7 +1,14 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import styles from './ProcessFlow.module.css';
+import acceptSvg from '../../assets/icons/accept.svg?raw';
+import declineSvg from '../../assets/icons/decline.svg?raw';
+import pendingSvg from '../../assets/icons/pending.svg?raw';
+import statusInactiveSvg from '../../assets/icons/status-inactive.svg?raw';
+import warning2Svg from '../../assets/icons/warning2.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+
+const ICON_SVGS: Record<string, string> = { 'accept': acceptSvg, 'decline': declineSvg, 'pending': pendingSvg, 'status-inactive': statusInactiveSvg, 'warning2': warning2Svg };
 
 export type ProcessFlowStatus = 'done' | 'current' | 'pending' | 'warning' | 'error';
 
@@ -84,7 +91,7 @@ export const ProcessFlow = forwardRef<HTMLOListElement, ProcessFlowProps>(functi
           <li key={lane.id} className={cx(styles.lane, styles[status], next && styles.hasNext, reached && styles.reached)}>
             <div className={styles.laneHeader}>
               <span className={styles.icon} aria-hidden="true">
-                {IconProvider.getIcon(Icon)}
+                {svgIcon(ICON_SVGS[Icon], Icon)}
               </span>
               <span className={styles.laneTitle}>
                 {lane.title}
@@ -103,7 +110,7 @@ export const ProcessFlow = forwardRef<HTMLOListElement, ProcessFlowProps>(functi
                       <span className={styles.nodeTitle}>{node.title}</span>
                       {node.subtitle && <span className={styles.nodeSubtitle}>{node.subtitle}</span>}
                       <span className={cx(styles.nodeStatus, styles[`text-${node.status}`])}>
-                        {IconProvider.getIcon(NodeIcon, { 'aria-hidden': 'true' })}
+                        {svgIcon(ICON_SVGS[NodeIcon], NodeIcon, { 'aria-hidden': 'true' })}
                         {node.statusText}
                       </span>
                       {node.meta && <span className={styles.nodeMeta}>{node.meta}</span>}

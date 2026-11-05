@@ -1,8 +1,9 @@
 import { forwardRef, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { Button, type ButtonProps } from '../button';
 import styles from './AIButton.module.css';
+import aiSvg from '../../assets/icons/ai.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 /** A named visual state of an AIButton (replaces UI5 `ButtonState`). */
 export interface AIButtonState {
@@ -30,7 +31,7 @@ export const AIButton = forwardRef<HTMLButtonElement, AIButtonProps>(function AI
         ref={ref}
         variant={variant}
         className={cx(styles.button, current?.busy && styles.busy, className)}
-        icon={current?.icon ?? IconProvider.getIcon('ai')}
+        icon={current?.icon ?? svgIcon(aiSvg, 'ai')}
         iconEnd={current?.endIcon}
         aria-busy={current?.busy || undefined}
         {...rest}

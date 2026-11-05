@@ -1,5 +1,4 @@
 import { forwardRef, useEffect, useRef, useState, type InputHTMLAttributes } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { parseISODate, toISODate, isOutOfRange } from '../../utilities/date';
 import { focusElement } from '../../utilities/focus';
@@ -13,6 +12,8 @@ import { useFormControl, type FieldProps } from '../form-field';
 import styles from '../input/InputBox.module.css';
 import { Calendar } from '../calendar';
 import floating from '../popover/Floating.module.css';
+import calendarSvg from '../../assets/icons/calendar.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface DatePickerProps
   extends FieldProps,
@@ -151,7 +152,7 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(function
           disabled={!interactive}
           onClick={() => (open ? close() : setOpen(true))}
         >
-          {IconProvider.getIcon('calendar', { 'aria-hidden': "true" })}
+          {svgIcon(calendarSvg, 'calendar', { 'aria-hidden': "true" })}
         </button>
       </div>
       {open && (

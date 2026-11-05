@@ -1,8 +1,9 @@
 import { forwardRef, type ButtonHTMLAttributes, type CSSProperties } from 'react';
-import { IconProvider } from '../../icons';
 import { useControllableState } from '../../hooks/useControllableState';
 import { cx } from '../../utilities/cx';
 import styles from './ColorPalette.module.css';
+import acceptSvg from '../../assets/icons/accept.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface ColorPaletteItemProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'value'> {
   /** CSS color of the swatch. */
@@ -15,7 +16,7 @@ export interface ColorPaletteItemProps extends Omit<ButtonHTMLAttributes<HTMLBut
 }
 /** A labelled color swatch. */
 export const ColorPaletteItem = forwardRef<HTMLButtonElement, ColorPaletteItemProps>(function ColorPaletteItem({ color, label, selected = false, className, style, ...rest }, ref) {
-  return <button {...rest} ref={ref} type="button" aria-label={label} aria-pressed={selected} className={cx(styles.item, className)} style={{ ...style, '--swatch': color } as CSSProperties}>{selected && IconProvider.getIcon('accept', { 'aria-hidden': "true" })}</button>;
+  return <button {...rest} ref={ref} type="button" aria-label={label} aria-pressed={selected} className={cx(styles.item, className)} style={{ ...style, '--swatch': color } as CSSProperties}>{selected && svgIcon(acceptSvg, 'accept', { 'aria-hidden': "true" })}</button>;
 });
 export interface ColorOption { color: string; label: string; disabled?: boolean }
 export interface ColorPaletteProps {

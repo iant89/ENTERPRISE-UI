@@ -1,9 +1,19 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { Badge, Button, IconButton, MessageStrip, SearchField, IconProvider } from '@enterprise-ui/react';
+import { Badge, Button, IconButton, MessageStrip, SearchField } from '@enterprise-ui/react';
 import { cx } from '../../../../src/utilities/cx';
 import { buildMatcher, DEFAULT_MAX_RESULTS, searchFiles, type SearchMatch } from '../../core/vfs/search';
 import { pathFilter } from '../../core/vfs/glob';
 import styles from './CodeWorkspace.module.css';
+import collapseAllSvg from '../../../../src/assets/icons/collapse-all.svg?raw';
+import declineSvg from '../../../../src/assets/icons/decline.svg?raw';
+import filterSvg from '../../../../src/assets/icons/filter.svg?raw';
+import restartSvg from '../../../../src/assets/icons/restart.svg?raw';
+import slimArrowDownSvg from '../../../../src/assets/icons/slim-arrow-down.svg?raw';
+import slimArrowRightSvg from '../../../../src/assets/icons/slim-arrow-right.svg?raw';
+import syntaxSvg from '../../../../src/assets/icons/syntax.svg?raw';
+import textSvg from '../../../../src/assets/icons/text.svg?raw';
+import textFormattingSvg from '../../../../src/assets/icons/text-formatting.svg?raw';
+import { svgIcon } from '../../../../src/icons/svgIcon';
 
 export interface SearchPanelProps {
   files: Readonly<Record<string, string>>;
@@ -67,21 +77,21 @@ export function SearchPanel({ files, onOpen, debounceMs = 300, maxResults = DEFA
       <div className={styles.docsHead}>
         <h2 className={styles.paneTitle}>Search</h2>
         <span>
-          <IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('restart')} label="Refresh results" onClick={() => setNonce((n) => n + 1)} />
-          <IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('collapse-all')} label="Collapse all" onClick={() => setCollapsed(new Set(groups.keys()))} />
-          <IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('decline')} label="Clear search" onClick={clear} />
+          <IconButton size="sm" variant="tertiary" icon={svgIcon(restartSvg, 'restart')} label="Refresh results" onClick={() => setNonce((n) => n + 1)} />
+          <IconButton size="sm" variant="tertiary" icon={svgIcon(collapseAllSvg, 'collapse-all')} label="Collapse all" onClick={() => setCollapsed(new Set(groups.keys()))} />
+          <IconButton size="sm" variant="tertiary" icon={svgIcon(declineSvg, 'decline')} label="Clear search" onClick={clear} />
         </span>
       </div>
       <div className={styles.searchFields}>
         <div className={styles.searchRow}>
           <SearchField size="sm" label="Search" hideLabel placeholder="Search" value={query} onChange={setQuery} error={regexError ?? undefined} className={styles.grow} />
-          {toggleBtn('caseSensitive', 'Match case', 'C', IconProvider.getIcon('text-formatting', { 'aria-hidden': "true" }))}
-          {toggleBtn('wholeWord', 'Match whole word', 'W', IconProvider.getIcon('text', { 'aria-hidden': "true" }))}
-          {toggleBtn('regex', 'Use regular expression', 'R', IconProvider.getIcon('syntax', { 'aria-hidden': "true" }))}
+          {toggleBtn('caseSensitive', 'Match case', 'C', svgIcon(textFormattingSvg, 'text-formatting', { 'aria-hidden': "true" }))}
+          {toggleBtn('wholeWord', 'Match whole word', 'W', svgIcon(textSvg, 'text', { 'aria-hidden': "true" }))}
+          {toggleBtn('regex', 'Use regular expression', 'R', svgIcon(syntaxSvg, 'syntax', { 'aria-hidden': "true" }))}
         </div>
         <div className={styles.searchRow}>
           <SearchField size="sm" label="Files to include" hideLabel placeholder="Files to include, e.g. src/**" value={include} onChange={setInclude} className={styles.grow} clearLabel="Clear files to include" />
-          <button type="button" className={cx(styles.toggle, showExclude && styles.toggleOn)} aria-pressed={showExclude} aria-label="Show files to exclude" title="Files to exclude" onClick={() => setShowExclude((s) => !s)}>{IconProvider.getIcon('filter', { 'aria-hidden': "true" })}</button>
+          <button type="button" className={cx(styles.toggle, showExclude && styles.toggleOn)} aria-pressed={showExclude} aria-label="Show files to exclude" title="Files to exclude" onClick={() => setShowExclude((s) => !s)}>{svgIcon(filterSvg, 'filter', { 'aria-hidden': "true" })}</button>
         </div>
         {showExclude && <SearchField size="sm" label="Files to exclude" hideLabel placeholder="Files to exclude, e.g. **/*.test.tsx" value={exclude} onChange={setExclude} clearLabel="Clear files to exclude" />}
       </div>
@@ -105,7 +115,7 @@ export function SearchPanel({ files, onOpen, debounceMs = 300, maxResults = DEFA
             <div key={path}>
               <button type="button" className={styles.resultFile} aria-expanded={open} title={path}
                 onClick={() => setCollapsed((c) => { const n = new Set(c); if (n.has(path)) n.delete(path); else n.add(path); return n; })}>
-                {open ? IconProvider.getIcon('slim-arrow-down', { 'aria-hidden': "true" }) : IconProvider.getIcon('slim-arrow-right', { 'aria-hidden': "true" })}
+                {open ? svgIcon(slimArrowDownSvg, 'slim-arrow-down', { 'aria-hidden': "true" }) : svgIcon(slimArrowRightSvg, 'slim-arrow-right', { 'aria-hidden': "true" })}
                 <strong>{path.slice(slash + 1)}</strong><span className={styles.dim}>{path.slice(0, Math.max(0, slash))}</span>
                 <Badge tone="neutral">{matches.length}</Badge><span className="eui-visually-hidden">{matches.length === 1 ? 'match' : 'matches'}</span>
               </button>

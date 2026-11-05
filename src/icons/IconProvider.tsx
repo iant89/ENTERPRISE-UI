@@ -1,5 +1,6 @@
-import type { ReactElement, SVGProps } from 'react';
-import { cx } from '../utilities/cx';
+import type { ReactElement } from 'react';
+import type { SapIconName } from './icon-names.generated';
+import { parseSvg, renderIcon, type ParsedSvg, type SvgIconProps } from './svgIcon';
 
 /**
  * SVG files from `src/assets/icons`, bundled as text. Each is one 16×16 path with `fill="currentColor"`;
@@ -9,22 +10,23 @@ import { cx } from '../utilities/cx';
  */
 const svgFiles = import.meta.glob<string>('../assets/icons/*.svg', { query: '?raw', import: 'default', eager: true });
 
-export interface SvgIconProps extends Omit<SVGProps<SVGSVGElement>, 'ref' | 'children'> {
-  /** Width and height. CSS that sizes the `svg` (for example inside a Button) takes precedence. @default 24 */
-  size?: number | string;
-  /** Fill colour. @default 'currentColor' */
-  color?: string;
-  /** Accessible name. When set, the icon is announced as an image; otherwise it is hidden from assistive technology. */
-  title?: string;
-}
+/**
+ * Names of icons you add with `IconProvider.registerIcon`. Augment it so `<Icon name>` accepts them:
+ * `declare module '@enterprise-ui/react' { interface CustomIconNames { 'company-logo': true } }`.
+ */
+export interface CustomIconNames {}
+
+/** Name of an available icon: every SVG in `src/assets/icons`, plus any `CustomIconNames`. */
+export type IconName = SapIconName | Extract<keyof CustomIconNames, string>;
 
 /**
  * A reference to an icon: its name (`'bar-code'`), a UI5-style URI (`'sap-icon://bar-code'`),
  * or its font code point (`0xe08d`, `'&#xe08d;'`, `'U+E08D'`).
  */
-export type IconRef = string | number;
+// `string & {}` keeps editor autocompletion for IconName while accepting any string.
+export type IconRef = IconName | (string & {}) | number;
 
-interface IconEntry { path: string; code?: number; flipInRtl: boolean }
+type IconEntry = ParsedSvg;
 
 const URI_PREFIX = 'sap-icon://';
 const FALLBACK = 'fallback';
@@ -64,11 +66,10 @@ export class IconProvider {
     const entries = new Map<string, IconEntry>();
     for (const [file, svg] of Object.entries(svgFiles)) {
       const name = /([^/]+)\.svg$/.exec(file)![1].toLowerCase();
-      const path = / d="([^"]+)"/.exec(svg)?.[1];
-      if (!path) continue;
-      const hex = /data-code="([0-9a-f]+)"/i.exec(svg)?.[1];
-      const code = hex ? parseInt(hex, 16) : undefined;
-      entries.set(name, { path, code, flipInRtl: /data-rtl="flip"/.test(svg) });
+      const entry = parseSvg(svg, name);
+      if (!entry.path) continue;
+      const { code } = entry;
+      entries.set(name, entry);
       // Several names can share a code point (for example status-positive and status-completed): the first wins.
       if (code !== undefined && (!IconProvider.codes.has(code) || name < IconProvider.codes.get(code)!)) IconProvider.codes.set(code, name);
     }
@@ -92,27 +93,7 @@ export class IconProvider {
    */
   static getIcon(ref: IconRef, props: SvgIconProps = {}): ReactElement {
     const name = IconProvider.resolveName(ref) ?? FALLBACK;
-    const { path, flipInRtl } = IconProvider.load().get(name) ?? { path: '', flipInRtl: false };
-    const { size = 24, color = 'currentColor', title, className, ...rest } = props;
-    const labelled = Boolean(title || rest['aria-label'] || rest['aria-labelledby']);
-    return (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 16 16"
-        width={size}
-        height={size}
-        fill={color}
-        role={labelled ? 'img' : undefined}
-        aria-hidden={labelled ? undefined : true}
-        focusable="false"
-        data-icon={name}
-        className={cx('eui-icon', flipInRtl && 'eui-icon-rtl-flip', className)}
-        {...rest}
-      >
-        {title && <title>{title}</title>}
-        <path d={path} />
-      </svg>
-    );
+    return renderIcon(IconProvider.load().get(name) ?? { name, path: '', flipInRtl: false }, props);
   }
 
   /** Every available icon name (including alternative names), sorted alphabetically. */
@@ -137,7 +118,7 @@ export class IconProvider {
    */
   static registerIcon(name: string, path: string, options: { code?: number; flipInRtl?: boolean } = {}): void {
     const key = normalize(name);
-    IconProvider.load().set(key, { path, code: options.code, flipInRtl: options.flipInRtl ?? false });
+    IconProvider.load().set(key, { name: key, path, code: options.code, flipInRtl: options.flipInRtl ?? false });
     if (options.code !== undefined) IconProvider.codes.set(options.code, key);
   }
 }

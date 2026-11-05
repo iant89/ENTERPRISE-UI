@@ -1,11 +1,12 @@
 import { forwardRef, useLayoutEffect, useRef, useState, type HTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { getNavigationIndex } from '../../utilities/keyboard';
 import { Button, type ButtonVariant } from '../button';
 import { DropdownMenu } from '../dropdown-menu';
 import { IconButton } from '../icon-button';
 import styles from './FooterToolbar.module.css';
+import overflowSvg from '../../assets/icons/overflow.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface FooterToolbarAction {
   /** Unique ID. */
@@ -143,14 +144,14 @@ export const FooterToolbar = forwardRef<HTMLDivElement, FooterToolbarProps>(func
             placement="top-end"
             aria-label={text.more}
             items={overflow.map((a) => ({ id: a.id, label: a.label, disabled: a.disabled, destructive: a.variant === 'destructive', onSelect: a.onClick }))}
-            trigger={<IconButton icon={IconProvider.getIcon('overflow')} label={text.more} />}
+            trigger={<IconButton icon={svgIcon(overflowSvg, 'overflow')} label={text.more} />}
           />
         )}
       </div>
       <div ref={measureRef} className={styles.measure} aria-hidden="true" inert>
         {actions.map((a) => renderAction(a, true))}
         <span data-overflow="">
-          <IconButton icon={IconProvider.getIcon('overflow')} label={text.more} tabIndex={-1} />
+          <IconButton icon={svgIcon(overflowSvg, 'overflow')} label={text.more} tabIndex={-1} />
         </span>
       </div>
     </div>

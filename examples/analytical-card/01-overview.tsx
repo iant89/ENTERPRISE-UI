@@ -1,4 +1,4 @@
-import { AnalyticalCard, BarChart, BulletChart, DonutChart, Grid, IconButton, LineChart, ProportionBar, IconProvider } from '@enterprise-ui/react';
+import { AnalyticalCard, BarChart, BulletChart, DonutChart, Grid, IconButton, LineChart, ProportionBar, Icon } from '@enterprise-ui/react';
 
 export const title = 'Overview page';
 export const description = 'Analytical cards pair a KPI header (value, trend, target and deviation) with a chart. `onHeaderClick` makes the header a drill-down target; header actions stay separately focusable.';
@@ -17,7 +17,7 @@ export default function AnalyticalCardOverview() {
         trend={{ direction: 'up', value: '+12.4%', label: 'vs. last year' }}
         indicators={[{ label: 'Target', value: '9.85' }, { label: 'Deviation', value: '+4.9%', tone: 'success' }]}
         onHeaderClick={() => {}}
-        actions={<IconButton icon={IconProvider.getIcon('overflow')} label="Card options" size="sm" />}
+        actions={<IconButton icon={<Icon name="overflow" />} label="Card options" size="sm" />}
         footer="Updated 5 minutes ago"
       >
         <LineChart label="Revenue by month, actual versus plan" data={revenue} categoryKey="month" categoryLabel="Month" series={[{ key: 'actual', label: 'Actual' }, { key: 'plan', label: 'Plan' }]} height={180} includeZero={false} tableToggle={false} />

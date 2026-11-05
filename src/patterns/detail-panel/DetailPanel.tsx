@@ -1,5 +1,4 @@
 import { useRef, type CSSProperties, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { Portal } from '../../utilities/Portal';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
@@ -7,6 +6,8 @@ import { useScrollLock } from '../../hooks/useScrollLock';
 import { useId } from '../../hooks/useId';
 import { IconButton } from '../../components/icon-button';
 import styles from './DetailPanel.module.css';
+import declineSvg from '../../assets/icons/decline.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface DetailPanelProps {
   /** Whether the panel is open. */
@@ -72,7 +73,7 @@ export function DetailPanel({ open, onClose, title, subtitle, headerActions, foo
         </div>
         <div className={styles.headerActions}>
           {headerActions}
-          <IconButton icon={IconProvider.getIcon('decline')} label="Close details" neutral onClick={onClose} />
+          <IconButton icon={svgIcon(declineSvg, 'decline')} label="Close details" neutral onClick={onClose} />
         </div>
       </div>
       <div className={styles.body}>{children}</div>

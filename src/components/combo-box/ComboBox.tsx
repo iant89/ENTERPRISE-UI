@@ -1,5 +1,4 @@
 import { forwardRef, useMemo, useRef, useState, type InputHTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { getNavigationIndex } from '../../utilities/keyboard';
 import { useMergedRefs } from '../../utilities/refs';
@@ -12,6 +11,9 @@ import { Spinner } from '../spinner';
 import { ListboxPopup, optionId, type SelectOption } from '../listbox';
 import { collectOptionElements, ComboBoxItem, ComboBoxItemCustom, ComboBoxItemGroup } from '../listbox/optionElements';
 import listboxStyles from '../listbox/Listbox.module.css';
+import declineSvg from '../../assets/icons/decline.svg?raw';
+import slimArrowDownSvg from '../../assets/icons/slim-arrow-down.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface ComboBoxProps
   extends FieldProps,
@@ -212,7 +214,7 @@ export const ComboBox = forwardRef<HTMLInputElement, ComboBoxProps>(function Com
               inputRef.current?.focus();
             }}
           >
-            {IconProvider.getIcon('decline', { 'aria-hidden': "true" })}
+            {svgIcon(declineSvg, 'decline', { 'aria-hidden': "true" })}
           </button>
         )}
         <button
@@ -231,7 +233,7 @@ export const ComboBox = forwardRef<HTMLInputElement, ComboBoxProps>(function Com
             inputRef.current?.focus();
           }}
         >
-          {IconProvider.getIcon('slim-arrow-down', { 'aria-hidden': "true" })}
+          {svgIcon(slimArrowDownSvg, 'slim-arrow-down', { 'aria-hidden': "true" })}
         </button>
       </div>
       {open && (

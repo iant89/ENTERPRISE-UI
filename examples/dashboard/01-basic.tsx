@@ -1,4 +1,4 @@
-import { Button, Card, Dashboard, DashboardWidget, List, MetricCard, ProgressBar, Select, Stack, StatusIndicator, IconProvider } from '@enterprise-ui/react';
+import { Button, Card, Dashboard, DashboardWidget, List, MetricCard, ProgressBar, Select, Stack, StatusIndicator, Icon } from '@enterprise-ui/react';
 import { currency, orders, orderTone } from '../data';
 
 export const title = 'Sales dashboard';
@@ -14,7 +14,7 @@ export default function DashboardBasic() {
           <div style={{ width: 160 }}>
             <Select aria-label="Period" size="sm" defaultValue="month" options={[{ value: 'week', label: 'This week' }, { value: 'month', label: 'This month' }, { value: 'quarter', label: 'This quarter' }]} />
           </div>
-          <Button size="sm" icon={IconProvider.getIcon('refresh')}>Refresh</Button>
+          <Button size="sm" icon={<Icon name="refresh" />}>Refresh</Button>
         </>
       }
     >

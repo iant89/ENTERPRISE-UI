@@ -1,11 +1,12 @@
 import { forwardRef, useEffect, useRef, useState, type HTMLAttributes } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { formatRelativeTime, useNow } from '../../hooks/useRelativeTime';
 import { IconButton } from '../icon-button';
 import { Select } from '../select';
 import styles from './RefreshControl.module.css';
+import refreshSvg from '../../assets/icons/refresh.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface RefreshControlLabels {
   refresh: string;
@@ -111,7 +112,7 @@ export const RefreshControl = forwardRef<HTMLDivElement, RefreshControlProps>(fu
           {labels.updated(formatRelativeTime(lastUpdated, now, locale))}
         </time>
       )}
-      <IconButton icon={IconProvider.getIcon('refresh', { className: cx(refreshing && styles.spinning) })} label={labels.refresh} size="sm" aria-busy={refreshing || undefined} onClick={() => void run(true)} />
+      <IconButton icon={svgIcon(refreshSvg, 'refresh', { className: cx(refreshing && styles.spinning) })} label={labels.refresh} size="sm" aria-busy={refreshing || undefined} onClick={() => void run(true)} />
       {intervals.length > 0 && (
         <Select
           size="sm"

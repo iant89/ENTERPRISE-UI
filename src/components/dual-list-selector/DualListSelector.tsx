@@ -1,10 +1,16 @@
 import { forwardRef, useMemo, useState, type HTMLAttributes, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useId } from '../../hooks/useId';
 import { useControllableState } from '../../hooks/useControllableState';
 import { IconButton } from '../icon-button';
 import styles from './DualListSelector.module.css';
+import arrowBottomSvg from '../../assets/icons/arrow-bottom.svg?raw';
+import arrowTopSvg from '../../assets/icons/arrow-top.svg?raw';
+import closeCommandFieldSvg from '../../assets/icons/close-command-field.svg?raw';
+import openCommandFieldSvg from '../../assets/icons/open-command-field.svg?raw';
+import slimArrowLeftSvg from '../../assets/icons/slim-arrow-left.svg?raw';
+import slimArrowRightSvg from '../../assets/icons/slim-arrow-right.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface DualListOption {
   /** Unique value. */
@@ -211,10 +217,10 @@ export const DualListSelector = forwardRef<HTMLDivElement, DualListSelectorProps
         labels={labels}
       />
       <div className={styles.actions}>
-        <IconButton icon={IconProvider.getIcon('slim-arrow-right')} label={labels.add} variant="secondary" disabled={disabled || !checkedAvail.length} onClick={() => add(checkedAvail)} />
-        <IconButton icon={IconProvider.getIcon('open-command-field')} label={labels.addAll} variant="tertiary" disabled={disabled || !movable(available).length} onClick={() => add(movable(available))} />
-        <IconButton icon={IconProvider.getIcon('slim-arrow-left')} label={labels.remove} variant="secondary" disabled={disabled || !checkedSel.length} onClick={() => remove(checkedSel)} />
-        <IconButton icon={IconProvider.getIcon('close-command-field')} label={labels.removeAll} variant="tertiary" disabled={disabled || !movable(chosenItems).length} onClick={() => remove(movable(chosenItems))} />
+        <IconButton icon={svgIcon(slimArrowRightSvg, 'slim-arrow-right')} label={labels.add} variant="secondary" disabled={disabled || !checkedAvail.length} onClick={() => add(checkedAvail)} />
+        <IconButton icon={svgIcon(openCommandFieldSvg, 'open-command-field')} label={labels.addAll} variant="tertiary" disabled={disabled || !movable(available).length} onClick={() => add(movable(available))} />
+        <IconButton icon={svgIcon(slimArrowLeftSvg, 'slim-arrow-left')} label={labels.remove} variant="secondary" disabled={disabled || !checkedSel.length} onClick={() => remove(checkedSel)} />
+        <IconButton icon={svgIcon(closeCommandFieldSvg, 'close-command-field')} label={labels.removeAll} variant="tertiary" disabled={disabled || !movable(chosenItems).length} onClick={() => remove(movable(chosenItems))} />
       </div>
       <div className={styles.chosen}>
         <Pane
@@ -233,8 +239,8 @@ export const DualListSelector = forwardRef<HTMLDivElement, DualListSelectorProps
         />
         {reorderable && (
           <div className={styles.reorder}>
-            <IconButton icon={IconProvider.getIcon('arrow-top')} label={labels.moveUp} size="sm" disabled={disabled || !checkedSel.length} onClick={() => reorder(-1)} />
-            <IconButton icon={IconProvider.getIcon('arrow-bottom')} label={labels.moveDown} size="sm" disabled={disabled || !checkedSel.length} onClick={() => reorder(1)} />
+            <IconButton icon={svgIcon(arrowTopSvg, 'arrow-top')} label={labels.moveUp} size="sm" disabled={disabled || !checkedSel.length} onClick={() => reorder(-1)} />
+            <IconButton icon={svgIcon(arrowBottomSvg, 'arrow-bottom')} label={labels.moveDown} size="sm" disabled={disabled || !checkedSel.length} onClick={() => reorder(1)} />
           </div>
         )}
       </div>

@@ -1,5 +1,4 @@
 import { forwardRef, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { addDays, addMonths, isOutOfRange, isSameDay, isSameMonth, startOfDay, startOfMonth, startOfWeek } from '../../utilities/date';
 import { useId } from '../../hooks/useId';
@@ -7,6 +6,9 @@ import { useControllableState } from '../../hooks/useControllableState';
 import { IconButton } from '../icon-button';
 import { readCalendarMarkers } from './dates';
 import styles from './Calendar.module.css';
+import slimArrowLeftSvg from '../../assets/icons/slim-arrow-left.svg?raw';
+import slimArrowRightSvg from '../../assets/icons/slim-arrow-right.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface CalendarProps {
   /** Selected date. */
@@ -104,11 +106,11 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calen
   return (
     <div ref={ref} className={cx(styles.calendar, className)}>
       <div className={styles.header}>
-        <IconButton icon={IconProvider.getIcon('slim-arrow-left')} label="Previous month" size="sm" onClick={() => setFocused(addMonths(focused, -1))} />
+        <IconButton icon={svgIcon(slimArrowLeftSvg, 'slim-arrow-left')} label="Previous month" size="sm" onClick={() => setFocused(addMonths(focused, -1))} />
         <h2 id={titleId} className={styles.title} aria-live="polite">
           {monthFormatter.format(focused)}
         </h2>
-        <IconButton icon={IconProvider.getIcon('slim-arrow-right')} label="Next month" size="sm" onClick={() => setFocused(addMonths(focused, 1))} />
+        <IconButton icon={svgIcon(slimArrowRightSvg, 'slim-arrow-right')} label="Next month" size="sm" onClick={() => setFocused(addMonths(focused, 1))} />
       </div>
       <table ref={gridRef} role="grid" aria-labelledby={titleId} className={styles.grid} onKeyDown={onKeyDown}>
         <thead>

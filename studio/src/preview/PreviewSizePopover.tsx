@@ -1,8 +1,12 @@
 import { useId, useReducer, useRef, useState, type KeyboardEvent } from 'react';
-import { Button, NumberInput, Popover, Select, ToggleButton, IconProvider } from '@enterprise-ui/react';
+import { Button, NumberInput, Popover, Select, ToggleButton } from '@enterprise-ui/react';
 import { PREVIEW_SIZE_LIMITS, PREVIEW_ZOOMS, type PreviewSize, type PreviewZoom } from '../app/workspace/layout';
 import { draftErrors, draftFrom, draftToSize, sizeDraftReducer } from './previewSize';
 import styles from '../app/workspace/CodeWorkspace.module.css';
+import brokenLinkSvg from '../../../src/assets/icons/broken-link.svg?raw';
+import chainLinkSvg from '../../../src/assets/icons/chain-link.svg?raw';
+import resetSvg from '../../../src/assets/icons/reset.svg?raw';
+import { svgIcon } from '../../../src/icons/svgIcon';
 
 export interface PreviewSizePopoverProps {
   /** The current frame size and zoom. */
@@ -65,7 +69,7 @@ export function PreviewSizePopover({ size, fit, onApply, onReset }: PreviewSizeP
       }
       footer={
         <div className={styles.sizeFooter}>
-          <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('reset')} onClick={() => { onReset(); close(); }}>Reset to Desktop</Button>
+          <Button size="sm" variant="tertiary" icon={svgIcon(resetSvg, 'reset')} onClick={() => { onReset(); close(); }}>Reset to Desktop</Button>
           <Button size="sm" variant="primary" disabled={!valid} onClick={() => apply()}>Apply</Button>
         </div>
       }
@@ -74,7 +78,7 @@ export function PreviewSizePopover({ size, fit, onApply, onReset }: PreviewSizeP
         <div className={styles.sizeRow}>
           <NumberInput size="sm" label="Width" name="preview-width" unit="px" value={draft.width} onChange={(v) => dispatch({ type: 'width', value: v })} error={errors.width} />
           <ToggleButton size="sm" variant="tertiary" pressed={draft.locked} onPressedChange={(p: boolean) => dispatch({ type: 'lock', locked: p })} aria-label="Lock aspect ratio" title="Lock aspect ratio">
-            {draft.locked ? IconProvider.getIcon('chain-link', { 'aria-hidden': "true" }) : IconProvider.getIcon('broken-link', { 'aria-hidden': "true" })}
+            {draft.locked ? svgIcon(chainLinkSvg, 'chain-link', { 'aria-hidden': "true" }) : svgIcon(brokenLinkSvg, 'broken-link', { 'aria-hidden': "true" })}
           </ToggleButton>
           <NumberInput size="sm" label="Height" name="preview-height" unit="px" value={draft.height} onChange={(v) => dispatch({ type: 'height', value: v })} error={errors.height} />
         </div>

@@ -1,7 +1,12 @@
 import { useMemo, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { IconButton, Input, IconProvider } from '@enterprise-ui/react';
+import { IconButton, Input } from '@enterprise-ui/react';
 import { search, type SearchEntry } from './search';
 import styles from './Docs.module.css';
+import arrowLeftSvg from '../../../src/assets/icons/arrow-left.svg?raw';
+import arrowRightSvg from '../../../src/assets/icons/arrow-right.svg?raw';
+import pushpinOffSvg from '../../../src/assets/icons/pushpin-off.svg?raw';
+import pushpinOnSvg from '../../../src/assets/icons/pushpin-on.svg?raw';
+import { svgIcon } from '../../../src/icons/svgIcon';
 
 /** Back/forward history of docs page ids (C7). */
 export interface DocsNav { stack: string[]; index: number }
@@ -40,10 +45,10 @@ export function DocsPanel({ nav, dispatchNav, index, pinned, onPin, breadcrumb, 
   return (
     <div className={styles.panel} data-testid={pinned ? 'docs-pinned' : 'docs-sidebar'} onKeyDown={onKey}>
       <div className={styles.head}>
-        <IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('arrow-left')} label="Back (Alt+Left)" disabled={nav.index <= 0} onClick={() => dispatchNav({ type: 'back' })} />
-        <IconButton size="sm" variant="tertiary" icon={IconProvider.getIcon('arrow-right')} label="Forward (Alt+Right)" disabled={nav.index >= nav.stack.length - 1} onClick={() => dispatchNav({ type: 'forward' })} />
+        <IconButton size="sm" variant="tertiary" icon={svgIcon(arrowLeftSvg, 'arrow-left')} label="Back (Alt+Left)" disabled={nav.index <= 0} onClick={() => dispatchNav({ type: 'back' })} />
+        <IconButton size="sm" variant="tertiary" icon={svgIcon(arrowRightSvg, 'arrow-right')} label="Forward (Alt+Right)" disabled={nav.index >= nav.stack.length - 1} onClick={() => dispatchNav({ type: 'forward' })} />
         <h2 className={styles.headTitle}>Docs</h2>
-        <IconButton size="sm" variant="tertiary" icon={pinned ? IconProvider.getIcon('pushpin-off') : IconProvider.getIcon('pushpin-on')} label={pinned ? 'Unpin Docs' : 'Pin Docs beside the editor'} aria-pressed={pinned} onMouseDown={(e) => e.preventDefault()} onClick={() => onPin(!pinned)} />
+        <IconButton size="sm" variant="tertiary" icon={pinned ? svgIcon(pushpinOffSvg, 'pushpin-off') : svgIcon(pushpinOnSvg, 'pushpin-on')} label={pinned ? 'Unpin Docs' : 'Pin Docs beside the editor'} aria-pressed={pinned} onMouseDown={(e) => e.preventDefault()} onClick={() => onPin(!pinned)} />
       </div>
       <div className={styles.search} role="search">
         <Input size="sm" label="Search docs" hideLabel placeholder="Search docs" value={query} onChange={(e) => setQuery(e.currentTarget.value)} />

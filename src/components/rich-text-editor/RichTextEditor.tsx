@@ -1,9 +1,16 @@
 import { useEffect, useRef, useState, type ClipboardEvent, type KeyboardEvent, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useFormControl, type FieldProps } from '../form-field';
 import { richTextToPlain, safeHref, sanitizeRichText } from './sanitize';
 import styles from './RichTextEditor.module.css';
+import boldTextSvg from '../../assets/icons/bold-text.svg?raw';
+import chainLinkSvg from '../../assets/icons/chain-link.svg?raw';
+import clearAllSvg from '../../assets/icons/clear-all.svg?raw';
+import italicTextSvg from '../../assets/icons/italic-text.svg?raw';
+import listSvg from '../../assets/icons/list.svg?raw';
+import numberedTextSvg from '../../assets/icons/numbered-text.svg?raw';
+import underlineTextSvg from '../../assets/icons/underline-text.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 type Command = 'bold' | 'italic' | 'underline' | 'insertUnorderedList' | 'insertOrderedList';
 
@@ -70,11 +77,11 @@ const defaultLabels: RichTextEditorLabels = {
 };
 
 const COMMANDS: { command: Command; icon: ReactNode; key: keyof RichTextEditorLabels; shortcut?: string }[] = [
-  { command: 'bold', icon: IconProvider.getIcon('bold-text'), key: 'bold', shortcut: 'Control+B' },
-  { command: 'italic', icon: IconProvider.getIcon('italic-text'), key: 'italic', shortcut: 'Control+I' },
-  { command: 'underline', icon: IconProvider.getIcon('underline-text'), key: 'underline', shortcut: 'Control+U' },
-  { command: 'insertUnorderedList', icon: IconProvider.getIcon('list'), key: 'bulletList' },
-  { command: 'insertOrderedList', icon: IconProvider.getIcon('numbered-text'), key: 'numberedList' },
+  { command: 'bold', icon: svgIcon(boldTextSvg, 'bold-text'), key: 'bold', shortcut: 'Control+B' },
+  { command: 'italic', icon: svgIcon(italicTextSvg, 'italic-text'), key: 'italic', shortcut: 'Control+I' },
+  { command: 'underline', icon: svgIcon(underlineTextSvg, 'underline-text'), key: 'underline', shortcut: 'Control+U' },
+  { command: 'insertUnorderedList', icon: svgIcon(listSvg, 'list'), key: 'bulletList' },
+  { command: 'insertOrderedList', icon: svgIcon(numberedTextSvg, 'numbered-text'), key: 'numberedList' },
 ];
 
 const run = (command: string, arg?: string) => {
@@ -223,10 +230,10 @@ export function RichTextEditor({
           ))}
           <span className={styles.divider} aria-hidden="true" />
           <button type="button" className={styles.tool} aria-label={labels.link} title={`${labels.link} (Ctrl+K)`} aria-keyshortcuts="Control+K" aria-expanded={linkOpen} onMouseDown={(e) => e.preventDefault()} onClick={openLink}>
-            {IconProvider.getIcon('chain-link')}
+            {svgIcon(chainLinkSvg, 'chain-link')}
           </button>
           <button type="button" className={styles.tool} aria-label={labels.clear} title={labels.clear} onMouseDown={(e) => e.preventDefault()} onClick={() => exec('removeFormat')}>
-            {IconProvider.getIcon('clear-all')}
+            {svgIcon(clearAllSvg, 'clear-all')}
           </button>
         </div>
       )}

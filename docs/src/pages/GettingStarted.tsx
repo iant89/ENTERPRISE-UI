@@ -35,7 +35,7 @@ export function Dashboard() {
 }`;
 
 const shell = `import {
-  AppShell, IconProvider, ApplicationHeader, SideNavigation, NavigationItem, Page, Button,
+  AppShell, Icon, ApplicationHeader, SideNavigation, NavigationItem, Page, Button,
 } from '@enterprise-ui/react';
 
 export function App() {
@@ -44,8 +44,8 @@ export function App() {
       header={<ApplicationHeader productName="Northwind" user={{ name: 'Ada Lovelace' }} />}
       navigation={
         <SideNavigation activeId="products">
-          <NavigationItem id="home" label="Home" icon={IconProvider.getIcon('home')} href="/" />
-          <NavigationItem id="products" label="Products" icon={IconProvider.getIcon('product')} href="/products" />
+          <NavigationItem id="home" label="Home" icon={<Icon name="home" />} href="/" />
+          <NavigationItem id="products" label="Products" icon={<Icon name="product" />} href="/products" />
         </SideNavigation>
       }
     >

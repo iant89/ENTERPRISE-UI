@@ -2,7 +2,7 @@
 
 A React + TypeScript component library for building business applications that look and behave like modern SAP Fiori software, without depending on SAPUI5.
 
-`@enterprise-ui/react` is meant for dashboards, admin panels, ERP, inventory, fleet management and other data-heavy screens. It has its own implementation, design tokens and component APIs. Its icons are the SAP icon set, stored as SVG files in `src/assets/icons` and served by the `IconProvider` class (`IconProvider.getIcon('bell')`, `IconProvider.getIconNames()`). `lucide-react` is still listed as a dependency, but the library no longer imports it.
+`@enterprise-ui/react` is meant for dashboards, admin panels, ERP, inventory, fleet management and other data-heavy screens. It has its own implementation, design tokens and component APIs. Its icons are the SAP icon set, stored as SVG files in `src/assets/icons`: `<Icon name="bell" />` renders one (names are type-checked), and `IconProvider.getIconNames()` lists them all. `lucide-react` is still listed as a dependency, but the library no longer imports it.
 
 ![Inventory management app built with Enterprise UI Kit: application header, side navigation, filter bar and data grid](docs/screenshots/demo-app.png)
 
@@ -158,7 +158,7 @@ Components are controlled when you pass `value`, `checked` or `open`. Without th
 ### Application shell
 
 ```tsx
-import { AppShell, ApplicationHeader, Button, IconProvider, NavigationItem, Page, SideNavigation } from '@enterprise-ui/react';
+import { AppShell, ApplicationHeader, Button, Icon, NavigationItem, Page, SideNavigation } from '@enterprise-ui/react';
 
 <AppShell
   header={<ApplicationHeader productName="Northwind" user={{ name: 'Ada Lovelace' }} notificationCount={3} />}
@@ -170,8 +170,8 @@ import { AppShell, ApplicationHeader, Button, IconProvider, NavigationItem, Page
         router.push(id);
       }}
     >
-      <NavigationItem id="home" label="Home" icon={IconProvider.getIcon('home')} href="/" />
-      <NavigationItem id="catalog" label="Catalog" icon={IconProvider.getIcon('product')}>
+      <NavigationItem id="home" label="Home" icon={<Icon name="home" />} href="/" />
+      <NavigationItem id="catalog" label="Catalog" icon={<Icon name="product" />}>
         <NavigationItem id="products" label="Products" href="/products" />
       </NavigationItem>
     </SideNavigation>

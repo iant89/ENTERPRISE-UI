@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useId } from '../../hooks/useId';
 import { Button } from '../../components/button';
 import { MessageStrip } from '../../components/message-strip';
 import styles from './Wizard.module.css';
+import acceptSvg from '../../assets/icons/accept.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface WizardStep {
   id: string;
@@ -133,7 +134,7 @@ export function Wizard({ steps, step, defaultStep = 0, onStepChange, onFinish, o
                 onClick={() => goTo(i)}
               >
                 <span className={styles.marker} aria-hidden="true">
-                  {done ? IconProvider.getIcon('accept') : i + 1}
+                  {done ? svgIcon(acceptSvg, 'accept') : i + 1}
                 </span>
                 <span className={styles.stepLabel}>
                   <span className="eui-visually-hidden">Step {i + 1}:</span>{' '}

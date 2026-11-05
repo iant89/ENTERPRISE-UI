@@ -1,9 +1,11 @@
 import { forwardRef, useId, useRef, useState, type DragEvent, type HTMLAttributes, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { IconButton } from '../icon-button';
 import { ProgressBar } from '../progress-bar';
 import styles from './UploadCollection.module.css';
+import deleteSvg from '../../assets/icons/delete.svg?raw';
+import documentTextSvg from '../../assets/icons/document-text.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export type UploadCollectionItemStatus = 'complete' | 'uploading' | 'error' | 'ready';
 
@@ -91,7 +93,7 @@ export const UploadCollection = forwardRef<HTMLElement, UploadCollectionProps>(f
             const status = item.status ?? 'complete';
             return (
               <li key={item.id} className={styles.item}>
-                <span className={styles.thumb} aria-hidden="true">{item.thumbnail ?? IconProvider.getIcon('document-text')}</span>
+                <span className={styles.thumb} aria-hidden="true">{item.thumbnail ?? svgIcon(documentTextSvg, 'document-text')}</span>
                 <div className={styles.details}>
                   {item.href ? <a href={item.href} className={styles.name}>{item.fileName}</a> : <span className={styles.name}>{item.fileName}</span>}
                   <span className={cx(styles.meta, status === 'error' && styles.error)}>
@@ -99,7 +101,7 @@ export const UploadCollection = forwardRef<HTMLElement, UploadCollectionProps>(f
                   </span>
                   {status === 'uploading' && <ProgressBar value={item.progress ?? 0} label={text.progress(item.fileName)} />}
                 </div>
-                {onItemDelete && !item.disableDelete && <IconButton icon={IconProvider.getIcon('delete')} label={text.delete(item.fileName)} onClick={() => onItemDelete(item.id)} />}
+                {onItemDelete && !item.disableDelete && <IconButton icon={svgIcon(deleteSvg, 'delete')} label={text.delete(item.fileName)} onClick={() => onItemDelete(item.id)} />}
               </li>
             );
           })}

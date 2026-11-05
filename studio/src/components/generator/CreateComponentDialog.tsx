@@ -1,8 +1,11 @@
 import { useMemo, useState, type FormEvent } from 'react';
-import { Button, Checkbox, Dialog, Input, Select, IconProvider } from '@enterprise-ui/react';
+import { Button, Checkbox, Dialog, Input, Select } from '@enterprise-ui/react';
 import { DEFAULT_OPTIONS, fileNames, type ComponentOptions, type ExportStyle, type Language, type Styling } from './templates';
 import { DEFAULT_DESTINATION, planComponent, type Plan } from './generate';
 import styles from './CreateComponentDialog.module.css';
+import slimArrowDownSvg from '../../../../src/assets/icons/slim-arrow-down.svg?raw';
+import slimArrowRightSvg from '../../../../src/assets/icons/slim-arrow-right.svg?raw';
+import { svgIcon } from '../../../../src/icons/svgIcon';
 
 /** Decision 1a: Advanced starts expanded, then its state is a Studio-level preference (not per project). */
 export const ADVANCED_KEY = 'eui-studio:create-component-advanced';
@@ -79,7 +82,7 @@ export function CreateComponentDialog({ files, destination = DEFAULT_DESTINATION
           <Checkbox label={`Example (${shownName}.example${x})`} checked={opts.example} onChange={(c) => set('example', c)} />
         </fieldset>
         <button type="button" className={styles.disclosure} aria-expanded={advanced} aria-controls="create-component-advanced" onClick={toggleAdvanced}>
-          {advanced ? IconProvider.getIcon('slim-arrow-down', { 'aria-hidden': "true" }) : IconProvider.getIcon('slim-arrow-right', { 'aria-hidden': "true" })}Advanced options
+          {advanced ? svgIcon(slimArrowDownSvg, 'slim-arrow-down', { 'aria-hidden': "true" }) : svgIcon(slimArrowRightSvg, 'slim-arrow-right', { 'aria-hidden': "true" })}Advanced options
         </button>
         <div id="create-component-advanced" className={styles.advanced} hidden={!advanced}>
           <Select<Language> label="Language" value={opts.language} onChange={(v) => v && set('language', v)}

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
-import { IconProvider } from '../../icons';
 import { useControllableState } from '../../hooks/useControllableState';
 import type { ChartTable } from '../chart-core/ChartFrame';
 import type { ChartRegistration, ChartToolsContextValue } from '../chart-core/ChartToolsContext';
@@ -8,6 +7,15 @@ import { renderChartImage } from './exportImage';
 import { IconButton } from '../icon-button';
 import { SegmentedButton } from '../segmented-button';
 import styles from './ChartContainer.module.css';
+import attachmentPhotoSvg from '../../assets/icons/attachment-photo.svg?raw';
+import downloadSvg from '../../assets/icons/download.svg?raw';
+import excelAttachmentSvg from '../../assets/icons/excel-attachment.svg?raw';
+import exitFullScreenSvg from '../../assets/icons/exit-full-screen.svg?raw';
+import fullScreenSvg from '../../assets/icons/full-screen.svg?raw';
+import listSvg from '../../assets/icons/list.svg?raw';
+import tableViewSvg from '../../assets/icons/table-view.svg?raw';
+import verticalBarChart2Svg from '../../assets/icons/vertical-bar-chart-2.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 /** Which toolbar tools to show. Each defaults to `true`. */
 export interface ChartToolOptions {
@@ -202,24 +210,24 @@ export function ChartToolbar({ state, tools, labels }: { state: ChartToolsState;
           size="sm"
           aria-label={labels.toolbar}
           items={[
-            { value: 'chart', label: IconProvider.getIcon('vertical-bar-chart-2', { 'aria-hidden': "true" }), ariaLabel: labels.chartView },
-            { value: 'table', label: IconProvider.getIcon('table-view', { 'aria-hidden': "true" }), ariaLabel: labels.tableView },
+            { value: 'chart', label: svgIcon(verticalBarChart2Svg, 'vertical-bar-chart-2', { 'aria-hidden': "true" }), ariaLabel: labels.chartView },
+            { value: 'table', label: svgIcon(tableViewSvg, 'table-view', { 'aria-hidden': "true" }), ariaLabel: labels.tableView },
           ]}
           value={[state.view]}
           onChange={(v) => v[0] && state.setView(v[0] as 'chart' | 'table')}
         />
       )}
       {legend && state.view === 'chart' && (
-        <IconButton icon={IconProvider.getIcon('list')} label={labels.legend} size="sm" aria-pressed={state.showLegend} onClick={() => state.setShowLegend(!state.showLegend)} />
+        <IconButton icon={svgIcon(listSvg, 'list')} label={labels.legend} size="sm" aria-pressed={state.showLegend} onClick={() => state.setShowLegend(!state.showLegend)} />
       )}
       {formats.length > 0 && (
         <DropdownMenu
-          trigger={<IconButton icon={IconProvider.getIcon('download')} label={labels.download} size="sm" disabled={!state.hasData} />}
+          trigger={<IconButton icon={svgIcon(downloadSvg, 'download')} label={labels.download} size="sm" disabled={!state.hasData} />}
           placement="bottom-end"
           items={formats.map((f) => ({
             id: f,
             label: f === 'png' ? labels.downloadPng : f === 'jpeg' ? labels.downloadJpeg : labels.downloadCsv,
-            icon: f === 'csv' ? IconProvider.getIcon('excel-attachment') : IconProvider.getIcon('attachment-photo'),
+            icon: f === 'csv' ? svgIcon(excelAttachmentSvg, 'excel-attachment') : svgIcon(attachmentPhotoSvg, 'attachment-photo'),
             // Images need the plot, which the table view does not render.
             disabled: f !== 'csv' && state.view === 'table',
           }))}
@@ -228,7 +236,7 @@ export function ChartToolbar({ state, tools, labels }: { state: ChartToolsState;
       )}
       {fullscreen && (
         <IconButton
-          icon={state.fullscreen ? IconProvider.getIcon('exit-full-screen') : IconProvider.getIcon('full-screen')}
+          icon={state.fullscreen ? svgIcon(exitFullScreenSvg, 'exit-full-screen') : svgIcon(fullScreenSvg, 'full-screen')}
           label={state.fullscreen ? labels.exitFullscreen : labels.enterFullscreen}
           size="sm"
           onClick={() => void state.toggleFullscreen()}

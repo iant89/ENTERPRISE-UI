@@ -50,6 +50,7 @@
     "dev:studio": "npm run docs:api && vite --config studio/vite.config.ts",
     "preview": "vite preview --config docs/vite.config.ts --strictPort",
     "docs:api": "node scripts/extract-api.mjs",
+    "icons:names": "node scripts/generate-icon-names.mjs",
     "typecheck": "npm run docs:api && tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "test": "vitest run",

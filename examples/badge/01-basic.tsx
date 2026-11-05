@@ -1,4 +1,4 @@
-import { Badge, Stack, IconProvider } from '@enterprise-ui/react';
+import { Badge, Stack, Icon } from '@enterprise-ui/react';
 
 export const title = 'Badges and counters';
 export const description = 'Badges label status or categories; `count` renders a counter that caps at `max`.';
@@ -14,7 +14,7 @@ export default function BadgeBasic() {
         <Badge tone="error">Blocked</Badge>
       </Stack>
       <Stack direction="horizontal" gap={2} wrap>
-        <Badge solid tone="information" icon={IconProvider.getIcon('bell')}>3 alerts</Badge>
+        <Badge solid tone="information" icon={<Icon name="bell" />}>3 alerts</Badge>
         <Badge solid tone="success">Released</Badge>
         <Badge solid tone="error">Critical</Badge>
         <Badge count={7} tone="information" aria-label="7 new" />

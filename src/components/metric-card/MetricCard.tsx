@@ -1,9 +1,14 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import type { Tone } from '../../utilities/types';
 import { Skeleton } from '../skeleton';
 import styles from './MetricCard.module.css';
+import arrowRightSvg from '../../assets/icons/arrow-right.svg?raw';
+import trendDownSvg from '../../assets/icons/trend-down.svg?raw';
+import trendUpSvg from '../../assets/icons/trend-up.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+
+const ICON_SVGS: Record<string, string> = { 'arrow-right': arrowRightSvg, 'trend-down': trendDownSvg, 'trend-up': trendUpSvg };
 
 export interface MetricTrend {
   direction: 'up' | 'down' | 'flat';
@@ -99,7 +104,7 @@ export const MetricCard = forwardRef<HTMLElement, MetricCardProps>(function Metr
             </div>
             {trend && (
               <div className={cx(styles.trend, good === null ? styles.flat : good ? styles.good : styles.bad)}>
-                {IconProvider.getIcon(TrendIcon, { 'aria-hidden': 'true' })}
+                {svgIcon(ICON_SVGS[TrendIcon], TrendIcon, { 'aria-hidden': 'true' })}
                 <span>
                   <span className="eui-visually-hidden">{trend.direction === 'up' ? 'Up' : trend.direction === 'down' ? 'Down' : 'Unchanged'}</span>{' '}
                   {trend.value}

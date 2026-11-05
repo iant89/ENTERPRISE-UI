@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, IconButton, Page, ProgressBar, StatusIndicator, IconProvider } from '@enterprise-ui/react';
+import { Avatar, Button, Card, IconButton, Page, ProgressBar, StatusIndicator, Icon } from '@enterprise-ui/react';
 
 export const title = 'Page layout';
 export const description = 'Breadcrumbs, title with status, subtitle, actions, header content and a toolbar area above the content region.';
@@ -14,8 +14,8 @@ export default function PageBasic() {
       avatar={<Avatar name="Contoso Ltd" shape="square" size="lg" decorative />}
       actions={
         <>
-          <IconButton icon={IconProvider.getIcon('share-2')} label="Share" />
-          <Button icon={IconProvider.getIcon('edit')} variant="primary">Edit</Button>
+          <IconButton icon={<Icon name="share-2" />} label="Share" />
+          <Button icon={<Icon name="edit" />} variant="primary">Edit</Button>
         </>
       }
       headerContent={<div style={{ maxWidth: 320 }}><ProgressBar label="Annual purchase volume" value={72} formatValue={() => '$720K of $1M'} /></div>}

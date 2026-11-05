@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { createRef } from 'react';
+import { readdirSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { render } from '@testing-library/react';
 import { Icon } from '../components/icon';
 import { IconProvider } from './IconProvider';
@@ -53,8 +56,22 @@ describe('IconProvider', () => {
     expect(container.querySelector('path')).toHaveAttribute('d', 'M0 0h16v16H0z');
   });
 
-  it('powers <Icon name>', () => {
-    const { container } = render(<Icon name="sap-icon://bell" label="Bell" />);
-    expect(container.querySelector('svg')).toHaveAttribute('data-icon', 'bell');
+  it('powers <Icon name>: a bare, labelled svg that forwards its ref', () => {
+    const ref = createRef<SVGSVGElement>();
+    const { container } = render(<Icon ref={ref} name="bell" label="Bell" size={16} />);
+    const svg = container.firstElementChild!;
+    expect(svg.tagName.toLowerCase()).toBe('svg');
+    expect(ref.current).toBe(svg);
+    expect(svg).toHaveAttribute('data-icon', 'bell');
+    expect(svg).toHaveAttribute('aria-label', 'Bell');
+    expect(svg).toHaveAttribute('role', 'img');
+    expect(svg).toHaveAttribute('width', '16');
+  });
+
+  it('keeps the IconName type in sync with src/assets/icons', () => {
+    const folder = readdirSync(resolve(__dirname, '../assets/icons')).filter((f) => f.endsWith('.svg')).map((f) => f.slice(0, -4).toLowerCase()).sort();
+    const typed = [...readFileSync(resolve(__dirname, 'icon-names.generated.ts'), 'utf8').matchAll(/\| '([^']+)'/g)].map((m) => m[1]);
+    // If this fails, run `npm run icons:names` after adding or removing icon files.
+    expect(typed).toEqual(folder);
   });
 });

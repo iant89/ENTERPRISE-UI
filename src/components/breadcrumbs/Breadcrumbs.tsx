@@ -1,10 +1,12 @@
 import { forwardRef, type HTMLAttributes, type MouseEvent } from 'react';
-import { IconProvider } from '../../icons';
 import { BreadcrumbsItem } from './BreadcrumbsItem';
 import { cx } from '../../utilities/cx';
 import { DropdownMenu } from '../dropdown-menu';
 import { IconButton } from '../icon-button';
 import styles from './Breadcrumbs.module.css';
+import overflowSvg from '../../assets/icons/overflow.svg?raw';
+import slimArrowRightSvg from '../../assets/icons/slim-arrow-right.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface BreadcrumbItem {
   label: string;
@@ -57,9 +59,9 @@ export const Breadcrumbs = forwardRef<HTMLElement, BreadcrumbsProps>(function Br
             <DropdownMenu
               aria-label={overflowMenuLabel}
               items={hidden.map((item, i) => ({ id: String(i), label: item.label, href: item.href, target: item.target, ariaLabel: item.ariaLabel, onSelect: item.onClick }))}
-              trigger={<IconButton icon={IconProvider.getIcon('overflow')} label={overflowTriggerLabel(hidden.length)} size="sm" />}
+              trigger={<IconButton icon={svgIcon(overflowSvg, 'overflow')} label={overflowTriggerLabel(hidden.length)} size="sm" />}
             />
-            <span className={styles.separator} aria-hidden="true">{IconProvider.getIcon('slim-arrow-right')}</span>
+            <span className={styles.separator} aria-hidden="true">{svgIcon(slimArrowRightSvg, 'slim-arrow-right')}</span>
           </li>
         )}
         {tail.map((item, i) => renderItem(item, i === tail.length - 1, head.length + hidden.length + i))}

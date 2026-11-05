@@ -1,11 +1,13 @@
 import { useRef, type KeyboardEvent, type ReactNode } from 'react';
-import { IconProvider } from '@enterprise-ui/react';
 import type { Workspace } from './layout';
 import styles from './CodeWorkspace.module.css';
+import gridSvg from '../../../../src/assets/icons/grid.svg?raw';
+import sourceCodeSvg from '../../../../src/assets/icons/source-code.svg?raw';
+import { svgIcon } from '../../../../src/icons/svgIcon';
 
 const ITEMS: { value: Workspace; label: string; short: string; icon: ReactNode }[] = [
-  { value: 'design', label: 'Design Studio', short: 'Design', icon: IconProvider.getIcon('grid', { 'aria-hidden': "true" }) },
-  { value: 'code', label: 'Code Studio', short: 'Code', icon: IconProvider.getIcon('source-code', { 'aria-hidden': "true" }) },
+  { value: 'design', label: 'Design Studio', short: 'Design', icon: svgIcon(gridSvg, 'grid', { 'aria-hidden': "true" }) },
+  { value: 'code', label: 'Code Studio', short: 'Code', icon: svgIcon(sourceCodeSvg, 'source-code', { 'aria-hidden': "true" }) },
 ];
 
 /** Decision 1: the centred Design / Code switch. A radiogroup with roving focus and arrow keys. */

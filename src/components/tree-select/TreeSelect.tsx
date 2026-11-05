@@ -1,11 +1,12 @@
 import { useMemo, useState, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import { useFormControl, type FieldProps } from '../form-field';
 import { Popover } from '../popover';
 import { Tree, type TreeNode } from '../tree';
 import styles from './TreeSelect.module.css';
+import slimArrowDownSvg from '../../assets/icons/slim-arrow-down.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface TreeSelectLabels {
   search: string;
@@ -111,7 +112,7 @@ export function TreeSelect({
           <span id={`${control.id}-value`} className={styles.value}>
             {display}
           </span>
-          {IconProvider.getIcon('slim-arrow-down', { 'aria-hidden': "true", className: styles.chevron })}
+          {svgIcon(slimArrowDownSvg, 'slim-arrow-down', { 'aria-hidden': "true", className: styles.chevron })}
         </button>
       }
     >

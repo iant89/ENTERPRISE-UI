@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type DragEvent, type HTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useId } from '../../hooks/useId';
 import { useControllableState } from '../../hooks/useControllableState';
 import styles from './KanbanBoard.module.css';
+import verticalGripSvg from '../../assets/icons/vertical-grip.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface KanbanColumn {
   /** Unique column id, referenced by `KanbanItem.columnId`. */
@@ -279,7 +280,7 @@ export function KanbanBoard<T extends KanbanItem>({
                         }
                       }}
                     >
-                      {IconProvider.getIcon('vertical-grip', { 'aria-hidden': "true" })}
+                      {svgIcon(verticalGripSvg, 'vertical-grip', { 'aria-hidden': "true" })}
                     </button>
                     <div className={styles.content}>{renderItem(item)}</div>
                   </li>

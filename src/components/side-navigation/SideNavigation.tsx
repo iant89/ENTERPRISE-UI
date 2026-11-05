@@ -9,13 +9,14 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useAppShell } from '../../layouts/app-shell/AppShellContext';
 import { Badge } from '../badge';
 import { DropdownMenu } from '../dropdown-menu';
 import { Tooltip } from '../tooltip';
 import styles from './SideNavigation.module.css';
+import slimArrowDownSvg from '../../assets/icons/slim-arrow-down.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 interface SideNavContextValue {
   activeId?: string;
@@ -126,7 +127,7 @@ export function NavigationItem({ id, label, icon, href, badge, children, default
         </>
       )}
       {badge !== undefined && badge > 0 && <span className={styles.dotBadge} aria-hidden="true" />}
-      {hasChildren && <span className={styles.chevron} aria-hidden="true">{IconProvider.getIcon('slim-arrow-down')}</span>}
+      {hasChildren && <span className={styles.chevron} aria-hidden="true">{svgIcon(slimArrowDownSvg, 'slim-arrow-down')}</span>}
     </>
   );
 

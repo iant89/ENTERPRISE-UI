@@ -1,7 +1,8 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import styles from './Token.module.css';
+import declineSvg from '../../assets/icons/decline.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface TokenProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'children'> {
   /** Token text. */
@@ -28,7 +29,7 @@ export const Token = forwardRef<HTMLSpanElement, TokenProps>(function Token({ te
       <span className={styles.text}>{text}</span>
       {removable && (
         <button type="button" className={styles.remove} disabled={disabled} aria-label={deleteLabel ?? `Remove ${typeof text === 'string' ? text : 'token'}`} onClick={onDelete}>
-          {IconProvider.getIcon('decline', { 'aria-hidden': "true" })}
+          {svgIcon(declineSvg, 'decline', { 'aria-hidden': "true" })}
         </button>
       )}
     </span>

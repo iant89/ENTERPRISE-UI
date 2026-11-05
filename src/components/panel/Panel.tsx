@@ -1,8 +1,9 @@
 import { forwardRef, useId, type HTMLAttributes, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { useControllableState } from '../../hooks/useControllableState';
 import { cx } from '../../utilities/cx';
 import styles from './Panel.module.css';
+import slimArrowRightSvg from '../../assets/icons/slim-arrow-right.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 export interface PanelProps extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
   /** Text heading for the panel. */
   title: string;
@@ -26,7 +27,7 @@ export const Panel = forwardRef<HTMLElement, PanelProps>(function Panel({ title,
   const id = useId(); const headingId = `${id}-heading`; const Heading = `h${headingLevel}` as const;
   const visible = fixed || open;
   return <section {...rest} ref={ref} aria-labelledby={headingId} className={cx(styles.panel, className)}>
-    <Heading id={headingId} className={styles.heading}>{fixed ? title : <button className={styles.toggle} type="button" aria-expanded={visible} aria-controls={id} onClick={() => setOpen(!open)}>{IconProvider.getIcon('slim-arrow-right', { className: cx(styles.chevron, visible && styles.expanded), 'aria-hidden': "true" })}{title}</button>}</Heading>
+    <Heading id={headingId} className={styles.heading}>{fixed ? title : <button className={styles.toggle} type="button" aria-expanded={visible} aria-controls={id} onClick={() => setOpen(!open)}>{svgIcon(slimArrowRightSvg, 'slim-arrow-right', { className: cx(styles.chevron, visible && styles.expanded), 'aria-hidden': "true" })}{title}</button>}</Heading>
     <div id={id} hidden={!visible} className={styles.content}>{children}</div>
   </section>;
 });

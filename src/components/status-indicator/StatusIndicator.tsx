@@ -1,8 +1,15 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import type { Tone } from '../../utilities/types';
 import styles from './StatusIndicator.module.css';
+import messageErrorSvg from '../../assets/icons/message-error.svg?raw';
+import messageInformationSvg from '../../assets/icons/message-information.svg?raw';
+import messageSuccessSvg from '../../assets/icons/message-success.svg?raw';
+import sysMinusSvg from '../../assets/icons/sys-minus.svg?raw';
+import warning2Svg from '../../assets/icons/warning2.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+
+const ICON_SVGS: Record<string, string> = { 'message-error': messageErrorSvg, 'message-information': messageInformationSvg, 'message-success': messageSuccessSvg, 'sys-minus': sysMinusSvg, 'warning2': warning2Svg };
 
 export interface StatusIndicatorProps extends HTMLAttributes<HTMLSpanElement> {
   /** Status text. Always provide text — color alone must not convey meaning. */
@@ -40,7 +47,7 @@ export const StatusIndicator = forwardRef<HTMLSpanElement, StatusIndicatorProps>
   const Icon = ICONS[tone];
   return (
     <span ref={ref} className={cx(styles.status, styles[tone], inverted && styles.inverted, size === 'sm' && styles.small, className)} {...rest}>
-      {indicator === 'icon' && <span className={styles.icon} aria-hidden="true">{icon ?? IconProvider.getIcon(Icon)}</span>}
+      {indicator === 'icon' && <span className={styles.icon} aria-hidden="true">{icon ?? svgIcon(ICON_SVGS[Icon], Icon)}</span>}
       {indicator === 'dot' && <span className={styles.dotMark} aria-hidden="true" />}
       <span>{children}</span>
     </span>

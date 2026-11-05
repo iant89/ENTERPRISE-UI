@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { IconProvider } from '../../icons';
 import { useControllableState } from '../../hooks/useControllableState';
 import { Input, type InputProps } from '../input';
 import { Tokenizer } from '../token';
 import { ValueHelpDialog, type ValueHelpDialogProps } from './ValueHelpDialog';
 import styles from './ValueHelp.module.css';
+import filterFieldsSvg from '../../assets/icons/filter-fields.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface ValueHelpInputProps<T>
   extends Omit<ValueHelpDialogProps<T>, 'open' | 'onClose' | 'onConfirm' | 'defaultSelected' | 'initialSearch'>,
@@ -56,7 +57,7 @@ export function ValueHelpInput<T>({
         }}
         endAdornment={
           <button type="button" className={styles.openButton} aria-label={openLabel ?? title} title={`${openLabel ?? title} (F4)`} disabled={disabled || readOnly} onClick={() => setOpen(true)}>
-            {IconProvider.getIcon('filter-fields', { 'aria-hidden': "true" })}
+            {svgIcon(filterFieldsSvg, 'filter-fields', { 'aria-hidden': "true" })}
           </button>
         }
       />

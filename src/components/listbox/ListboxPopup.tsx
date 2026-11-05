@@ -1,11 +1,12 @@
 import { forwardRef, useEffect, useRef, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useMergedRefs } from '../../utilities/refs';
 import { Portal } from '../../utilities/Portal';
 import floating from '../popover/Floating.module.css';
 import type { SelectOption } from './types';
 import styles from './Listbox.module.css';
+import acceptSvg from '../../assets/icons/accept.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface ListboxPopupProps {
   id: string;
@@ -71,7 +72,7 @@ export const ListboxPopup = forwardRef<HTMLUListElement, ListboxPopupProps>(func
       >
         {multiple && (
           <span className={styles.check} aria-hidden="true">
-            {selected && IconProvider.getIcon('accept')}
+            {selected && svgIcon(acceptSvg, 'accept')}
           </span>
         )}
         {option.icon && (

@@ -1,11 +1,13 @@
 import { forwardRef, useEffect, useState, type InputHTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { clamp } from '../../utilities/format';
 import { useControllableState } from '../../hooks/useControllableState';
 import { formatLocaleNumber, parseLocaleNumber } from '../../utilities/number';
 import { useFormControl, type FieldProps } from '../form-field';
 import styles from '../input/InputBox.module.css';
+import addSvg from '../../assets/icons/add.svg?raw';
+import lessSvg from '../../assets/icons/less.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface NumberInputProps
   extends FieldProps,
@@ -137,7 +139,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
           disabled={control.disabled || readOnly || (min != null && current != null && current <= min)}
           onClick={() => stepBy(-step)}
         >
-          {IconProvider.getIcon('less', { 'aria-hidden': "true" })}
+          {svgIcon(lessSvg, 'less', { 'aria-hidden': "true" })}
         </button>
       )}
       <input
@@ -175,7 +177,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
           disabled={control.disabled || readOnly || (max != null && current != null && current >= max)}
           onClick={() => stepBy(step)}
         >
-          {IconProvider.getIcon('add', { 'aria-hidden': "true" })}
+          {svgIcon(addSvg, 'add', { 'aria-hidden': "true" })}
         </button>
       )}
     </div>,

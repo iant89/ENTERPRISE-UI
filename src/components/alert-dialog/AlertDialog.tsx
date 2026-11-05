@@ -1,7 +1,13 @@
 import { useRef, useState, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { Button } from '../button';
 import { Dialog } from '../dialog';
+import messageErrorSvg from '../../assets/icons/message-error.svg?raw';
+import messageInformationSvg from '../../assets/icons/message-information.svg?raw';
+import messageSuccessSvg from '../../assets/icons/message-success.svg?raw';
+import warning2Svg from '../../assets/icons/warning2.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+
+const ICON_SVGS: Record<string, string> = { 'message-error': messageErrorSvg, 'message-information': messageInformationSvg, 'message-success': messageSuccessSvg, 'warning2': warning2Svg };
 
 export interface AlertDialogProps {
   /** Whether the dialog is open. */
@@ -58,7 +64,7 @@ export function AlertDialog({ open, onCancel, onConfirm, title, children, confir
       role="alertdialog"
       tone={tone}
       size="sm"
-      icon={IconProvider.getIcon(Icon)}
+      icon={svgIcon(ICON_SVGS[Icon], Icon)}
       showClose={false}
       closeOnOverlayClick={false}
       initialFocusRef={cancelRef}

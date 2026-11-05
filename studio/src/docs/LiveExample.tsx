@@ -1,10 +1,14 @@
 import { useMemo, useState } from 'react';
-import { Button, Input, NumberInput, Select, Switch, type Density, type ThemeName, IconProvider } from '@enterprise-ui/react';
+import { Button, Input, NumberInput, Select, Switch, type Density, type ThemeName } from '@enterprise-ui/react';
 import { usePreviewBuild } from '../preview/usePreviewBuild';
 import { CodePreviewFrame } from '../preview/CodePreviewFrame';
 import { relative } from '../core/vfs/paths';
 import { exampleJsx, inferControl, initialValues, type DocsPage } from './api-metadata/pageModel';
 import styles from './Docs.module.css';
+import copySvg from '../../../src/assets/icons/copy.svg?raw';
+import resetSvg from '../../../src/assets/icons/reset.svg?raw';
+import sourceCodeSvg from '../../../src/assets/icons/source-code.svg?raw';
+import { svgIcon } from '../../../src/icons/svgIcon';
 
 export const EXAMPLE_ENTRY = 'src/__docs_example__.tsx';
 
@@ -55,9 +59,9 @@ export function LiveExample({ page, files, theme, density, onShowSource, copy }:
         </div>
       )}
       <div className={styles.exampleActions}>
-        <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('copy')} onClick={() => copy(jsx, 'Example code')}>Copy code</Button>
-        {onShowSource && <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('source-code')} onClick={onShowSource}>Show source</Button>}
-        <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('reset')} onClick={() => setValues(defaults)}>Reset</Button>
+        <Button size="sm" variant="tertiary" icon={svgIcon(copySvg, 'copy')} onClick={() => copy(jsx, 'Example code')}>Copy code</Button>
+        {onShowSource && <Button size="sm" variant="tertiary" icon={svgIcon(sourceCodeSvg, 'source-code')} onClick={onShowSource}>Show source</Button>}
+        <Button size="sm" variant="tertiary" icon={svgIcon(resetSvg, 'reset')} onClick={() => setValues(defaults)}>Reset</Button>
       </div>
     </div>
   );

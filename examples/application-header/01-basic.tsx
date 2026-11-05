@@ -1,4 +1,4 @@
-import { ApplicationHeader, SearchField, Tag, IconProvider } from '@enterprise-ui/react';
+import { ApplicationHeader, SearchField, Tag, Icon } from '@enterprise-ui/react';
 
 export const title = 'Shell bar';
 export const description = 'Branding, a trial-system tag in the context area, global search, AI assistant, notifications, a product action with a counter, help, the product switch and the user menu (Settings lives there). Make the window narrower: search collapses first, then the actions move into the overflow menu (it carries the counter), then the tag and finally the product name hide.';
@@ -8,22 +8,22 @@ export default function ApplicationHeaderBasic() {
     <ApplicationHeader
       productName="Northwind"
       secondaryTitle="Procurement"
-      logo={IconProvider.getIcon('sap-box', { color: "var(--eui-color-primary)" })}
+      logo={<Icon name="sap-box" color="var(--eui-color-primary)" />}
       homeHref="#"
       context={[{ id: 'trial', priority: 1, content: <Tag colorScheme={7} set={2}>Trial: 14 days left</Tag> }]}
       search={<SearchField aria-label="Search" placeholder="Search orders, suppliers…" size="sm" />}
       onAssistantClick={() => {}}
       notificationCount={12}
       onNotificationsClick={() => {}}
-      additionalActions={[{ id: 'tasks', label: 'My tasks', icon: IconProvider.getIcon('task'), count: 4, onClick: () => {} }]}
+      additionalActions={[{ id: 'tasks', label: 'My tasks', icon: <Icon name="task" />, count: 4, onClick: () => {} }]}
       helpItems={[{ id: 'docs', label: 'Documentation' }, { id: 'whatsnew', label: "What's new" }]}
       onSettingsClick={() => {}}
       user={{ name: 'Grace Hopper', email: 'grace@northwind.example' }}
       userMenuItems={[{ id: 'profile', label: 'My profile' }, { id: 'logout', label: 'Sign out' }]}
       productSwitchItems={[
-        { id: 'procurement', title: 'Procurement', icon: IconProvider.getIcon('product'), current: true },
-        { id: 'manufacturing', title: 'Manufacturing', icon: IconProvider.getIcon('factory') },
-        { id: 'logistics', title: 'Logistics', icon: IconProvider.getIcon('shipping-status') },
+        { id: 'procurement', title: 'Procurement', icon: <Icon name="product" />, current: true },
+        { id: 'manufacturing', title: 'Manufacturing', icon: <Icon name="factory" /> },
+        { id: 'logistics', title: 'Logistics', icon: <Icon name="shipping-status" /> },
       ]}
     />
   );

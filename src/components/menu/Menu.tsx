@@ -1,11 +1,12 @@
 import { Children, Fragment, forwardRef, isValidElement, useEffect, useMemo, useRef, useState, type HTMLAttributes, type KeyboardEvent, type MouseEvent, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { findTypeaheadIndex, getNavigationIndex } from '../../utilities/keyboard';
 import { focusElement } from '../../utilities/focus';
 import { useMergedRefs } from '../../utilities/refs';
 import { MenuItem, MenuItemGroup, type MenuItemGroupProps, type MenuItemProps } from './MenuParts';
 import styles from './Menu.module.css';
+import acceptSvg from '../../assets/icons/accept.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface MenuItemDef {
   /** Unique id, passed to `onAction`. */
@@ -207,7 +208,7 @@ export const Menu = forwardRef<HTMLDivElement, MenuProps>(function Menu(
           <>
             {(entry.icon || isCheckbox) && (
               <span className={cx(styles.icon, isCheckbox && styles.check)} aria-hidden="true">
-                {isCheckbox ? entry.checked ? IconProvider.getIcon('accept') : null : entry.icon}
+                {isCheckbox ? entry.checked ? svgIcon(acceptSvg, 'accept') : null : entry.icon}
               </span>
             )}
             <span className={styles.text}>

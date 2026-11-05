@@ -1,5 +1,4 @@
 import { useEffect, useLayoutEffect, useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useAppShell } from '../../layouts/app-shell/AppShellContext';
 import { Avatar } from '../avatar';
@@ -10,6 +9,18 @@ import type { MenuEntry } from '../menu';
 import { Popover } from '../popover';
 import { ProductSwitch, type ProductSwitchItem } from '../product-switch';
 import styles from './ApplicationHeader.module.css';
+import aiSvg from '../../assets/icons/ai.svg?raw';
+import bellSvg from '../../assets/icons/bell.svg?raw';
+import closeCommandFieldSvg from '../../assets/icons/close-command-field.svg?raw';
+import gridSvg from '../../assets/icons/grid.svg?raw';
+import menu2Svg from '../../assets/icons/menu2.svg?raw';
+import navBackSvg from '../../assets/icons/nav-back.svg?raw';
+import openCommandFieldSvg from '../../assets/icons/open-command-field.svg?raw';
+import overflowSvg from '../../assets/icons/overflow.svg?raw';
+import searchSvg from '../../assets/icons/search.svg?raw';
+import settingsSvg from '../../assets/icons/settings.svg?raw';
+import sysHelpSvg from '../../assets/icons/sys-help.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface ApplicationHeaderUser {
   name: string;
@@ -230,7 +241,7 @@ export function ApplicationHeader({
 
   const navToggle = hasNav && shell && (
     <IconButton
-      icon={shell.isMobile ? IconProvider.getIcon('menu2') : shell.navCollapsed ? IconProvider.getIcon('open-command-field') : IconProvider.getIcon('close-command-field')}
+      icon={shell.isMobile ? svgIcon(menu2Svg, 'menu2') : shell.navCollapsed ? svgIcon(openCommandFieldSvg, 'open-command-field') : svgIcon(closeCommandFieldSvg, 'close-command-field')}
       label={shell.isMobile ? text.openNavigation : shell.navCollapsed ? text.expandNavigation : text.collapseNavigation}
       aria-expanded={shell.isMobile ? shell.mobileNavOpen : !shell.navCollapsed}
       aria-controls={shell.isMobile ? undefined : shell.navId}
@@ -252,7 +263,7 @@ export function ApplicationHeader({
     </>
   );
 
-  const bellButton = <IconButton icon={IconProvider.getIcon('bell')} label={text.notifications(notificationCount)} neutral hideTitle={!!notifications} onClick={notifications ? undefined : onNotificationsClick} />;
+  const bellButton = <IconButton icon={svgIcon(bellSvg, 'bell')} label={text.notifications(notificationCount)} neutral hideTitle={!!notifications} onClick={notifications ? undefined : onNotificationsClick} />;
   const bell = (
     <span className={styles.notification}>
       {notifications ? (
@@ -267,9 +278,9 @@ export function ApplicationHeader({
   );
 
   const helpButton = helpItems && helpItems.length > 0 ? (
-    <DropdownMenu placement="bottom-end" items={helpItems} onAction={onHelpAction} trigger={<IconButton icon={IconProvider.getIcon('sys-help')} label={text.help} neutral hideTitle />} />
+    <DropdownMenu placement="bottom-end" items={helpItems} onAction={onHelpAction} trigger={<IconButton icon={svgIcon(sysHelpSvg, 'sys-help')} label={text.help} neutral hideTitle />} />
   ) : (
-    <IconButton icon={IconProvider.getIcon('sys-help')} label={text.help} neutral onClick={onHelpClick} />
+    <IconButton icon={svgIcon(sysHelpSvg, 'sys-help')} label={text.help} neutral onClick={onHelpClick} />
   );
 
   const withCount = (action: ShellBarAction) => (
@@ -286,11 +297,11 @@ export function ApplicationHeader({
     overflowItems.push({ id, label, icon });
     if (run) overflowHandlers.set(id, run);
   };
-  if (search && layout.searchInOverflow) addOverflow('__eui-search', text.search, IconProvider.getIcon('search'), () => setSearchOpen(true));
+  if (search && layout.searchInOverflow) addOverflow('__eui-search', text.search, svgIcon(searchSvg, 'search'), () => setSearchOpen(true));
   let overflowBadges = 0;
   let overflowCount = 0;
   if (layout.actionsInOverflow) {
-    if (onAssistantClick) addOverflow('__eui-assistant', text.assistant, IconProvider.getIcon('ai'), onAssistantClick);
+    if (onAssistantClick) addOverflow('__eui-assistant', text.assistant, svgIcon(aiSvg, 'ai'), onAssistantClick);
     for (const a of additionalActions) {
       if (a.count) { overflowBadges++; overflowCount = a.count; }
       addOverflow(`__eui-action:${a.id}`, a.count ? `${a.label} (${a.count})` : a.label, a.icon, a.onClick);
@@ -305,7 +316,7 @@ export function ApplicationHeader({
           overflowHandlers.set(id, () => onHelpAction?.(entry.id));
         }
       }
-    } else addOverflow('__eui-help', text.help, IconProvider.getIcon('sys-help'), onHelpClick);
+    } else addOverflow('__eui-help', text.help, svgIcon(sysHelpSvg, 'sys-help'), onHelpClick);
   }
   const overflow = overflowItems.length > 0 && (
     <span className={styles.notification}>
@@ -314,7 +325,7 @@ export function ApplicationHeader({
         aria-label={text.more(0)}
         items={overflowItems}
         onAction={(id) => overflowHandlers.get(id)?.()}
-        trigger={<IconButton icon={IconProvider.getIcon('overflow')} label={text.more(overflowBadges)} neutral hideTitle />}
+        trigger={<IconButton icon={svgIcon(overflowSvg, 'overflow')} label={text.more(overflowBadges)} neutral hideTitle />}
       />
       {overflowBadges === 1 && <Badge className={styles.count} count={overflowCount} tone="error" aria-hidden="true" />}
       {overflowBadges > 1 && <Badge className={styles.dotBadge} dot tone="error" aria-hidden="true" />}
@@ -341,7 +352,7 @@ export function ApplicationHeader({
     >
       <div className={styles.start}>
         {navToggle}
-        {onBack && <IconButton icon={IconProvider.getIcon('nav-back')} label={text.back} neutral onClick={onBack} />}
+        {onBack && <IconButton icon={svgIcon(navBackSvg, 'nav-back')} label={text.back} neutral onClick={onBack} />}
         {homeHref ? (
           <a className={styles.brand} href={homeHref} aria-label={layout.brandTextHidden ? productName : undefined}>
             {brandContent}
@@ -360,12 +371,12 @@ export function ApplicationHeader({
         {contextItems('end')}
         {actions}
         {search && layout.searchCollapsed && !layout.searchInOverflow && (
-          <IconButton icon={IconProvider.getIcon('search')} label={searchOpen ? text.closeSearch : text.search} aria-expanded={searchOpen} neutral onClick={() => setSearchOpen(!searchOpen)} />
+          <IconButton icon={svgIcon(searchSvg, 'search')} label={searchOpen ? text.closeSearch : text.search} aria-expanded={searchOpen} neutral onClick={() => setSearchOpen(!searchOpen)} />
         )}
         {search && layout.searchInOverflow && searchOpen && (
-          <IconButton icon={IconProvider.getIcon('search')} label={text.closeSearch} aria-expanded neutral onClick={() => setSearchOpen(false)} />
+          <IconButton icon={svgIcon(searchSvg, 'search')} label={text.closeSearch} aria-expanded neutral onClick={() => setSearchOpen(false)} />
         )}
-        {!layout.actionsInOverflow && onAssistantClick && <IconButton icon={IconProvider.getIcon('ai')} label={text.assistant} neutral onClick={onAssistantClick} />}
+        {!layout.actionsInOverflow && onAssistantClick && <IconButton icon={svgIcon(aiSvg, 'ai')} label={text.assistant} neutral onClick={onAssistantClick} />}
         {hasNotifications && bell}
         {!layout.actionsInOverflow && additionalActions.map(withCount)}
         {!layout.actionsInOverflow && helpButton}
@@ -375,7 +386,7 @@ export function ApplicationHeader({
             placement="bottom-end"
             aria-label={text.productSwitch}
             width="28rem"
-            trigger={<IconButton icon={IconProvider.getIcon('grid')} label={text.productSwitch} neutral hideTitle />}
+            trigger={<IconButton icon={svgIcon(gridSvg, 'grid')} label={text.productSwitch} neutral hideTitle />}
           >
             {(close) => <ProductSwitch items={productSwitchItems} aria-label={text.productSwitch} onItemClick={(item) => { onProductSwitchItemClick?.(item); close(); }} />}
           </Popover>
@@ -385,7 +396,7 @@ export function ApplicationHeader({
           aria-label={text.userMenu(user.name)}
           items={[
             { type: 'label', label: user.email ? `${user.name} · ${user.email}` : user.name },
-            ...(onSettingsClick ? [{ id: SETTINGS_ID, label: text.settings, icon: IconProvider.getIcon('settings') }, { type: 'separator' as const }] : []),
+            ...(onSettingsClick ? [{ id: SETTINGS_ID, label: text.settings, icon: svgIcon(settingsSvg, 'settings') }, { type: 'separator' as const }] : []),
             ...(userMenuItems ?? []),
           ]}
           onAction={(id) => (id === SETTINGS_ID ? onSettingsClick?.() : onUserAction?.(id))}
@@ -397,7 +408,7 @@ export function ApplicationHeader({
         />
       </div>
       <div ref={measureRef} className={styles.measure} aria-hidden="true" inert>
-        <span data-measure="icon"><IconButton icon={IconProvider.getIcon('search')} label={text.search} tabIndex={-1} /></span>
+        <span data-measure="icon"><IconButton icon={svgIcon(searchSvg, 'search')} label={text.search} tabIndex={-1} /></span>
         {logo && <span data-measure="logo" className={styles.logo}>{logo}</span>}
         <span data-measure="brandText" className={styles.brand}>{brandText}</span>
         {actions != null && <span data-measure="actions" className={styles.end}>{actions}</span>}

@@ -1,5 +1,4 @@
 import { forwardRef, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { findTypeaheadIndex, getNavigationIndex } from '../../utilities/keyboard';
 import { useMergedRefs } from '../../utilities/refs';
@@ -11,6 +10,8 @@ import inputBoxStyles from '../input/InputBox.module.css';
 import { ListboxPopup, optionId, type SelectOption } from '../listbox';
 import { collectOptionElements, Option, OptionCustom, OptionGroup } from '../listbox/optionElements';
 import styles from '../listbox/Listbox.module.css';
+import slimArrowDownSvg from '../../assets/icons/slim-arrow-down.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface SelectProps<V extends string = string> extends FieldProps {
   /** Choices. Option elements are used when this is omitted. */
@@ -196,7 +197,7 @@ function SelectInner<V extends string = string>(
           {selectedOption ? (renderValue ? renderValue(selectedOption) : selectedOption.label) : placeholder}
         </span>
         <span className={styles.chevron} aria-hidden="true">
-          {IconProvider.getIcon('slim-arrow-down')}
+          {svgIcon(slimArrowDownSvg, 'slim-arrow-down')}
         </span>
       </div>
       {name && <input type="hidden" name={name} value={selected ?? ''} />}

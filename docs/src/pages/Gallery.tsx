@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlertDialog, Avatar, Badge, Breadcrumbs, Button, ButtonGroup, Card, Checkbox, ComboBox, DataGrid, DatePicker, Dialog, DropdownMenu, Grid, GridItem, IconButton, Input, MessageStrip, MetricCard, MultiSelect, NavigationItem, NumberInput, Page, Pagination, ProgressBar, RadioGroup, SearchField, Select, SideNavigation, SplitButton, Stack, StatusIndicator, Switch, Tab, TabList, TabPanel, Tabs, TextArea, ToggleButton, Tooltip, useToast, type DataGridColumn, IconProvider } from '@enterprise-ui/react';
+import { AlertDialog, Avatar, Badge, Breadcrumbs, Button, ButtonGroup, Card, Checkbox, ComboBox, DataGrid, DatePicker, Dialog, DropdownMenu, Grid, GridItem, IconButton, Input, MessageStrip, MetricCard, MultiSelect, NavigationItem, NumberInput, Page, Pagination, ProgressBar, RadioGroup, SearchField, Select, SideNavigation, SplitButton, Stack, StatusIndicator, Switch, Tab, TabList, TabPanel, Tabs, TextArea, ToggleButton, Tooltip, useToast, type DataGridColumn, Icon } from '@enterprise-ui/react';
 import { categoryOptions, countries, currency, products, statusTone, type Product } from '../../../examples/data';
 import styles from './Pages.module.css';
 
@@ -25,10 +25,10 @@ export function Gallery() {
         <Card title="Buttons" headingLevel={2}>
           <Stack gap={3}>
             <Stack direction="horizontal" gap={2} wrap>
-              <Button variant="primary" icon={IconProvider.getIcon('add')}>Create</Button>
+              <Button variant="primary" icon={<Icon name="add" />}>Create</Button>
               <Button>Edit</Button>
               <Button variant="tertiary">Cancel</Button>
-              <Button variant="destructive" icon={IconProvider.getIcon('delete')}>Delete</Button>
+              <Button variant="destructive" icon={<Icon name="delete" />}>Delete</Button>
             </Stack>
             <Stack direction="horizontal" gap={2} wrap align="center">
               <SplitButton variant="primary" items={[{ id: 'draft', label: 'Save as draft' }]}>Save</SplitButton>
@@ -36,7 +36,7 @@ export function Gallery() {
                 <ToggleButton defaultPressed>List</ToggleButton>
                 <ToggleButton>Grid</ToggleButton>
               </ButtonGroup>
-              <Tooltip content="Download report"><IconButton icon={IconProvider.getIcon('download')} label="Download" hideTitle /></Tooltip>
+              <Tooltip content="Download report"><IconButton icon={<Icon name="download" />} label="Download" hideTitle /></Tooltip>
               <Button loading>Saving</Button>
             </Stack>
           </Stack>
@@ -44,7 +44,7 @@ export function Gallery() {
 
         <Card title="Inputs" headingLevel={2}>
           <Stack gap={3}>
-            <Input label="Email" startAdornment={IconProvider.getIcon('email')} defaultValue="ada@northwind.example" />
+            <Input label="Email" startAdornment={<Icon name="email" />} defaultValue="ada@northwind.example" />
             <Input label="VAT ID" defaultValue="DE123" error="VAT ID must have 11 characters." />
             <Grid columns={2} gap={3}>
               <NumberInput label="Quantity" defaultValue={12} unit="pcs" />
@@ -122,9 +122,9 @@ export function Gallery() {
             <SearchField aria-label="Search orders" placeholder="Search orders" />
             <div style={{ border: '1px solid var(--eui-color-border-subtle)', borderRadius: 8, overflow: 'hidden' }}>
               <SideNavigation activeId="orders" aria-label="Gallery navigation" onNavigate={(_, e) => e.preventDefault()}>
-                <NavigationItem id="home" label="Home" icon={IconProvider.getIcon('home')} href="#home" />
-                <NavigationItem id="orders" label="Orders" icon={IconProvider.getIcon('cart')} href="#orders" badge={3} />
-                <NavigationItem id="products" label="Products" icon={IconProvider.getIcon('product')} href="#products" />
+                <NavigationItem id="home" label="Home" icon={<Icon name="home" />} href="#home" />
+                <NavigationItem id="orders" label="Orders" icon={<Icon name="cart" />} href="#orders" badge={3} />
+                <NavigationItem id="products" label="Products" icon={<Icon name="product" />} href="#products" />
               </SideNavigation>
             </div>
             <Pagination page={page} onPageChange={setPage} totalItems={120} pageSize={10} showSummary={false} />
@@ -145,7 +145,7 @@ export function Gallery() {
               <Badge count={8} tone="information" aria-label="8 new" />
               <Avatar name="Ada Lovelace" size="sm" presence="online" />
               <Avatar name="Contoso Ltd" size="sm" shape="square" />
-              <Avatar icon={IconProvider.getIcon('group')} size="sm" aria-label="Team" />
+              <Avatar icon={<Icon name="group" />} size="sm" aria-label="Team" />
             </Stack>
           </Stack>
         </Card>

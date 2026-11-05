@@ -1,4 +1,4 @@
-import { Badge, Button, Checkbox, IconButton, Input, MessageStrip, Select, Stack, StatusIndicator, Switch, Tab, TabList, Tabs, IconProvider } from '@enterprise-ui/react';
+import { Badge, Button, Checkbox, IconButton, Input, MessageStrip, Select, Stack, StatusIndicator, Switch, Tab, TabList, Tabs, Icon } from '@enterprise-ui/react';
 
 /** A compact UI sample used to compare themes and densities. */
 export function ThemeSample() {
@@ -8,7 +8,7 @@ export function ThemeSample() {
         <strong>Purchase order</strong>
         <Stack direction="horizontal" gap={1} align="center">
           <Badge tone="warning">Pending</Badge>
-          <IconButton icon={IconProvider.getIcon('bell')} label="Notifications" size="sm" />
+          <IconButton icon={<Icon name="bell" />} label="Notifications" size="sm" />
         </Stack>
       </Stack>
       <Tabs defaultValue="general">

@@ -8,19 +8,18 @@ interface IconInfo { name: string; code?: number; aliases: string[]; groups: str
 
 const usage = `import { Button, Icon, IconProvider } from '@enterprise-ui/react';
 
-// An icon element, wherever an icon is expected
-<Button icon={IconProvider.getIcon('add')}>Create</Button>
-IconProvider.getIcon('bell', { size: 20, color: 'var(--eui-color-primary)', title: 'Notifications' });
+// A bare <svg>. The name is autocompleted and type-checked.
+<Icon name="bell" />
+<Icon name="bell" size={20} color="var(--eui-color-primary)" label="Notifications" />
+<Button icon={<Icon name="add" />}>Create</Button>
 
-// By sap-icon:// URI or font code point
+// Names known only at runtime, sap-icon:// URIs and font code points
+IconProvider.getIcon(row.iconName);
 IconProvider.getIcon('sap-icon://bar-code');
 IconProvider.getIcon('&#xe08d;');
 
 // Every available name
-IconProvider.getIconNames(); // ['accelerated', 'accept', …]
-
-// Inside an accessible wrapper
-<Icon name="bar-code" label="Barcode" />`;
+IconProvider.getIconNames(); // ['accelerated', 'accept', …]`;
 
 /** One entry per icon (aliases folded in), with the groups and tags from SAP-icons.json. */
 function buildIcons(): IconInfo[] {
@@ -63,7 +62,7 @@ export function IconsPage() {
   });
 
   const copy = async (icon: IconInfo) => {
-    const snippet = `IconProvider.getIcon('${icon.name}')`;
+    const snippet = `<Icon name="${icon.name}" />`;
     try {
       await navigator.clipboard.writeText(snippet);
       toast.show({ title: 'Copied', description: snippet, tone: 'success' });
@@ -75,7 +74,7 @@ export function IconsPage() {
   return (
     <Page
       title="Icons"
-      subtitle={`${icons.length} SAP icons from src/assets/icons, served by the IconProvider class. Search by name, alias, tag or code point, or filter by group. Select an icon to copy its code.`}
+      subtitle={`${icons.length} SAP icons from src/assets/icons, rendered with <Icon name="…" />. Search by name, alias, tag or code point, or filter by group. Select an icon to copy its code.`}
       breadcrumbs={[{ label: 'Docs', href: '#/' }, { label: 'Foundations' }, { label: 'Icons' }]}
     >
       <CodeBlock code={usage} label="Usage" />

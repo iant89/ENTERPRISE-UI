@@ -1,10 +1,16 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import type { ValidationStatus } from '../../utilities/types';
 import { useId } from '../../hooks/useId';
 import { FormFieldContext, type FormFieldContextValue } from './FormFieldContext';
 import styles from './FormField.module.css';
+import messageErrorSvg from '../../assets/icons/message-error.svg?raw';
+import messageInformationSvg from '../../assets/icons/message-information.svg?raw';
+import messageSuccessSvg from '../../assets/icons/message-success.svg?raw';
+import warning2Svg from '../../assets/icons/warning2.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+
+const ICON_SVGS: Record<string, string> = { 'message-error': messageErrorSvg, 'message-information': messageInformationSvg, 'message-success': messageSuccessSvg, 'warning2': warning2Svg };
 
 /** Props shared by every form control for labelling and validation. */
 export interface FieldProps {
@@ -108,7 +114,7 @@ export const FormField = forwardRef<HTMLDivElement, FormFieldProps>(function For
           <div id={messageId} className={cx(styles.message, status !== 'none' && styles[status])} aria-live="polite">
             {hasMessage && (
               <>
-                {Icon && IconProvider.getIcon(Icon, { 'aria-hidden': 'true' })}
+                {Icon && svgIcon(ICON_SVGS[Icon], Icon, { 'aria-hidden': 'true' })}
                 <span>
                   {status === 'error' && <span className="eui-visually-hidden">Error:</span>}
                   {status === 'error' && ' '}

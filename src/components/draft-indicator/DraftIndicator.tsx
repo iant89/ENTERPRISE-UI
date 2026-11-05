@@ -1,8 +1,14 @@
 import { forwardRef, useCallback, useEffect, useRef, useState, type HTMLAttributes } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { formatRelativeTime, useNow } from '../../hooks/useRelativeTime';
 import styles from './DraftIndicator.module.css';
+import acceptSvg from '../../assets/icons/accept.svg?raw';
+import highPrioritySvg from '../../assets/icons/high-priority.svg?raw';
+import uploadToCloudSvg from '../../assets/icons/upload-to-cloud.svg?raw';
+import writeNewSvg from '../../assets/icons/write-new.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+
+const ICON_SVGS: Record<string, string> = { 'accept': acceptSvg, 'high-priority': highPrioritySvg, 'upload-to-cloud': uploadToCloudSvg, 'write-new': writeNewSvg };
 
 export type DraftStatus = 'idle' | 'unsaved' | 'saving' | 'saved' | 'error';
 
@@ -49,7 +55,7 @@ export const DraftIndicator = forwardRef<HTMLDivElement, DraftIndicatorProps>(fu
     <div ref={ref} className={cx(styles.root, styles[status], className)} {...rest}>
       {/* Only the outcome is announced, not every keystroke-driven "Saving…". */}
       <span className={styles.text} role="status" aria-live="polite">
-        {status !== 'idle' && IconProvider.getIcon(Icon, { 'aria-hidden': 'true' })}
+        {status !== 'idle' && svgIcon(ICON_SVGS[Icon], Icon, { 'aria-hidden': 'true' })}
         <span aria-hidden={status === 'saving' || status === 'unsaved' ? true : undefined}>{text}</span>
       </span>
       {status === 'error' && onRetry && (

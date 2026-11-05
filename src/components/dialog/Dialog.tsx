@@ -1,5 +1,4 @@
 import { useRef, type ReactNode, type RefObject } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { Portal } from '../../utilities/Portal';
 import { useId } from '../../hooks/useId';
@@ -7,6 +6,8 @@ import { useFocusTrap } from '../../hooks/useFocusTrap';
 import { useScrollLock } from '../../hooks/useScrollLock';
 import { IconButton } from '../icon-button';
 import styles from './Dialog.module.css';
+import declineSvg from '../../assets/icons/decline.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface DialogProps {
   /** Whether the dialog is shown. */
@@ -120,7 +121,7 @@ export function Dialog({
             <h2 id={titleId} className={styles.title}>
               {title}
             </h2>
-            {showClose && <IconButton icon={IconProvider.getIcon('decline')} label={closeLabel} neutral onClick={onClose} />}
+            {showClose && <IconButton icon={svgIcon(declineSvg, 'decline')} label={closeLabel} neutral onClick={onClose} />}
           </div>
           <div id={bodyId} className={styles.body}>
             {children}

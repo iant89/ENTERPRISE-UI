@@ -1,25 +1,21 @@
-import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { cx } from '../../utilities/cx';
-import { IconProvider, type IconRef } from '../../icons/IconProvider';
-import styles from './Icon.module.css';
+import { forwardRef } from 'react';
+import { IconProvider, type IconName } from '../../icons/IconProvider';
+import type { SvgIconProps } from '../../icons/svgIcon';
 
-export interface IconProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'children'> {
-  /** SVG or other non-interactive icon. Not needed when `name` is set. */
-  children?: ReactNode;
+export interface IconProps extends Omit<SvgIconProps, 'ref'> {
+  /** The icon to show. Autocompleted and type-checked; see the Icons page for every name. */
+  name: IconName;
   /**
-   * Icon from IconProvider: a name (`'bar-code'`), `'sap-icon://bar-code'` or a code point
-   * (`'&#xe08d;'`, `0xe08d`). Ignored when `children` is set.
+   * Accessible name. Set it for informative icons (the icon is then announced as an image);
+   * omit it for decorative icons, which are hidden from assistive technology.
    */
-  name?: IconRef;
-  /** Accessible name; omit when the icon is decorative. */
   label?: string;
 }
 
-/** An accessible or decorative icon wrapper. Use IconButton for actions. */
-export const Icon = forwardRef<HTMLSpanElement, IconProps>(function Icon({ children, name, label, className, ...rest }, ref) {
-  return (
-    <span {...rest} ref={ref} role={label ? 'img' : undefined} aria-label={label} aria-hidden={label ? undefined : true} className={cx(styles.icon, className)}>
-      {children ?? (name !== undefined ? IconProvider.getIcon(name) : null)}
-    </span>
-  );
+/**
+ * An icon from the SAP icon set, rendered as a bare `<svg>`: `<Icon name="bell" />`.
+ * Use IconButton for actions. Including Icon (or IconProvider) bundles the whole icon set.
+ */
+export const Icon = forwardRef<SVGSVGElement, IconProps>(function Icon({ name, label, ...rest }, ref) {
+  return IconProvider.getIcon(name, { ...rest, ...(label ? { 'aria-label': label } : {}), ref });
 });

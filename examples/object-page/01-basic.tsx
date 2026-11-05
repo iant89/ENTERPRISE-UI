@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, IconButton, MetricCard, ObjectPage, StatusIndicator, Table, Timeline, IconProvider } from '@enterprise-ui/react';
+import { Avatar, Button, Card, IconButton, MetricCard, ObjectPage, StatusIndicator, Table, Timeline, Icon } from '@enterprise-ui/react';
 import { currency, products } from '../data';
 
 export const title = 'Purchase order object page';
@@ -17,8 +17,8 @@ export default function ObjectPageBasic() {
         status={<StatusIndicator tone="warning">Awaiting approval</StatusIndicator>}
         actions={
           <>
-            <IconButton icon={IconProvider.getIcon('print')} label="Print" />
-            <Button icon={IconProvider.getIcon('edit')}>Edit</Button>
+            <IconButton icon={<Icon name="print" />} label="Print" />
+            <Button icon={<Icon name="edit" />}>Edit</Button>
             <Button variant="primary">Approve</Button>
           </>
         }

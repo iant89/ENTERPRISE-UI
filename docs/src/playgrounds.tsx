@@ -1,4 +1,4 @@
-import { Avatar, Badge, Button, Card, Input, MessageStrip, MetricCard, ProgressBar, Spinner, StatusIndicator, Switch, type Tone, IconProvider } from '@enterprise-ui/react';
+import { Avatar, Badge, Button, Card, Input, MessageStrip, MetricCard, ProgressBar, Spinner, StatusIndicator, Switch, type Tone, Icon } from '@enterprise-ui/react';
 import { jsx, type PlaygroundDef } from './components/Playground';
 
 const tones = ['neutral', 'information', 'success', 'warning', 'error'];
@@ -16,15 +16,15 @@ export const playgrounds: Record<string, PlaygroundDef> = {
       { name: 'fullWidth', type: 'boolean', default: false },
     ],
     render: (v) => (
-      <Button variant={v.variant as 'primary'} size={v.size as 'md'} icon={v.icon ? IconProvider.getIcon('add') : undefined} loading={!!v.loading} disabled={!!v.disabled} fullWidth={!!v.fullWidth}>
+      <Button variant={v.variant as 'primary'} size={v.size as 'md'} icon={v.icon ? <Icon name="add" /> : undefined} loading={!!v.loading} disabled={!!v.disabled} fullWidth={!!v.fullWidth}>
         {String(v.label)}
       </Button>
     ),
     code: (v) =>
-      imp(v.icon ? 'Button, IconProvider' : 'Button') +
+      imp(v.icon ? 'Button, Icon' : 'Button') +
       jsx('Button', { variant: v.variant, size: v.size, icon: v.icon ? '__icon__' : undefined, loading: v.loading, disabled: v.disabled, fullWidth: v.fullWidth }, { variant: 'secondary', size: 'md', loading: false, disabled: false, fullWidth: false }, String(v.label)).replace(
         'icon="__icon__"',
-        "icon={IconProvider.getIcon('add')}",
+        'icon={<Icon name="add" />}',
       ),
   },
   input: {

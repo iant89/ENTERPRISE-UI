@@ -1,11 +1,16 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { useId } from '../../hooks/useId';
 import type { Tone } from '../../utilities/types';
 import type { MetricTrend } from '../../components/metric-card';
 import { Skeleton } from '../../components/skeleton';
 import styles from './AnalyticalCard.module.css';
+import arrowRightSvg from '../../assets/icons/arrow-right.svg?raw';
+import trendDownSvg from '../../assets/icons/trend-down.svg?raw';
+import trendUpSvg from '../../assets/icons/trend-up.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
+
+const ICON_SVGS: Record<string, string> = { 'arrow-right': arrowRightSvg, 'trend-down': trendDownSvg, 'trend-up': trendUpSvg };
 
 export interface AnalyticalCardIndicator {
   /** Name, e.g. "Target" or "Deviation". */
@@ -97,7 +102,7 @@ export const AnalyticalCard = forwardRef<HTMLElement, AnalyticalCardProps>(funct
                   <span className={cx(styles.value, valueTone && styles[valueTone])}>{value}</span>
                   {trend && (
                     <span className={cx(styles.trend, good === null ? styles.flat : good ? styles.good : styles.bad)}>
-                      {IconProvider.getIcon(TrendIcon, { 'aria-hidden': 'true' })}
+                      {svgIcon(ICON_SVGS[TrendIcon], TrendIcon, { 'aria-hidden': 'true' })}
                       <span className="eui-visually-hidden">{labels[trend.direction]}</span>
                     </span>
                   )}

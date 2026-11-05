@@ -1,9 +1,16 @@
 import type { ReactNode } from 'react';
-import { Badge, Button, Tooltip, type Density, type ThemeName, IconProvider } from '@enterprise-ui/react';
+import { Badge, Button, Tooltip, type Density, type ThemeName } from '@enterprise-ui/react';
 import { BUILD_ID, NOT_DOCUMENTED, type DocsPage, type PageProp } from './api-metadata/pageModel';
 import { Markdown } from './project-markdown/markdown';
 import { LiveExample } from './LiveExample';
 import styles from './Docs.module.css';
+import actionSvg from '../../../src/assets/icons/action.svg?raw';
+import addDocumentSvg from '../../../src/assets/icons/add-document.svg?raw';
+import copySvg from '../../../src/assets/icons/copy.svg?raw';
+import courseBookSvg from '../../../src/assets/icons/course-book.svg?raw';
+import headerSvg from '../../../src/assets/icons/header.svg?raw';
+import sourceCodeSvg from '../../../src/assets/icons/source-code.svg?raw';
+import { svgIcon } from '../../../src/icons/svgIcon';
 
 export interface DocsPageViewProps {
   page: DocsPage;
@@ -47,11 +54,11 @@ export function DocsPageView({ page, files, theme, density, copy, onShowSource, 
   const undocumented = page.kind === 'project' && !page.docsFile;
   const actions: ReactNode = (
     <div className={styles.actions} role="toolbar" aria-label={`${page.name} docs actions`}>
-      <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('copy')} onClick={() => copy(page.importStatement, 'Import')}>Copy import</Button>
-      {page.example && <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('copy')} onClick={() => copy(page.example!, 'Example code')}>Copy example code</Button>}
-      {page.kind === 'project' && onShowSource && <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('source-code')} onClick={() => onShowSource(page)}>Show source</Button>}
-      {page.docsUrl && <Button size="sm" variant="tertiary" icon={IconProvider.getIcon('action')} onClick={() => window.open(page.docsUrl, '_blank', 'noopener,noreferrer')}>Open full docs</Button>}
-      <Tooltip content="Coming in C8"><Button size="sm" variant="tertiary" icon={IconProvider.getIcon('header')} aria-disabled="true" onClick={(e) => e.preventDefault()}>Open component detail view</Button></Tooltip>
+      <Button size="sm" variant="tertiary" icon={svgIcon(copySvg, 'copy')} onClick={() => copy(page.importStatement, 'Import')}>Copy import</Button>
+      {page.example && <Button size="sm" variant="tertiary" icon={svgIcon(copySvg, 'copy')} onClick={() => copy(page.example!, 'Example code')}>Copy example code</Button>}
+      {page.kind === 'project' && onShowSource && <Button size="sm" variant="tertiary" icon={svgIcon(sourceCodeSvg, 'source-code')} onClick={() => onShowSource(page)}>Show source</Button>}
+      {page.docsUrl && <Button size="sm" variant="tertiary" icon={svgIcon(actionSvg, 'action')} onClick={() => window.open(page.docsUrl, '_blank', 'noopener,noreferrer')}>Open full docs</Button>}
+      <Tooltip content="Coming in C8"><Button size="sm" variant="tertiary" icon={svgIcon(headerSvg, 'header')} aria-disabled="true" onClick={(e) => e.preventDefault()}>Open component detail view</Button></Tooltip>
     </div>
   );
   return (
@@ -62,10 +69,10 @@ export function DocsPageView({ page, files, theme, density, copy, onShowSource, 
       </div>
       {undocumented && (
         <div className={styles.empty} data-testid="docs-not-documented">
-          {IconProvider.getIcon('course-book', { 'aria-hidden': "true" })}
+          {svgIcon(courseBookSvg, 'course-book', { 'aria-hidden': "true" })}
           <p><strong>{page.name} · {NOT_DOCUMENTED}</strong></p>
           <p>No {page.name}.docs.md{page.descriptionFrom === 'jsdoc' ? '' : ' and no JSDoc'}. Props below come from TypeScript only.</p>
-          {onAddDocs && <Button size="sm" variant="primary" icon={IconProvider.getIcon('add-document')} onClick={() => onAddDocs(page)}>Add documentation</Button>}
+          {onAddDocs && <Button size="sm" variant="primary" icon={svgIcon(addDocumentSvg, 'add-document')} onClick={() => onAddDocs(page)}>Add documentation</Button>}
         </div>
       )}
       <h4 className={styles.section}>Overview</h4>

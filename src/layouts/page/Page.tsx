@@ -1,9 +1,10 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { IconProvider } from '../../icons';
 import { cx } from '../../utilities/cx';
 import { IconButton } from '../../components/icon-button';
 import { Breadcrumbs, type BreadcrumbItem } from '../../components/breadcrumbs';
 import styles from './Page.module.css';
+import arrowLeftSvg from '../../assets/icons/arrow-left.svg?raw';
+import { svgIcon } from '../../icons/svgIcon';
 
 export interface PageProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   /** Page heading (rendered as the page's `<h1>`). */
@@ -47,7 +48,7 @@ export const Page = forwardRef<HTMLDivElement, PageProps>(function Page(
           {breadcrumbs && (Array.isArray(breadcrumbs) ? <Breadcrumbs items={breadcrumbs} /> : breadcrumbs)}
           <div className={styles.titleRow}>
             <div className={styles.titleBlock}>
-              {onBack && <IconButton icon={IconProvider.getIcon('arrow-left')} label="Back" onClick={onBack} />}
+              {onBack && <IconButton icon={svgIcon(arrowLeftSvg, 'arrow-left')} label="Back" onClick={onBack} />}
               {avatar}
               <div className={styles.titleText}>
                 <h1 className={styles.title}>

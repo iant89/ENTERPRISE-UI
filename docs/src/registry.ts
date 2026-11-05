@@ -457,6 +457,21 @@ export const docs: ComponentDoc[] = [
     a11y: ['`role="alertdialog"`; the message is the accessible description.', 'Initial focus is on the least destructive action (Cancel).'],
   },
   {
+    slug: 'message-manager', name: 'Message manager', category: 'Feedback',
+    components: ['MessageManagerProvider', 'ManagedMessagePopover', 'ManagedMessageStrips', 'ManagedMessageView', 'MessageToastBridge'],
+    summary: 'One message store for global, component and field messages from form validation, API responses, application events and background operations, shown in MessagePopover, MessageStrip, MessageView and toasts.',
+    keyboard: [k('Enter (field message)', 'Moves focus to the field the message is about')],
+    a11y: ['Every consumer states the message type in text, not only by color or icon.', 'Global strips are announced (errors assertively); turn `announce` off when MessageToastBridge already announces the same messages.', 'Field messages keep the DOM id of their control, so the popover and MessageView can move focus to it; `useFieldMessage` puts server messages on the control as its value state.', 'Toasts are transient: keep every message that needs action in the store and in a MessageView or MessagePopover as well.'],
+    related: ['message-view', 'message-strip', 'toast', 'form-validation'],
+  },
+  {
+    slug: 'message-view', name: 'MessageView', category: 'Feedback', components: ['MessageView'],
+    summary: 'A full list of messages for a page, side panel or dialog, with type filters, source and time, technical details and navigation to the field.',
+    keyboard: [k('Tab', 'Moves through filters, message links and remove buttons'), k('Enter (message)', 'Moves focus to the field')],
+    a11y: ['A labelled region; filters are buttons with `aria-pressed` and counts in their names.', 'Each message starts with its type as hidden text; technical details use a native `details` disclosure.', 'Remove buttons name the message they remove.'],
+    related: ['message-manager', 'form-validation'],
+  },
+  {
     slug: 'toast', name: 'Toast', category: 'Feedback', components: ['ToastProvider'],
     summary: 'Brief, non-blocking notifications.',
     a11y: ['Announced through the ThemeProvider live region (errors assertively).', 'Timers pause while hovered or focused (WCAG 2.2.1); errors persist until dismissed.', 'Do not put the only path to an action in a toast.'],

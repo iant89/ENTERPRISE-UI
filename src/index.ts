@@ -203,3 +203,6 @@ export * from './components/notification-center';
 export * from './components/app-breadcrumb-bar';
 export * from './components/permission-gate';
 export * from './components/virtual-tree';
+
+// Application message manager
+export * from './messages';

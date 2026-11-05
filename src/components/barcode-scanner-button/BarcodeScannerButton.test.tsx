@@ -20,7 +20,7 @@ describe('BarcodeScannerButton', () => {
     renderWithTheme(<BarcodeScannerButton ref={ref} onScanSuccess={() => {}} />);
     const button = screen.getByRole('button', { name: 'Scan barcode' });
     expect(ref.current).toBe(button);
-    expect(button.querySelector('svg[data-icon="bar-code"]')).not.toBeNull();
+    expect(button.querySelector('svg[data-icon="enterprise://bar-code"]')).not.toBeNull();
     expect(button).toHaveAttribute('aria-expanded', 'false');
   });
 

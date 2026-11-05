@@ -1,13 +1,14 @@
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import { cx } from '../../utilities/cx';
 import styles from './InputIcon.module.css';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 export interface InputIconProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   /** Icon shown before the text. */
-  icon: ReactNode;
+  icon: IconSource;
   /** Required accessible name for the icon action. */
   label: string;
 }
 /** Action button for an Input adornment. */
 export const InputIcon = forwardRef<HTMLButtonElement, InputIconProps>(function InputIcon({ icon, label, className, type = 'button', ...rest }, ref) {
-  return <button {...rest} ref={ref} type={type} aria-label={label} title={label} className={cx(styles.button, className)}><span aria-hidden="true">{icon}</span></button>;
+  return <button {...rest} ref={ref} type={type} aria-label={label} title={label} className={cx(styles.button, className)}><span aria-hidden="true">{renderIconSource(icon)}</span></button>;
 });

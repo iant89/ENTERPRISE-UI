@@ -37,3 +37,8 @@ if (!globalThis.CSS?.escape) {
   } as typeof CSS;
 }
 Element.prototype.setPointerCapture ??= function () {};
+
+// Load the lazy enterprise icon collection once, so components that take icon names render their
+// icons synchronously in tests. The lazy path itself is covered in src/icons/icons.test.tsx.
+import { icons } from '../src/icons/registry';
+await icons.preload('enterprise');

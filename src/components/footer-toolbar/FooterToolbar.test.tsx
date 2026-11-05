@@ -2,13 +2,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createRef } from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithTheme, axeViolations } from '../../../tests/utils';
-import { IconProvider } from '../../icons';
 import { FooterToolbar, type FooterToolbarAction } from './FooterToolbar';
 
 const actions: FooterToolbarAction[] = [
   { id: 'save', label: 'Save', variant: 'primary' },
   { id: 'cancel', label: 'Cancel' },
-  { id: 'edit', label: 'Edit header', display: 'icon', icon: IconProvider.getIcon('edit') },
+  { id: 'edit', label: 'Edit header', display: 'icon', icon: 'edit' },
   { id: 'delete', label: 'Delete', variant: 'destructive' },
 ];
 

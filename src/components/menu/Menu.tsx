@@ -7,12 +7,13 @@ import { MenuItem, MenuItemGroup, type MenuItemGroupProps, type MenuItemProps } 
 import styles from './Menu.module.css';
 import acceptSvg from '../../assets/icons/accept.svg?raw';
 import { svgIcon } from '../../icons/svgIcon';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 export interface MenuItemDef {
   /** Unique id, passed to `onAction`. */
   id: string;
   label: string;
-  icon?: ReactNode;
+  icon?: IconSource;
   description?: string;
   /** Keyboard shortcut hint, e.g. `Ctrl+S`. Display only. */
   shortcut?: string;
@@ -208,7 +209,7 @@ export const Menu = forwardRef<HTMLDivElement, MenuProps>(function Menu(
           <>
             {(entry.icon || isCheckbox) && (
               <span className={cx(styles.icon, isCheckbox && styles.check)} aria-hidden="true">
-                {isCheckbox ? entry.checked ? svgIcon(acceptSvg, 'accept') : null : entry.icon}
+                {isCheckbox ? entry.checked ? svgIcon(acceptSvg, 'accept') : null : renderIconSource(entry.icon)}
               </span>
             )}
             <span className={styles.text}>

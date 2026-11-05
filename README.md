@@ -2,7 +2,7 @@
 
 A React + TypeScript component library for building business applications that look and behave like modern SAP Fiori software, without depending on SAPUI5.
 
-`@enterprise-ui/react` is meant for dashboards, admin panels, ERP, inventory, fleet management and other data-heavy screens. It has its own implementation, design tokens and component APIs. Its icons are the SAP icon set, stored as SVG files in `src/assets/icons`: `<Icon name="bell" />` renders one (names are type-checked), and `IconProvider.getIconNames()` lists them all. `lucide-react` is still listed as a dependency, but the library no longer imports it.
+`@enterprise-ui/react` is meant for dashboards, admin panels, ERP, inventory, fleet management and other data-heavy screens. It has its own implementation, design tokens and component APIs. Icons go through a pluggable icon system (registry, resolver and providers; see `docs/icon-system.md`): `<Icon name="edit" />` and `<Button icon="enterprise://save">` use the bundled SAP icon set by default, and Font Awesome, Material or your own icons can be registered. `lucide-react` is still listed as a dependency, but the library no longer imports it.
 
 ![Inventory management app built with Enterprise UI Kit: application header, side navigation, filter bar and data grid](docs/screenshots/demo-app.png)
 

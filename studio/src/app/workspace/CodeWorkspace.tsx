@@ -1,4 +1,4 @@
-import { useEffect, useState, type Dispatch, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, useState, type Dispatch, type ReactNode } from 'react';
 import { Button, IconButton } from '@enterprise-ui/react';
 import { cx } from '../../../../src/utilities/cx';
 import { ActivityTabs, ACTIVITY_META, ACTIVITY_PANEL_ID, activityTabId } from './ActivityTabs';
@@ -22,6 +22,9 @@ import showSvg from '../../../../src/assets/icons/show.svg?raw';
 import sourceCodeSvg from '../../../../src/assets/icons/source-code.svg?raw';
 import toasterUpSvg from '../../../../src/assets/icons/toaster-up.svg?raw';
 import { svgIcon } from '../../../../src/icons/svgIcon';
+
+// The Icon Explorer (and the icon collection) load only when the Icons tab is opened.
+const IconExplorer = lazy(() => import('../../panels/icons/IconExplorer'));
 
 export interface CodeWorkspaceProps {
   breakpoint: Breakpoint;
@@ -109,6 +112,7 @@ function SidebarBody({ activity, explorer, search, docsPinned, onPin, onCreateCo
       {activity === 'explorer' && explorer}
       {activity === 'search' && (search ?? <p className={styles.empty}>Search is unavailable.</p>)}
       {activity === 'components' && components}
+      {activity === 'icons' && <Suspense fallback={<p className={styles.empty}>Loading icons…</p>}><IconExplorer /></Suspense>}
       {activity === 'components' && !components && (
         <div className={styles.docs} data-testid="components-panel">
           <div className={styles.docsHead}>

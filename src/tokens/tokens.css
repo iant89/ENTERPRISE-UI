@@ -56,9 +56,12 @@
   --eui-control-height: 2.25rem; /* 36px */
   --eui-control-height-lg: 2.75rem; /* 44px */
   --eui-control-padding-x: var(--eui-space-3);
+  --eui-icon-size-xs: 12px;
   --eui-icon-size-sm: 14px;
   --eui-icon-size: 16px;
   --eui-icon-size-lg: 20px;
+  --eui-icon-size-xl: 24px;
+  --eui-icon-size-2xl: 32px;
   --eui-row-height: 2.75rem; /* 44px */
   --eui-header-height: 3rem; /* 48px */
   --eui-sidenav-width: 16rem;

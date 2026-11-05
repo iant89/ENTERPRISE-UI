@@ -6,6 +6,7 @@ import { DropdownMenu } from '../dropdown-menu';
 import type { MenuEntry } from '../menu';
 import slimArrowDownSvg from '../../assets/icons/slim-arrow-down.svg?raw';
 import { svgIcon } from '../../icons/svgIcon';
+import { type IconSource } from '../../icons/IconSource';
 
 export interface SplitButtonProps {
   /** Label of the default action. */
@@ -23,7 +24,7 @@ export interface SplitButtonProps {
   /** Size of the split button. */
   size?: ButtonSize;
   /** Icon shown before the text. */
-  icon?: ReactNode;
+  icon?: IconSource;
   /** @default false */
   /** Disables the split button. A disabled control cannot be focused or changed. */
   disabled?: boolean;

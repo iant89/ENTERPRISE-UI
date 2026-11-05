@@ -79,7 +79,7 @@ describe('LightboxImage', () => {
     const { user } = renderWithTheme(<LightboxImage ref={ref} src="/pump.jpg" thumbnailSrc="/pump-thumb.jpg" title="Pump P-100" width={120} />);
     const trigger = screen.getByRole('button', { name: 'Enlarge image: Pump P-100' });
     expect(ref.current).toBe(trigger);
-    expect(trigger.querySelector('[data-icon="zoom-in"]')).not.toBeNull();
+    expect(trigger.querySelector('[data-icon="enterprise://zoom-in"]')).not.toBeNull();
     expect(trigger.querySelector('img')).toHaveAttribute('src', '/pump-thumb.jpg');
     await user.click(trigger);
     expect(screen.getByRole('dialog', { name: 'Pump P-100' })).toBeInTheDocument();

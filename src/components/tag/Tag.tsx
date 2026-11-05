@@ -1,6 +1,7 @@
 import { forwardRef, type CSSProperties, type HTMLAttributes, type ReactNode } from 'react';
 import { cx } from '../../utilities/cx';
 import styles from './Tag.module.css';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 export type TagColorScheme = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
@@ -16,7 +17,7 @@ export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
   /** `1` is a solid tag with light text; `2` is a light tag with colored text and border. @default 1 */
   set?: 1 | 2;
   /** Optional leading icon. */
-  icon?: ReactNode;
+  icon?: IconSource;
 }
 
 const COLORS: Record<TagColorScheme, string> = {
@@ -32,7 +33,7 @@ const COLORS: Record<TagColorScheme, string> = {
 export const Tag = forwardRef<HTMLSpanElement, TagProps>(function Tag({ children, colorScheme = 10, set = 1, icon, className, style, ...rest }, ref) {
   return (
     <span ref={ref} className={cx(styles.tag, set === 2 ? styles.set2 : styles.set1, className)} style={{ '--tag-color': COLORS[colorScheme], ...style } as CSSProperties} {...rest}>
-      {icon && <span className={styles.icon} aria-hidden="true">{icon}</span>}
+      {icon && <span className={styles.icon} aria-hidden="true">{renderIconSource(icon)}</span>}
       <span className={styles.text}>{children}</span>
     </span>
   );

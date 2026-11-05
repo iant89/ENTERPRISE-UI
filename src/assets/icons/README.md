@@ -3,12 +3,12 @@
 704 SAP icons, one SVG per icon.
 
 ```tsx
-<Icon name="bar-code" />                // a bare <svg>; the name is type-checked
-IconProvider.getIcon(row.iconName);     // names known only at runtime
-IconProvider.getIconNames();            // every available name
+<Icon name="bar-code" />                       // the default "enterprise" collection
+<Button icon="enterprise://bar-code">Scan</Button>
+icons.list({ collection: 'enterprise' });      // every definition
 ```
 
-Library components import the files they need directly (`import barCode from '../../assets/icons/bar-code.svg?raw'` with the internal `svgIcon` helper), so apps only bundle those. `<Icon>` and `IconProvider` load the whole folder.
+They form the `enterprise` collection of the icon system (`src/icons`, see `docs/icon-system.md`), loaded lazily on first use. Library components import their own built-in icons directly (`import barCode from '../../assets/icons/bar-code.svg?raw'` with the internal `svgIcon` helper), so apps only bundle those unless they use icons by name.
 
 Every file is a single 16×16 path with `fill="currentColor"`. Two optional attributes on the `<svg>` element carry the metadata the library needs:
 

@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import { renderWithTheme, axeViolations } from '../../../tests/utils';
-import { IconProvider } from '../../icons';
 import { Tag } from '../tag';
 import { ApplicationHeader, type ApplicationHeaderProps } from './ApplicationHeader';
 
@@ -63,7 +62,7 @@ describe('ApplicationHeader', () => {
       <ApplicationHeader
         {...base}
         onAssistantClick={() => {}}
-        additionalActions={[{ id: 'tasks', label: 'My tasks', icon: IconProvider.getIcon('task'), count: 4 }]}
+        additionalActions={[{ id: 'tasks', label: 'My tasks', icon: 'task', count: 4 }]}
         context={[{ id: 'trial', content: <Tag colorScheme={7} set={2}>Trial</Tag> }]}
         productSwitchItems={[{ id: 'a', title: 'Procurement' }, { id: 'b', title: 'Logistics' }]}
         onProductSwitchItemClick={onItem}
@@ -82,7 +81,7 @@ describe('ApplicationHeader', () => {
     mockWidths(380);
     const onTasks = vi.fn();
     const { user } = renderWithTheme(
-      <ApplicationHeader {...base} search={<input aria-label="Search orders" />} onAssistantClick={() => {}} additionalActions={[{ id: 'tasks', label: 'My tasks', icon: IconProvider.getIcon('task'), count: 4, onClick: onTasks }]} />,
+      <ApplicationHeader {...base} search={<input aria-label="Search orders" />} onAssistantClick={() => {}} additionalActions={[{ id: 'tasks', label: 'My tasks', icon: 'task', count: 4, onClick: onTasks }]} />,
     );
     await waitFor(() => expect(screen.getByRole('button', { name: 'More, 1 with new items' })).toBeInTheDocument());
     expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
@@ -98,7 +97,7 @@ describe('ApplicationHeader', () => {
   it('shows only an attention dot when several badged actions overflow', async () => {
     mockWidths(300);
     const { container } = renderWithTheme(
-      <ApplicationHeader {...base} additionalActions={[{ id: 'a', label: 'Tasks', icon: IconProvider.getIcon('task'), count: 4 }, { id: 'b', label: 'Approvals', icon: IconProvider.getIcon('task'), count: 2 }]} />,
+      <ApplicationHeader {...base} additionalActions={[{ id: 'a', label: 'Tasks', icon: 'task', count: 4 }, { id: 'b', label: 'Approvals', icon: 'task', count: 2 }]} />,
     );
     await waitFor(() => expect(screen.getByRole('button', { name: 'More, 2 with new items' })).toBeInTheDocument());
     expect(screen.queryByText('4')).not.toBeInTheDocument();

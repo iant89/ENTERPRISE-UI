@@ -7,6 +7,7 @@ import arrowRightSvg from '../../assets/icons/arrow-right.svg?raw';
 import trendDownSvg from '../../assets/icons/trend-down.svg?raw';
 import trendUpSvg from '../../assets/icons/trend-up.svg?raw';
 import { svgIcon } from '../../icons/svgIcon';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 const ICON_SVGS: Record<string, string> = { 'arrow-right': arrowRightSvg, 'trend-down': trendDownSvg, 'trend-up': trendUpSvg };
 
@@ -34,7 +35,7 @@ export interface MetricCardProps extends Omit<HTMLAttributes<HTMLElement>, 'titl
   /** Color the value by status (Fiori semantic KPI coloring). */
   tone?: Exclude<Tone, 'neutral'>;
   /** Icon shown next to the title. */
-  icon?: ReactNode;
+  icon?: IconSource;
   /** Data points for a small trend line. */
   sparkline?: number[];
   /** Content shown in the footer. */
@@ -91,7 +92,7 @@ export const MetricCard = forwardRef<HTMLElement, MetricCardProps>(function Metr
           </Heading>
           {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
         </div>
-        {icon && <span className={styles.icon} aria-hidden="true">{icon}</span>}
+        {icon && <span className={styles.icon} aria-hidden="true">{renderIconSource(icon)}</span>}
       </div>
       {loading ? (
         <Skeleton variant="rect" height={40} width="60%" />

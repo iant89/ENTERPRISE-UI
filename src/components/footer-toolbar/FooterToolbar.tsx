@@ -7,6 +7,7 @@ import { IconButton } from '../icon-button';
 import styles from './FooterToolbar.module.css';
 import overflowSvg from '../../assets/icons/overflow.svg?raw';
 import { svgIcon } from '../../icons/svgIcon';
+import { type IconSource } from '../../icons/IconSource';
 
 export interface FooterToolbarAction {
   /** Unique ID. */
@@ -14,7 +15,7 @@ export interface FooterToolbarAction {
   /** Button text, or the accessible name and tooltip when `display` is `'icon'`. */
   label: string;
   /** Icon, used only when `display` is `'icon'`. A button never combines icon and text. */
-  icon?: ReactNode;
+  icon?: IconSource;
   /** Show the action as a text button or an icon-only button. @default 'text' */
   display?: 'text' | 'icon';
   /** Called when the action is chosen, in the toolbar or the overflow menu. */

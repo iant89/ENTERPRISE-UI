@@ -8,6 +8,7 @@ import { IconButton } from '../icon-button';
 import styles from './Dialog.module.css';
 import declineSvg from '../../assets/icons/decline.svg?raw';
 import { svgIcon } from '../../icons/svgIcon';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 export interface DialogProps {
   /** Whether the dialog is shown. */
@@ -32,7 +33,7 @@ export interface DialogProps {
   /** Show the × button in the header. @default true */
   showClose?: boolean;
   /** Icon shown before the title. */
-  icon?: ReactNode;
+  icon?: IconSource;
   /** @internal ARIA role. */
   /** ARIA role. Use `alertdialog` for urgent messages that require a response. */
   role?: 'dialog' | 'alertdialog';
@@ -115,7 +116,7 @@ export function Dialog({
           <div className={styles.header}>
             {icon && (
               <span className={styles.headerIcon} aria-hidden="true">
-                {icon}
+                {renderIconSource(icon)}
               </span>
             )}
             <h2 id={titleId} className={styles.title}>

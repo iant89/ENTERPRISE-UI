@@ -1,5 +1,6 @@
 import { Children, Fragment, isValidElement, type ReactNode } from 'react';
 import type { ListItemData } from './List';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 export type ListItemHighlight = 'none' | 'positive' | 'critical' | 'negative' | 'information';
 
@@ -20,7 +21,7 @@ export interface ListItemStandardProps {
   /** Trailing text, such as a status or amount. */
   additionalText?: ReactNode;
   /** Leading visual. Decorative icons should be hidden from assistive technology. */
-  icon?: ReactNode;
+  icon?: IconSource;
   /** @default false */
   /** Disables the item. It cannot be selected or activated. */
   disabled?: boolean;
@@ -90,7 +91,7 @@ export function readListItems(children: ReactNode): ListItemData[] {
         textValue: text,
         description: node.type === ListItemStandard ? props.description : undefined,
         meta: node.type === ListItemStandard ? props.additionalText : undefined,
-        leading: node.type === ListItemStandard ? props.icon : undefined,
+        leading: node.type === ListItemStandard ? renderIconSource(props.icon) : undefined,
         disabled: props.disabled,
         href: props.href,
         group,

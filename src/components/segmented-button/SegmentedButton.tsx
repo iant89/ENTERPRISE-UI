@@ -2,11 +2,12 @@ import { forwardRef, useRef, type HTMLAttributes, type KeyboardEvent, type React
 import { cx } from '../../utilities/cx';
 import { useControllableState } from '../../hooks/useControllableState';
 import styles from './SegmentedButton.module.css';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 export interface SegmentedButtonItem {
   value: string;
   label: ReactNode;
-  icon?: ReactNode;
+  icon?: IconSource;
   /** Required for icon-only items. */
   ariaLabel?: string;
   /** Longer name shown as a tooltip and exposed as the accessible description, e.g. "Tuesday" for a "Tue" label. */
@@ -74,7 +75,7 @@ export const SegmentedButton = forwardRef<HTMLDivElement, SegmentedButtonProps>(
             disabled={item.disabled}
             onClick={() => toggle(item)}
           >
-            {item.icon && <span className={styles.icon} aria-hidden="true">{item.icon}</span>}
+            {item.icon && <span className={styles.icon} aria-hidden="true">{renderIconSource(item.icon)}</span>}
             {item.label}
           </button>
         );

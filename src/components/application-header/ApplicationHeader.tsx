@@ -21,6 +21,7 @@ import searchSvg from '../../assets/icons/search.svg?raw';
 import settingsSvg from '../../assets/icons/settings.svg?raw';
 import sysHelpSvg from '../../assets/icons/sys-help.svg?raw';
 import { svgIcon } from '../../icons/svgIcon';
+import { type IconSource } from '../../icons/IconSource';
 
 export interface ApplicationHeaderUser {
   name: string;
@@ -46,7 +47,7 @@ export interface ShellBarAction {
   id: string;
   /** Accessible name, tooltip and overflow menu text. */
   label: string;
-  icon: ReactNode;
+  icon: IconSource;
   onClick?: () => void;
   /** Counter badge, for example unread items. */
   count?: number;
@@ -293,7 +294,7 @@ export function ApplicationHeader({
   // Overflow menu: search (last resort), assistant, product actions and help, in bar order.
   const overflowItems: MenuEntry[] = [];
   const overflowHandlers = new Map<string, () => void>();
-  const addOverflow = (id: string, label: string, icon: ReactNode, run?: () => void) => {
+  const addOverflow = (id: string, label: string, icon: IconSource, run?: () => void) => {
     overflowItems.push({ id, label, icon });
     if (run) overflowHandlers.set(id, run);
   };

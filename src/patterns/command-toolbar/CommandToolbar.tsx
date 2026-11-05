@@ -7,11 +7,12 @@ import { IconButton } from '../../components/icon-button';
 import styles from './CommandToolbar.module.css';
 import overflowSvg from '../../assets/icons/overflow.svg?raw';
 import { svgIcon } from '../../icons/svgIcon';
+import { type IconSource } from '../../icons/IconSource';
 
 export interface CommandAction {
   id: string;
   label: string;
-  icon?: ReactNode;
+  icon?: IconSource;
   onClick?: () => void;
   /** @default 'tertiary' */
   variant?: ButtonVariant;

@@ -3,11 +3,12 @@ import { cx } from '../../utilities/cx';
 import { Dialog } from '../dialog';
 import { Button } from '../button';
 import styles from './UserSettingsDialog.module.css';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 export interface UserSettingsView {
   id: string;
   label: string;
-  icon?: ReactNode;
+  icon?: IconSource;
   /** View content. */
   content: ReactNode;
   /** Group the view in the fixed (bottom) section, e.g. "About". @default false */
@@ -45,7 +46,7 @@ export function UserSettingsDialog({ open, onClose, title = 'Settings', views, s
   const renderNav = (list: UserSettingsView[]) => list.map((view) => (
     <li key={view.id}>
       <button type="button" className={cx(styles.navItem, view.id === current?.id && styles.selected)} aria-current={view.id === current?.id ? 'true' : undefined} onClick={() => select(view.id)}>
-        {view.icon && <span className={styles.icon} aria-hidden="true">{view.icon}</span>}{view.label}
+        {view.icon && <span className={styles.icon} aria-hidden="true">{renderIconSource(view.icon)}</span>}{view.label}
       </button>
     </li>
   ));

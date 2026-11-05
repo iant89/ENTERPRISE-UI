@@ -1,12 +1,13 @@
-import { forwardRef, useRef, type HTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
+import { forwardRef, useRef, type HTMLAttributes, type KeyboardEvent } from 'react';
 import { cx } from '../../utilities/cx';
 import styles from './ProductSwitch.module.css';
+import { renderIconSource, type IconSource } from '../../icons/IconSource';
 
 export interface ProductSwitchItem {
   id: string;
   title: string;
   subtitle?: string;
-  icon?: ReactNode;
+  icon?: IconSource;
   /** Navigates natively when set. */
   href?: string;
   target?: string;
@@ -45,7 +46,7 @@ export const ProductSwitch = forwardRef<HTMLElement, ProductSwitchProps>(functio
     <nav ref={ref} aria-label={label} className={cx(styles.root, className)} {...rest}>
       <ul className={cx(styles.grid, columns === 3 && styles.three)}>
         {items.map((item, index) => {
-          const content = <>{item.icon && <span className={styles.icon} aria-hidden="true">{item.icon}</span>}<span className={styles.title}>{item.title}</span>{item.subtitle && <span className={styles.subtitle}>{item.subtitle}</span>}</>;
+          const content = <>{item.icon && <span className={styles.icon} aria-hidden="true">{renderIconSource(item.icon)}</span>}<span className={styles.title}>{item.title}</span>{item.subtitle && <span className={styles.subtitle}>{item.subtitle}</span>}</>;
           const common = { ref: (el: HTMLElement | null) => { tiles.current[index] = el; }, className: cx(styles.tile, item.current && styles.current), 'aria-current': item.current ? ('page' as const) : undefined, onKeyDown: (e: KeyboardEvent) => onKey(e, index), onClick: () => onItemClick?.(item) };
           return <li key={item.id}>{item.href ? <a {...common} href={item.href} target={item.target}>{content}</a> : <button {...common} type="button">{content}</button>}</li>;
         })}

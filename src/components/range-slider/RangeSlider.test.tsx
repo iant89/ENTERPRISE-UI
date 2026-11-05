@@ -29,7 +29,7 @@ describe('RangeSlider', () => {
     const slider = container.querySelector<HTMLElement>('[style*="--range-start"]')!;
     expect(slider.style.getPropertyValue('--range-start')).toBe('25%');
     expect(slider.style.getPropertyValue('--range-end')).toBe('75%');
-    expect(container.querySelectorAll('svg[data-icon="direction-arrows"]')).toHaveLength(2);
+    expect(container.querySelectorAll('svg[data-icon="enterprise://direction-arrows"]')).toHaveLength(2);
   });
   it('has no axe violations', async () => {
     const { container } = renderWithTheme(<RangeSlider label="Price" />);

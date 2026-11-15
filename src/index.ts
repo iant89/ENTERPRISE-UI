@@ -133,6 +133,7 @@ export * from './components/media-gallery';
 export * from './components/title';
 export * from './components/text';
 export * from './components/description-list';
+export * from './components/qr-code';
 
 // Charts and micro charts
 export * from './components/line-chart';

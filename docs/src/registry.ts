@@ -136,6 +136,13 @@ export const docs: ComponentDoc[] = [
   },
   { slug: 'description-list', name: 'DescriptionList', category: 'Data display', components: ['DescriptionList'], summary: 'Read-only term and value pairs for business object facts.', a11y: ['A native `dl` with `dt`/`dd` pairs in reading order.', 'Missing values show visible text instead of an empty cell.'], related: ['object-page', 'form'] },
   {
+    slug: 'qr-code', name: 'QrCode', category: 'Data display', components: ['QrCode'],
+    summary: 'A QR code drawn as SVG in the browser, for setup links, URLs and IDs; optionally enlargeable in a dialog.',
+    keyboard: [k('Tab', 'Focuses an enlargeable code'), k('Enter / Space', 'Opens the larger copy'), k('Escape', 'Closes the larger copy')],
+    a11y: ['An image named by `label` (default "QR code"); an enlargeable code is a button named "<label>. Show it larger".', 'Always offer the same content as text nearby (a link or a copyable field): a QR code alone is not accessible.', 'Keep strong contrast between `color` and `background` (dark on light) and the 4-module quiet zone, or scanners may fail.', 'The value is encoded locally and never sent anywhere, so it can hold secrets such as authenticator setup keys.'],
+    related: ['barcode-scanner-dialog', 'copy-button', 'dialog'],
+  },
+  {
     slug: 'dual-list-selector', name: 'DualListSelector', category: 'Forms', components: ['DualListSelector'],
     summary: 'Choose, and optionally order, a subset of a long list by moving items between two panes.',
     keyboard: [k('Tab', 'Moves between filter fields, checkboxes and move buttons'), k('Space', 'Checks the focused item')],

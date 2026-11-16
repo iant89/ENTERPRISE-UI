@@ -131,6 +131,12 @@ export function Tour({
   }
   const text = { ...DEFAULT_LABELS, ...labels };
   const [rawIndex, setIndex] = useControllableState(step, defaultStep, onStepChange);
+  // Uncontrolled: every time the tour opens it starts again from defaultStep.
+  const wasOpen = useRef(open);
+  useEffect(() => {
+    if (open && !wasOpen.current && step === undefined) setIndex(defaultStep);
+    wasOpen.current = open;
+  }, [open, step, defaultStep, setIndex]);
   const index = Math.min(Math.max(0, rawIndex), steps.length - 1);
   const current = steps[index]!;
   const last = index === steps.length - 1;

@@ -70,6 +70,12 @@
   outline: none;
 }
 
+/* Focus is moved to the title so it is announced; the callout already shows where it is. */
+.callout .title:focus,
+.callout .title:focus-visible {
+  outline: none;
+}
+
 .body {
   position: relative;
   padding: var(--eui-space-2) var(--eui-space-4) var(--eui-space-3);

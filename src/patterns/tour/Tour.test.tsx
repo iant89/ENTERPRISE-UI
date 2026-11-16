@@ -112,6 +112,24 @@ describe('Tour', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
+  it('starts again from the first step every time it opens (uncontrolled)', async () => {
+    function Reopen() {
+      const [open, setOpen] = useState(true);
+      return (
+        <Page>
+          <button onClick={() => setOpen(true)}>Start</button>
+          <Tour steps={STEPS} open={open} onFinish={noop} onSkip={() => setOpen(false)} />
+        </Page>
+      );
+    }
+    const { user } = renderWithTheme(<Reopen />);
+    await user.click(await screen.findByRole('button', { name: 'Next' }));
+    await user.click(await screen.findByRole('button', { name: 'Skip tour' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    await user.click(screen.getByRole('button', { name: 'Start' }));
+    expect(await screen.findByRole('dialog', { name: 'The menu' })).toBeInTheDocument();
+  });
+
   it('keeps the page behind it from being clicked', async () => {
     const clicked = vi.fn();
     renderWithTheme(<div><button onClick={clicked}>Behind</button><Tour steps={STEPS.slice(2)} open onFinish={noop} onSkip={noop} /></div>);

@@ -98,6 +98,19 @@ function resolve(target: TourStep['target']): Element | null {
   }
 }
 
+/**
+ * Whether the user can see the element: not hidden by CSS, and (when it has a
+ * size) at least partly inside the viewport after scrolling. An element in a
+ * collapsed off-canvas navigation exists but is not visible.
+ */
+function visible(element: Element): boolean {
+  const check = (element as Element & { checkVisibility?: (options?: { visibilityProperty?: boolean }) => boolean }).checkVisibility;
+  if (check && !check.call(element, { visibilityProperty: true })) return false;
+  const r = element.getBoundingClientRect();
+  if (r.width === 0 && r.height === 0) return true; // nothing to measure (unrendered layout, e.g. tests)
+  return r.right > 0 && r.bottom > 0 && r.left < window.innerWidth && r.top < window.innerHeight;
+}
+
 const sideOf = (placement: Placement) => placement.split('-')[0] as 'top' | 'bottom' | 'left' | 'right';
 
 /**
@@ -168,7 +181,8 @@ export function Tour({
       const element = resolve(wanted);
       if (element) {
         element.scrollIntoView?.({ block: 'center', inline: 'nearest' });
-        setTarget({ element, searching: false });
+        // Present but not visible (hidden, or in a collapsed off-canvas menu): centre the step now.
+        setTarget({ element: visible(element) ? element : null, searching: false });
       } else if (performance.now() < deadline) {
         frame = requestAnimationFrame(look);
       } else {

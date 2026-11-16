@@ -94,6 +94,19 @@ describe('Tour', () => {
     expect(baseElement.querySelector('[data-eui-tour-backdrop]')?.className).toMatch(/dimmed/);
   });
 
+  it('centres a step whose target exists but is off screen (a collapsed off-canvas menu)', async () => {
+    const { baseElement } = renderWithTheme(
+      <div>
+        <a id="offcanvas" href="/x" ref={(el) => { if (el) el.getBoundingClientRect = () => ({ top: 10, left: -300, right: -60, bottom: 40, width: 240, height: 30, x: -300, y: 10, toJSON: () => ({}) }); }}>Hidden link</a>
+        <Tour steps={[{ id: 'nav', target: '#offcanvas', title: 'Navigation', content: 'Every page.' }]} open onFinish={noop} onSkip={noop} />
+      </div>,
+    );
+    const dialog = await screen.findByRole('dialog', { name: 'Navigation' });
+    await waitFor(() => expect(dialog.style.visibility).toBe(''));
+    expect(baseElement.querySelector('[data-eui-tour-spotlight]')).toBeNull();
+    expect(baseElement.querySelector('[data-eui-tour-backdrop]')?.className).toMatch(/dimmed/);
+  });
+
   it('can be controlled, localized and closed', async () => {
     function Controlled() {
       const [step, setStep] = useState(2);

@@ -170,6 +170,7 @@ export * from './patterns/master-detail';
 export * from './patterns/object-page';
 export * from './patterns/detail-panel';
 export * from './patterns/wizard';
+export * from './patterns/tour';
 export * from './patterns/dashboard';
 export * from './patterns/command-toolbar';
 export * from './patterns/empty-state';

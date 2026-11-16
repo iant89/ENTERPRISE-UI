@@ -170,14 +170,30 @@
     border: 0;
   }
 
-  .current .stepLabel {
-    position: static;
-    width: auto;
-    height: auto;
-    margin: 0;
-    overflow: visible;
-    clip: auto;
-    white-space: normal;
+  /* Every step fits the row (no sideways scrolling that hides the current step). Labels
+     stay for screen readers; the step heading below and "Step n of m" name it visually. */
+  .steps {
+    padding: var(--eui-space-3) var(--eui-space-2);
+    overflow-x: visible;
+  }
+
+  .step {
+    min-width: 0;
+  }
+
+  .marker {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .step + .step::before {
+    top: 0.875rem;
+    right: calc(50% + 1.125rem);
+    left: calc(-50% + 1.125rem);
+  }
+
+  .optional {
+    display: none;
   }
 
   .body {

@@ -1,0 +1,107 @@
+/* The page behind the tour: it catches clicks, so the page cannot be used mid-tour. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--eui-z-overlay);
+}
+
+.dimmed {
+  background: var(--eui-color-overlay);
+}
+
+/* A hole around the target; its huge shadow dims everything else. */
+.spotlight {
+  position: fixed;
+  z-index: var(--eui-z-overlay);
+  border-radius: var(--eui-radius-md);
+  box-shadow: 0 0 0 2px var(--eui-color-primary), 0 0 0 100vmax var(--eui-color-overlay);
+  pointer-events: none;
+  transition: top var(--eui-duration-fast) var(--eui-easing-standard), left var(--eui-duration-fast) var(--eui-easing-standard),
+    width var(--eui-duration-fast) var(--eui-easing-standard), height var(--eui-duration-fast) var(--eui-easing-standard);
+}
+
+.callout {
+  position: fixed;
+  z-index: var(--eui-z-popover);
+  width: min(22rem, calc(100vw - 16px));
+  max-height: calc(100vh - 16px);
+  display: flex;
+  flex-direction: column;
+  background: var(--eui-color-surface);
+  color: var(--eui-color-text);
+  border: var(--eui-border-width) solid var(--eui-color-primary);
+  border-radius: var(--eui-radius-md);
+  box-shadow: var(--eui-shadow-level-3);
+  outline: none;
+}
+
+.callout:focus-visible {
+  outline: var(--eui-focus-width) solid var(--eui-color-focus);
+}
+
+/* A square turned 45°, bordered on the two sides that face the target. */
+.arrow {
+  position: absolute;
+  width: calc(8px * 2);
+  height: calc(8px * 2);
+  background: var(--eui-color-surface);
+  border: var(--eui-border-width) solid var(--eui-color-primary);
+  transform: rotate(45deg);
+}
+
+.callout[data-placement^='bottom'] .arrow { border-right-color: transparent; border-bottom-color: transparent; }
+.callout[data-placement^='top'] .arrow { border-left-color: transparent; border-top-color: transparent; }
+.callout[data-placement^='right'] .arrow { border-right-color: transparent; border-top-color: transparent; }
+.callout[data-placement^='left'] .arrow { border-left-color: transparent; border-bottom-color: transparent; }
+
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-2) var(--eui-space-2) 0 var(--eui-space-4);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--eui-font-size-md);
+  font-weight: var(--eui-font-weight-bold);
+  outline: none;
+}
+
+.body {
+  position: relative;
+  padding: var(--eui-space-2) var(--eui-space-4) var(--eui-space-3);
+  overflow: auto;
+  line-height: 1.5;
+}
+
+.body > :first-child { margin-top: 0; }
+.body > :last-child { margin-bottom: 0; }
+
+.footer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--eui-space-2);
+  padding: var(--eui-space-2) var(--eui-space-4) var(--eui-space-3);
+  border-top: var(--eui-border-width) solid var(--eui-color-border-subtle);
+}
+
+.progress {
+  color: var(--eui-color-text-secondary);
+  font-size: var(--eui-font-size-sm);
+}
+
+.actions {
+  display: flex;
+  gap: var(--eui-space-2);
+  margin-left: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight { transition: none; }
+}

@@ -510,6 +510,13 @@ export const docs: ComponentDoc[] = [
   { slug: 'object-page', name: 'ObjectPage', category: 'Patterns', components: ['ObjectPage'], summary: 'Displays one business object with a rich header and sections.', a11y: ['Sections are labelled regions with `<h2>` headings.', 'The anchor bar marks the visible section with `aria-current` and moves focus to the section heading.', 'Smooth scrolling is disabled for reduced motion.'] },
   { slug: 'detail-panel', name: 'DetailPanel', category: 'Patterns', components: ['DetailPanel'], summary: 'Side panel with details of a selected object.', keyboard: [k('Escape', 'Closes the panel')], a11y: ['Overlay mode is a modal dialog with focus trapping and restoration; inline mode is a labelled region.'] },
   { slug: 'wizard', name: 'Wizard', category: 'Patterns', components: ['Wizard'], summary: 'Guides users through a multi-step task.', a11y: ['The step list marks the current step with `aria-current="step"` and completed steps in text.', 'Focus moves to the step heading on navigation; validation errors are announced.'] },
+  {
+    slug: 'tour', name: 'Tour', category: 'Patterns', components: ['Tour'],
+    summary: 'A guided tour: callouts that point at parts of the page in turn, with Back, Next, Done and Skip.',
+    keyboard: [k('Tab', 'Moves between the buttons in the callout (focus stays in the callout)'), k('Right / Left', 'Next or previous step'), k('Escape', 'Skips the tour')],
+    a11y: ['Each step is a modal dialog named by its title and described by its content; focus moves to the title on every step and returns when the tour ends.', 'The page behind cannot be clicked during the tour; the target is highlighted with a ring and the rest dimmed, never by colour alone.', 'Progress ("Step 2 of 7") is announced politely. Skip is always offered, and should stay possible: never force a tour.', 'A step whose target is missing (not rendered, or hidden for this user) is centred instead of failing, so tours survive permission-based layouts.'],
+    related: ['wizard', 'popover', 'dialog'],
+  },
   { slug: 'dashboard', name: 'Dashboard', category: 'Patterns', components: ['Dashboard', 'DashboardWidget'], summary: 'A responsive grid of KPI tiles and cards.', a11y: ['A labelled region; widgets keep DOM order on all breakpoints.'] },
   {
     slug: 'command-toolbar', name: 'CommandToolbar', category: 'Patterns', components: ['CommandToolbar'],

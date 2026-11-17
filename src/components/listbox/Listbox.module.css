@@ -151,8 +151,17 @@
 .chevron svg {
   width: var(--eui-icon-size);
   height: var(--eui-icon-size);
+  /* The arrow glyph sits 0.5/16 below its box's centre: centre it, so the flip on open keeps it in place. */
+  translate: 0 calc(var(--eui-icon-size) / -32);
 }
 
 .open .chevron {
   transform: rotate(180deg);
+}
+
+/* ComboBox with editable={false}: reads like a select (no text caret, pointer cursor). */
+.selectOnly {
+  cursor: pointer;
+  caret-color: transparent;
+  user-select: none;
 }

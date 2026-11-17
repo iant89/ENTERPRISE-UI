@@ -384,9 +384,9 @@ export const docs: ComponentDoc[] = [
   },
   {
     slug: 'combo-box', name: 'ComboBox', category: 'Forms', components: ['ComboBox'],
-    summary: 'Editable combobox that filters options as you type.',
-    keyboard: [k('Typing', 'Filters and opens the list'), k('↓ / ↑', 'Opens / moves the active option'), k('Enter', 'Selects the active option'), k('Escape', 'Closes the list, then clears the value'), k('Alt + ↑', 'Closes the list')],
-    a11y: ['ARIA 1.2 combobox with `aria-autocomplete="list"`.', 'Matches are highlighted with `<mark>`; the empty message is part of the listbox.'],
+    summary: 'Editable combobox that filters options as you type; with `editable={false}` a select-like box (no typing, letters jump), and `openOnClick` opens it from a click on the text.',
+    keyboard: [k('Typing', 'Filters and opens the list (editable)'), k('Letter', 'Jumps to the next option starting with it (editable={false})'), k('Space / Enter', 'Opens the list (editable={false})'), k('↓ / ↑', 'Opens / moves the active option'), k('Enter', 'Selects the active option'), k('Escape', 'Closes the list, then clears the value'), k('Alt + ↑', 'Closes the list')],
+    a11y: ['ARIA 1.2 combobox with `aria-autocomplete="list"` (`"none"` and a read-only input when not editable).', 'Matches are highlighted with `<mark>`; the empty message is part of the listbox.'],
   },
   {
     slug: 'multi-select', name: 'MultiSelect', category: 'Forms', components: ['MultiSelect'],

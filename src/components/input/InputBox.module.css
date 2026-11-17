@@ -28,6 +28,15 @@
   outline-offset: 1px;
 }
 
+/*
+ * The box shows focus (above). Without this, the global `[data-eui-theme] :focus-visible`
+ * rule (more specific than `.input`) drew a second ring around the text inside the box,
+ * whose edge read as a divider before the field's buttons.
+ */
+.box .input:focus-visible {
+  outline: none;
+}
+
 .input {
   flex: 1 1 auto;
   width: 100%;

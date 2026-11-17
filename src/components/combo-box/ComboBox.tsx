@@ -52,6 +52,15 @@ export interface ComboBoxProps
   clearable?: boolean;
   /** Display text for a value (defaults to the option label or the value). */
   formatValue?: (value: string) => string;
+  /**
+   * Whether the text can be typed in. `false` makes a select-like combo box: no
+   * typing or filtering; click (with `openOnClick`), Space, Enter or the arrows open
+   * it, and a letter jumps to the next option whose label starts with it.
+   * @default true
+   */
+  editable?: boolean;
+  /** Open the list when the text is clicked, not only from the arrow button. @default false */
+  openOnClick?: boolean;
 }
 
 const defaultFilter = (option: SelectOption, text: string) => option.label.toLocaleLowerCase().includes(text.toLocaleLowerCase());
@@ -64,7 +73,7 @@ export const ComboBox = forwardRef<HTMLInputElement, ComboBoxProps>(function Com
   {
     label, description, error, status, statusMessage, hideLabel, labelPosition,
     options: optionsProp, children, value, defaultValue = null, onChange, onInputChange, allowCustomValue = false, parseCustomValue,
-    filter = defaultFilter, loading = false, emptyText, size = 'md', clearable = true, formatValue,
+    filter = defaultFilter, loading = false, emptyText, size = 'md', clearable = true, formatValue, editable = true, openOnClick = false,
     id, required, disabled, readOnly, placeholder, className, 'aria-label': ariaLabel, 'aria-describedby': ariaDescribedBy, ...rest
   },
   ref,
@@ -88,6 +97,27 @@ export const ComboBox = forwardRef<HTMLInputElement, ComboBoxProps>(function Com
 
   const visible = useMemo(() => (filtering && text ? options.filter((o) => filter(o, text)) : options), [filtering, text, options, filter]);
   const interactive = !control.disabled && !readOnly;
+
+  /** Opens the full list with the selected option active (the arrow button, a click, Space). */
+  const openList = () => {
+    setFiltering(false);
+    setOpen(true);
+    setActive(Math.max(0, options.findIndex((o) => o.value === selected)));
+  };
+
+  /** Select-like type-ahead: the next option, after the active one, whose label starts with `char`. */
+  const jumpTo = (char: string) => {
+    const starts = (o: SelectOption) => !o.disabled && o.label.replace(/^[^\p{L}\p{N}]+/u, '').toLocaleLowerCase().startsWith(char.toLocaleLowerCase());
+    const from = open ? active : visible.findIndex((o) => o.value === selected);
+    for (let step = 1; step <= visible.length; step++) {
+      const i = (from + step + visible.length) % visible.length;
+      if (visible[i] && starts(visible[i])) {
+        if (open) setActive(i);
+        else setSelected(visible[i].value);
+        return;
+      }
+    }
+  };
 
   const closeAndRevert = () => {
     setOpen(false);
@@ -122,6 +152,11 @@ export const ComboBox = forwardRef<HTMLInputElement, ComboBoxProps>(function Com
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (!interactive) return;
     const { key } = event;
+    // Select-like: Space and Enter open the list (Enter still picks once it is open).
+    if (!editable && !open && (key === ' ' || key === 'Enter')) {
+      event.preventDefault();
+      return openList();
+    }
     if (key === 'ArrowDown' || key === 'ArrowUp') {
       event.preventDefault();
       if (!open) {
@@ -146,7 +181,8 @@ export const ComboBox = forwardRef<HTMLInputElement, ComboBoxProps>(function Com
         event.preventDefault();
         event.stopPropagation();
         closeAndRevert();
-      } else if (text) {
+      } else if (text && (editable || clearable)) {
+        // A select-like box without a clear button keeps its value.
         event.preventDefault();
         setFiltering(false);
         setSelected(null);
@@ -154,6 +190,9 @@ export const ComboBox = forwardRef<HTMLInputElement, ComboBoxProps>(function Com
     } else if (key === 'Tab') {
       if (open && active >= 0 && visible[active]) choose(visible[active]);
       else commitText();
+    } else if (!editable && key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey && key !== ' ') {
+      event.preventDefault();
+      jumpTo(key);
     }
   };
 
@@ -176,16 +215,17 @@ export const ComboBox = forwardRef<HTMLInputElement, ComboBoxProps>(function Com
           type="text"
           role="combobox"
           autoComplete="off"
-          aria-autocomplete="list"
+          aria-autocomplete={editable ? 'list' : 'none'}
           aria-expanded={open}
           aria-controls={open ? listId : undefined}
           aria-activedescendant={open && active >= 0 ? optionId(listId, active) : undefined}
           aria-label={control.labelId ? undefined : ariaLabel}
-          className={cx(inputBoxStyles.input, className)}
+          className={cx(inputBoxStyles.input, !editable && listboxStyles.selectOnly, className)}
           value={text}
           placeholder={placeholder}
           disabled={control.disabled}
-          readOnly={readOnly}
+          // Not editable: the text cannot be typed in, but the list still opens.
+          readOnly={readOnly || !editable}
           required={control.required}
           onChange={(event) => {
             setQuery(event.target.value);
@@ -195,6 +235,12 @@ export const ComboBox = forwardRef<HTMLInputElement, ComboBoxProps>(function Com
             onInputChange?.(event.target.value);
           }}
           onKeyDown={onKeyDown}
+          onClick={() => {
+            if (!openOnClick || !interactive) return;
+            // A select-like box toggles; an editable one only opens (a click also places the caret).
+            if (!open) openList();
+            else if (!editable) closeAndRevert();
+          }}
           onBlur={(event) => {
             if (!listRef.current?.contains(event.relatedTarget as Node) && !boxRef.current?.contains(event.relatedTarget as Node)) commitText();
           }}
@@ -225,11 +271,7 @@ export const ComboBox = forwardRef<HTMLInputElement, ComboBoxProps>(function Com
           disabled={!interactive}
           onClick={() => {
             if (open) closeAndRevert();
-            else {
-              setFiltering(false);
-              setOpen(true);
-              setActive(Math.max(0, options.findIndex((o) => o.value === selected)));
-            }
+            else openList();
             inputRef.current?.focus();
           }}
         >

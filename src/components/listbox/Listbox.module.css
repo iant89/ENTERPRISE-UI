@@ -156,3 +156,10 @@
 .open .chevron {
   transform: rotate(180deg);
 }
+
+/* ComboBox with editable={false}: reads like a select (no text caret, pointer cursor). */
+.selectOnly {
+  cursor: pointer;
+  caret-color: transparent;
+  user-select: none;
+}

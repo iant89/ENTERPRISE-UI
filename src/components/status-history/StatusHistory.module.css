@@ -1,0 +1,29 @@
+.strip {
+  display: flex;
+  gap: 2px;
+  align-items: stretch;
+  block-size: 1.5rem;
+  min-inline-size: 12rem;
+}
+.sm { block-size: 1rem; }
+.lg { block-size: 2rem; }
+
+.segment {
+  flex: 1 1 0;
+  min-inline-size: 2px;
+  border: 1px solid var(--eui-color-border-subtle);
+  border-radius: 1px;
+  background: var(--_fill, transparent);
+}
+.success { --_fill: var(--eui-color-success); }
+.warning { --_fill: var(--eui-color-warning); }
+.error { --_fill: var(--eui-color-error); }
+.information { --_fill: var(--eui-color-info); }
+.neutral { --_fill: var(--eui-color-neutral); }
+.disabled { --_fill: var(--eui-color-border-strong); }
+/* Nothing recorded: an empty, dashed outline, never a colour that could read as a status. */
+.none { border-style: dashed; }
+
+@media (forced-colors: active) {
+  .segment { forced-color-adjust: none; }
+}

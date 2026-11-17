@@ -136,11 +136,24 @@ export const docs: ComponentDoc[] = [
   },
   { slug: 'description-list', name: 'DescriptionList', category: 'Data display', components: ['DescriptionList'], summary: 'Read-only term and value pairs for business object facts.', a11y: ['A native `dl` with `dt`/`dd` pairs in reading order.', 'Missing values show visible text instead of an empty cell.'], related: ['object-page', 'form'] },
   {
+    slug: 'status-history', name: 'StatusHistory', category: 'Data display', components: ['StatusHistory'],
+    summary: 'A strip of periods coloured by status, for uptime and health history on status pages and dashboards.',
+    a11y: ['A named list; each segment names its period and status in text (`label`), as accessible name and tooltip.', 'Periods without data are drawn dashed, not in a colour that could read as a status.', 'Put a text summary (availability, number of changes) next to the strip.'],
+    related: ['status-indicator', 'sparkline', 'timeline'],
+  },
+  {
     slug: 'qr-code', name: 'QrCode', category: 'Data display', components: ['QrCode'],
     summary: 'A QR code drawn as SVG in the browser, for setup links, URLs and IDs; optionally enlargeable in a dialog.',
     keyboard: [k('Tab', 'Focuses an enlargeable code'), k('Enter / Space', 'Opens the larger copy'), k('Escape', 'Closes the larger copy')],
     a11y: ['An image named by `label` (default "QR code"); an enlargeable code is a button named "<label>. Show it larger".', 'Always offer the same content as text nearby (a link or a copyable field): a QR code alone is not accessible.', 'Keep strong contrast between `color` and `background` (dark on light) and the 4-module quiet zone, or scanners may fail.', 'The value is encoded locally and never sent anywhere, so it can hold secrets such as authenticator setup keys.'],
     related: ['barcode-scanner-dialog', 'copy-button', 'dialog'],
+  },
+  {
+    slug: 'emoji-picker', name: 'EmojiPicker', category: 'Forms', components: ['EmojiPicker'],
+    summary: 'A button that opens a searchable grid of emoji to add to a message or title.',
+    keyboard: [k('Enter / Space', 'Opens the picker; chooses the focused emoji'), k('Arrow keys', 'Move between emoji'), k('Home / End', 'First / last emoji'), k('Escape', 'Closes the picker only, not a dialog around it')],
+    a11y: ['Every emoji is a button named in words ("alarm clock"), which is also what search matches.', 'Group headings are region names; a search without results is announced.', 'Use `insertTextAtCursor` to insert at the caret of the field the emoji is for.'],
+    related: ['popover', 'text-area', 'input'],
   },
   {
     slug: 'dual-list-selector', name: 'DualListSelector', category: 'Forms', components: ['DualListSelector'],
@@ -287,7 +300,7 @@ export const docs: ComponentDoc[] = [
     keyboard: [k('Tab', 'Reach the file picker and each queue action')],
     a11y: ['Native file input provides a keyboard alternative to drag and drop.', 'Progress is available through labelled progress bars and a live summary.', 'The server must validate files and authorize uploads; cancellation cannot guarantee server rollback. Use idempotent upload operations before retrying uncertain outcomes.'],
   },
-  { slug: 'copy-button', name: 'CopyButton', category: 'Buttons', components: ['CopyButton'], summary: 'Copies a text value with success and failure feedback.', a11y: ['Uses a native button and politely announces the outcome.', 'Clipboard access may be unavailable outside secure contexts; failures are surfaced.'] },
+  { slug: 'copy-button', name: 'CopyButton', category: 'Buttons', components: ['CopyButton'], summary: 'Copies a text value with success and failure feedback; `iconOnly` fits inside a field.', a11y: ['Uses a native button and politely announces the outcome.', 'With `iconOnly`, the label is the accessible name and tooltip, and the icon shows the outcome; pair it with a toast through `onCopied` and `onError` when people need to see it.', 'Clipboard access may be unavailable outside secure contexts; failures are surfaced.'] },
   { slug: 'virtual-tree', name: 'VirtualTree', category: 'Data display', components: ['VirtualTree'], summary: 'Windowed, fixed-height hierarchical navigation using the TreeNode contract.', keyboard: [k('↑ / ↓', 'Move through visible nodes'), k('← / →', 'Collapse, expand or move to parent/child'), k('Home / End', 'Move to first / last node'), k('Enter / Space', 'Select')], a11y: ['A tree with explicit level, position and set size; focus stays on the tree using aria-activedescendant.', 'Set virtualized to false for a full-render alternative. Verify with target screen readers.', 'Nodes have fixed heights. Do not include interactive descendants in node content.'], related: ['tree', 'virtual-list'] },
   { slug: 'inline-edit', name: 'InlineEdit', category: 'Forms', components: ['InlineEdit'], summary: 'Controlled text editing with validation and asynchronous save.', keyboard: [k('Escape', 'Cancel while not saving')], a11y: ['The edit input has an associated label and validation errors are announced.', 'Focus moves to the input on edit and returns to the edit button on cancel or save.'] },
   { slug: 'overflow-menu', name: 'OverflowMenu', category: 'Navigation', components: ['OverflowMenu'], summary: 'A compact trigger for secondary actions, built on DropdownMenu.', a11y: ['The trigger has an accessible name and uses the existing keyboard-accessible menu.'], related: ['dropdown-menu'] },
@@ -489,6 +502,19 @@ export const docs: ComponentDoc[] = [
     a11y: ['Announced through the ThemeProvider live region (errors assertively).', 'Timers pause while hovered or focused (WCAG 2.2.1); errors persist until dismissed.', 'Do not put the only path to an action in a toast.'],
   },
   { slug: 'message-strip', name: 'MessageStrip', category: 'Feedback', components: ['MessageStrip'], summary: 'Inline message about the current page or section.', a11y: ['Tone is announced as a hidden prefix (“Warning:”).', 'Use `announce` for messages that appear dynamically.'] },
+  {
+    slug: 'field-help', name: 'FieldHelp', category: 'Feedback', components: ['FieldHelp', 'WithFieldHelp'],
+    summary: 'An "i" button beside a form field that shows its longer explanation in a tip, keeping forms compact; works with touch.',
+    keyboard: [k('Tab (focus the button)', 'Shows the tip'), k('Enter / Space', 'Keeps the tip open, or closes it'), k('Escape', 'Closes the tip only, not a dialog around it')],
+    a11y: ['A button named "About <label>" whose tip is its description (`aria-describedby`), read on focus.', 'A toggletip: a click or tap keeps it open, so it works without hover; nothing inside it takes focus.', 'Keep what is needed to fill the field in (range, format, warnings) visible under the field; the tip is for the longer explanation.'],
+    related: ['tooltip', 'form-field', 'input'],
+  },
+  {
+    slug: 'error-boundary', name: 'ErrorBoundary', category: 'Feedback', components: ['ErrorBoundary'],
+    summary: 'Keeps an error in one part of the page (a route, a panel) from taking down the application; shows a fallback with Try again.',
+    a11y: ['The default fallback is an EmptyState announced as an alert, with a heading at a configurable level.', 'When the code of a lazily loaded part cannot be fetched (the application was updated), it offers only Reload, which is the one thing that helps.'],
+    related: ['empty-state', 'message-strip'],
+  },
   {
     slug: 'tooltip', name: 'Tooltip', category: 'Feedback', components: ['Tooltip'],
     summary: 'Short contextual help on hover and focus.',

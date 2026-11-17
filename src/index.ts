@@ -134,6 +134,7 @@ export * from './components/title';
 export * from './components/text';
 export * from './components/description-list';
 export * from './components/qr-code';
+export * from './components/status-history';
 
 // Charts and micro charts
 export * from './components/line-chart';
@@ -174,6 +175,7 @@ export * from './patterns/tour';
 export * from './patterns/dashboard';
 export * from './patterns/command-toolbar';
 export * from './patterns/empty-state';
+export * from './patterns/error-boundary';
 export * from './patterns/analytical-card';
 export * from './patterns/dashboard-card';
 export * from './patterns/dashboard-filters';
@@ -199,6 +201,8 @@ export * from './components/diff-viewer';
 export * from './components/file-uploader';
 export * from './components/upload-collection';
 export * from './components/copy-button';
+export * from './components/emoji-picker';
+export * from './components/field-help';
 export * from './components/inline-edit';
 export * from './components/overflow-menu';
 export * from './components/notification-center';
